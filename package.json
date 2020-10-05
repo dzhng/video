@@ -66,6 +66,7 @@
     "start": "next start",
     "test": "jest",
     "lint": "eslint src/**/*.{ts,tsx}",
+    "type-check": "tsc",
     "server": "node server.js",
     "test:ci": "jest --ci --runInBand --reporters=default --reporters=jest-junit --coverage",
     "cypress:open": "cypress open",
