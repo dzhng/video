@@ -1,4 +1,6 @@
 {
   "version": 2,
-  "regions": ["bru"]
+  "regions": ["bru"],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
