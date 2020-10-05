@@ -4,7 +4,7 @@ import { useAppState } from '../../state';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import { ReactComponent as GoogleLogo } from './google-logo.svg';
+import GoogleLogo from './google-logo.svg';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
@@ -77,7 +77,12 @@ export default function LoginPage() {
       <Grid container justify="center" alignItems="flex-start" className={classes.container}>
         {authError}
         <Paper className={classes.paper} elevation={6}>
-          <Button variant="contained" className={classes.button} onClick={login} startIcon={<GoogleLogo />}>
+          <Button
+            variant="contained"
+            className={classes.button}
+            onClick={login}
+            startIcon={<GoogleLogo />}
+          >
             Sign in with Google
           </Button>
         </Paper>
