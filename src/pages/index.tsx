@@ -1,43 +1,28 @@
+import dynamic from 'next/dynamic';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { StaticRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 
-import App from '~/App';
-import AppStateProvider, { useAppState } from '~/state';
-import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
+import AppStateProvider from '~/state';
 import LoginPage from '~/components/LoginPage/LoginPage';
 import PrivateRoute from '~/components/PrivateRoute/PrivateRoute';
 import theme from '~/theme';
 import '~/types';
-import { VideoProvider } from '~/components/VideoProvider';
-import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
-import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 
-const VideoApp = () => {
-  const { error, setError } = useAppState();
-  const connectionOptions = useConnectionOptions();
+// disable SSR on the video component itself, since it uses browser features
+const App = dynamic(() => import('~/App'), { ssr: false });
 
-  return (
-    <UnsupportedBrowserWarning>
-      <VideoProvider options={connectionOptions} onError={setError}>
-        <ErrorDialog dismissError={() => setError(null)} error={error} />
-        <App />
-      </VideoProvider>
-    </UnsupportedBrowserWarning>
-  );
-};
-
-export default (
+export default () => (
   <MuiThemeProvider theme={theme}>
     <CssBaseline />
     <Router>
       <AppStateProvider>
         <Switch>
           <PrivateRoute exact path="/">
-            <VideoApp />
+            <App />
           </PrivateRoute>
           <PrivateRoute path="/room/:URLRoomName">
-            <VideoApp />
+            <App />
           </PrivateRoute>
           <Route path="/login">
             <LoginPage />
