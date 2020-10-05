@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 
 const firebaseConfig = {
@@ -27,38 +27,30 @@ export default function useFirebaseAuth() {
       const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
       const params = new window.URLSearchParams({ identity, roomName });
 
-      return fetch(`${endpoint}?${params}`, { headers }).then(res => res.text());
+      return fetch(`${endpoint}?${params}`, { headers }).then((res) => res.text());
     },
-    [user]
+    [user],
   );
 
   useEffect(() => {
     firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged((user) => {
       setUser(user);
       setIsAuthReady(true);
     });
   }, []);
 
-  const signIn = useCallback(() => {
+  const signIn = useCallback(async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/plus.login');
 
-    return firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(user => {
-        setUser(user.user);
-      });
+    const user = await firebase.auth().signInWithPopup(provider);
+    setUser(user.user);
   }, []);
 
-  const signOut = useCallback(() => {
-    return firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        setUser(null);
-      });
+  const signOut = useCallback(async () => {
+    await firebase.auth().signOut();
+    setUser(null);
   }, []);
 
   return { user, signIn, signOut, isAuthReady, getToken };

@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useReducer, useState } from 'react';
 import { RoomType } from '../types';
 import { TwilioError } from 'twilio-video';
-import { settingsReducer, initialSettings, Settings, SettingsAction } from './settings/settingsReducer';
+import {
+  settingsReducer,
+  initialSettings,
+  Settings,
+  SettingsAction,
+} from './settings/settingsReducer';
 import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
 import { User } from 'firebase';
 
@@ -44,22 +49,24 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     ...useFirebaseAuth(),
   };
 
-  const getToken: StateContextType['getToken'] = (name, room) => {
+  const getToken: StateContextType['getToken'] = async (name, room) => {
     setIsFetching(true);
-    return contextValue
-      .getToken(name, room)
-      .then(res => {
-        setIsFetching(false);
-        return res;
-      })
-      .catch(err => {
-        setError(err);
-        setIsFetching(false);
-        return Promise.reject(err);
-      });
+    try {
+      const res = await contextValue.getToken(name, room);
+      setIsFetching(false);
+      return res;
+    } catch (err) {
+      setError(err);
+      setIsFetching(false);
+      return Promise.reject(err);
+    }
   };
 
-  return <StateContext.Provider value={{ ...contextValue, getToken }}>{props.children}</StateContext.Provider>;
+  return (
+    <StateContext.Provider value={{ ...contextValue, getToken }}>
+      {props.children}
+    </StateContext.Provider>
+  );
 }
 
 export function useAppState() {
