@@ -52,6 +52,7 @@
     "mocha-junit-reporter": "^2.0.0",
     "pixelmatch": "^5.2.1",
     "puppeteer": "^5.3.1",
+    "react-scripts": "^3.4.3",
     "react-test-renderer": "^16.13.1",
     "start-server-and-test": "^1.11.4",
     "ts-jest": "^26.4.0",
@@ -76,7 +77,16 @@
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "no-shadow": "warn"
+      "no-shadow": "warn",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-props-no-spreading": "off",
+      "jsx-a11y/anchor-is-valid": "off",
+      "jsx-a11y/alt-text": "off",
+      "jsx-a11y/click-events-have-key-events": "off",
+      "jsx-a11y/no-static-element-interactions": "off",
+      "jsx-a11y/interactive-supports-focus": "off",
+      "react/require-default-props": "off",
+      "no-param-reassign": "off"
     }
   },
   "browserslist": {

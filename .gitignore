@@ -32,3 +32,4 @@ test-reports
 junit.xml
 
 .vercel
+.next
