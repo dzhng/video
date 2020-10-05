@@ -22,7 +22,9 @@ jest.mock('../../hooks/useRoomState/useRoomState');
 jest.mock('../../hooks/useFullScreenToggle/useFullScreenToggle');
 jest.mock('../../state');
 
+// @ts-ignore
 delete window.location;
+
 // @ts-ignore
 window.location = {
   pathname: '',
@@ -34,12 +36,6 @@ const renderComponent = () => (
     <MenuBar />
   </MemoryRouter>
 );
-
-// delete window.location;
-// // @ts-ignore
-// window.location = {
-//   origin: '',
-// };
 
 const mockReplaceState = jest.fn();
 Object.defineProperty(window.history, 'replaceState', { value: mockReplaceState });
@@ -145,7 +141,7 @@ describe('the MenuBar component', () => {
     expect(window.history.replaceState).not.toHaveBeenCalled();
   });
 
-  it('should call getToken() and connect() on submit', done => {
+  it('should call getToken() and connect() on submit', (done) => {
     mockedUseRoomState.mockImplementation(() => 'disconnected');
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any)

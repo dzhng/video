@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import useDominantSpeaker from './useDominantSpeaker';
 import useVideoContext from '../useVideoContext/useVideoContext';
 

@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import { mockRoom } from '../../../__mocks__/twilio-video';
 import useRoom from './useRoom';
 import Video, { LocalTrack } from 'twilio-video';
@@ -42,7 +42,7 @@ describe('the useRoom hook', () => {
   });
 
   it('should publish video tracks that are supplied in a rerender', async () => {
-    const { result, rerender, waitForNextUpdate } = renderHook(props => useRoom(props.tracks, () => {}, {}), {
+    const { result, rerender, waitForNextUpdate } = renderHook((props) => useRoom(props.tracks, () => {}, {}), {
       initialProps: { tracks: [] as LocalTrack[] },
     });
     rerender({ tracks: [{ kind: 'video' } as LocalTrack] });

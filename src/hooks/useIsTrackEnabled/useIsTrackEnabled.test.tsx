@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import useIsTrackEnabled from './useIsTrackEnabled';
 
 describe('the useIsTrackEnabled hook', () => {
