@@ -63,7 +63,14 @@
     "webpack": "^4.44.2"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write", "bash -c tsc"]
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --no-ignore --fix",
+      "bash -c tsc"
+    ],
+    "*.{json,md,css,scss}": [
+      "prettier --write"
+    ]
   },
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev",
@@ -94,8 +101,16 @@
     }
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "husky": {
     "hooks": {
@@ -104,6 +119,8 @@
   },
   "proxy": "http://localhost:8081/",
   "jest": {
-    "snapshotSerializers": ["enzyme-to-json/serializer"]
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   }
 }
