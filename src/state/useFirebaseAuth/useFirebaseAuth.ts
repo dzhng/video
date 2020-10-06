@@ -35,8 +35,8 @@ export default function useFirebaseAuth() {
   useEffect(() => {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
-      firebase.auth().onAuthStateChanged((user) => {
-        setUser(user);
+      firebase.auth().onAuthStateChanged((newUser) => {
+        setUser(newUser);
         setIsAuthReady(true);
       });
     }
@@ -46,8 +46,8 @@ export default function useFirebaseAuth() {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/plus.login');
 
-    const user = await firebase.auth().signInWithPopup(provider);
-    setUser(user.user);
+    const ret = await firebase.auth().signInWithPopup(provider);
+    setUser(ret.user);
   }, []);
 
   const signOut = useCallback(async () => {
