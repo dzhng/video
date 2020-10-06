@@ -1,83 +1,8 @@
-# Twilio Video React App
+# Video React App
 
-## What is it
+## Pull env Variables from Vercel
 
-This application demonstrates a multi-party video application built with [twilio-video.js](https://github.com/twilio/twilio-video.js) and [Create React App](https://github.com/facebook/create-react-app).
-
-* Deploy to [Twilio Serverless](https://www.twilio.com/docs/runtime/functions-assets-api) in just a few minutes
-* No other infrastructure is required
-* No code changes are required before your first deploy
-* There is no cost associated with deploying the app
-* When using the app, you will be charged [$0.01 / video participant minute](https://www.twilio.com/video/pricing).
-
-![App Preview](https://user-images.githubusercontent.com/12685223/76361972-c035b700-62e5-11ea-8f9d-0bb24bd73fd4.png)
-
-## Prerequisites
-
-You must have the following installed:
-
-* [Node.js v10+](https://nodejs.org/en/download/)
-* NPM v6+ (comes installed with newer Node versions)
-
-## Install Dependencies
-
-Run `npm install` to install all dependencies from NPM.
-
-If you want to use `yarn` to install dependencies, first run the [yarn import](https://classic.yarnpkg.com/en/docs/cli/import/) command. This will ensure that yarn installs the package versions that are specified in `package-lock.json`.
-
-## Install Twilio CLI
-
-The app is deployed to Twilio using the Twilio CLI. Install twilio-cli with:
-
-    $ npm install -g twilio-cli
-
-Login to the Twilio CLI. You will be prompted for your Account SID and Auth Token, both of which you can find on the dashboard of your [Twilio console](https://twilio.com/console).
-
-    $ twilio login
-
-This app requires an additional plugin. Install the CLI plugin with:
-
-    $ twilio plugins:install @twilio-labs/plugin-rtc
-
-## Deploy the app to Twilio
-
-Before deploying the app, make sure you are using the correct account on the Twilio CLI (using the command `twilio profiles:list` to check). 
-The app is deployed to Twilio with a single command:
-
-    $ npm run deploy:twilio-cli
-
-This performs the following steps:
-
-* Builds the React app in the `src` directory
-* Generates a random code used to access the Video app
-* Deploys the React app and token server function as a Twilio Serverless service.
-* Prints the URL for the app and the passcode.
-
-**NOTE:** The Twilio Function that provides access tokens via a passcode should *NOT* be used in a production environment. This token server supports seamlessly getting started with the collaboration app, and while convenient, the passcode is not secure enough for production environments. You should use an authentication provider to securely provide access tokens to your client applications. You can find more information about Programmable Video access tokens [in this tutorial](https://www.twilio.com/docs/video/tutorials/user-identity-access-tokens). **As a precaution, the passcode will expire after one week**. To generate a new passcode, redeploy the app:
-
-    $ npm run deploy:twilio-cli -- --override
-
-## View app details
-
-View the URL and passcode for the Video app with
-
-     $ twilio rtc:apps:video:view
-
-## Delete the app
-
-Delete the app with
-
-    $ twilio rtc:apps:video:delete
-
-This removes the Serverless app from Twilio. This will ensure that no further cost are incurred by the app.
-
-## Troubleshooting The Twilio CLI
-
-If any errors occur after running a [Twilio CLI RTC Plugin](https://github.com/twilio-labs/plugin-rtc) command, then try the following steps.
-
-1. Run `twilio plugins:update` to update the rtc plugin to the latest version.
-1. Run `twilio rtc:apps:video:delete` to delete any existing video apps.
-1. Run `npm run deploy:twilio-cli` to deploy a new video app.
+`now env pull`
 
 ## App Behavior with Different Room Types
 
