@@ -26,7 +26,7 @@ const Video = () => {
   );
 };
 
-export default function App() {
+function App() {
   return (
     <Router>
       <AppStateProvider>
@@ -46,3 +46,5 @@ export default function App() {
     </Router>
   );
 }
+
+export default App;

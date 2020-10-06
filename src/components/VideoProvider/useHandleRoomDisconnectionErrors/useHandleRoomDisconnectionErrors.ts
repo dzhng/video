@@ -4,7 +4,7 @@ import { Callback } from '~/types';
 
 export default function useHandleRoomDisconnectionErrors(room: Room, onError: Callback) {
   useEffect(() => {
-    const onDisconnected = (error: TwilioError) => {
+    const onDisconnected = (_room: Room, error: TwilioError) => {
       if (error) {
         onError(error);
       }
