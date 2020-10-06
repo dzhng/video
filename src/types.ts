@@ -3,7 +3,10 @@ import { LocalVideoTrack, RemoteVideoTrack, TwilioError } from 'twilio-video';
 declare module 'twilio-video' {
   interface LocalParticipant {
     setBandwidthProfile: (bandwidthProfile: BandwidthProfileOptions) => void;
-    publishTrack(track: LocalTrack, options?: { priority: Track.Priority }): Promise<LocalTrackPublication>;
+    publishTrack(
+      track: LocalTrack,
+      options?: { priority: Track.Priority },
+    ): Promise<LocalTrackPublication>;
   }
 
   interface VideoCodecSettings {
@@ -26,12 +29,6 @@ declare module 'twilio-video' {
 }
 
 declare global {
-  interface Window {
-    visualViewport?: {
-      scale: number;
-    };
-  }
-
   interface MediaDevices {
     getDisplayMedia(constraints: MediaStreamConstraints): Promise<MediaStream>;
   }
