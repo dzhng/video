@@ -22,16 +22,20 @@ export default function Menu() {
 
   const handleSignOut = useCallback(() => {
     room.disconnect?.();
-    localTracks.forEach(track => track.stop());
+    localTracks.forEach((track) => track.stop());
     signOut?.();
-  }, [room.disconnect, localTracks, signOut]);
+  }, [room, localTracks, signOut]);
 
   return (
     <div ref={anchorRef}>
-      <IconButton color="inherit" onClick={() => setMenuOpen(state => !state)}>
+      <IconButton color="inherit" onClick={() => setMenuOpen((state) => !state)}>
         {user ? <UserAvatar user={user} /> : <MoreIcon />}
       </IconButton>
-      <MenuContainer open={menuOpen} onClose={() => setMenuOpen(state => !state)} anchorEl={anchorRef.current}>
+      <MenuContainer
+        open={menuOpen}
+        onClose={() => setMenuOpen((state) => !state)}
+        anchorEl={anchorRef.current}
+      >
         {user?.displayName && <MenuItem disabled>{user.displayName}</MenuItem>}
         <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
         <MenuItem onClick={() => setSettingsOpen(true)}>Settings</MenuItem>
