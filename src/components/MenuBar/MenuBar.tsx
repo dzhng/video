@@ -56,12 +56,12 @@ const useStyles = makeStyles((theme: Theme) =>
     joinButton: {
       margin: '1em',
     },
-  })
+  }),
 );
 
 export default function MenuBar() {
   const classes = useStyles();
-  const { URLRoomName } = useParams();
+  const { URLRoomName } = useParams() as any;
   const { user, getToken, isFetching } = useAppState();
   const { isConnecting, connect, isAcquiringLocalTracks } = useVideoContext();
   const roomState = useRoomState();
@@ -87,9 +87,13 @@ export default function MenuBar() {
     event.preventDefault();
     // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
     if (!window.location.origin.includes('twil.io')) {
-      window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
+      window.history.replaceState(
+        null,
+        '',
+        window.encodeURI(`/room/${roomName}${window.location.search || ''}`),
+      );
     }
-    getToken(name, roomName).then(token => connect(token));
+    getToken(name, roomName).then((token) => connect(token));
   };
 
   return (
@@ -128,7 +132,9 @@ export default function MenuBar() {
             >
               Join Room
             </Button>
-            {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
+            {(isConnecting || isFetching) && (
+              <CircularProgress className={classes.loadingSpinner} />
+            )}
           </form>
         ) : (
           <h3>{roomName}</h3>

@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginPage from './LoginPage';
-import { act, fireEvent, render, waitForElement } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { useAppState } from '../../state';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -26,20 +26,32 @@ describe('the LoginPage component', () => {
 
   describe('with auth enabled', () => {
     it('should redirect to "/" when there is a user ', () => {
-      mockUseAppState.mockImplementation(() => ({ user: {}, signIn: () => Promise.resolve(), isAuthReady: true }));
+      mockUseAppState.mockImplementation(() => ({
+        user: {},
+        signIn: () => Promise.resolve(),
+        isAuthReady: true,
+      }));
       render(<LoginPage />);
       expect(mockReplace).toHaveBeenCalledWith('/');
     });
 
     it('should render the login page when there is no user', () => {
-      mockUseAppState.mockImplementation(() => ({ user: null, signIn: () => Promise.resolve(), isAuthReady: true }));
+      mockUseAppState.mockImplementation(() => ({
+        user: null,
+        signIn: () => Promise.resolve(),
+        isAuthReady: true,
+      }));
       const { getByText } = render(<LoginPage />);
       expect(mockReplace).not.toHaveBeenCalled();
       expect(getByText('Sign in with Google')).toBeTruthy();
     });
 
-    it('should redirect the user to "/" after signIn when there is no previous location', done => {
-      mockUseAppState.mockImplementation(() => ({ user: null, signIn: () => Promise.resolve(), isAuthReady: true }));
+    it('should redirect the user to "/" after signIn when there is no previous location', (done) => {
+      mockUseAppState.mockImplementation(() => ({
+        user: null,
+        signIn: () => Promise.resolve(),
+        isAuthReady: true,
+      }));
       const { getByText } = render(<LoginPage />);
       getByText('Sign in with Google').click();
       setImmediate(() => {
@@ -48,9 +60,13 @@ describe('the LoginPage component', () => {
       });
     });
 
-    it('should redirect the user to their previous location after signIn', done => {
+    it('should redirect the user to their previous location after signIn', (done) => {
       mockUseLocation.mockImplementation(() => ({ state: { from: { pathname: '/room/test' } } }));
-      mockUseAppState.mockImplementation(() => ({ user: null, signIn: () => Promise.resolve(), isAuthReady: true }));
+      mockUseAppState.mockImplementation(() => ({
+        user: null,
+        signIn: () => Promise.resolve(),
+        isAuthReady: true,
+      }));
       const { getByText } = render(<LoginPage />);
       getByText('Sign in with Google').click();
       setImmediate(() => {
@@ -60,7 +76,11 @@ describe('the LoginPage component', () => {
     });
 
     it('should not render anything when isAuthReady is false', () => {
-      mockUseAppState.mockImplementation(() => ({ user: null, signIn: () => Promise.resolve(), isAuthReady: false }));
+      mockUseAppState.mockImplementation(() => ({
+        user: null,
+        signIn: () => Promise.resolve(),
+        isAuthReady: false,
+      }));
       const { container } = render(<LoginPage />);
       expect(mockReplace).not.toHaveBeenCalled();
       expect(container.children[0]).toBe(undefined);

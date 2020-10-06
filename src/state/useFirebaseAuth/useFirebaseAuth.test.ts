@@ -1,6 +1,6 @@
 import useFirebaseAuth from './useFirebaseAuth';
 import { renderHook } from '@testing-library/react-hooks';
-import { TOKEN_ENDPOINT } from '~/.constants';
+import { TOKEN_ENDPOINT } from '~/constants';
 
 const mockUser = { getIdToken: () => Promise.resolve('idToken') };
 
