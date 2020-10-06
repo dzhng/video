@@ -58,10 +58,7 @@ describe('the useFirebaseAuth hook', () => {
     await waitForNextUpdate();
     await result.current.getToken('testuser', 'testroom');
     expect(window.fetch).toHaveBeenCalledWith(
-      `${TOKEN_ENDPOINT}?identity=testuser&roomName=testroom`,
-      {
-        headers: { _headers: { authorization: ['idToken'] } },
-      },
+      `${TOKEN_ENDPOINT}?identity=testuser&roomName=testroom&idToken=idToken`,
     );
   });
 });

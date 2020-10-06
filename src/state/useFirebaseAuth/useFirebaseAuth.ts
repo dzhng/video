@@ -20,20 +20,15 @@ export default function useFirebaseAuth() {
 
   const getToken = useCallback(
     async (identity: string, roomName: string) => {
-      const headers = new window.Headers();
-
       const idToken = await user!.getIdToken();
-      headers.set('Authorization', idToken);
-
-      const params = new window.URLSearchParams({ identity, roomName });
-
-      return fetch(`${TOKEN_ENDPOINT}?${params}`, { headers }).then((res) => res.text());
+      const params = new window.URLSearchParams({ identity, roomName, idToken });
+      return fetch(`${TOKEN_ENDPOINT}?${params}`).then((res) => res.text());
     },
     [user],
   );
 
   useEffect(() => {
-    if (!firebase.apps.length) {
+    if (!firebase.apps?.length) {
       firebase.initializeApp(firebaseConfig);
       firebase.auth().onAuthStateChanged((newUser) => {
         setUser(newUser);
