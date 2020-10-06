@@ -1,4 +1,4 @@
-import { StaticRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 
 import AppStateProvider from '~/state';
 import LoginPage from '~/components/LoginPage/LoginPage';
@@ -12,7 +12,7 @@ import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOpti
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import Room from '~/Room';
 
-const App = () => {
+const Video = () => {
   const { error, setError } = useAppState();
   const connectionOptions = useConnectionOptions();
 
@@ -26,21 +26,23 @@ const App = () => {
   );
 };
 
-export default () => (
-  <Router>
-    <AppStateProvider>
-      <Switch>
-        <PrivateRoute exact path="/">
-          <App />
-        </PrivateRoute>
-        <PrivateRoute path="/room/:URLRoomName">
-          <App />
-        </PrivateRoute>
-        <Route path="/login">
-          <LoginPage />
-        </Route>
-        <Redirect to="/" />
-      </Switch>
-    </AppStateProvider>
-  </Router>
-);
+export default function App() {
+  return (
+    <Router>
+      <AppStateProvider>
+        <Switch>
+          <PrivateRoute exact path="/">
+            <Video />
+          </PrivateRoute>
+          <PrivateRoute path="/room/:URLRoomName">
+            <Video />
+          </PrivateRoute>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+          <Redirect to="/" />
+        </Switch>
+      </AppStateProvider>
+    </Router>
+  );
+}

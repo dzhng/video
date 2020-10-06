@@ -1,5 +1,6 @@
 import useFirebaseAuth from './useFirebaseAuth';
 import { renderHook } from '@testing-library/react-hooks';
+import { TOKEN_ENDPOINT } from '~/.constants';
 
 const mockUser = { getIdToken: () => Promise.resolve('idToken') };
 
@@ -51,14 +52,16 @@ describe('the useFirebaseAuth hook', () => {
   });
 
   it('should include the users idToken in request to the video token server', async () => {
-    process.env.REACT_APP_TOKEN_ENDPOINT='http://test-endpoint.com/token'
     const { result, waitForNextUpdate } = renderHook(() => useFirebaseAuth());
     await waitForNextUpdate();
     result.current.signIn();
     await waitForNextUpdate();
     await result.current.getToken('testuser', 'testroom');
-    expect(window.fetch).toHaveBeenCalledWith('http://test-endpoint.com/token?identity=testuser&roomName=testroom', {
-      headers: { _headers: { authorization: ['idToken'] } },
-    });
+    expect(window.fetch).toHaveBeenCalledWith(
+      `${TOKEN_ENDPOINT}?identity=testuser&roomName=testroom`,
+      {
+        headers: { _headers: { authorization: ['idToken'] } },
+      },
+    );
   });
 });

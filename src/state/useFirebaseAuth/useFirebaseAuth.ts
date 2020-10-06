@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { TOKEN_ENDPOINT } from '~/constants';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,8 +13,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
-
-const endpoint = '/token';
 
 export default function useFirebaseAuth() {
   const [user, setUser] = useState<firebase.User | null>(null);
@@ -28,17 +27,19 @@ export default function useFirebaseAuth() {
 
       const params = new window.URLSearchParams({ identity, roomName });
 
-      return fetch(`${endpoint}?${params}`, { headers }).then((res) => res.text());
+      return fetch(`${TOKEN_ENDPOINT}?${params}`, { headers }).then((res) => res.text());
     },
     [user],
   );
 
   useEffect(() => {
-    firebase.initializeApp(firebaseConfig);
-    firebase.auth().onAuthStateChanged((user) => {
-      setUser(user);
-      setIsAuthReady(true);
-    });
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+      firebase.auth().onAuthStateChanged((user) => {
+        setUser(user);
+        setIsAuthReady(true);
+      });
+    }
   }, []);
 
   const signIn = useCallback(async () => {

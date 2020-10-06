@@ -6,9 +6,11 @@ import theme from '~/theme';
 // disable SSR on the video component itself, since it uses browser features
 const App = dynamic(() => import('~/App'), { ssr: false });
 
-export default () => (
-  <MuiThemeProvider theme={theme}>
-    <CssBaseline />
-    <App />
-  </MuiThemeProvider>
-);
+export default function Index() {
+  return (
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </MuiThemeProvider>
+  );
+}
