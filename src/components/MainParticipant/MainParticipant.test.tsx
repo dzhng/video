@@ -6,7 +6,7 @@ import ParticipantTracks from '~/components/ParticipantTracks/ParticipantTracks'
 import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import MainParticipant from './MainParticipant';
 
-jest.mock('~/componentsVideoProvider/useSelectedParticipant/useSelectedParticipant');
+jest.mock('~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant');
 jest.mock('~/hooks/useMainSpeaker/useMainSpeaker');
 jest.mock('~/hooks/useScreenShareParticipant/useScreenShareParticipant');
 
