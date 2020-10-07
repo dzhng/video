@@ -21,8 +21,15 @@ export default function useFirebaseAuth() {
   const getToken = useCallback(
     async (identity: string, roomName: string) => {
       const idToken = await user!.getIdToken();
-      const params = new window.URLSearchParams({ identity, roomName, idToken });
-      return fetch(`${TOKEN_ENDPOINT}?${params}`).then((res) => res.text());
+      const params = JSON.stringify({ identity, roomName, idToken });
+
+      return fetch(`${TOKEN_ENDPOINT}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: params,
+      }).then((res) => res.text());
     },
     [user],
   );

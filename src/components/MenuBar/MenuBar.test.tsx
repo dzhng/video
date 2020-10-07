@@ -11,7 +11,7 @@ import { useAppState } from '~/state';
 import MenuBar from './MenuBar';
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;
-const mockeduseFullScreenToggle = useFullScreenToggle as jest.Mock;
+const mockedUseFullScreenToggle = useFullScreenToggle as jest.Mock;
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockToggleFullScreen = jest.fn();
@@ -43,7 +43,7 @@ Object.defineProperty(window.history, 'replaceState', { value: mockReplaceState 
 
 describe('the MenuBar component', () => {
   beforeEach(jest.clearAllMocks);
-  mockeduseFullScreenToggle.mockImplementation(() => [true, mockToggleFullScreen]);
+  mockedUseFullScreenToggle.mockImplementation(() => [true, mockToggleFullScreen]);
   mockUseAppState.mockImplementation(() => ({ getToken: mockGetToken }));
 
   it('should hide inputs when connected to a room', () => {
