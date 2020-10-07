@@ -1,7 +1,8 @@
-const pixelmatch = require('pixelmatch');
+import pixelmatch from 'pixelmatch';
 
 function compareVideoElements(videoEl1, videoEl2) {
-  const { videoHeight, videoWidth } = videoEl1.videoWidth > videoEl2.videoWidth ? videoEl2 : videoEl1;
+  const { videoHeight, videoWidth } =
+    videoEl1.videoWidth > videoEl2.videoWidth ? videoEl2 : videoEl1;
 
   const canvas1 = document.createElement('canvas');
   const canvas2 = document.createElement('canvas');
@@ -22,7 +23,7 @@ function compareVideoElements(videoEl1, videoEl2) {
   const imageData2 = context2.getImageData(0, 0, videoWidth, videoHeight).data;
 
   // If either frame is 100% black, return a result that will fail the test
-  if (imageData1.every(i => i === 0) || imageData2.every(i => i === 0)) {
+  if (imageData1.every((i) => i === 0) || imageData2.every((i) => i === 0)) {
     return videoHeight * videoWidth; // 100% of pixels are incorrect
   }
 
@@ -50,7 +51,7 @@ const isSameVideoTrack = (_chai, utils) => {
       `expected #{act} to have same track as #{exp} - ${result} pixels were different`,
       `expected #{act} to not have same track as #{exp} - ${result} pixels were different`,
       $el1.selector || $el1[0].outerHTML,
-      $el2.selector || $el2[0].outerHTML
+      $el2.selector || $el2[0].outerHTML,
     );
   }
 
@@ -70,7 +71,7 @@ const isSameVideoFile = (_chai, utils) => {
       `expected #{act} to have same track as #{exp} - ${result} pixels were different`,
       `expected #{act} to not have same track as #{exp} - ${result} pixels were different`,
       $el.selector || $el[0].outerHTML,
-      'file'
+      'file',
     );
   }
 
