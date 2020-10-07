@@ -23,13 +23,14 @@ describe('twilio token renew function', () => {
     expect(res._isEndCalled()).toEqual(true);
   });
 
-  it('should return a token with correct data', async () => {});
-  const { req, res } = createMocks({ method: 'POST' });
-  req.body = { identity: 'hello', roomName: 'world' };
+  it('should return a token with correct data', async () => {
+    const { req, res } = createMocks({ method: 'POST' });
+    req.body = { identity: 'hello', roomName: 'world' };
 
-  token(req as any, res as any);
+    token(req as any, res as any);
 
-  expect(res.statusCode).toEqual(200);
-  expect(res._isEndCalled()).toEqual(true);
-  expect(res._getData()).toEqual('token');
+    expect(res.statusCode).toEqual(200);
+    expect(res._isEndCalled()).toEqual(true);
+    expect(res._getData()).toEqual('token');
+  });
 });
