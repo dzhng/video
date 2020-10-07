@@ -1,4 +1,5 @@
 import { createMocks } from 'node-mocks-http';
+import twilio from 'twilio';
 import token from '~/pages/api/token';
 
 jest.mock('twilio', () => {
@@ -23,12 +24,13 @@ describe('twilio token renew function', () => {
     expect(res._isEndCalled()).toEqual(true);
   });
 
-  it('should return a token with correct data', async () => {
+  it('should return a token with correct data and correct grant', async () => {
     const { req, res } = createMocks({ method: 'POST' });
     req.body = { identity: 'hello', roomName: 'world' };
 
     token(req as any, res as any);
 
+    expect(twilio.jwt.AccessToken.VideoGrant).toBeCalledWith({ room: 'world' });
     expect(res.statusCode).toEqual(200);
     expect(res._isEndCalled()).toEqual(true);
     expect(res._getData()).toEqual('token');
