@@ -7,7 +7,9 @@ import PinIcon from './PinIcon/PinIcon';
 
 jest.mock('~/hooks/usePublications/usePublications');
 jest.mock('~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff');
-jest.mock('./useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel', () => () => 4);
+jest.mock('~/hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel', () => () =>
+  4,
+);
 
 const mockUsePublications = usePublications as jest.Mock<any>;
 const mockUseIsTrackSwitchedOff = useIsTrackSwitchedOff as jest.Mock<any>;

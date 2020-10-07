@@ -18,9 +18,9 @@ import NetworkQualityLevel from '~/components/NetworkQualityLevel/NetworkQuality
 
 import usePublications from '~/hooks/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
+import useParticipantNetworkQualityLevel from '~/hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
 import useTrack from '~/hooks/useTrack/useTrack';
 
-import useParticipantNetworkQualityLevel from './useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 
 const useStyles = makeStyles((theme: Theme) =>
