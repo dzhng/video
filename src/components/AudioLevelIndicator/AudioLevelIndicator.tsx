@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AudioTrack, LocalAudioTrack, RemoteAudioTrack } from 'twilio-video';
 import { interval } from 'd3-timer';
 import MicOff from '@material-ui/icons/MicOff';
-import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
-import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
+import useIsTrackEnabled from '~/hooks/useIsTrackEnabled/useIsTrackEnabled';
+import useMediaStreamTrack from '~/hooks/useMediaStreamTrack/useMediaStreamTrack';
 
 let clipId = 0;
 const getUniqueClipId = () => clipId++;
@@ -50,7 +50,8 @@ function AudioLevelIndicator({
       // we stop the cloned track that is stored in 'newMediaStream'. It is important that we stop
       // all tracks when they are not in use. Browsers like Firefox don't let you create a new stream
       // from a new audio device while the active audio device still has active tracks.
-      const stopAllMediaStreamTracks = () => newMediaStream.getTracks().forEach(track => track.stop());
+      const stopAllMediaStreamTracks = () =>
+        newMediaStream.getTracks().forEach((track) => track.stop());
       audioTrack.on('stopped', stopAllMediaStreamTracks);
 
       const reinitializeAnalyser = () => {
@@ -105,7 +106,13 @@ function AudioLevelIndicator({
   const clipPathId = `audio-level-clip-${getUniqueClipId()}`;
 
   return isTrackEnabled ? (
-    <svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" height={`${SIZE}px`} width={`${SIZE}px`}>
+    <svg
+      focusable="false"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      height={`${SIZE}px`}
+      width={`${SIZE}px`}
+    >
       <defs>
         <clipPath id={clipPathId}>
           <rect ref={SVGRectRef} x="0" y="21" width="24" height="24" />

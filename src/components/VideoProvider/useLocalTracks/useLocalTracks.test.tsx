@@ -1,7 +1,8 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import useLocalTracks from './useLocalTracks';
 import Video from 'twilio-video';
 import { EventEmitter } from 'events';
+
+import useLocalTracks from './useLocalTracks';
 
 describe('the useLocalTracks hook', () => {
   afterEach(jest.clearAllMocks);
@@ -10,7 +11,10 @@ describe('the useLocalTracks hook', () => {
     const { result, waitForNextUpdate } = renderHook(useLocalTracks);
     expect(result.current.localTracks).toEqual([]);
     await waitForNextUpdate();
-    expect(result.current.localTracks).toEqual([expect.any(EventEmitter), expect.any(EventEmitter)]);
+    expect(result.current.localTracks).toEqual([
+      expect.any(EventEmitter),
+      expect.any(EventEmitter),
+    ]);
     expect(result.current.getLocalVideoTrack).toEqual(expect.any(Function));
   });
 
@@ -33,7 +37,7 @@ describe('the useLocalTracks hook', () => {
     it('should call videoTrack.stop() and remove the videoTrack from state', async () => {
       const { result, waitForNextUpdate } = renderHook(useLocalTracks);
       await waitForNextUpdate();
-      const initialVideoTrack = result.current.localTracks.find(track => track.kind === 'video');
+      const initialVideoTrack = result.current.localTracks.find((track) => track.kind === 'video');
       expect(initialVideoTrack!.stop).not.toHaveBeenCalled();
       expect(initialVideoTrack).toBeTruthy();
 
@@ -41,7 +45,7 @@ describe('the useLocalTracks hook', () => {
         result.current.removeLocalVideoTrack();
       });
 
-      expect(result.current.localTracks.some(track => track.kind === 'video')).toBe(false);
+      expect(result.current.localTracks.some((track) => track.kind === 'video')).toBe(false);
       expect(initialVideoTrack!.stop).toHaveBeenCalled();
     });
   });

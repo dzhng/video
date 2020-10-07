@@ -1,14 +1,14 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Menu from './Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import UserAvatar from '../UserAvatar/UserAvatar';
-import { useAppState } from '../../../state';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import { MenuItem } from '@material-ui/core';
+import { useAppState } from '~/state';
+import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import UserAvatar from './UserAvatar/UserAvatar';
+import Menu from './Menu';
 
-jest.mock('../../../state');
-jest.mock('../../../hooks/useVideoContext/useVideoContext');
+jest.mock('~/state');
+jest.mock('~/hooks/useVideoContext/useVideoContext');
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
@@ -16,7 +16,10 @@ const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 describe('the Menu component', () => {
   const mockDisconnect = jest.fn();
   const mockTrack = { stop: jest.fn() };
-  mockUseVideoContext.mockImplementation(() => ({ room: { disconnect: mockDisconnect }, localTracks: [mockTrack] }));
+  mockUseVideoContext.mockImplementation(() => ({
+    room: { disconnect: mockDisconnect },
+    localTracks: [mockTrack],
+  }));
 
   describe('when there is a user', () => {
     it('should render the UserAvatar component', () => {
@@ -26,13 +29,19 @@ describe('the Menu component', () => {
     });
 
     it('should include the logout button in the menu', () => {
-      mockUseAppState.mockImplementation(() => ({ user: { displayName: 'Test User' }, signOut: jest.fn() }));
+      mockUseAppState.mockImplementation(() => ({
+        user: { displayName: 'Test User' },
+        signOut: jest.fn(),
+      }));
       const wrapper = shallow(<Menu />);
       expect(wrapper.contains('Logout')).toBe(true);
     });
 
     it('should display the user name in the menu', () => {
-      mockUseAppState.mockImplementation(() => ({ user: { displayName: 'Test User' }, signOut: jest.fn() }));
+      mockUseAppState.mockImplementation(() => ({
+        user: { displayName: 'Test User' },
+        signOut: jest.fn(),
+      }));
       const wrapper = shallow(<Menu />);
       expect(wrapper.contains('Test User')).toBe(true);
     });
@@ -44,10 +53,7 @@ describe('the Menu component', () => {
         signOut: mockSignOut,
       }));
       const wrapper = shallow(<Menu />);
-      wrapper
-        .find(MenuItem)
-        .last()
-        .simulate('click');
+      wrapper.find(MenuItem).last().simulate('click');
       expect(mockDisconnect).toHaveBeenCalled();
       expect(mockTrack.stop).toHaveBeenCalled();
       expect(mockSignOut).toHaveBeenCalled();
@@ -62,14 +68,12 @@ describe('the Menu component', () => {
     });
 
     it('should not display the user name in the menu', () => {
-      mockUseAppState.mockImplementation(() => ({ user: { displayName: undefined }, signOut: jest.fn() }));
+      mockUseAppState.mockImplementation(() => ({
+        user: { displayName: undefined },
+        signOut: jest.fn(),
+      }));
       const wrapper = shallow(<Menu />);
-      expect(
-        wrapper
-          .find(MenuItem)
-          .find({ disabled: true })
-          .exists()
-      ).toBe(false);
+      expect(wrapper.find(MenuItem).find({ disabled: true }).exists()).toBe(false);
     });
 
     it('should not include the logout button in the menu', () => {

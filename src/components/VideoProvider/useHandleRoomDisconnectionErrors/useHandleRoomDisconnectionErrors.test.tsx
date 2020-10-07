@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import { EventEmitter } from 'events';
+import { Room } from 'twilio-video';
 
 import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors';
-import { Room } from 'twilio-video';
 
 describe('the useHandleRoomDisconnectionErrors hook', () => {
   let mockRoom: any = new EventEmitter();

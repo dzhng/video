@@ -2,19 +2,19 @@ import { EventEmitter } from 'events';
 import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { Room, TwilioError } from 'twilio-video';
+import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import { VideoProvider } from './index';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
 import useRoom from './useRoom/useRoom';
 import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
 const mockRoom = new EventEmitter() as Room;
 const mockOnDisconnect = jest.fn();
 jest.mock('./useRoom/useRoom', () => jest.fn(() => ({ room: mockRoom, isConnecting: false })));
 jest.mock('./useLocalTracks/useLocalTracks', () =>
-  jest.fn(() => ({ localTracks: [{ name: 'mockTrack' }], getLocalVideoTrack: jest.fn() }))
+  jest.fn(() => ({ localTracks: [{ name: 'mockTrack' }], getLocalVideoTrack: jest.fn() })),
 );
 jest.mock('./useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors');
 jest.mock('./useHandleTrackPublicationFailed/useHandleTrackPublicationFailed');
@@ -24,7 +24,11 @@ jest.mock('./useHandleOnDisconnect/useHandleOnDisconnect');
 describe('the VideoProvider component', () => {
   it('should correctly return the Video Context object', () => {
     const wrapper: React.FC = ({ children }) => (
-      <VideoProvider onError={() => {}} onDisconnect={mockOnDisconnect} options={{ dominantSpeaker: true }}>
+      <VideoProvider
+        onError={() => {}}
+        onDisconnect={mockOnDisconnect}
+        options={{ dominantSpeaker: true }}
+      >
         {children}
       </VideoProvider>
     );
@@ -49,7 +53,11 @@ describe('the VideoProvider component', () => {
   it('should call the onError function when there is an error', () => {
     const mockOnError = jest.fn();
     const wrapper: React.FC = ({ children }) => (
-      <VideoProvider onError={mockOnError} onDisconnect={mockOnDisconnect} options={{ dominantSpeaker: true }}>
+      <VideoProvider
+        onError={mockOnError}
+        onDisconnect={mockOnDisconnect}
+        options={{ dominantSpeaker: true }}
+      >
         {children}
       </VideoProvider>
     );

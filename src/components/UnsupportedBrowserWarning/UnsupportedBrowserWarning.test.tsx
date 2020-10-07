@@ -1,7 +1,8 @@
 import React from 'react';
-import UnsupportedBrowserWarning from './UnsupportedBrowserWarning';
 import Video from 'twilio-video';
 import { shallow } from 'enzyme';
+
+import UnsupportedBrowserWarning from './UnsupportedBrowserWarning';
 
 describe('the UnsupportedBrowserWarning component', () => {
   it('should render correctly when isSupported is false', () => {
@@ -10,7 +11,7 @@ describe('the UnsupportedBrowserWarning component', () => {
     const wrapper = shallow(
       <UnsupportedBrowserWarning>
         <span>Is supported</span>
-      </UnsupportedBrowserWarning>
+      </UnsupportedBrowserWarning>,
     );
     expect(wrapper).toMatchSnapshot();
   });
@@ -21,7 +22,7 @@ describe('the UnsupportedBrowserWarning component', () => {
     const wrapper = shallow(
       <UnsupportedBrowserWarning>
         <span>Is supported</span>
-      </UnsupportedBrowserWarning>
+      </UnsupportedBrowserWarning>,
     );
     expect(wrapper.text()).toBe('Is supported');
   });

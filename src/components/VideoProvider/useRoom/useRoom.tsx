@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Video, { ConnectOptions, LocalTrack, Room } from 'twilio-video';
-import { Callback } from '../../../types';
 import { EventEmitter } from 'events';
-import { isMobile } from '../../../utils';
+
+import { Callback } from '~/types';
+import { isMobile } from '~/utils';
 
 // @ts-ignore
 window.TwilioVideo = Video; // for debugging purposes

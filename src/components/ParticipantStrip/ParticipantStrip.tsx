@@ -1,9 +1,9 @@
 import React from 'react';
 import Participant from '../Participant/Participant';
 import { styled } from '@material-ui/core/styles';
-import useParticipants from '../../hooks/useParticipants/useParticipants';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import useParticipants from '~/hooks/useParticipants/useParticipants';
+import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -37,7 +37,7 @@ export default function ParticipantStrip() {
           isSelected={selectedParticipant === localParticipant}
           onClick={() => setSelectedParticipant(localParticipant)}
         />
-        {participants.map(participant => (
+        {participants.map((participant) => (
           <Participant
             key={participant.sid}
             participant={participant}

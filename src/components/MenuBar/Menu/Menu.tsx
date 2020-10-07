@@ -4,11 +4,11 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuContainer from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import SettingsDialog from '../SettingsDialog/SettingsDialog';
-import UserAvatar from '../UserAvatar/UserAvatar';
 
-import { useAppState } from '../../../state';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { useAppState } from '~/state';
+import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import SettingsDialog from './SettingsDialog/SettingsDialog';
+import UserAvatar from './UserAvatar/UserAvatar';
 
 export default function Menu() {
   const { user, signOut } = useAppState();

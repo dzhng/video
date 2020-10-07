@@ -14,13 +14,13 @@ import {
 
 import AudioLevelIndicator from '~/components/AudioLevelIndicator/AudioLevelIndicator';
 import BandwidthWarning from '~/components/BandwidthWarning/BandwidthWarning';
-import NetworkQualityLevel from '~/components/NewtorkQualityLevel/NetworkQualityLevel';
+import NetworkQualityLevel from '~/components/NetworkQualityLevel/NetworkQualityLevel';
 
-import useParticipantNetworkQualityLevel from '~/hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
 import usePublications from '~/hooks/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useTrack from '~/hooks/useTrack/useTrack';
 
+import useParticipantNetworkQualityLevel from './useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 
 const useStyles = makeStyles((theme: Theme) =>

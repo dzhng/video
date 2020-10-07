@@ -7,9 +7,9 @@ import {
   Room,
   TwilioError,
 } from 'twilio-video';
-import { Callback, ErrorCallback } from '../../types';
-import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
+import { Callback, ErrorCallback } from '~/types';
 
+import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
 import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';

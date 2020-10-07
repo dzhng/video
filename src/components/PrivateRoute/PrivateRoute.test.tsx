@@ -1,12 +1,12 @@
 import React from 'react';
 import PrivateRoute from './PrivateRoute';
-import { useAppState } from '../../state';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
+import { useAppState } from '~/state';
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 
-jest.mock('../../state');
+jest.mock('~/state');
 
 const MockComponent = () => <h1>test</h1>;
 
@@ -20,7 +20,7 @@ describe('the PrivateRoute component', () => {
             <PrivateRoute exact path="/">
               <MockComponent />
             </PrivateRoute>
-          </MemoryRouter>
+          </MemoryRouter>,
         );
         const history = wrapper.find('Router').prop('history') as any;
         expect(history.location.pathname).toEqual('/login');
@@ -34,7 +34,7 @@ describe('the PrivateRoute component', () => {
             <PrivateRoute exact path="/">
               <MockComponent />
             </PrivateRoute>
-          </MemoryRouter>
+          </MemoryRouter>,
         );
         const history = wrapper.find('Router').prop('history') as any;
         expect(history.location.pathname).toEqual('/');
@@ -50,7 +50,7 @@ describe('the PrivateRoute component', () => {
             <PrivateRoute exact path="/">
               <MockComponent />
             </PrivateRoute>
-          </MemoryRouter>
+          </MemoryRouter>,
         );
         const history = wrapper.find('Router').prop('history') as any;
         expect(history.location.pathname).toEqual('/');

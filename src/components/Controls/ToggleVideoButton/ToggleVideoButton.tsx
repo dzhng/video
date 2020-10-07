@@ -6,14 +6,14 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Videocam from '@material-ui/icons/Videocam';
 import VideocamOff from '@material-ui/icons/VideocamOff';
 
-import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
+import useLocalVideoToggle from '~/hooks/useLocalVideoToggle/useLocalVideoToggle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     fab: {
       margin: theme.spacing(1),
     },
-  })
+  }),
 );
 
 export default function ToggleVideoButton(props: { disabled?: boolean }) {

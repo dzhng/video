@@ -1,26 +1,26 @@
-import { DEFAULT_VIDEO_CONSTRAINTS } from '../../../constants';
 import { useCallback, useEffect, useState } from 'react';
 import Video, { LocalVideoTrack, LocalAudioTrack, CreateLocalTrackOptions } from 'twilio-video';
+
+import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
 
 export default function useLocalTracks() {
   const [audioTrack, setAudioTrack] = useState<LocalAudioTrack>();
   const [videoTrack, setVideoTrack] = useState<LocalVideoTrack>();
   const [isAcquiringLocalTracks, setIsAcquiringLocalTracks] = useState(false);
 
-  const getLocalAudioTrack = useCallback((deviceId?: string) => {
+  const getLocalAudioTrack = useCallback(async (deviceId?: string) => {
     const options: CreateLocalTrackOptions = {};
 
     if (deviceId) {
       options.deviceId = { exact: deviceId };
     }
 
-    return Video.createLocalAudioTrack(options).then(newTrack => {
-      setAudioTrack(newTrack);
-      return newTrack;
-    });
+    const newTrack = await Video.createLocalAudioTrack(options);
+    setAudioTrack(newTrack);
+    return newTrack;
   }, []);
 
-  const getLocalVideoTrack = useCallback((newOptions?: CreateLocalTrackOptions) => {
+  const getLocalVideoTrack = useCallback(async (newOptions?: CreateLocalTrackOptions) => {
     // In the DeviceSelector and FlipCameraButton components, a new video track is created,
     // then the old track is unpublished and the new track is published. Unpublishing the old
     // track and publishing the new track at the same time sometimes causes a conflict when the
@@ -32,10 +32,9 @@ export default function useLocalTracks() {
       ...newOptions,
     };
 
-    return Video.createLocalVideoTrack(options).then(newTrack => {
-      setVideoTrack(newTrack);
-      return newTrack;
-    });
+    const newTrack = await Video.createLocalVideoTrack(options);
+    setVideoTrack(newTrack);
+    return newTrack;
   }, []);
 
   const removeLocalVideoTrack = useCallback(() => {
@@ -54,9 +53,9 @@ export default function useLocalTracks() {
       },
       audio: true,
     })
-      .then(tracks => {
-        const videoTrack = tracks.find(track => track.kind === 'video');
-        const audioTrack = tracks.find(track => track.kind === 'audio');
+      .then((tracks) => {
+        const videoTrack = tracks.find((track) => track.kind === 'video');
+        const audioTrack = tracks.find((track) => track.kind === 'audio');
         if (videoTrack) {
           setVideoTrack(videoTrack as LocalVideoTrack);
         }
@@ -67,10 +66,16 @@ export default function useLocalTracks() {
       .finally(() => setIsAcquiringLocalTracks(false));
   }, []);
 
-  const localTracks = [audioTrack, videoTrack].filter(track => track !== undefined) as (
+  const localTracks = [audioTrack, videoTrack].filter((track) => track !== undefined) as (
     | LocalAudioTrack
     | LocalVideoTrack
   )[];
 
-  return { localTracks, getLocalVideoTrack, getLocalAudioTrack, isAcquiringLocalTracks, removeLocalVideoTrack };
+  return {
+    localTracks,
+    getLocalVideoTrack,
+    getLocalAudioTrack,
+    isAcquiringLocalTracks,
+    removeLocalVideoTrack,
+  };
 }

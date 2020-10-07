@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-import { IVideoTrack } from '../../types';
 import { styled } from '@material-ui/core/styles';
 import { Track } from 'twilio-video';
-import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
+
+import { IVideoTrack } from '~/types';
+import useMediaStreamTrack from '~/hooks/useMediaStreamTrack/useMediaStreamTrack';
 
 const Video = styled('video')({
   width: '100%',

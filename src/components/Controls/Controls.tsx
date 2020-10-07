@@ -2,13 +2,13 @@ import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
+import useRoomState from '~/hooks/useRoomState/useRoomState';
+
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
-import ToggleScreenShareButton from './ToogleScreenShareButton/ToggleScreenShareButton';
-
+import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
         bottom: `${theme.sidebarMobileHeight + 3}px`,
       },
     },
-  })
+  }),
 );
 
 export default function Controls() {

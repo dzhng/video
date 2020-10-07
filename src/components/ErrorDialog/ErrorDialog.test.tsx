@@ -42,7 +42,7 @@ describe('the ErrorDialog component', () => {
     const error = { message, code: 20101 } as TwilioError;
     const wrapper = shallow(<ErrorDialog dismissError={() => {}} error={error} />);
     expect(wrapper.find(DialogContentText).text()).toBe(
-      message + '. Please make sure you are using the correct credentials.'
+      message + '. Please make sure you are using the correct credentials.',
     );
     expect(wrapper.find('code').text()).toBe(`Error Code: ${20101}`);
   });
