@@ -1,7 +1,7 @@
 import { ConnectOptions } from 'twilio-video';
+import { getResolution } from '~/state/settings/renderDimensions';
+import { useAppState } from '~/state';
 import { isMobile, removeUndefineds } from '..';
-import { getResolution } from '../../state/settings/renderDimensions';
-import { useAppState } from '../../state';
 
 export default function useConnectionOptions() {
   const { roomType, settings } = useAppState();

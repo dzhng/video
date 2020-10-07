@@ -1,20 +1,27 @@
 import React from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { LocalAudioTrack, LocalVideoTrack, Participant, RemoteAudioTrack, RemoteVideoTrack } from 'twilio-video';
-
-import AudioLevelIndicator from '../AudioLevelIndicator/AudioLevelIndicator';
-import BandwidthWarning from '../BandwidthWarning/BandwidthWarning';
-import NetworkQualityLevel from '../NewtorkQualityLevel/NetworkQualityLevel';
-import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 import PinIcon from './PinIcon/PinIcon';
 import ScreenShare from '@material-ui/icons/ScreenShare';
 import VideocamOff from '@material-ui/icons/VideocamOff';
+import {
+  LocalAudioTrack,
+  LocalVideoTrack,
+  Participant,
+  RemoteAudioTrack,
+  RemoteVideoTrack,
+} from 'twilio-video';
 
-import useParticipantNetworkQualityLevel from '../../hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
-import usePublications from '../../hooks/usePublications/usePublications';
-import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
-import useTrack from '../../hooks/useTrack/useTrack';
+import AudioLevelIndicator from '~/components/AudioLevelIndicator/AudioLevelIndicator';
+import BandwidthWarning from '~/components/BandwidthWarning/BandwidthWarning';
+import NetworkQualityLevel from '~/components/NewtorkQualityLevel/NetworkQualityLevel';
+
+import useParticipantNetworkQualityLevel from '~/hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
+import usePublications from '~/hooks/usePublications/usePublications';
+import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
+import useTrack from '~/hooks/useTrack/useTrack';
+
+import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,7 +76,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'space-between',
     },
-  })
+  }),
 );
 
 interface ParticipantInfoProps {
@@ -79,18 +86,25 @@ interface ParticipantInfoProps {
   isSelected: boolean;
 }
 
-export default function ParticipantInfo({ participant, onClick, isSelected, children }: ParticipantInfoProps) {
+export default function ParticipantInfo({
+  participant,
+  onClick,
+  isSelected,
+  children,
+}: ParticipantInfoProps) {
   const publications = usePublications(participant);
 
-  const audioPublication = publications.find(p => p.kind === 'audio');
-  const videoPublication = publications.find(p => p.trackName.includes('camera'));
+  const audioPublication = publications.find((p) => p.kind === 'audio');
+  const videoPublication = publications.find((p) => p.trackName.includes('camera'));
 
   const networkQualityLevel = useParticipantNetworkQualityLevel(participant);
   const isVideoEnabled = Boolean(videoPublication);
-  const isScreenShareEnabled = publications.find(p => p.trackName.includes('screen'));
+  const isScreenShareEnabled = publications.find((p) => p.trackName.includes('screen'));
 
   const videoTrack = useTrack(videoPublication);
-  const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
+  const isVideoSwitchedOff = useIsTrackSwitchedOff(
+    videoTrack as LocalVideoTrack | RemoteVideoTrack,
+  );
 
   const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack;
 

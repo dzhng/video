@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import VideocamOff from '@material-ui/icons/VideocamOff';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
 
-import BandwidthWarning from '../BandwidthWarning/BandwidthWarning';
-import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
-import usePublications from '../../hooks/usePublications/usePublications';
-import useTrack from '../../hooks/useTrack/useTrack';
-import VideocamOff from '@material-ui/icons/VideocamOff';
+import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
+import usePublications from '~/hooks/usePublications/usePublications';
+import useTrack from '~/hooks/useTrack/useTrack';
+import BandwidthWarning from '~/components/BandwidthWarning/BandwidthWarning';
 
 const useStyles = makeStyles({
   container: {
@@ -49,12 +49,14 @@ export default function MainParticipantInfo({ participant, children }: MainParti
   const classes = useStyles();
 
   const publications = usePublications(participant);
-  const videoPublication = publications.find(p => p.trackName.includes('camera'));
-  const screenSharePublication = publications.find(p => p.trackName.includes('screen'));
+  const videoPublication = publications.find((p) => p.trackName.includes('camera'));
+  const screenSharePublication = publications.find((p) => p.trackName.includes('screen'));
   const isVideoEnabled = Boolean(videoPublication);
 
   const videoTrack = useTrack(screenSharePublication || videoPublication);
-  const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
+  const isVideoSwitchedOff = useIsTrackSwitchedOff(
+    videoTrack as LocalVideoTrack | RemoteVideoTrack,
+  );
 
   return (
     <div
