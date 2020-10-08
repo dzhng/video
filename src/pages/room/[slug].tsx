@@ -12,34 +12,8 @@ import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOpti
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import Room from '~/components/Room/Room';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
-    container: {
-      backgroundColor: theme.palette.background.default,
-    },
-    toolbar: {
-      [theme.breakpoints.down('xs')]: {
-        padding: 0,
-      },
-    },
-    rightButtonContainer: {
-      display: 'flex',
-      alignItems: 'center',
-      marginLeft: 'auto',
-    },
-    form: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      [theme.breakpoints.up('md')]: {
-        marginLeft: '2.2em',
-      },
-    },
-    textField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      maxWidth: 200,
-    },
     loadingSpinner: {
       marginLeft: '1em',
     },
@@ -59,6 +33,7 @@ function Lobby() {
   const roomName: string = String(slug);
 
   const handleSubmit = (event: FormEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     getToken(roomName).then((token) => connect(token));
   };
 
