@@ -5,9 +5,6 @@ import { EventEmitter } from 'events';
 import { Callback } from '~/types';
 import { isMobile } from '~/utils';
 
-// @ts-ignore
-window.TwilioVideo = Video; // for debugging purposes
-
 export default function useRoom(
   localTracks: LocalTrack[],
   onError: Callback,
@@ -49,8 +46,11 @@ export default function useRoom(
             }
           });
 
+          // for debugging purposes
           // @ts-ignore
           window.twilioRoom = newRoom;
+          // @ts-ignore
+          window.TwilioVideo = Video;
 
           localTracksRef.current.forEach((track) =>
             // Tracks can be supplied as arguments to the Video.connect() function and they will automatically be published.

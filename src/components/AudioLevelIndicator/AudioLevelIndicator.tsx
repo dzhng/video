@@ -9,7 +9,7 @@ let clipId = 0;
 const getUniqueClipId = () => clipId++;
 
 // @ts-ignore
-const AudioContext = window.AudioContext || window.webkitAudioContext;
+const AudioContext = global.window?.AudioContext || global.window?.webkitAudioContext;
 let audioContext: AudioContext;
 
 export function initializeAnalyser(stream: MediaStream) {
