@@ -20,6 +20,8 @@ export default (req: NowRequest, res: NowResponse) => {
   const body: RequestBody = req.body;
   assert(typeof body.identity === 'string');
   assert(typeof body.roomName === 'string');
+  assert(body.identity.length > 0);
+  assert(body.roomName.length > 0);
 
   const AccessToken = twilio.jwt.AccessToken;
   const VideoGrant = AccessToken.VideoGrant;
