@@ -13,6 +13,7 @@ import AppStateProvider from '~/state';
 // no need to load if already cached on client
 const showLoadingThresholdMS = 200;
 let isLoading = false;
+let previousPage = '';
 
 NProgress.configure({
   trickleSpeed: 100,
@@ -38,6 +39,10 @@ Router.onRouteChangeError = () => {
   NProgress.done();
 };
 
+Router.beforeHistoryChange = (url) => {
+  previousPage = url;
+};
+
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
@@ -46,7 +51,7 @@ class MyApp extends App {
         <AppStateProvider>
           <Head />
           <CssBaseline />
-          <Component {...pageProps} />
+          <Component previousPage={previousPage} {...pageProps} />
         </AppStateProvider>
       </MuiThemeProvider>
     );

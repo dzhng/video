@@ -28,9 +28,10 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "~/*": ["./*"]
+      "~/*": ["./src/*"],
+      "#/*": ["./public/*"]
     }
   },
   "exclude": ["node_modules"],

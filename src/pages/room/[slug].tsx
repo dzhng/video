@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 
+import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import '~/types';
 import { useAppState } from '~/state';
 import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
@@ -55,7 +56,7 @@ function Lobby() {
   );
 }
 
-export default function RoomPage() {
+export default withPrivateRoute(function RoomPage() {
   const { error, setError } = useAppState();
   const connectionOptions = useConnectionOptions();
 
@@ -67,4 +68,4 @@ export default function RoomPage() {
       </VideoProvider>
     </UnsupportedBrowserWarning>
   );
-}
+});

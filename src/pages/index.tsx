@@ -1,8 +1,9 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button, Typography, TextField } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { useAppState } from '~/state';
+
+import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,17 +31,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function IndexPage() {
+export default withPrivateRoute(function IndexPage() {
   const router = useRouter();
-  const { user, isAuthReady } = useAppState();
   const classes = useStyles();
   const [roomName, setRoomName] = useState<string>('');
-
-  useEffect(() => {
-    if (isAuthReady && !user) {
-      router.push('/login');
-    }
-  }, [isAuthReady]); // eslint-disable-line
 
   const handleRoomNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setRoomName(event.target.value);
@@ -76,4 +70,4 @@ export default function IndexPage() {
       </Button>
     </form>
   );
-}
+});

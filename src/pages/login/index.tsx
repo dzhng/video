@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { useAppState } from '../../state';
-
+import { useRouter } from 'next/router';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import GoogleLogo from './google-logo.svg';
-
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
-import { useLocation, useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
+
+import GoogleLogo from '#/google-logo.svg';
+import { useAppState } from '~/state';
 
 const useStyles = makeStyles({
   container: {
@@ -50,24 +49,23 @@ const theme = createMuiTheme({
   },
 });
 
-export default function LoginPage() {
+export default function LoginPage(props: { previousPage?: string }) {
   const classes = useStyles();
+  const router = useRouter();
   const { signIn, user, isAuthReady } = useAppState();
-  const history = useHistory();
-  const location = useLocation<{ from: Location }>();
   const [authError, setAuthError] = useState<Error | null>(null);
 
   const login = () => {
     setAuthError(null);
     signIn?.()
       .then(() => {
-        history.replace(location?.state?.from || { pathname: '/' });
+        router.replace(props?.previousPage ?? '/');
       })
       .catch((err) => setAuthError(err));
   };
 
   if (user) {
-    history.replace('/');
+    router.replace('/');
   }
 
   if (!isAuthReady) {

@@ -1,26 +1,20 @@
 import React from 'react';
-import LoginPage from './LoginPage';
 import { render } from '@testing-library/react';
-import { useAppState } from '../../state';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useRouter } from 'next/router';
+import { useAppState } from '~/state';
+import LoginPage from '~/pages/login';
 
-jest.mock('react-router-dom', () => {
-  return {
-    useLocation: jest.fn(),
-    useHistory: jest.fn(),
-  };
-});
-jest.mock('../../state');
-jest.mock('./google-logo.svg', () => () => null);
+jest.mock('next/router');
+jest.mock('~/state');
+jest.mock('#/google-logo.svg', () => () => null);
 
 const mockUseAppState = useAppState as jest.Mock<any>;
-const mockUseLocation = useLocation as jest.Mock<any>;
-const mockUseHistory = useHistory as jest.Mock<any>;
+const mockUseRouter = useRouter as jest.Mock<any>;
 
 const mockReplace = jest.fn();
-mockUseHistory.mockImplementation(() => ({ replace: mockReplace }));
+mockUseRouter.mockImplementation(() => ({ replace: mockReplace }));
 
-describe('the LoginPage component', () => {
+describe('login page', () => {
   beforeEach(jest.clearAllMocks);
 
   describe('with auth enabled', () => {
@@ -60,13 +54,12 @@ describe('the LoginPage component', () => {
     });
 
     it('should redirect the user to their previous location after signIn', (done) => {
-      mockUseLocation.mockImplementation(() => ({ state: { from: { pathname: '/room/test' } } }));
       mockUseAppState.mockImplementation(() => ({
         user: null,
         signIn: () => Promise.resolve(),
         isAuthReady: true,
       }));
-      const { getByText } = render(<LoginPage />);
+      const { getByText } = render(<LoginPage previousPage={'/room/test'} />);
       getByText('Sign in with Google').click();
       setImmediate(() => {
         expect(mockReplace).toHaveBeenCalledWith({ pathname: '/room/test' });
