@@ -62,11 +62,10 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MenuBar() {
   const classes = useStyles();
   const { URLRoomName } = useParams() as any;
-  const { user, getToken, isFetching } = useAppState();
+  const { getToken, isFetching } = useAppState();
   const { isConnecting, connect, isAcquiringLocalTracks } = useVideoContext();
   const roomState = useRoomState();
   const [roomName, setRoomName] = useState<string>('');
-  const name = user?.displayName || '';
 
   useEffect(() => {
     if (URLRoomName) {
@@ -81,7 +80,7 @@ export default function MenuBar() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}`));
-    getToken(name, roomName).then((token) => connect(token));
+    getToken(roomName).then((token) => connect(token));
   };
 
   return (

@@ -13,7 +13,7 @@ import { User } from 'firebase';
 export interface StateContextType {
   error: TwilioError | null;
   setError(error: TwilioError | null): void;
-  getToken(name: string, room: string, passcode?: string): Promise<string>;
+  getToken(room: string): Promise<string>;
   user?: User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
   signIn?(passcode?: string): Promise<void>;
   signOut?(): Promise<void>;
@@ -49,10 +49,10 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     ...useFirebaseAuth(),
   };
 
-  const getToken: StateContextType['getToken'] = async (name, room) => {
+  const getToken: StateContextType['getToken'] = async (room) => {
     setIsFetching(true);
     try {
-      const res = await contextValue.getToken(name, room);
+      const res = await contextValue.getToken(room);
       setIsFetching(false);
       return res;
     } catch (err) {

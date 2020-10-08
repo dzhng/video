@@ -20,6 +20,7 @@
     "cross-env": "^7.0.2",
     "d3-timer": "^2.0.0",
     "firebase": "^7.22.1",
+    "firebase-admin": "^9.2.0",
     "fscreen": "^1.1.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",

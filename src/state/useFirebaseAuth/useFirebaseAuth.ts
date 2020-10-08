@@ -18,10 +18,21 @@ export default function useFirebaseAuth() {
   const [user, setUser] = useState<firebase.User | null>(null);
   const [isAuthReady, setIsAuthReady] = useState(false);
 
+  useEffect(() => {
+    if (!firebase.apps?.length) {
+      firebase.initializeApp(firebaseConfig);
+      firebase.auth().onAuthStateChanged((newUser) => {
+        setUser(newUser);
+        setIsAuthReady(true);
+      });
+    }
+  }, []);
+
+  // fetch twilio token for call from internal endpoint (which talks to twilio admin API)
   const getToken = useCallback(
-    async (identity: string, roomName: string) => {
+    async (roomName: string) => {
       const idToken = await user!.getIdToken();
-      const params = JSON.stringify({ identity, roomName, idToken });
+      const params = JSON.stringify({ idToken, roomName });
 
       return fetch(`${TOKEN_ENDPOINT}`, {
         method: 'POST',
@@ -33,16 +44,6 @@ export default function useFirebaseAuth() {
     },
     [user],
   );
-
-  useEffect(() => {
-    if (!firebase.apps?.length) {
-      firebase.initializeApp(firebaseConfig);
-      firebase.auth().onAuthStateChanged((newUser) => {
-        setUser(newUser);
-        setIsAuthReady(true);
-      });
-    }
-  }, []);
 
   const signIn = useCallback(async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
