@@ -1,14 +1,18 @@
 import React from 'react';
-import PrivateRoute from './PrivateRoute';
-import { useAppState } from '../../state';
 import { mount } from 'enzyme';
-import { MemoryRouter } from 'react-router-dom';
+import { useRouter } from 'next/router';
+import { useAppState } from '~/state';
+import PrivateRoute from './PrivateRoute';
+
+jest.mock('next/router');
+jest.mock('~/state');
 
 const mockUseAppState = useAppState as jest.Mock<any>;
-
-jest.mock('../../state');
-
+const mockUseRouter = useRouter as jest.Mock<any>;
 const MockComponent = () => <h1>test</h1>;
+
+const mockPush = jest.fn();
+mockUseRouter.mockImplementation(() => ({ push: mockPush }));
 
 describe('the PrivateRoute component', () => {
   describe('with auth enabled', () => {
@@ -16,28 +20,21 @@ describe('the PrivateRoute component', () => {
       it('should redirect to /login when there is no user', () => {
         mockUseAppState.mockImplementation(() => ({ user: false, isAuthReady: true }));
         const wrapper = mount(
-          <MemoryRouter initialEntries={['/']}>
-            <PrivateRoute exact path="/">
-              <MockComponent />
-            </PrivateRoute>
-          </MemoryRouter>,
+          <PrivateRoute>
+            <MockComponent />
+          </PrivateRoute>,
         );
-        const history = wrapper.find('Router').prop('history') as any;
-        expect(history.location.pathname).toEqual('/login');
+        expect(mockPush).toHaveBeenCalledWith('/login');
         expect(wrapper.exists(MockComponent)).toBe(false);
       });
 
       it('should render children when there is a user', () => {
         mockUseAppState.mockImplementation(() => ({ user: {}, isAuthReady: true }));
         const wrapper = mount(
-          <MemoryRouter initialEntries={['/']}>
-            <PrivateRoute exact path="/">
-              <MockComponent />
-            </PrivateRoute>
-          </MemoryRouter>,
+          <PrivateRoute>
+            <MockComponent />
+          </PrivateRoute>,
         );
-        const history = wrapper.find('Router').prop('history') as any;
-        expect(history.location.pathname).toEqual('/');
         expect(wrapper.exists(MockComponent)).toBe(true);
       });
     });
@@ -46,14 +43,10 @@ describe('the PrivateRoute component', () => {
       it('should not render children', () => {
         mockUseAppState.mockImplementation(() => ({ user: false, isAuthReady: false }));
         const wrapper = mount(
-          <MemoryRouter initialEntries={['/']}>
-            <PrivateRoute exact path="/">
-              <MockComponent />
-            </PrivateRoute>
-          </MemoryRouter>,
+          <PrivateRoute>
+            <MockComponent />
+          </PrivateRoute>,
         );
-        const history = wrapper.find('Router').prop('history') as any;
-        expect(history.location.pathname).toEqual('/');
         expect(wrapper.exists(MockComponent)).toBe(false);
       });
     });

@@ -51,7 +51,9 @@ function Lobby() {
       >
         Join Call
       </Button>
-      {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
+      {(isConnecting || isFetching) && (
+        <CircularProgress className={classes.loadingSpinner} data-testid="progress-spinner" />
+      )}
     </>
   );
 }

@@ -56,9 +56,16 @@ describe('the useFirebaseAuth hook', () => {
     await waitForNextUpdate();
     result.current.signIn();
     await waitForNextUpdate();
-    await result.current.getToken('testuser', 'testroom');
-    expect(window.fetch).toHaveBeenCalledWith(
-      `${TOKEN_ENDPOINT}?identity=testuser&roomName=testroom&idToken=idToken`,
-    );
+    await result.current.getToken('testroom');
+    expect(fetch).toHaveBeenCalledWith(TOKEN_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idToken: 'idToken',
+        roomName: 'testroom',
+      }),
+    });
   });
 });

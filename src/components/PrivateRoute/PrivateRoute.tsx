@@ -2,15 +2,25 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAppState } from '../../state';
 
-export default function PrivateRoute(props: { children: React.ReactChild }): React.ReactElement {
+export default function PrivateRoute(props: {
+  children: React.ReactChild;
+}): React.ReactElement | null {
   const router = useRouter();
   const { isAuthReady, user } = useAppState();
 
+  const isAuthenticated: boolean = !!isAuthReady && !!user;
+
   useEffect(() => {
-    if (isAuthReady && !user) {
+    // don't prematurely push to login if auth is not ready
+    // just hide component until we're sure
+    if (!isAuthReady) {
+      return;
+    }
+
+    if (!isAuthenticated) {
       router.push('/login');
     }
   }, [isAuthReady]); // eslint-disable-line
 
-  return <>{props.children}</>;
+  return isAuthenticated ? <>{props.children}</> : null;
 }

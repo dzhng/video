@@ -10,12 +10,13 @@ jest.mock('#/google-logo.svg', () => () => null);
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseRouter = useRouter as jest.Mock<any>;
-
 const mockReplace = jest.fn();
-mockUseRouter.mockImplementation(() => ({ replace: mockReplace }));
 
 describe('login page', () => {
-  beforeEach(jest.clearAllMocks);
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseRouter.mockImplementation(() => ({ replace: mockReplace }));
+  });
 
   describe('with auth enabled', () => {
     it('should redirect to "/" when there is a user ', () => {
@@ -48,7 +49,7 @@ describe('login page', () => {
       const { getByText } = render(<LoginPage />);
       getByText('Sign in with Google').click();
       setImmediate(() => {
-        expect(mockReplace).toHaveBeenCalledWith({ pathname: '/' });
+        expect(mockReplace).toHaveBeenCalledWith('/');
         done();
       });
     });
@@ -62,7 +63,7 @@ describe('login page', () => {
       const { getByText } = render(<LoginPage previousPage={'/room/test'} />);
       getByText('Sign in with Google').click();
       setImmediate(() => {
-        expect(mockReplace).toHaveBeenCalledWith({ pathname: '/room/test' });
+        expect(mockReplace).toHaveBeenCalledWith('/room/test');
         done();
       });
     });

@@ -9,9 +9,18 @@ import { useAppState } from '~/state';
 import RoomPage from '~/pages/room/[slug]';
 
 jest.mock('next/router');
+jest.mock('~/state');
 jest.mock('~/hooks/useRoomState/useRoomState');
 jest.mock('~/hooks/useVideoContext/useVideoContext');
-jest.mock('~/state');
+jest.mock('~/utils/useConnectionOptions/useConnectionOptions');
+jest.mock(
+  '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning',
+  () => ({ children }: { children: React.ReactChildren }) => children,
+);
+jest.mock('~/components/VideoProvider', () => ({
+  VideoProvider: ({ children }: { children: React.ReactChildren }) => children,
+}));
+jest.mock('~/components/PrivateRoute/withPrivateRoute', () => (component: any) => component);
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
@@ -20,28 +29,12 @@ const mockUseRouter = useRouter as jest.Mock<any>;
 const mockConnect = jest.fn();
 const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 
-mockUseRouter.mockImplementation(() => ({ query: { slug: 'test' } }));
-mockUseAppState.mockImplementation(() => ({ getToken: mockGetToken }));
-
 describe('room page', () => {
-  beforeEach(jest.clearAllMocks);
+  beforeEach(() => {
+    jest.clearAllMocks();
 
-  it('should hide inputs when connected to a room', () => {
-    mockedUseRoomState.mockImplementation(() => 'connected');
-    mockedUseVideoContext.mockImplementation(
-      () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
-    );
-    const { container } = render(<RoomPage />);
-    expect(container.querySelector('input')).toEqual(null);
-  });
-
-  it('should display inputs when disconnected from a room', () => {
-    mockedUseRoomState.mockImplementation(() => 'disconnected');
-    mockedUseVideoContext.mockImplementation(
-      () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
-    );
-    const { container } = render(<RoomPage />);
-    expect(container.querySelectorAll('input').length).toEqual(1);
+    mockUseRouter.mockImplementation(() => ({ query: { slug: 'test-room' } }));
+    mockUseAppState.mockImplementation(() => ({ getToken: mockGetToken }));
   });
 
   it('should display a loading spinner while connecting to a room', () => {
@@ -49,8 +42,8 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: true, room: {}, localTracks: [] } as any),
     );
-    const { container } = render(<RoomPage />);
-    expect(container.querySelector('svg')).not.toBeNull();
+    const { getByTestId } = render(<RoomPage />);
+    expect(getByTestId('progress-spinner')).not.toBeNull();
   });
 
   it('should display a loading spinner while fetching a token', () => {
@@ -58,30 +51,9 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
     );
-    mockUseAppState.mockImplementationOnce(() => ({ isFetching: true }));
-    const { container } = render(<RoomPage />);
-    expect(container.querySelector('svg')).not.toBeNull();
-  });
-
-  it('should disable the Join Room button when the Room input is empty', () => {
-    mockedUseRoomState.mockImplementation(() => 'disconnected');
-    mockedUseVideoContext.mockImplementation(
-      () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
-    );
-    const { getByLabelText, getByTestId } = render(<RoomPage />);
-    expect(getByTestId('join-button')).toBeDisabled();
-    fireEvent.change(getByLabelText('Room'), { target: { value: '' } });
-    expect(getByTestId('join-button')).toBeDisabled();
-  });
-
-  it('should enable the Join Room button when the Room input is not empty', () => {
-    mockedUseRoomState.mockImplementation(() => 'disconnected');
-    mockedUseVideoContext.mockImplementation(
-      () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
-    );
-    const { getByLabelText, getByTestId } = render(<RoomPage />);
-    fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo' } });
-    expect(getByTestId('join-button')).not.toBeDisabled();
+    mockUseAppState.mockImplementation(() => ({ isFetching: true }));
+    const { getByTestId } = render(<RoomPage />);
+    expect(getByTestId('progress-spinner')).not.toBeNull();
   });
 
   it('should disable the Join Room button when connecting to a room', () => {
@@ -89,8 +61,7 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: true, room: {}, localTracks: [] } as any),
     );
-    const { getByLabelText, getByTestId } = render(<RoomPage />);
-    fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo' } });
+    const { getByTestId } = render(<RoomPage />);
     expect(getByTestId('join-button')).toBeDisabled();
   });
 
@@ -99,8 +70,7 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isAcquiringLocalTracks: true, room: {}, localTracks: [] } as any),
     );
-    const { getByLabelText, getByTestId } = render(<RoomPage />);
-    fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo' } });
+    const { getByTestId } = render(<RoomPage />);
     expect(getByTestId('join-button')).toBeDisabled();
   });
 
@@ -109,11 +79,10 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any),
     );
-    const { getByLabelText, getByTestId } = render(<RoomPage />);
-    fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo Test' } });
+    const { getByTestId } = render(<RoomPage />);
     fireEvent.click(getByTestId('join-button'));
-    expect(mockGetToken).toHaveBeenCalledWith('', 'Foo Test');
     setImmediate(() => {
+      expect(mockGetToken).toHaveBeenCalledWith('test-room');
       expect(mockConnect).toHaveBeenCalledWith('mockToken');
       done();
     });

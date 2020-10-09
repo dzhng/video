@@ -5,10 +5,11 @@ module.exports = {
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   snapshotSerializers: ['enzyme-to-json/serializer'],
-  setupFiles: ['<rootDir>/src/setupTests.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   reporters: ['default', 'jest-junit'],
   moduleNameMapper: {
     '^~/(.*)$': '<rootDir>/src/$1',
+    '^#/(.*)$': '<rootDir>/public/$1',
   },
   globals: {
     // we must specify a custom tsconfig for tests because we need the typescript transform
