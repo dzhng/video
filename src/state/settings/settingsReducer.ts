@@ -27,8 +27,8 @@ export const initialSettings: Settings = {
   maxTracks: isMobile ? '5' : '10',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
-  renderDimensionStandard: '960p',
-  renderDimensionHigh: 'wide1080p',
+  renderDimensionStandard: 'vga',
+  renderDimensionHigh: '960p',
 };
 
 // This inputLabels object is used by ConnectionOptions.tsx. It is used to populate the id, name, and label props

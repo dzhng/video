@@ -1,73 +1,56 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
-import { useRouter } from 'next/router';
-import { Button, Typography, TextField } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import React from 'react';
+import { InferGetServerSidePropsType } from 'next';
+import { Container, Typography, Grid, Card } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
-    form: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      [theme.breakpoints.up('md')]: {
-        marginLeft: '2.2em',
-      },
+    grid: {
+      // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+      transform: 'translateZ(0)',
     },
-    textField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      maxWidth: 200,
-    },
-    displayName: {
-      margin: '1.1em 0.6em',
-      minWidth: '200px',
-      fontWeight: 600,
-    },
-    joinButton: {
-      margin: '1em',
-    },
+    callCard: {},
+    customerGrid: {},
+    customerCard: {},
   }),
 );
 
-export default withPrivateRoute(function IndexPage() {
-  const router = useRouter();
+export default withPrivateRoute(function IndexPage(
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
+) {
   const classes = useStyles();
-  const [roomName, setRoomName] = useState<string>('');
-
-  const handleRoomNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setRoomName(event.target.value);
-  };
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    router.push(encodeURI(`/room/${roomName}`));
-  };
 
   return (
-    <form className={classes.form} onSubmit={handleSubmit}>
-      <Typography className={classes.displayName} variant="body1">
-        Enter Room Name:
-      </Typography>
-      <TextField
-        id="menu-room"
-        label="Room"
-        className={classes.textField}
-        value={roomName}
-        onChange={handleRoomNameChange}
-        margin="dense"
-      />
-      <Button
-        className={classes.joinButton}
-        type="submit"
-        color="primary"
-        variant="contained"
-        disabled={!roomName}
-        data-testid="join-button"
-      >
-        Join Room
-      </Button>
-    </form>
+    <Container maxWidth={false}>
+      <Grid container className={classes.grid} wrap="nowrap" spacing={3}>
+        {props.upcomingCalls.map((call: any) => (
+          <Grid item>
+            <Card className={classes.callCard}>
+              <Typography>Hello World {call}</Typography>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      <Grid container className={classes.grid} spacing={3}>
+        {props.customers.map((customer: any) => (
+          <Grid item>
+            <Card className={classes.customerCard}>
+              <Typography>{customer}</Typography>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 });
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      upcomingCalls: [],
+      customers: [],
+    },
+  };
+}

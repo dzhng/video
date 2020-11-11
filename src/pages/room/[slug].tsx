@@ -9,6 +9,7 @@ import { useAppState } from '~/state';
 import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
 import { VideoProvider } from '~/components/VideoProvider';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useRoomState from '~/hooks/useRoomState/useRoomState';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import Room from '~/components/Room/Room';
@@ -29,6 +30,7 @@ function Lobby() {
   const router = useRouter();
   const { getToken, isFetching } = useAppState();
   const { isConnecting, connect, isAcquiringLocalTracks } = useVideoContext();
+  const roomState = useRoomState();
 
   const { slug } = router.query;
   const roomName: string = String(slug);
@@ -41,16 +43,18 @@ function Lobby() {
   return (
     <>
       <Room />
-      <Button
-        className={classes.joinButton}
-        onClick={handleSubmit}
-        color="primary"
-        variant="contained"
-        disabled={isAcquiringLocalTracks || isConnecting || !roomName || isFetching}
-        data-testid="join-button"
-      >
-        Join Call
-      </Button>
+      {roomState !== 'connected' && (
+        <Button
+          className={classes.joinButton}
+          onClick={handleSubmit}
+          color="primary"
+          variant="contained"
+          disabled={isAcquiringLocalTracks || isConnecting || isFetching}
+          data-testid="join-button"
+        >
+          Join Call
+        </Button>
+      )}
       {(isConnecting || isFetching) && (
         <CircularProgress className={classes.loadingSpinner} data-testid="progress-spinner" />
       )}
