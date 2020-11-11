@@ -11,21 +11,24 @@ describe('the settingsReducer', () => {
       maxTracks: '10',
       renderDimensionHigh: 'test',
       renderDimensionLow: 'low',
-      renderDimensionStandard: '960p',
+      renderDimensionStandard: 'vga',
       trackSwitchOffMode: undefined,
     });
   });
 
   it('should set undefined when the value is "default"', () => {
-    const result = settingsReducer(initialSettings, { name: 'bandwidthProfileMode', value: 'default' });
+    const result = settingsReducer(initialSettings, {
+      name: 'bandwidthProfileMode',
+      value: 'default',
+    });
     expect(result).toEqual({
       bandwidthProfileMode: undefined,
       dominantSpeakerPriority: 'standard',
       maxAudioBitrate: '16000',
       maxTracks: '10',
-      renderDimensionHigh: 'wide1080p',
+      renderDimensionHigh: '960p',
       renderDimensionLow: 'low',
-      renderDimensionStandard: '960p',
+      renderDimensionStandard: 'vga',
       trackSwitchOffMode: undefined,
     });
   });

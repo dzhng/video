@@ -271,7 +271,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
           label="renderDimensionStandard"
           name="renderDimensionStandard"
           onChange={[Function]}
-          value="960p"
+          value="vga"
         >
           <WithStyles(ForwardRef(MenuItem))
             key="low"
@@ -351,7 +351,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
           label="renderDimensionHigh"
           name="renderDimensionHigh"
           onChange={[Function]}
-          value="wide1080p"
+          value="960p"
         >
           <WithStyles(ForwardRef(MenuItem))
             key="low"
@@ -691,7 +691,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           label="renderDimensionStandard"
           name="renderDimensionStandard"
           onChange={[Function]}
-          value="960p"
+          value="vga"
         >
           <WithStyles(ForwardRef(MenuItem))
             key="low"
@@ -771,7 +771,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           label="renderDimensionHigh"
           name="renderDimensionHigh"
           onChange={[Function]}
-          value="wide1080p"
+          value="960p"
         >
           <WithStyles(ForwardRef(MenuItem))
             key="low"
