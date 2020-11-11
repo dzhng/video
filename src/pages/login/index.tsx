@@ -8,7 +8,6 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
-import GoogleLogo from '#/google-logo.svg';
 import { useAppState } from '~/state';
 
 const useStyles = makeStyles({
@@ -49,6 +48,8 @@ const theme = createMuiTheme({
   },
 });
 
+const GoogleLogo = <img src="/google-logo.svg" />;
+
 export default function LoginPage(props: { previousPage?: string }) {
   const classes = useStyles();
   const router = useRouter();
@@ -88,7 +89,7 @@ export default function LoginPage(props: { previousPage?: string }) {
             variant="contained"
             className={classes.button}
             onClick={login}
-            startIcon={<GoogleLogo />}
+            startIcon={GoogleLogo}
           >
             Sign in with Google
           </Button>

@@ -30,8 +30,7 @@
     "strictNullChecks": true,
     "baseUrl": "./",
     "paths": {
-      "~/*": ["./src/*"],
-      "#/*": ["./public/*"]
+      "~/*": ["./src/*"]
     }
   },
   "exclude": ["node_modules"],
