@@ -13,11 +13,13 @@ declare module 'twilio-video' {
     simulcast?: boolean;
   }
 
+  // eslint-disable-next-line
   interface LocalVideoTrack {
     isSwitchedOff: undefined;
     setPriority: undefined;
   }
 
+  // eslint-disable-next-line
   interface RemoteVideoTrack {
     isSwitchedOff: boolean;
     setPriority: (priority: Track.Priority | null) => void;
