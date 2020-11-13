@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Video, { ConnectOptions, LocalTrack, Room } from 'twilio-video';
 import { EventEmitter } from 'events';
 
-import { Callback } from '~/types';
+import { Callback } from '~/utils/twilio-types';
 import { isMobile } from '~/utils';
 
 export default function useRoom(

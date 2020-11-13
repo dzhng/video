@@ -7,7 +7,7 @@ import {
   Room,
   TwilioError,
 } from 'twilio-video';
-import { Callback, ErrorCallback } from '~/types';
+import { Callback, ErrorCallback } from '~/utils/twilio-types';
 
 import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';

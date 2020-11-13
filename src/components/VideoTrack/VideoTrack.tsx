@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { styled } from '@material-ui/core/styles';
 import { Track } from 'twilio-video';
 
-import { IVideoTrack } from '~/types';
+import { IVideoTrack } from '~/utils/twilio-types';
 import useMediaStreamTrack from '~/hooks/useMediaStreamTrack/useMediaStreamTrack';
 
 const Video = styled('video')({

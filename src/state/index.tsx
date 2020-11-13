@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useState } from 'react';
-import { RoomType } from '../types';
 import { TwilioError } from 'twilio-video';
+
+import { RoomType } from '~/utils/twilio-types';
 import {
   settingsReducer,
   initialSettings,

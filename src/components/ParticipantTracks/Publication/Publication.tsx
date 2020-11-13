@@ -7,7 +7,7 @@ import {
   Track,
 } from 'twilio-video';
 
-import { IVideoTrack } from '~/types';
+import { IVideoTrack } from '~/utils/twilio-types';
 import useTrack from '~/hooks/useTrack/useTrack';
 import VideoTrack from '~/components/VideoTrack/VideoTrack';
 import AudioTrack from './AudioTrack/AudioTrack';

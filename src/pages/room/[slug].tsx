@@ -4,7 +4,6 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
-import '~/types';
 import { useAppState } from '~/state';
 import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
 import { VideoProvider } from '~/components/VideoProvider';
