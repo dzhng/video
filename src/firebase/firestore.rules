@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /networks/{network} {
+      allow read: if
+          request.auth != null;
+
+      allow write: if 
+          request.resource.data.name is string &&
+          request.resource.data.name.size() > 0;
+
+      match /customers/{customer} {
+        allow read: if
+            request.auth != null;
+
+        allow write: if 
+            request.resource.data.name is string &&
+            request.resource.data.name.size() > 0;
+      }
+    }
+
+    match /calls/{call} {
+      allow read: if true;
+    }
+
+  }
+}
