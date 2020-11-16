@@ -32,6 +32,10 @@ service cloud.firestore {
       return request.resource.data[key] is list;
     }
 
+    function assertObject(key) {
+      return request.resource.data[key] is map;
+    }
+
     function assertCreatedAt() {
       return resource.data.createdAt ? 
         // if it exists already in existing doc, we should not change the value
@@ -52,59 +56,81 @@ service cloud.firestore {
       }
 
       allow read: if
-          request.auth != null;
+        request.auth != null;
 
       allow update: if 
-          request.auth != null &&
-          assertStringKey('name') &&
-          optionalStringKey('logoURL') &&
-          optionalStringKey('primaryColor') &&
-          assertCreatedAt() &&
-          // only network owners can update
-          currentAdmin().role === 'owner';
+        request.auth != null &&
+        assertStringKey('name') &&
+        optionalStringKey('logoURL') &&
+        optionalStringKey('primaryColor') &&
+        assertCreatedAt() &&
+        // only network owners can update
+        currentAdmin().role === 'owner';
 
       match /admins/{adminId} {
         allow read: if
-            request.auth != null &&
-            // make sure only users in the same network can read admin list
-            exists(/database/$(database)/documents/$(networkId)/users/$(request.auth.uid));
+          request.auth != null &&
+          // make sure only users in the same network can read admin list
+          exists(/database/$(database)/documents/$(networkId)/users/$(request.auth.uid));
 
         allow write: if
-            assertStringKey('role') &&
-            assertCreatedAt() &&
-            // make sure only owners can create another admin
-            currentAdmin().role === 'owner' &&
-            // make sure this admin is also an user
-            exists(/database/$(database)/documents/$(networkId)/users/$(adminId));
+          assertStringKey('role') &&
+          assertCreatedAt() &&
+          // make sure only owners can create another admin
+          currentAdmin().role === 'owner' &&
+          // make sure this admin is also an user
+          exists(/database/$(database)/documents/$(networkId)/users/$(adminId));
       }
 
       match /users/{userId} {
         allow read;
 
-        allow create: if 
-            request.auth != null && 
-            request.auth.uid == userId &&
-            optionalStringKey('bio') &&
-            assertCreatedAt();
+        allow write: if 
+          request.auth != null && 
+          request.auth.uid == userId &&
+          optionalStringKey('bio') &&
+          assertCreatedAt();
       }
 
       match /calls/{callId} {
         allow read: if
-            request.auth != null;
+          request.auth != null;
 
         allow write: if 
-            request.auth != null &&
-            assertStringKey('name') &&
-            assertStringKey('ownerId') &&
-            // list of internal users who have access to this call
-            assertArray('participants') &&
-            // list of external users (in form of emails) who have access to this call
-            assertArray('externalEmails') &&
-            assertCreatedAt() &&
-            // only owners of the doc can write
-            (resource.data.ownerId ? 
-              resource.data.ownerId == request.auth.uid : 
-              request.resource.data.ownerId == request.auth.uid);
+          request.auth != null &&
+          assertStringKey('name') &&
+          assertStringKey('ownerId') &&
+          // list of internal users who have access to this call
+          assertArray('participants') &&
+          // list of external users (in form of emails) who have access to this call
+          assertArray('externalEmails') &&
+          // set if have presentation attachment
+          optionalString('presentationId') &&
+          // set if have note attachment
+          optionalString('noteId') &&
+          // set if have chat attachment
+          optionalString('chatId') &&
+          // set once transcrit is ready
+          optionalString('transcriptId') &&
+          assertCreatedAt() &&
+          // only owners of the doc can write
+          (resource.data.ownerId ? 
+            resource.data.ownerId == request.auth.uid : 
+            request.resource.data.ownerId == request.auth.uid);
+
+        match /notes/{noteId} {
+          allow read;
+
+          allow write: if
+            assertStringKey('text');
+        }
+      }
+
+      match /presentations/{presentationId} {
+        allow read;
+
+        allow write: if
+          assertStringKey('fileId');
       }
     }
 
