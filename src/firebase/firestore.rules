@@ -2,26 +2,61 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /networks/{network} {
+    function assertStringKey(key) {
+      return request.resource.data[key] is string && 
+              request.resource.data[key].size > 0;
+    }
+
+    function assertIntKey(key) {
+      return request.resource.data[key] is integer;
+    }
+
+    function assertPositiveIntKey(key) {
+      return request.resource.data[key] is integer &&
+              request.resoure.data[key] >= 0;
+    }
+
+    function assertBoolKey(key) {
+      return request.resource.data[key] is bool;
+    }
+
+    match /networks/{networkId} {
+
+      function currentUser() {
+        return get(/databases/$(database)/documents/$(networkId)/users/$(request.auth.uid))
+      }
+
       allow read: if
           request.auth != null;
 
-      allow write: if 
-          request.resource.data.name is string &&
-          request.resource.data.name.size() > 0;
+      allow update: if 
+          request.auth != null &&
+          assertStringKey('name') &&
+          assertStringKey('logoURL') &&
+          assertStringKey('primaryColor') &&
+          currentUser().isAdmin == true;
 
-      match /customers/{customer} {
+      match /users/{userId} {
+        allow read;
+
+        allow write: if 
+            request.auth != null && request.auth.uid == userId &&
+            assertBoolKey('isAdmin');             
+      }
+
+      match /calls/{callId} {
         allow read: if
             request.auth != null;
 
         allow write: if 
-            request.resource.data.name is string &&
-            request.resource.data.name.size() > 0;
+            request.auth != null &&
+            assertStringKey('name') &&
+            assertStringKey('ownerId') &&
+            // only owners of the doc can write
+            (resource.data.ownerId ? 
+              resource.data.ownerId == request.auth.uid : 
+              request.resource.data.ownerId == request.auth.uid);
       }
-    }
-
-    match /calls/{call} {
-      allow read: if true;
     }
 
   }
