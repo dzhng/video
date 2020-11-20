@@ -34,7 +34,7 @@ This will run all unit tests with Jest and output the results to the console.
 
 To run a specific test
 
-    $ npm test --grep=<SEARCH_TERM>
+    $ npm test <SEARCH_TERM>
 
 The grep command will automatically run all tests that matches the given search term
 
