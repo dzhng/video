@@ -38,6 +38,10 @@ To run a specific test
 
 The grep command will automatically run all tests that matches the given search term
 
+If you need to pass more arguments into jest, add a `--` before adding additional arguments.
+
+    $ npm test <SEARCH_TERM> -- --watch
+
 ### E2E Tests (WORK IN PROGRESS)
 
 Run end to end tests with

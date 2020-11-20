@@ -11,7 +11,7 @@ const PROJECT_ID = 'firestore-emulator-test';
  * Creates a new client FirebaseApp with authentication and returns the Firestore instance.
  */
 function getAuthedFirestore(auth: { uid: string } | null) {
-  return firebase.initializeTestApp({ projectId: PROJECT_ID, auth: auth ?? {} }).firestore();
+  return firebase.initializeTestApp({ projectId: PROJECT_ID, auth: auth ?? undefined }).firestore();
 }
 
 describe('firebase cloud firestore database rules', () => {
@@ -38,13 +38,13 @@ describe('firebase cloud firestore database rules', () => {
     await firebase.assertSucceeds(network.get());
   });
 
-  it('require users to log in and be owner before updating network', async () => {
+  /*it('require users to log in and be owner before updating network', async () => {
     const db = getAuthedFirestore(null);
     const profile = db.collection('networks').doc('apple');
     await firebase.assertFails(profile.set({ name: 'hello world' }));
   });
 
-  /*it('should enforce the createdAt date in user profiles', async () => {
+  it('should enforce the createdAt date in user profiles', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     const profile = db.collection('users').doc('alice');
     await firebase.assertFails(profile.set({ birthday: 'January 1' }));
