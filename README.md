@@ -1,5 +1,17 @@
 # Video React App
 
+## Make sure you have the necessary dependencies
+
+### Install firebase-tools globally
+
+`npm install -g firebase-tools`
+
+### Install Java
+
+Some versions of Linux may not have Java installed by default (required for Firebase emulators)
+
+`sudo apt update && sudo apt install openjdk-11-jdk`
+
 ## Pull env Variables from Vercel
 
 `vercel env pull`
