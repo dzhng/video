@@ -41,28 +41,47 @@ describe('firebase cloud firestore database rules', () => {
     // Clear the database between tests
     await firebase.clearFirestoreData({ projectId: PROJECT_ID });
 
-    // Create an owner user
     const admin = getAdminFirestore();
-    const adminProfile = admin.collection('admins').doc('OwnerUser');
-    await firebase.assertSucceeds(adminProfile.set({ role: 'owner' }));
+
+    // create a network
+    const network = admin.collection('networks').doc('network');
+    await network.set({ createdAt: new Date(), name: 'A Network' });
+
+    // Create an owner user
+    const profile = admin
+      .collection('networks')
+      .doc('network')
+      .collection('admins')
+      .doc('OwnerUser');
+    await profile.set({
+      role: 'owner',
+      createdAt: new Date(),
+    });
   });
 
   it('allows anyone to read network data', async () => {
     const db = getAuthedFirestore(null);
-    const network = db.collection('networks').doc('apple');
-    await firebase.assertSucceeds(network.get());
+    const network = db.collection('networks').doc('network');
+    const doc = await firebase.assertSucceeds(network.get());
+    expect(doc.data().name).toEqual('A Network');
   });
 
   it('require users to log in and be owner before updating network', async () => {
     const db = getAuthedFirestore(null);
-    const profile = db.collection('networks').doc('apple');
-    await firebase.assertFails(profile.set({ name: 'hello world' }));
+    const network = db.collection('networks').doc('network');
+    await firebase.assertFails(network.set({ name: 'hello world' }));
+  });
+
+  it('does not allow anyone to create a new network', async () => {
+    const db = getAuthedFirestore({ uid: 'OwnerUser' });
+    const network = db.collection('networks').doc('test');
+    await firebase.assertFails(network.set({ name: 'hello world' }));
   });
 
   it('allows logged in owners to update network', async () => {
     const db = getAuthedFirestore({ uid: 'OwnerUser' });
-    const profile = db.collection('networks').doc('apple');
-    await firebase.assertSucceeds(profile.set({ name: 'hello world' }));
+    const network = db.collection('networks').doc('network');
+    await firebase.assertSucceeds(network.update({ name: 'hello world' }));
   });
 
   /*it('should enforce the createdAt date in user profiles', async () => {

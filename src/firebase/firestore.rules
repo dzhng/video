@@ -48,16 +48,16 @@ service cloud.firestore {
     match /networks/{networkId} {
 
       function currentUser() {
-        return get(/databases/$(database)/documents/$(networkId)/users/$(request.auth.uid));
+        return get(/databases/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid));
       }
 
       function currentAdmin() {
-        return get(/database/$(database)/documents/$(networkId)/admins/$(request.auth.uid));
+        return get(/database/$(database)/documents/networks/$(networkId)/admins/$(request.auth.uid));
       }
 
       allow read;
 
-      allow update: if 
+      allow update: if
         request.auth != null &&
         assertStringKey('name') &&
         optionalStringKey('logoURL') &&
@@ -70,7 +70,7 @@ service cloud.firestore {
         allow read: if
           request.auth != null &&
           // make sure only users in the same network can read admin list
-          exists(/database/$(database)/documents/$(networkId)/users/$(request.auth.uid));
+          exists(/database/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid));
 
         allow write: if
           assertStringKey('role') &&
@@ -78,7 +78,7 @@ service cloud.firestore {
           // make sure only owners can create another admin
           currentAdmin().role == 'owner' &&
           // make sure this admin is also an user
-          exists(/database/$(database)/documents/$(networkId)/users/$(adminId));
+          exists(/database/$(database)/documents/networks/$(networkId)/users/$(adminId));
       }
 
       match /users/{userId} {
