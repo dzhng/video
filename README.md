@@ -38,6 +38,10 @@ To run a specific test
 
 The grep command will automatically run all tests that matches the given search term
 
+If you want to run in dev mode, which includes auto re-run as well as search term support
+
+    $ npm run test:watch <SEARCH_TERM>
+
 If you need to pass more arguments into jest, add a `--` before adding additional arguments.
 
     $ npm test <SEARCH_TERM> -- --watch
