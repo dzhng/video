@@ -84,7 +84,7 @@
     "build": "next build",
     "start": "next start",
     "jest": "jest",
-    "test": "sh -c 'firebase emulators:exec \"npm run jest $0\"'",
+    "test": "sh -c 'firebase emulators:exec \"npm run jest $@\"' placeholder",
     "lint": "eslint src/**/*.{ts,tsx}",
     "tsc": "tsc",
     "server": "node server.js",
