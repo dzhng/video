@@ -8,31 +8,11 @@ To run the app locally:
 
 `vercel dev`
 
-## Features
-
-The Video app has the following features:
-
-- [x] Video conferencing with real-time video and audio
-- [x] Enable/disable camera
-- [x] Mute/unmute mic
-- [x] Screen sharing
-- [x] [Dominant speaker](https://www.twilio.com/docs/video/detecting-dominant-speaker) indicator
-- [x] [Network quality](https://www.twilio.com/docs/video/using-network-quality-api) indicator
-- [x] [Bandwidth Profile API](https://www.twilio.com/docs/video/tutorials/using-bandwidth-profile-api)
-
-## Deeper dive
-
-### Multiple Participants in a Room
-
-If you want to see how the application behaves with multiple participants, you can simply open `localhost:3000` in multiple tabs in your browser and connect to the same room using different user names.
-
-Additionally, if you would like to invite other participants to a room, each participant would need to have their own installation of this application and use the same room name and Account SID (the API Key and Secret can be different).
-
-### Tests
+## Tests
 
 This application has unit tests (using [Jest](https://jestjs.io/)) and E2E tests (using [Cypress](https://www.cypress.io/)). You can run the tests with the following scripts.
 
-#### Unit Tests
+### Unit Tests
 
 Run unit tests with
 
@@ -40,7 +20,13 @@ Run unit tests with
 
 This will run all unit tests with Jest and output the results to the console.
 
-#### E2E Tests
+To run a specific test
+
+    $ npm test --grep=<SEARCH_TERM>
+
+The grep command will automatically run all tests that matches the given search term
+
+### E2E Tests (WORK IN PROGRESS)
 
 Run end to end tests with
 
@@ -48,7 +34,7 @@ Run end to end tests with
 
 This will open the Cypress test runner. When it's open, select a test file to run.
 
-### Application Architecture
+## Video Architecture
 
 The state of this application (with a few exceptions) is managed by the [room object](https://media.twiliocdn.com/sdk/js/video/releases/2.0.0/docs/Room.html) that is supplied by the SDK. The `room` object contains all information about the room that the user is connected to. The class hierarchy of the `room` object can be viewed [here](https://www.twilio.com/docs/video/migrating-1x-2x#object-model).
 
@@ -79,14 +65,10 @@ In this hook, the `useEffect` hook is used to subscribe to the `dominantSpeakerC
 
 For more information on how React hooks can be used with the Twilio Video SDK, see this tutorial: https://www.twilio.com/blog/video-chat-react-hooks. To see all of the hooks used by this application, look in the `src/hooks` directory.
 
-### Configuration
+### Video Settings
 
 The `connect` function from the SDK accepts a [configuration object](https://media.twiliocdn.com/sdk/js/video/releases/2.0.0/docs/global.html#ConnectOptions). The configuration object for this application can be found in [src/index.ts](https://github.com/twilio/twilio-video-app-react/blob/master/src/index.tsx#L20). In this object, we 1) enable dominant speaker detection, 2) enable the network quality API, and 3) supply various options to configure the [bandwidth profile](https://www.twilio.com/docs/video/tutorials/using-bandwidth-profile-api).
 
-#### Track Priority Settings
+### Track Priority Settings
 
 This application dynamically changes the priority of remote video tracks to provide an optimal collaboration experience. Any video track that will be displayed in the main video area will have `track.setPriority('high')` called on it (see the [VideoTrack](https://github.com/twilio/twilio-video-app-react/blob/master/src/components/VideoTrack/VideoTrack.tsx#L25) component) when the component is mounted. This higher priority enables the track to be rendered at a high resolution. `track.setPriority(null)` is called when the component is unmounted so that the track's priority is set to its publish priority (low).
-
-## License
-
-See the [LICENSE](LICENSE) file for details.

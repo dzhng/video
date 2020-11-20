@@ -1,4 +1,5 @@
-import firebase from '@firebase/rules-unit-testing';
+import * as firebase from '@firebase/rules-unit-testing';
+import path from 'path';
 import fs from 'fs';
 
 /**
@@ -16,7 +17,7 @@ function getAuthedFirestore(auth: { uid: string } | null) {
 describe('firebase cloud firestore database rules', () => {
   beforeAll(async () => {
     // Load the rules file before the tests begin
-    const rules = fs.readFileSync('firestore.rules', 'utf8');
+    const rules = fs.readFileSync(path.resolve(__dirname, './firestore.rules'), 'utf8');
     await firebase.loadFirestoreRules({ projectId: PROJECT_ID, rules });
   });
 
@@ -31,13 +32,19 @@ describe('firebase cloud firestore database rules', () => {
     await firebase.clearFirestoreData({ projectId: PROJECT_ID });
   });
 
-  it('require users to log in before creating a profile', async () => {
+  it('allows anyone to read network data', async () => {
     const db = getAuthedFirestore(null);
-    const profile = db.collection('users').doc('alice');
-    await firebase.assertFails(profile.set({ networkId: 'apple' }));
+    const network = db.collection('networks').doc('apple');
+    await firebase.assertSucceeds(network.get());
   });
 
-  it('should enforce the createdAt date in user profiles', async () => {
+  it('require users to log in and be owner before updating network', async () => {
+    const db = getAuthedFirestore(null);
+    const profile = db.collection('networks').doc('apple');
+    await firebase.assertFails(profile.set({ name: 'hello world' }));
+  });
+
+  /*it('should enforce the createdAt date in user profiles', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     const profile = db.collection('users').doc('alice');
     await firebase.assertFails(profile.set({ birthday: 'January 1' }));
@@ -110,5 +117,5 @@ describe('firebase cloud firestore database rules', () => {
         topic: 'skiing > snowboarding',
       }),
     );
-  });
+  });*/
 });
