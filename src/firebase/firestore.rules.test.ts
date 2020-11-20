@@ -84,6 +84,12 @@ describe('firebase cloud firestore database rules', () => {
     await firebase.assertSucceeds(network.update({ name: 'hello world' }));
   });
 
+  it('does not allow random data to be added to network', async () => {
+    const db = getAuthedFirestore({ uid: 'OwnerUser' });
+    const network = db.collection('networks').doc('network');
+    await firebase.assertFails(network.update({ name: 'hello world', random: 'data' }));
+  });
+
   /*it('should enforce the createdAt date in user profiles', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     const profile = db.collection('users').doc('alice');

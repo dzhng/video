@@ -2,67 +2,72 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function assertStringKey(key) {
+    // ensures that only the input list of keys are used, and no others
+    function assertKeys(keys) {
+      return request.resource.data.keys().toSet().hasOnly(keys.toSet());
+    }
+
+    function requiredStringKey(key) {
       return request.resource.data[key] is string && 
-              request.resource.data[key].size > 0;
+              request.resource.data[key].size() > 0;
     }
 
     function optionalStringKey(key) {
-      return (request.resource.data[key]) ? assertStringKey(key) : true;
+      return key in request.resource.data ? requiredStringKey(key) : true;
     }
 
-    function assertIntKey(key) {
+    function requiredIntKey(key) {
       return request.resource.data[key] is int;
     }
 
-    function assertPosIntKey(key) {
+    function requiredPosIntKey(key) {
       return request.resource.data[key] is int &&
               request.resoure.data[key] >= 0;
     }
 
-    function assertBoolKey(key) {
+    function requiredBoolKey(key) {
       return request.resource.data[key] is bool;
     }
 
-    function assertTimeKey(key) {
+    function requiredTimeKey(key) {
       return request.resource.data[key] is timestamp;
     }
 
-    function assertArrayKey(key) {
+    function requiredArrayKey(key) {
       return request.resource.data[key] is list;
     }
 
-    function assertObjectKey(key) {
+    function requiredObjectKey(key) {
       return request.resource.data[key] is map;
     }
 
-    function assertCreatedAtKey() {
-      return resource.data.createdAt ? 
-        // if it exists already in existing doc, we should not change the value
-        (request.resource.data.createdAt ? 
-          (request.resource.data.createdAt == resource.data.createdAt) : true) :
-        // if it doesn't exist in existing doc, make sure it's server timestamp
-        (assertTimeKey('createdAt') && request.resource.data.createdAt == request.time);
+    function requiredCreatedAtKey() {
+      // if it exists already in existing doc, we should not change the value
+      let isDateDifferent = request.resource.data.createdAt == resource.data.createdAt;
+      let isServerTimestamp = request.resource.data.createdAt == request.time;
+
+      return 'createdAt' in resource.data ? isDateDifferent : isServerTimestamp;
     }
 
     match /networks/{networkId} {
 
       function currentUser() {
-        return get(/databases/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid));
+        return get(/databases/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid)).data;
       }
 
       function currentAdmin() {
-        return get(/database/$(database)/documents/networks/$(networkId)/admins/$(request.auth.uid));
+        return get(/databases/$(database)/documents/networks/$(networkId)/admins/$(request.auth.uid)).data;
       }
 
       allow read;
 
       allow update: if
         request.auth != null &&
-        assertStringKey('name') &&
+        assertKeys(['name', 'logoURL', 'primaryColor', 'createdAt']) &&
+        requiredStringKey('name') &&
         optionalStringKey('logoURL') &&
         optionalStringKey('primaryColor') &&
-        assertCreatedAtKey() &&
+        requiredCreatedAtKey() &&
         // only network owners can update
         currentAdmin().role == 'owner';
 
@@ -73,8 +78,9 @@ service cloud.firestore {
           exists(/database/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid));
 
         allow write: if
-          assertStringKey('role') &&
-          assertCreatedAtKey() &&
+          assertKeys(['role', 'createdAt']) &&
+          requiredStringKey('role') &&
+          requiredCreatedAtKey() &&
           // make sure only owners can create another admin
           currentAdmin().role == 'owner' &&
           // make sure this admin is also an user
@@ -87,8 +93,9 @@ service cloud.firestore {
         allow write: if 
           request.auth != null && 
           request.auth.uid == userId &&
+          assertKeys(['bio', 'createdAt']) &&
           optionalStringKey('bio') &&
-          assertCreatedAtKey();
+          requiredCreatedAtKey();
       }
 
       match /calls/{callId} {
@@ -97,12 +104,13 @@ service cloud.firestore {
 
         allow write: if 
           request.auth != null &&
-          assertStringKey('name') &&
-          assertStringKey('ownerId') &&
+          assertKeys(['name', 'ownerId', 'participants', 'externalEmails', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
+          requiredStringKey('name') &&
+          requiredStringKey('ownerId') &&
           // list of internal users who have access to this call
-          assertArrayKey('participants') &&
+          requiredArrayKey('participants') &&
           // list of external users (in form of emails) who have access to this call
-          assertArrayKey('externalEmails') &&
+          requiredArrayKey('externalEmails') &&
           // set if have presentation attachment
           optionalStringKey('presentationId') &&
           // set if have note attachment
@@ -111,7 +119,7 @@ service cloud.firestore {
           optionalStringKey('chatId') &&
           // set once transcrit is ready
           optionalStringKey('transcriptId') &&
-          assertCreatedAtKey() &&
+          requiredCreatedAtKey() &&
           // only owners of the doc can write
           (resource.data.ownerId ? 
             resource.data.ownerId == request.auth.uid : 
@@ -121,7 +129,8 @@ service cloud.firestore {
           allow read;
 
           allow write: if
-            assertStringKey('text');
+            assertKeys(['text']) &&
+            requiredStringKey('text');
         }
       }
 
@@ -129,7 +138,8 @@ service cloud.firestore {
         allow read;
 
         allow write: if
-          assertStringKey('fileId');
+          assertKeys(['fileId']) &&
+          requiredStringKey('fileId');
       }
     }
 
