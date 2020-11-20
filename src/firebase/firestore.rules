@@ -7,6 +7,10 @@ service cloud.firestore {
       return request.resource.data.keys().toSet().hasOnly(keys.toSet());
     }
 
+    function isNewDoc() {
+      return resource == null;
+    }
+
     function requiredStringKey(key) {
       return request.resource.data[key] is string && 
               request.resource.data[key].size() > 0;
@@ -43,10 +47,8 @@ service cloud.firestore {
 
     function requiredCreatedAtKey() {
       // if it exists already in existing doc, we should not change the value
-      let isDateDifferent = request.resource.data.createdAt == resource.data.createdAt;
       let isServerTimestamp = request.resource.data.createdAt == request.time;
-
-      return 'createdAt' in resource.data ? isDateDifferent : isServerTimestamp;
+      return isNewDoc() ? isServerTimestamp : (request.resource.data.createdAt == resource.data.createdAt);
     }
 
     match /networks/{networkId} {
@@ -85,17 +87,6 @@ service cloud.firestore {
           currentAdmin().role == 'owner' &&
           // make sure this admin is also an user
           exists(/database/$(database)/documents/networks/$(networkId)/users/$(adminId));
-      }
-
-      match /users/{userId} {
-        allow read;
-
-        allow write: if 
-          request.auth != null && 
-          request.auth.uid == userId &&
-          assertKeys(['bio', 'createdAt']) &&
-          optionalStringKey('bio') &&
-          requiredCreatedAtKey();
       }
 
       match /calls/{callId} {
@@ -143,5 +134,16 @@ service cloud.firestore {
       }
     }
 
-  }
-}
+    match /users/{userId} {
+      allow read;
+
+      allow write: if 
+        request.auth != null && 
+        request.auth.uid == userId &&
+        assertKeys(['bio', 'createdAt']) &&
+        optionalStringKey('bio') &&
+        requiredCreatedAtKey();
+    }
+
+  } // match database
+} // service firestore

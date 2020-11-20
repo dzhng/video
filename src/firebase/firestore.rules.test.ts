@@ -48,6 +48,10 @@ describe('firebase cloud firestore database rules', () => {
     await network.set({ createdAt: new Date(), name: 'A Network' });
 
     // Create an owner user
+    const user = admin.collection('users').doc('OwnerUser');
+    await user.set({
+      networkId: 'network',
+    });
     const profile = admin
       .collection('networks')
       .doc('network')
@@ -90,19 +94,41 @@ describe('firebase cloud firestore database rules', () => {
     await firebase.assertFails(network.update({ name: 'hello world', random: 'data' }));
   });
 
-  /*it('should enforce the createdAt date in user profiles', async () => {
+  it('only allow user to update their own profile', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
-    const profile = db.collection('users').doc('alice');
-    await firebase.assertFails(profile.set({ birthday: 'January 1' }));
+    const charlie = db.collection('users').doc('charlie');
+    await firebase.assertFails(
+      charlie.set({
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }),
+    );
+
+    const alice = db.collection('users').doc('alice');
     await firebase.assertSucceeds(
-      profile.set({
-        birthday: 'January 1',
+      alice.set({
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       }),
     );
   });
 
-  it('should only let users create their own profile', async () => {
+  it('should enforce user profiles fields', async () => {
+    const db = getAuthedFirestore({ uid: 'alice' });
+    const profile = db.collection('users').doc('alice');
+    await firebase.assertFails(
+      profile.set({
+        birthday: 'January 1',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }),
+    );
+    await firebase.assertSucceeds(
+      profile.set({
+        bio: 'hello world',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }),
+    );
+  });
+
+  /*it('should only let users create their own profile', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     await firebase.assertSucceeds(
       db.collection('users').doc('alice').set({
