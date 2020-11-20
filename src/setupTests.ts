@@ -7,4 +7,7 @@ import 'jest-ts-auto-mock';
 configure({ adapter: new Adapter() });
 
 // Mocks the Fullscreen API. This is needed for ToggleFullScreenButton.test.tsx.
-Object.defineProperty(document, 'fullscreenEnabled', { value: true, writable: true });
+// Guard in if statement for any tests that specifies node environment (e.g. firebase)
+if (global.document) {
+  Object.defineProperty(document, 'fullscreenEnabled', { value: true, writable: true });
+}

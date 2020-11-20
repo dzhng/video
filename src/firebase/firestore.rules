@@ -12,11 +12,11 @@ service cloud.firestore {
     }
 
     function assertIntKey(key) {
-      return request.resource.data[key] is integer;
+      return request.resource.data[key] is int;
     }
 
     function assertPosIntKey(key) {
-      return request.resource.data[key] is integer &&
+      return request.resource.data[key] is int &&
               request.resoure.data[key] >= 0;
     }
 
@@ -28,15 +28,15 @@ service cloud.firestore {
       return request.resource.data[key] is timestamp;
     }
 
-    function assertArray(key) {
+    function assertArrayKey(key) {
       return request.resource.data[key] is list;
     }
 
-    function assertObject(key) {
+    function assertObjectKey(key) {
       return request.resource.data[key] is map;
     }
 
-    function assertCreatedAt() {
+    function assertCreatedAtKey() {
       return resource.data.createdAt ? 
         // if it exists already in existing doc, we should not change the value
         (request.resource.data.createdAt ? 
@@ -55,17 +55,16 @@ service cloud.firestore {
         return get(/database/$(database)/documents/$(networkId)/admins/$(request.auth.uid));
       }
 
-      allow read: if
-        request.auth != null;
+      allow read;
 
       allow update: if 
         request.auth != null &&
         assertStringKey('name') &&
         optionalStringKey('logoURL') &&
         optionalStringKey('primaryColor') &&
-        assertCreatedAt() &&
+        assertCreatedAtKey() &&
         // only network owners can update
-        currentAdmin().role === 'owner';
+        currentAdmin().role == 'owner';
 
       match /admins/{adminId} {
         allow read: if
@@ -75,9 +74,9 @@ service cloud.firestore {
 
         allow write: if
           assertStringKey('role') &&
-          assertCreatedAt() &&
+          assertCreatedAtKey() &&
           // make sure only owners can create another admin
-          currentAdmin().role === 'owner' &&
+          currentAdmin().role == 'owner' &&
           // make sure this admin is also an user
           exists(/database/$(database)/documents/$(networkId)/users/$(adminId));
       }
@@ -89,7 +88,7 @@ service cloud.firestore {
           request.auth != null && 
           request.auth.uid == userId &&
           optionalStringKey('bio') &&
-          assertCreatedAt();
+          assertCreatedAtKey();
       }
 
       match /calls/{callId} {
@@ -101,18 +100,18 @@ service cloud.firestore {
           assertStringKey('name') &&
           assertStringKey('ownerId') &&
           // list of internal users who have access to this call
-          assertArray('participants') &&
+          assertArrayKey('participants') &&
           // list of external users (in form of emails) who have access to this call
-          assertArray('externalEmails') &&
+          assertArrayKey('externalEmails') &&
           // set if have presentation attachment
-          optionalString('presentationId') &&
+          optionalStringKey('presentationId') &&
           // set if have note attachment
-          optionalString('noteId') &&
+          optionalStringKey('noteId') &&
           // set if have chat attachment
-          optionalString('chatId') &&
+          optionalStringKey('chatId') &&
           // set once transcrit is ready
-          optionalString('transcriptId') &&
-          assertCreatedAt() &&
+          optionalStringKey('transcriptId') &&
+          assertCreatedAtKey() &&
           // only owners of the doc can write
           (resource.data.ownerId ? 
             resource.data.ownerId == request.auth.uid : 

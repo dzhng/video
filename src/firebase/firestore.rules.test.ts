@@ -1,6 +1,12 @@
+/**
+ * @jest-environment node
+ */
+
 import * as firebase from '@firebase/rules-unit-testing';
 import path from 'path';
 import fs from 'fs';
+
+console.log(`EMULATOR HOST: ${process.env.FIRESTORE_EMULATOR_HOST}`);
 
 /**
  * The emulator will accept any project ID for testing.
@@ -12,6 +18,10 @@ const PROJECT_ID = 'firestore-emulator-test';
  */
 function getAuthedFirestore(auth: { uid: string } | null) {
   return firebase.initializeTestApp({ projectId: PROJECT_ID, auth: auth ?? undefined }).firestore();
+}
+
+function getAdminFirestore() {
+  return firebase.initializeAdminApp({ projectId: PROJECT_ID }).firestore();
 }
 
 describe('firebase cloud firestore database rules', () => {
@@ -30,6 +40,11 @@ describe('firebase cloud firestore database rules', () => {
   beforeEach(async () => {
     // Clear the database between tests
     await firebase.clearFirestoreData({ projectId: PROJECT_ID });
+
+    // Create an owner user
+    const admin = getAdminFirestore();
+    const adminProfile = admin.collection('admins').doc('OwnerUser');
+    await firebase.assertSucceeds(adminProfile.set({ role: 'owner' }));
   });
 
   it('allows anyone to read network data', async () => {
@@ -38,13 +53,19 @@ describe('firebase cloud firestore database rules', () => {
     await firebase.assertSucceeds(network.get());
   });
 
-  /*it('require users to log in and be owner before updating network', async () => {
+  it('require users to log in and be owner before updating network', async () => {
     const db = getAuthedFirestore(null);
     const profile = db.collection('networks').doc('apple');
     await firebase.assertFails(profile.set({ name: 'hello world' }));
   });
 
-  it('should enforce the createdAt date in user profiles', async () => {
+  it('allows logged in owners to update network', async () => {
+    const db = getAuthedFirestore({ uid: 'OwnerUser' });
+    const profile = db.collection('networks').doc('apple');
+    await firebase.assertSucceeds(profile.set({ name: 'hello world' }));
+  });
+
+  /*it('should enforce the createdAt date in user profiles', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     const profile = db.collection('users').doc('alice');
     await firebase.assertFails(profile.set({ birthday: 'January 1' }));
