@@ -62,7 +62,7 @@ service cloud.firestore {
     match /users/{userId} {
       allow read;
 
-      allow write: if 
+      allow update: if 
         request.auth != null && 
         request.auth.uid == userId &&
         assertKeys(['bio', 'networkId', 'createdAt']) &&

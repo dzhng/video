@@ -48,10 +48,10 @@ describe('firebase cloud firestore database rules', () => {
     await network.set({ createdAt: new Date(), name: 'A Network' });
 
     // Create an owner user
-    const user = admin.collection('users').doc('OwnerUser');
-    await user.set({
+    await admin.collection('users').doc('OwnerUser').set({
       networkId: 'network',
     });
+
     const profile = admin
       .collection('networks')
       .doc('network')
@@ -59,6 +59,16 @@ describe('firebase cloud firestore database rules', () => {
       .doc('OwnerUser');
     await profile.set({
       role: 'owner',
+      createdAt: new Date(),
+    });
+
+    // create a few sample user accounts first so it can be updated later
+    await admin.collection('users').doc('charlie').set({
+      networkId: 'network',
+      createdAt: new Date(),
+    });
+    await admin.collection('users').doc('alice').set({
+      networkId: 'network',
       createdAt: new Date(),
     });
   });
@@ -98,15 +108,15 @@ describe('firebase cloud firestore database rules', () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     const charlie = db.collection('users').doc('charlie');
     await firebase.assertFails(
-      charlie.set({
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      charlie.update({
+        bio: 'hello world',
       }),
     );
 
     const alice = db.collection('users').doc('alice');
     await firebase.assertSucceeds(
-      alice.set({
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      alice.update({
+        bio: 'hello world',
       }),
     );
   });
@@ -115,30 +125,22 @@ describe('firebase cloud firestore database rules', () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     const profile = db.collection('users').doc('alice');
     await firebase.assertFails(
-      profile.set({
+      profile.update({
         birthday: 'January 1',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       }),
     );
     await firebase.assertSucceeds(
-      profile.set({
+      profile.update({
         bio: 'hello world',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       }),
     );
   });
 
-  /*it('should only let users create their own profile', async () => {
+  it('should not let users create profile', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
-    await firebase.assertSucceeds(
-      db.collection('users').doc('alice').set({
-        birthday: 'January 1',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }),
-    );
     await firebase.assertFails(
       db.collection('users').doc('bob').set({
-        birthday: 'January 1',
+        bio: 'hello world',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       }),
     );
@@ -150,7 +152,7 @@ describe('firebase cloud firestore database rules', () => {
     await firebase.assertSucceeds(profile.get());
   });
 
-  it('should let anyone create a room', async () => {
+  /*it('should let anyone create a room', async () => {
     const db = getAuthedFirestore({ uid: 'alice' });
     const room = db.collection('rooms').doc('firebase');
     await firebase.assertSucceeds(
