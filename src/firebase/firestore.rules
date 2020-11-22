@@ -49,6 +49,10 @@ service cloud.firestore {
       return request.resource.data[key] is list;
     }
 
+    function optionalArrayKey(key) {
+      return key in request.resource.data ? requiredArrayKey(key) : true;
+    }
+
     function requiredObjectKey(key) {
       return request.resource.data[key] is map;
     }
@@ -106,18 +110,16 @@ service cloud.firestore {
       }
 
       match /calls/{callId} {
-        allow read: if
-          request.auth != null;
+        allow read;
 
         allow write: if 
           request.auth != null &&
-          assertKeys(['name', 'ownerId', 'participants', 'externalEmails', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
+          assertKeys(['name', 'participants', 'externalEmails', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
           requiredStringKey('name') &&
-          requiredStringKey('ownerId') &&
           // list of internal users who have access to this call
           requiredArrayKey('participants') &&
           // list of external users (in form of emails) who have access to this call
-          requiredArrayKey('externalEmails') &&
+          optionalArrayKey('externalEmails') &&
           // set if have presentation attachment
           optionalStringKey('presentationId') &&
           // set if have note attachment
@@ -127,10 +129,12 @@ service cloud.firestore {
           // set once transcrit is ready
           optionalStringKey('transcriptId') &&
           requiredCreatedAtKey() &&
-          // only owners of the doc can write
-          (resource.data.ownerId ? 
-            resource.data.ownerId == request.auth.uid : 
-            request.resource.data.ownerId == request.auth.uid);
+          // when creating, participants should contain at least one user which is the 
+          // current user. When editing, existing doc must contain current user
+          (isNewDoc() ? 
+            (request.resource.data.participants.size() >= 1 &&
+              request.resource.data.participants.hasAny([request.auth.uid])) : 
+            (resource.data.participants.hasAny([request.auth.uid])));
 
         match /notes/{noteId} {
           allow read;
