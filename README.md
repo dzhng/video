@@ -54,6 +54,26 @@ Run end to end tests with
 
 This will open the Cypress test runner. When it's open, select a test file to run.
 
+### Approach: testing-library vs enzyme
+
+Of the two popular testing methods for DOM, we're going to follow the strategy defined by testing-library, which tests closer to final rendered output, and not a component's internal states and methods. This is a good [summary of why](https://kentcdodds.com/blog/why-i-never-use-shallow-rendering#calling-methods-in-react-components).
+
+## Package Management
+
+Make sure to keep all dependencies updated. Read release notes whenever there is a major update to access compatibility / learn about new features.
+
+To see a list of all oudated packages
+
+    $ npm outdated
+
+To upgrade all or specific package to latest minor versions (following package.json semver). The `<package_name>` is optional, leave out to upgrade all packages.
+
+    $ npm upgrade <package_name>
+
+To upgrade a specific package to latest major version (make sure to research compatibility first!)
+
+    $ npm install <package_name>@latest
+
 ## Video Architecture
 
 The state of this application (with a few exceptions) is managed by the [room object](https://media.twiliocdn.com/sdk/js/video/releases/2.0.0/docs/Room.html) that is supplied by the SDK. The `room` object contains all information about the room that the user is connected to. The class hierarchy of the `room` object can be viewed [here](https://www.twilio.com/docs/video/migrating-1x-2x#object-model).

@@ -2,6 +2,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // FOR DATA LENGTH:
+    // id should be 24
+    // short text like names should be 50
+    // URLs should be 280
+    // short descriptions should be 280
+
     function currentUser() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
@@ -19,13 +25,14 @@ service cloud.firestore {
       return resource == null;
     }
 
-    function requiredStringKey(key) {
+    function requiredStringKey(key, maxLen) {
       return request.resource.data[key] is string && 
-              request.resource.data[key].size() > 0;
+              request.resource.data[key].size() > 0 &&
+              request.resource.data[key].size() <= maxLen;
     }
 
-    function optionalStringKey(key) {
-      return key in request.resource.data ? requiredStringKey(key) : true;
+    function optionalStringKey(key, maxLen) {
+      return key in request.resource.data ? requiredStringKey(key, maxLen) : true;
     }
 
     function requiredIntKey(key) {
@@ -45,12 +52,13 @@ service cloud.firestore {
       return request.resource.data[key] is timestamp;
     }
 
-    function requiredArrayKey(key) {
-      return request.resource.data[key] is list;
+    function requiredArrayKey(key, maxLen) {
+      return request.resource.data[key] is list &&
+              request.resource.data[key].size() <= maxLen;
     }
 
-    function optionalArrayKey(key) {
-      return key in request.resource.data ? requiredArrayKey(key) : true;
+    function optionalArrayKey(key, maxLen) {
+      return key in request.resource.data ? requiredArrayKey(key, maxLen) : true;
     }
 
     function requiredObjectKey(key) {
@@ -70,8 +78,8 @@ service cloud.firestore {
         request.auth != null && 
         request.auth.uid == userId &&
         assertKeys(['bio', 'networkId', 'createdAt']) &&
-        optionalStringKey('networkId') &&
-        optionalStringKey('bio') &&
+        optionalStringKey('networkId', 24) &&
+        optionalStringKey('bio', 280) &&
         requiredCreatedAtKey();
     }
 
@@ -86,9 +94,9 @@ service cloud.firestore {
       allow update: if
         request.auth != null &&
         assertKeys(['name', 'logoURL', 'primaryColor', 'createdAt']) &&
-        requiredStringKey('name') &&
-        optionalStringKey('logoURL') &&
-        optionalStringKey('primaryColor') &&
+        requiredStringKey('name', 50) &&
+        optionalStringKey('logoURL', 280) &&
+        optionalStringKey('primaryColor', 10) &&
         requiredCreatedAtKey() &&
         // only network owners can update
         currentAdmin().role == 'owner';
@@ -101,7 +109,7 @@ service cloud.firestore {
 
         allow write: if
           assertKeys(['role', 'createdAt']) &&
-          requiredStringKey('role') &&
+          requiredStringKey('role', 10) &&
           requiredCreatedAtKey() &&
           // make sure only owners can create another admin
           currentAdmin().role == 'owner' &&
@@ -115,19 +123,19 @@ service cloud.firestore {
         allow write: if 
           request.auth != null &&
           assertKeys(['name', 'participants', 'externalEmails', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
-          requiredStringKey('name') &&
+          requiredStringKey('name', 50) &&
           // list of internal users who have access to this call
-          requiredArrayKey('participants') &&
+          requiredArrayKey('participants', 10) &&
           // list of external users (in form of emails) who have access to this call
-          optionalArrayKey('externalEmails') &&
+          optionalArrayKey('externalEmails', 10) &&
           // set if have presentation attachment
-          optionalStringKey('presentationId') &&
+          optionalStringKey('presentationId', 24) &&
           // set if have note attachment
-          optionalStringKey('noteId') &&
+          optionalStringKey('noteId', 24) &&
           // set if have chat attachment
-          optionalStringKey('chatId') &&
+          optionalStringKey('chatId', 24) &&
           // set once transcrit is ready
-          optionalStringKey('transcriptId') &&
+          optionalStringKey('transcriptId', 24) &&
           requiredCreatedAtKey() &&
           // when creating, participants should contain at least one user which is the 
           // current user. When editing, existing doc must contain current user
@@ -141,7 +149,7 @@ service cloud.firestore {
 
           allow write: if
             assertKeys(['text']) &&
-            requiredStringKey('text');
+            requiredStringKey('text', 50000);
         }
       }
 
@@ -150,7 +158,7 @@ service cloud.firestore {
 
         allow write: if
           assertKeys(['fileId']) &&
-          requiredStringKey('fileId');
+          requiredStringKey('fileId', 24);
       }
     }
 

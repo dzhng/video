@@ -9,13 +9,13 @@ import {
   SettingsAction,
 } from './settings/settingsReducer';
 import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
-import { User } from 'firebase';
+import firebase from 'firebase';
 
 export interface StateContextType {
   error: TwilioError | null;
   setError(error: TwilioError | null): void;
   getToken(room: string): Promise<string>;
-  user?: User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
+  user?: firebase.User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
   signIn?(passcode?: string): Promise<void>;
   signOut?(): Promise<void>;
   isAuthReady?: boolean;

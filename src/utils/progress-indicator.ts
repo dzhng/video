@@ -1,7 +1,6 @@
 import Router from 'next/router';
 import NProgress from 'nprogress';
-
-// NOTE: don't forget to import global css in _app
+import 'nprogress/nprogress.css';
 
 // configure global loading spinner
 // ONLY show if page has been loading for more than a set period
