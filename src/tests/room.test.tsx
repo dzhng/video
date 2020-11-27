@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import { useRouter } from 'next/router';
 
 import useRoomState from '~/hooks/useRoomState/useRoomState';
@@ -40,8 +40,8 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: true, room: {}, localTracks: [] } as any),
     );
-    const { getByTestId } = render(<RoomPage />);
-    expect(getByTestId('progress-spinner')).not.toBeNull();
+    render(<RoomPage />);
+    expect(screen.queryByTestId('progress-spinner')).toBeInTheDocument();
   });
 
   it('should display a loading spinner while fetching a token', () => {
@@ -50,8 +50,8 @@ describe('room page', () => {
       () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
     );
     mockUseAppState.mockImplementation(() => ({ isFetching: true }));
-    const { getByTestId } = render(<RoomPage />);
-    expect(getByTestId('progress-spinner')).not.toBeNull();
+    render(<RoomPage />);
+    expect(screen.queryByTestId('progress-spinner')).toBeInTheDocument();
   });
 
   it('should disable the Join Room button when connecting to a room', () => {
@@ -59,8 +59,8 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: true, room: {}, localTracks: [] } as any),
     );
-    const { getByTestId } = render(<RoomPage />);
-    expect(getByTestId('join-button')).toBeDisabled();
+    render(<RoomPage />);
+    expect(screen.getByTestId('join-button')).toBeDisabled();
   });
 
   it('should disable the Join Room button while local tracks are being acquired', () => {
@@ -68,8 +68,8 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isAcquiringLocalTracks: true, room: {}, localTracks: [] } as any),
     );
-    const { getByTestId } = render(<RoomPage />);
-    expect(getByTestId('join-button')).toBeDisabled();
+    render(<RoomPage />);
+    expect(screen.getByTestId('join-button')).toBeDisabled();
   });
 
   it('should call getToken() and connect() on submit', (done) => {
@@ -77,8 +77,8 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any),
     );
-    const { getByTestId } = render(<RoomPage />);
-    fireEvent.click(getByTestId('join-button'));
+    render(<RoomPage />);
+    fireEvent.click(screen.getByTestId('join-button'));
     setImmediate(() => {
       expect(mockGetToken).toHaveBeenCalledWith('test-room');
       expect(mockConnect).toHaveBeenCalledWith('mockToken');

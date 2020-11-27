@@ -62,7 +62,7 @@ describe('the VideoInputList component', () => {
   it('should not display a Select menu and instead display the name of the local video track', () => {
     mockUseVideoInputDevices.mockImplementation(() => [mockDevice]);
     render(<VideoInputList />);
-    expect(screen.queryByTestId('select-menu')).toBeNull();
+    expect(screen.queryByTestId('select-menu')).not.toBeInTheDocument();
     expect(screen.getByTestId('default-track-name').textContent).toBe('mock local video track');
   });
 
@@ -80,7 +80,7 @@ describe('the VideoInputList component', () => {
   it('should render a Select menu when there are multiple video input devices', () => {
     mockUseVideoInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
     render(<VideoInputList />);
-    expect(screen.queryByTestId('select-menu')).toBeTruthy();
-    expect(screen.queryByTestId('default-track-name')).toBeNull();
+    expect(screen.queryByTestId('select-menu')).toBeInTheDocument();
+    expect(screen.queryByTestId('default-track-name')).not.toBeInTheDocument();
   });
 });

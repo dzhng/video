@@ -40,7 +40,7 @@ describe('the AudioInputList component', () => {
   it('should display the name of the local audio track when only one is avaiable', () => {
     mockUseAudioInputDevices.mockImplementation(() => [mockDevice]);
     render(<AudioInputList />);
-    expect(screen.queryByTestId('select-menu')).toBeNull();
+    expect(screen.queryByTestId('select-menu')).not.toBeInTheDocument();
     expect(screen.getByTestId('default-track-name')?.textContent).toBe('mock local audio track');
   });
 
@@ -58,8 +58,8 @@ describe('the AudioInputList component', () => {
   it('should render a Select menu when there are multiple audio input devices', () => {
     mockUseAudioInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
     render(<AudioInputList />);
-    expect(screen.queryByTestId('select-menu')).toBeTruthy();
-    expect(screen.queryByTestId('default-track-menu')).toBeNull();
+    expect(screen.queryByTestId('select-menu')).toBeInTheDocument();
+    expect(screen.queryByTestId('default-track-menu')).not.toBeInTheDocument();
   });
 
   it('should always render local audio indicator', () => {

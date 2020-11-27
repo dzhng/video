@@ -20,20 +20,20 @@ describe('Full screen button', () => {
   it('should render FullscreenExitIcon when the page is in full screen mode', () => {
     mockeduseFullScreenToggle.mockImplementation(() => [true, toggleFullScreen]);
     render(<ToggleFullscreenButton />);
-    expect(screen.queryByTestId('disable-icon')).toBeTruthy();
+    expect(screen.queryByTestId('disable-icon')).toBeInTheDocument();
   });
 
   it('should render FullscreenIcon when the page is not in full screen mode', () => {
     mockeduseFullScreenToggle.mockImplementation(() => [false, toggleFullScreen]);
     render(<ToggleFullscreenButton />);
-    expect(screen.queryByTestId('enable-icon')).toBeTruthy();
+    expect(screen.queryByTestId('enable-icon')).toBeInTheDocument();
   });
 
   it('should not render when Fullscreen API is not supported', () => {
     // @ts-ignore
     document.fullscreenEnabled = false;
     render(<ToggleFullscreenButton />);
-    expect(screen.queryByRole('button')).toBeNull();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
     // @ts-ignore
     document.fullscreenEnabled = true; // Reset value
   });

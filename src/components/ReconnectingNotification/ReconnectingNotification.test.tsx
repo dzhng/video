@@ -10,12 +10,12 @@ describe('the ReconnectingNotification component', () => {
   it('should not open Snackbar when room state is not "reconnecting"', () => {
     mockUseRoomState.mockImplementation(() => 'connected');
     render(<ReconnectingNotification />);
-    expect(screen.queryByTestId('container')).toBeNull();
+    expect(screen.queryByTestId('container')).not.toBeInTheDocument();
   });
 
   it('should open Snackbar when room state is "reconnecting"', () => {
     mockUseRoomState.mockImplementation(() => 'reconnecting');
     render(<ReconnectingNotification />);
-    expect(screen.queryByTestId('container')).toBeTruthy();
+    expect(screen.queryByTestId('container')).toBeInTheDocument();
   });
 });

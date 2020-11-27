@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import { useRouter } from 'next/router';
 import { useAppState } from '~/state';
 import LoginPage from '~/pages/login';
@@ -34,9 +34,10 @@ describe('login page', () => {
         signIn: () => Promise.resolve(),
         isAuthReady: true,
       }));
-      const { getByText } = render(<LoginPage />);
+      render(<LoginPage />);
       expect(mockReplace).not.toHaveBeenCalled();
-      expect(getByText('Sign in with Google')).toBeTruthy();
+      expect(screen.queryByTestId('container')).toBeInTheDocument();
+      expect(screen.getByText('Sign in with Google')).toBeInTheDocument();
     });
 
     it('should redirect the user to "/" after signIn when there is no previous location', (done) => {
@@ -45,8 +46,8 @@ describe('login page', () => {
         signIn: () => Promise.resolve(),
         isAuthReady: true,
       }));
-      const { getByText } = render(<LoginPage />);
-      getByText('Sign in with Google').click();
+      render(<LoginPage />);
+      fireEvent.click(screen.getByText('Sign in with Google'));
       setImmediate(() => {
         expect(mockReplace).toHaveBeenCalledWith('/');
         done();
@@ -59,8 +60,8 @@ describe('login page', () => {
         signIn: () => Promise.resolve(),
         isAuthReady: true,
       }));
-      const { getByText } = render(<LoginPage previousPage={'/room/test'} />);
-      getByText('Sign in with Google').click();
+      render(<LoginPage previousPage={'/room/test'} />);
+      fireEvent.click(screen.getByText('Sign in with Google'));
       setImmediate(() => {
         expect(mockReplace).toHaveBeenCalledWith('/room/test');
         done();
@@ -73,9 +74,9 @@ describe('login page', () => {
         signIn: () => Promise.resolve(),
         isAuthReady: false,
       }));
-      const { container } = render(<LoginPage />);
+      render(<LoginPage />);
       expect(mockReplace).not.toHaveBeenCalled();
-      expect(container.children[0]).toBe(undefined);
+      expect(screen.queryByTestId('container')).not.toBeInTheDocument();
     });
   });
 });

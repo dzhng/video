@@ -25,7 +25,7 @@ describe('the PrivateRoute component', () => {
           </PrivateRoute>,
         );
         expect(mockPush).toHaveBeenCalledWith('/login');
-        expect(screen.queryByTestId('mock')).toBeNull();
+        expect(screen.queryByTestId('mock')).not.toBeInTheDocument();
       });
 
       it('should render children when there is a user', () => {
@@ -35,7 +35,7 @@ describe('the PrivateRoute component', () => {
             <MockComponent />
           </PrivateRoute>,
         );
-        expect(screen.queryByTestId('mock')).toBeTruthy();
+        expect(screen.queryByTestId('mock')).toBeInTheDocument();
       });
     });
 
@@ -47,7 +47,7 @@ describe('the PrivateRoute component', () => {
             <MockComponent />
           </PrivateRoute>,
         );
-        expect(screen.queryByTestId('mock')).toBeNull();
+        expect(screen.queryByTestId('mock')).not.toBeInTheDocument();
       });
     });
   });

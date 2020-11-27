@@ -45,7 +45,7 @@ describe('the ParticipantInfo component', () => {
         mock children
       </ParticipantInfo>,
     );
-    expect(screen.queryByTestId('screenshare-icon')).toBeTruthy();
+    expect(screen.queryByTestId('screenshare-icon')).toBeInTheDocument();
   });
 
   it('should not display ScreenShare icon when participant has not published a screen share track', () => {
@@ -59,7 +59,7 @@ describe('the ParticipantInfo component', () => {
         mock children
       </ParticipantInfo>,
     );
-    expect(screen.queryByTestId('screenshare-icon')).toBeNull();
+    expect(screen.queryByTestId('screenshare-icon')).not.toBeInTheDocument();
   });
 
   it('should add hideVideoProp to InfoContainer component when no video tracks are published', () => {
@@ -101,7 +101,7 @@ describe('the ParticipantInfo component', () => {
         mock children
       </ParticipantInfo>,
     );
-    expect(screen.queryByTestId('camoff-icon')).toBeTruthy();
+    expect(screen.queryByTestId('camoff-icon')).toBeInTheDocument();
   });
 
   it('should not render a VideoCamOff icon when a video track is published', () => {
@@ -115,7 +115,7 @@ describe('the ParticipantInfo component', () => {
         mock children
       </ParticipantInfo>,
     );
-    expect(screen.queryByTestId('camoff-icon')).toBeNull();
+    expect(screen.queryByTestId('camoff-icon')).not.toBeInTheDocument();
   });
 
   it('should add isSwitchedOff class to Container component when video is switched off', () => {
@@ -159,7 +159,7 @@ describe('the ParticipantInfo component', () => {
         mock children
       </ParticipantInfo>,
     );
-    expect(screen.queryByTestId('pin-icon')).toBeTruthy();
+    expect(screen.queryByTestId('pin-icon')).toBeInTheDocument();
   });
 
   it('should not render the PinIcon component when the participant is not selected', () => {
@@ -173,6 +173,6 @@ describe('the ParticipantInfo component', () => {
         mock children
       </ParticipantInfo>,
     );
-    expect(screen.queryByTestId('pin-icon')).toBeNull();
+    expect(screen.queryByTestId('pin-icon')).not.toBeInTheDocument();
   });
 });

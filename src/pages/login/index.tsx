@@ -75,7 +75,13 @@ export default function LoginPage(props: { previousPage?: string }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container justify="center" alignItems="flex-start" className={classes.container}>
+      <Grid
+        container
+        justify="center"
+        alignItems="flex-start"
+        className={classes.container}
+        data-testid="container"
+      >
         <Paper className={classes.paper} elevation={6}>
           <div>
             {authError && (

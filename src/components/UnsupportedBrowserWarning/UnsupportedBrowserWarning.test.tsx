@@ -15,8 +15,8 @@ describe('the UnsupportedBrowserWarning component', () => {
         <IsSupported />
       </UnsupportedBrowserWarning>,
     );
-    expect(screen.queryByTestId('is-supported')).toBeNull();
-    expect(screen.queryByTestId('container')).toBeTruthy();
+    expect(screen.queryByTestId('is-supported')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('container')).toBeInTheDocument();
   });
 
   it('should render children when isSupported is true', () => {
@@ -27,6 +27,6 @@ describe('the UnsupportedBrowserWarning component', () => {
         <IsSupported />
       </UnsupportedBrowserWarning>,
     );
-    expect(screen.queryByTestId('is-supported')).toBeTruthy();
+    expect(screen.queryByTestId('is-supported')).toBeInTheDocument();
   });
 });
