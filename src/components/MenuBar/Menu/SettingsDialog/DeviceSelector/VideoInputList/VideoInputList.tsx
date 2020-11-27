@@ -39,6 +39,7 @@ export default function VideoInputList() {
           <Select
             onChange={(e) => replaceTrack(e.target.value as string)}
             value={localVideoInputDeviceId || ''}
+            data-testid="select-menu"
           >
             {videoInputDevices.map((device) => (
               <MenuItem value={device.deviceId} key={device.deviceId}>
@@ -50,7 +51,9 @@ export default function VideoInputList() {
       ) : (
         <>
           <Typography variant="h6">Video Input:</Typography>
-          <Typography>{localVideoTrack?.mediaStreamTrack.label || 'No Local Video'}</Typography>
+          <Typography data-testid="default-track-name">
+            {localVideoTrack?.mediaStreamTrack.label || 'No Local Video'}
+          </Typography>
         </>
       )}
       {localVideoTrack && (

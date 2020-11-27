@@ -1,8 +1,7 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import Tooltip from '@material-ui/core/Tooltip';
-import ParticipantConnectionIndicator from './ParticipantConnectionIndicator';
+import { screen, render, fireEvent, waitFor } from '@testing-library/react';
 import useParticipantIsReconnecting from '~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
+import ParticipantConnectionIndicator from './ParticipantConnectionIndicator';
 
 jest.mock('~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting');
 
@@ -12,28 +11,40 @@ describe('the ParticipantConnectionIndicator component', () => {
   describe('when the participant is reconnecting', () => {
     beforeEach(() => mockUseParticipantIsReconnecting.mockImplementation(() => true));
 
-    it('should render the correct toolip', () => {
-      const wrapper = shallow(<ParticipantConnectionIndicator participant={{} as any} />);
-      expect(wrapper.find(Tooltip).prop('title')).toBe('Participant is reconnecting');
+    it('should render the correct toolip', async () => {
+      render(<ParticipantConnectionIndicator participant={{} as any} />);
+      fireEvent.mouseOver(screen.getByTestId('indicator'));
+
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('tooltip').textContent).toBe('Participant is reconnecting');
     });
 
     it('should have isReconnecting css class', () => {
-      const wrapper = shallow(<ParticipantConnectionIndicator participant={{} as any} />);
-      expect(wrapper.find('span').prop('className')).toContain('makeStyles-isReconnecting-2');
+      render(<ParticipantConnectionIndicator participant={{} as any} />);
+      expect(screen.getByTestId('indicator').className).toContain('isReconnecting');
     });
   });
 
   describe('when the participant is not reconnecting', () => {
     beforeEach(() => mockUseParticipantIsReconnecting.mockImplementation(() => false));
 
-    it('should render the correct tooltip', () => {
-      const wrapper = shallow(<ParticipantConnectionIndicator participant={{} as any} />);
-      expect(wrapper.find(Tooltip).prop('title')).toBe('Participant is connected');
+    it('should render the correct tooltip', async () => {
+      render(<ParticipantConnectionIndicator participant={{} as any} />);
+      fireEvent.mouseOver(screen.getByTestId('indicator'));
+
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('tooltip').textContent).toBe('Participant is connected');
     });
 
     it('should not have isReconnecting css class', () => {
-      const wrapper = shallow(<ParticipantConnectionIndicator participant={{} as any} />);
-      expect(wrapper.find('span').prop('className')).not.toContain('makeStyles-isReconnecting-2');
+      render(<ParticipantConnectionIndicator participant={{} as any} />);
+      expect(screen.getByTestId('indicator').classList).not.toContain('isReconnecting');
     });
   });
 });

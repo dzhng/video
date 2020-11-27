@@ -1,6 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import { render, fireEvent } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import useFullScreenToggle from '~/hooks/useFullScreenToggle/useFullScreenToggle';
 
 import ToggleFullscreenButton from './ToggleFullScreenButton';
@@ -13,28 +12,28 @@ describe('Full screen button', () => {
 
   it('should call toggleFullScreen when Toggle FullScreen button is clicked', () => {
     mockeduseFullScreenToggle.mockImplementation(() => [false, toggleFullScreen]);
-    const { getByRole } = render(<ToggleFullscreenButton />);
-    fireEvent.click(getByRole('button'));
+    render(<ToggleFullscreenButton />);
+    fireEvent.click(screen.getByRole('button'));
     expect(toggleFullScreen).toHaveBeenCalled();
   });
 
   it('should render FullscreenExitIcon when the page is in full screen mode', () => {
     mockeduseFullScreenToggle.mockImplementation(() => [true, toggleFullScreen]);
-    const wrapper = shallow(<ToggleFullscreenButton />);
-    expect(wrapper.find('FullscreenExitIcon').exists()).toBe(true);
+    render(<ToggleFullscreenButton />);
+    expect(screen.queryByTestId('disable-icon')).toBeTruthy();
   });
 
   it('should render FullscreenIcon when the page is not in full screen mode', () => {
     mockeduseFullScreenToggle.mockImplementation(() => [false, toggleFullScreen]);
-    const wrapper = shallow(<ToggleFullscreenButton />);
-    expect(wrapper.find('FullscreenIcon').exists()).toBe(true);
+    render(<ToggleFullscreenButton />);
+    expect(screen.queryByTestId('enable-icon')).toBeTruthy();
   });
 
   it('should not render when Fullscreen API is not supported', () => {
     // @ts-ignore
     document.fullscreenEnabled = false;
-    const wrapper = shallow(<ToggleFullscreenButton />);
-    expect(wrapper.find(ToggleFullscreenButton).exists()).toBe(false);
+    render(<ToggleFullscreenButton />);
+    expect(screen.queryByRole('button')).toBeNull();
     // @ts-ignore
     document.fullscreenEnabled = true; // Reset value
   });

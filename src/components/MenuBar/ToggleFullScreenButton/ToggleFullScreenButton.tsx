@@ -12,7 +12,11 @@ export default function ToggleFullscreenButton() {
 
   return fscreen.fullscreenEnabled ? (
     <IconButton aria-label={`full screen`} onClick={toggleFullScreen}>
-      {isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+      {isFullScreen ? (
+        <FullscreenExitIcon data-testid="disable-icon" />
+      ) : (
+        <FullscreenIcon data-testid="enable-icon" />
+      )}
     </IconButton>
   ) : null;
 }

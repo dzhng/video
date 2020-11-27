@@ -27,8 +27,12 @@ export default function ParticipantConnectionIndicator({
   const isReconnecting = useParticipantIsReconnecting(participant);
   const classes = useStyles();
   return (
-    <Tooltip title={isReconnecting ? 'Participant is reconnecting' : 'Participant is connected'}>
+    <Tooltip
+      data-testid="tooltip"
+      title={isReconnecting ? 'Participant is reconnecting' : 'Participant is connected'}
+    >
       <span
+        data-testid="indicator"
         className={clsx(classes.indicator, { [classes.isReconnecting]: isReconnecting })}
       ></span>
     </Tooltip>
