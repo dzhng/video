@@ -24,7 +24,7 @@ const mockLocalTrack = {
   kind: 'video',
   mediaStreamTrack: {
     label: 'mock local video track',
-    getSettings: () => ({ deviceId: '234' }),
+    getSettings: () => ({ deviceId: '123' }),
   },
 };
 
@@ -32,6 +32,7 @@ mockVideoTrack.mockImplementation(() => null);
 
 describe('the VideoInputList component', () => {
   beforeEach(() => {
+    mockUseVideoInputDevices.mockImplementation(() => []);
     mockUseVideoContext.mockImplementation(() => ({
       room: {},
       getLocalVideoTrack: mockGetLocalVideotrack,

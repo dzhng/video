@@ -20,7 +20,10 @@ describe('the AttachVisibilityHandler component', () => {
       utils.isMobile = false;
       jest.spyOn(document, 'addEventListener');
       render(<AttachVisibilityHandler />);
-      expect(document.addEventListener).not.toHaveBeenCalled();
+      expect(document.addEventListener).not.toHaveBeenCalledWith(
+        'visibilitychange',
+        expect.any(Function),
+      );
     });
   });
 
@@ -33,7 +36,10 @@ describe('the AttachVisibilityHandler component', () => {
     it('should add a visibilitychange event handler to the document', () => {
       jest.spyOn(document, 'addEventListener');
       render(<AttachVisibilityHandler />);
-      expect(document.addEventListener).toHaveBeenCalled();
+      expect(document.addEventListener).toHaveBeenCalledWith(
+        'visibilitychange',
+        expect.any(Function),
+      );
     });
 
     it('should correctly toggle video when it is already enabled', () => {
