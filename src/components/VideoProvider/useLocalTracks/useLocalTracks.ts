@@ -57,7 +57,7 @@ export default function useLocalTracks() {
 
   const getAudioAndVideoTracks = useCallback(() => {
     if (!hasAudio && !hasVideo) return Promise.resolve();
-    if (audioTrack || videoTrack) return Promise.resolve();
+    if (isAcquiringLocalTracks || audioTrack || videoTrack) return Promise.resolve();
 
     setIsAcquiringLocalTracks(true);
 
@@ -92,7 +92,15 @@ export default function useLocalTracks() {
         }
       })
       .finally(() => setIsAcquiringLocalTracks(false));
-  }, [hasAudio, hasVideo, audioTrack, videoTrack, localAudioDevices, localVideoDevices]);
+  }, [
+    hasAudio,
+    hasVideo,
+    audioTrack,
+    videoTrack,
+    localAudioDevices,
+    localVideoDevices,
+    isAcquiringLocalTracks,
+  ]);
 
   const localTracks = [audioTrack, videoTrack].filter((track) => track !== undefined) as (
     | LocalAudioTrack

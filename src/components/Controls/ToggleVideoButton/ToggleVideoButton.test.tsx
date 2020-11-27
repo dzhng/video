@@ -46,9 +46,9 @@ describe('the ToggleVideoButton component', () => {
     const button = screen.getByRole('button');
     Date.now = () => 100000;
     fireEvent.click(button); // Should register
-    Date.now = () => 100100;
-    fireEvent.click(button); // Should be ignored
     Date.now = () => 100300;
+    fireEvent.click(button); // Should be ignored
+    Date.now = () => 100301;
     fireEvent.click(button); // Should register
     expect(mockFn).toHaveBeenCalledTimes(2);
   });

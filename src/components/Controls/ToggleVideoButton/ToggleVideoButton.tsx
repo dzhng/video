@@ -22,7 +22,7 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
   const lastClickTimeRef = useRef(0);
 
   const toggleVideo = useCallback(() => {
-    if (Date.now() - lastClickTimeRef.current > 200) {
+    if (Date.now() - lastClickTimeRef.current > 300) {
       lastClickTimeRef.current = Date.now();
       toggleVideoEnabled();
     }

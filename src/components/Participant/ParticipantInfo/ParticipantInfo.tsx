@@ -1,8 +1,8 @@
 import React from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import ScreenShare from '@material-ui/icons/ScreenShare';
-import VideocamOff from '@material-ui/icons/VideocamOff';
+import { Typography } from '@material-ui/core';
+import { ScreenShare, VideocamOff } from '@material-ui/icons';
 import {
   LocalAudioTrack,
   LocalVideoTrack,
@@ -17,7 +17,7 @@ import NetworkQualityLevel from '~/components/NetworkQualityLevel/NetworkQuality
 
 import usePublications from '~/hooks/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
-import useParticipantNetworkQualityLevel from '~/hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
+import useParticipantIsReconnecting from '~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import useTrack from '~/hooks/useTrack/useTrack';
 
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
@@ -62,6 +62,18 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       background: 'transparent',
     },
+    reconnectingContainer: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(40, 42, 43, 0.75)',
+      zIndex: 1,
+    },
     hideVideo: {
       background: 'black',
     },
@@ -97,7 +109,6 @@ export default function ParticipantInfo({
   const audioPublication = publications.find((p) => p.kind === 'audio');
   const videoPublication = publications.find((p) => p.trackName.includes('camera'));
 
-  const networkQualityLevel = useParticipantNetworkQualityLevel(participant);
   const isVideoEnabled = Boolean(videoPublication);
   const isScreenShareEnabled = publications.find((p) => p.trackName.includes('screen'));
 
@@ -106,7 +117,8 @@ export default function ParticipantInfo({
     videoTrack as LocalVideoTrack | RemoteVideoTrack,
   );
 
-  const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack;
+  const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
+  const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const classes = useStyles();
 
@@ -128,15 +140,20 @@ export default function ParticipantInfo({
             <ParticipantConnectionIndicator participant={participant} />
             {participant.identity}
           </h4>
-          <NetworkQualityLevel qualityLevel={networkQualityLevel} />
+          <NetworkQualityLevel participant={participant} />
         </div>
         <div>
-          <AudioLevelIndicator audioTrack={audioTrack} background="white" />
+          <AudioLevelIndicator audioTrack={audioTrack} />
           {!isVideoEnabled && <VideocamOff data-testid="camoff-icon" />}
           {isScreenShareEnabled && <ScreenShare data-testid="screenshare-icon" />}
           {isSelected && <PinIcon data-testid="pin-icon" />}
         </div>
       </div>
+      {isParticipantReconnecting && (
+        <div className={classes.reconnectingContainer}>
+          <Typography data-testid="reconnecting">Reconnecting...</Typography>
+        </div>
+      )}
       {isVideoSwitchedOff && <BandwidthWarning />}
       {children}
     </div>

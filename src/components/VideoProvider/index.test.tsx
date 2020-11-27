@@ -12,9 +12,17 @@ import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect
 
 const mockRoom = new EventEmitter() as Room;
 const mockOnDisconnect = jest.fn();
-jest.mock('./useRoom/useRoom', () => jest.fn(() => ({ room: mockRoom, isConnecting: false })));
+jest.mock('./useRoom/useRoom', () =>
+  jest.fn(() => ({ room: mockRoom, isConnecting: false, connect: () => {} })),
+);
 jest.mock('./useLocalTracks/useLocalTracks', () =>
-  jest.fn(() => ({ localTracks: [{ name: 'mockTrack' }], getLocalVideoTrack: jest.fn() })),
+  jest.fn(() => ({
+    localTracks: [{ name: 'mockTrack' }],
+    getLocalVideoTrack: () => {},
+    getLocalAudioTrack: () => {},
+    isAcquiringLocalTracks: true,
+    removeLocalVideoTrack: () => {},
+  })),
 );
 jest.mock('./useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors');
 jest.mock('./useHandleTrackPublicationFailed/useHandleTrackPublicationFailed');
@@ -33,14 +41,19 @@ describe('the VideoProvider component', () => {
       </VideoProvider>
     );
     const { result } = renderHook(useVideoContext, { wrapper });
-    expect(result.current).toEqual({
+    expect(result.current).toMatchObject({
       isConnecting: false,
       localTracks: [{ name: 'mockTrack' }],
       room: mockRoom,
+      connect: expect.any(Function),
       onError: expect.any(Function),
       onDisconnect: mockOnDisconnect,
       getLocalVideoTrack: expect.any(Function),
+      getLocalAudioTrack: expect.any(Function),
+      isAcquiringLocalTracks: true,
+      removeLocalVideoTrack: expect.any(Function),
     });
+
     expect(useRoom).toHaveBeenCalledWith([{ name: 'mockTrack' }], expect.any(Function), {
       dominantSpeaker: true,
     });
