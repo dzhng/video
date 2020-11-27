@@ -27,8 +27,9 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 if (process.env.NODE_ENV === 'test') {
-  db.useEmulator('localhost', 8080);
-  auth.useEmulator('http://localhost:9099');
+  // use optional chaining here as sometime they are mocked
+  db?.useEmulator?.('localhost', 8080);
+  auth?.useEmulator?.('http://localhost:9099');
 } else {
   // enable on non-testing version only
   db.enablePersistence({ synchronizeTabs: true }).catch(function (err) {

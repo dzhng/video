@@ -11,9 +11,11 @@ jest.mock('firebase/app', () => {
     signOut: jest.fn(() => Promise.resolve()),
   });
   mockAuth.GoogleAuthProvider = jest.fn(() => ({ addScope: jest.fn() }));
+
   return {
     auth: mockAuth,
     initializeApp: jest.fn(),
+    firestore: () => null,
   };
 });
 
