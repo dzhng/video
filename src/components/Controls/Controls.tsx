@@ -44,13 +44,13 @@ export default function Controls() {
   const showControls = isUserActive || roomState === 'disconnected';
 
   return (
-    <div className={clsx(classes.container, { showControls })}>
+    <div data-testid="container" className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={isReconnecting} />
       <ToggleVideoButton disabled={isReconnecting} />
       {roomState !== 'disconnected' && (
         <>
-          <ToggleScreenShareButton disabled={isReconnecting} />
-          <EndCallButton />
+          <ToggleScreenShareButton data-testid="screenshare-button" disabled={isReconnecting} />
+          <EndCallButton data-testid="endcall-button" />
         </>
       )}
     </div>

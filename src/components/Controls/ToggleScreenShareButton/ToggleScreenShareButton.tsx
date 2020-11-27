@@ -1,10 +1,8 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-import Fab from '@material-ui/core/Fab';
-import ScreenShare from '@material-ui/icons/ScreenShare';
-import StopScreenShare from '@material-ui/icons/StopScreenShare';
-import Tooltip from '@material-ui/core/Tooltip';
+import { ScreenShare, StopScreenShare } from '@material-ui/icons';
+import { Tooltip, Fab } from '@material-ui/core';
 
 import useScreenShareToggle from '~/hooks/useScreenShareToggle/useScreenShareToggle';
 import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
@@ -62,7 +60,11 @@ export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
         {/* The div element is needed because a disabled button will not emit hover events and we want to display
           a tooltip when screen sharing is disabled */}
         <Fab className={classes.fab} onClick={toggleScreenShare} disabled={isDisabled}>
-          {isScreenShared ? <StopScreenShare /> : <ScreenShare />}
+          {isScreenShared ? (
+            <StopScreenShare data-testid="stop-icon" />
+          ) : (
+            <ScreenShare data-testid="screenshare-icon" />
+          )}
         </Fab>
       </div>
     </Tooltip>

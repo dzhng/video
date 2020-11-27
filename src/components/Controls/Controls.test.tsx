@@ -1,11 +1,15 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { screen, render } from '@testing-library/react';
 
 import useRoomState from '~/hooks/useRoomState/useRoomState';
-import Controls from './Controls';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
+import Controls from './Controls';
 
 jest.mock('~/hooks/useRoomState/useRoomState');
+jest.mock('./EndCallButton/EndCallButton', () => () => null);
+jest.mock('./ToggleAudioButton/ToggleAudioButton', () => () => null);
+jest.mock('./ToggleVideoButton/ToggleVideoButton', () => () => null);
+jest.mock('./ToggleScreenShareButton/ToggleScreenShareButton', () => () => null);
 jest.mock('./useIsUserActive/useIsUserActive');
 
 const mockIsUserActive = useIsUserActive as jest.Mock<boolean>;
@@ -17,22 +21,23 @@ describe('the Controls component', () => {
 
     it('should have the "active" class', () => {
       mockUseRoomState.mockImplementation(() => 'disconnected');
-      const wrapper = shallow(<Controls />);
-      expect(wrapper.find('div').prop('className')).toContain('showControls');
+      render(<Controls />);
+      expect(screen.getByTestId('container').className).toContain('showControls');
     });
 
     it('should not render the ToggleScreenShare and EndCall buttons when not connected to a room', () => {
       mockUseRoomState.mockImplementation(() => 'disconnected');
-      const wrapper = shallow(<Controls />);
-      expect(wrapper.find('ToggleScreenShareButton').exists()).toBe(false);
-      expect(wrapper.find('EndCallButton').exists()).toBe(false);
+      render(<Controls />);
+      expect(screen.queryByTestId('screenshare-button')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('endcall-button')).not.toBeInTheDocument();
     });
 
     it('should render the ToggleScreenShare and EndCall buttons when connected to a room', () => {
       mockUseRoomState.mockImplementation(() => 'connected');
-      const wrapper = shallow(<Controls />);
-      expect(wrapper.find('ToggleScreenShareButton').exists()).toBe(true);
-      expect(wrapper.find('EndCallButton').exists()).toBe(true);
+      render(<Controls />);
+      screen.debug();
+      expect(screen.queryByTestId('screenshare-button')).toBeInTheDocument();
+      expect(screen.queryByTestId('endcall-button')).toBeInTheDocument();
     });
 
     it('should disable the ToggleAudio, ToggleVideo, and ToggleScreenShare buttons when reconnecting to a room', () => {

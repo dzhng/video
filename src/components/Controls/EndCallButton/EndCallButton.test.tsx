@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { screen, render, fireEvent } from '@testing-library/react';
 
 import EndCallButton from './EndCallButton';
 
@@ -8,8 +8,8 @@ jest.mock('~/hooks/useVideoContext/useVideoContext', () => () => ({ room: mockRo
 
 describe('End Call button', () => {
   it('should disconnect from the room when clicked', () => {
-    const wrapper = shallow(<EndCallButton />);
-    wrapper.simulate('click');
+    render(<EndCallButton />);
+    fireEvent.click(screen.getByRole('button'));
     expect(mockRoom.disconnect).toHaveBeenCalled();
   });
 });

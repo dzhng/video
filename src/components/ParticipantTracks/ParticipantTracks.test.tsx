@@ -1,7 +1,8 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import usePublications from '~/hooks/usePublications/usePublications';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import Publication from './Publication/Publication';
 import ParticipantTracks from './ParticipantTracks';
 
 jest.mock('~/hooks/usePublications/usePublications', () =>
@@ -11,24 +12,54 @@ jest.mock('~/hooks/usePublications/usePublications', () =>
   ]),
 );
 jest.mock('../../hooks/useVideoContext/useVideoContext');
+jest.mock('./Publication/Publication');
 
 const mockUsePublications = usePublications as jest.Mock<any>;
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
+const mockPublication = Publication as jest.Mock<any>;
+
+mockPublication.mockImplementation(() => null);
 
 describe('the ParticipantTracks component', () => {
   it('should render an array of publications', () => {
     mockUseVideoContext.mockImplementation(() => ({ room: {} }));
-    const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} />);
+    render(<ParticipantTracks participant={'mockParticipant' as any} />);
     expect(usePublications).toHaveBeenCalledWith('mockParticipant');
-    expect(wrapper).toMatchSnapshot();
+    expect(mockPublication).toBeCalledTimes(2);
+    expect(mockPublication).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        isLocal: false,
+        publication: { trackSid: 0, kind: 'video', trackName: '' },
+      }),
+      expect.anything(),
+    );
+    expect(mockPublication).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        isLocal: false,
+        publication: { trackSid: 1, kind: 'audio', trackName: '' },
+      }),
+      expect.anything(),
+    );
   });
 
   it('should render publications with "isLocal" set to true when the localParticipant is provided', () => {
     mockUseVideoContext.mockImplementation(() => ({
       room: { localParticipant: 'mockParticipant' },
     }));
-    const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} />);
-    expect(wrapper.find('Publication').first().prop('isLocal')).toEqual(true);
+    render(<ParticipantTracks participant={'mockParticipant' as any} />);
+    expect(mockPublication).toBeCalledTimes(2);
+    expect(mockPublication).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ isLocal: true }),
+      expect.anything(),
+    );
+    expect(mockPublication).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ isLocal: true }),
+      expect.anything(),
+    );
   });
 
   it('should filter out any screen share publications', () => {
@@ -37,13 +68,19 @@ describe('the ParticipantTracks component', () => {
       { trackName: 'screen', trackSid: 0, kind: 'video' },
       { trackName: 'camera-123456', trackSid: 1, kind: 'video' },
     ]);
-    const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} />);
-    expect(wrapper.find('Publication').length).toBe(1);
-    expect(wrapper.find('Publication').at(0).prop('publication')).toEqual({
-      trackName: 'camera-123456',
-      trackSid: 1,
-      kind: 'video',
-    });
+    render(<ParticipantTracks participant={'mockParticipant' as any} />);
+    expect(mockPublication).toBeCalledTimes(1);
+    expect(mockPublication).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        publication: {
+          trackName: 'camera-123456',
+          trackSid: 1,
+          kind: 'video',
+        },
+      }),
+      expect.anything(),
+    );
   });
 
   describe('with enableScreenShare prop', () => {
@@ -53,15 +90,19 @@ describe('the ParticipantTracks component', () => {
         { trackName: 'screen', trackSid: 0, kind: 'video' },
         { trackName: 'camera-123456', trackSid: 1, kind: 'video' },
       ]);
-      const wrapper = shallow(
-        <ParticipantTracks participant={'mockParticipant' as any} enableScreenShare />,
+      render(<ParticipantTracks participant={'mockParticipant' as any} enableScreenShare />);
+      expect(mockPublication).toBeCalledTimes(1);
+      expect(mockPublication).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          publication: {
+            trackName: 'screen',
+            trackSid: 0,
+            kind: 'video',
+          },
+        }),
+        expect.anything(),
       );
-      expect(wrapper.find('Publication').length).toBe(1);
-      expect(wrapper.find('Publication').at(0).prop('publication')).toEqual({
-        trackName: 'screen',
-        trackSid: 0,
-        kind: 'video',
-      });
     });
 
     it('should render camera publications when a screen share publication is absent', () => {
@@ -69,15 +110,19 @@ describe('the ParticipantTracks component', () => {
       mockUsePublications.mockImplementation(() => [
         { trackName: 'camera-123456', trackSid: 1, kind: 'video' },
       ]);
-      const wrapper = shallow(
-        <ParticipantTracks participant={'mockParticipant' as any} enableScreenShare />,
+      render(<ParticipantTracks participant={'mockParticipant' as any} enableScreenShare />);
+      expect(mockPublication).toBeCalledTimes(1);
+      expect(mockPublication).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          publication: {
+            trackName: 'camera-123456',
+            trackSid: 1,
+            kind: 'video',
+          },
+        }),
+        expect.anything(),
       );
-      expect(wrapper.find('Publication').length).toBe(1);
-      expect(wrapper.find('Publication').at(0).prop('publication')).toEqual({
-        trackName: 'camera-123456',
-        trackSid: 1,
-        kind: 'video',
-      });
     });
   });
 });

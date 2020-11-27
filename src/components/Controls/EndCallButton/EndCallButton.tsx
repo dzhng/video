@@ -2,8 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import CallEnd from '@material-ui/icons/CallEnd';
-import Fab from '@material-ui/core/Fab';
-import Tooltip from '@material-ui/core/Tooltip';
+import { Fab, Tooltip } from '@material-ui/core';
 
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 
@@ -15,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function EndCallButton() {
+export default function EndCallButton(props: object) {
   const classes = useStyles();
   const { room } = useVideoContext();
 
@@ -26,7 +25,7 @@ export default function EndCallButton() {
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
-      <Fab className={classes.fab} color="primary">
+      <Fab className={classes.fab} color="primary" {...props}>
         <CallEnd />
       </Fab>
     </Tooltip>

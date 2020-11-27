@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import React from 'react';
-import { shallow } from 'enzyme';
+import { screen, render, fireEvent } from '@testing-library/react';
 import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
 import useScreenShareToggle from '~/hooks/useScreenShareToggle/useScreenShareToggle';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
@@ -30,41 +30,56 @@ Object.defineProperty(navigator, 'mediaDevices', {
 });
 
 describe('the ToggleScreenShareButton component', () => {
-  it('should render correctly when screenSharing is allowed', () => {
+  beforeEach(() => mockUseScreenShareParticipant.mockImplementation(() => null));
+
+  it('should render correctly when screenSharing is allowed', async () => {
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
-    const wrapper = shallow(<ToggleScreenShareButton />);
-    expect(wrapper.find('ScreenShareIcon').exists()).toBe(true);
-    expect(wrapper.prop('title')).toBe(SCREEN_SHARE_TEXT);
+    render(<ToggleScreenShareButton />);
+    fireEvent.mouseOver(screen.getByRole('button'));
+
+    expect(screen.queryByTestId('screenshare-icon')).toBeInTheDocument();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    expect(screen.getByRole('tooltip').textContent).toBe(SCREEN_SHARE_TEXT);
   });
 
-  it('should render correctly when the user is sharing their screen', () => {
+  it('should render correctly when the user is sharing their screen', async () => {
     mockUseScreenShareToggle.mockImplementation(() => [true, () => {}]);
-    const wrapper = shallow(<ToggleScreenShareButton />);
-    expect(wrapper.find('StopScreenShareIcon').exists()).toBe(true);
-    expect(wrapper.prop('title')).toBe(STOP_SCREEN_SHARE_TEXT);
+    render(<ToggleScreenShareButton />);
+    fireEvent.mouseOver(screen.getByRole('button'));
+
+    expect(screen.queryByTestId('stop-icon')).toBeInTheDocument();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    expect(screen.getByRole('tooltip').textContent).toBe(STOP_SCREEN_SHARE_TEXT);
   });
 
-  it('should render correctly when another user is sharing their screen', () => {
+  it('should render correctly when another user is sharing their screen', async () => {
     mockUseScreenShareParticipant.mockImplementation(() => 'mockParticipant');
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
-    const wrapper = shallow(<ToggleScreenShareButton />);
-    expect(wrapper.find('WithStyles(ForwardRef(Fab))').prop('disabled')).toBe(true);
-    expect(wrapper.prop('title')).toBe(SHARE_IN_PROGRESS_TEXT);
+    render(<ToggleScreenShareButton />);
+    fireEvent.mouseOver(screen.getByRole('button'));
+
+    expect(screen.getByRole('button')).toBeDisabled();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    expect(screen.getByRole('tooltip').textContent).toBe(SHARE_IN_PROGRESS_TEXT);
   });
 
   it('should call the correct toggle function when clicked', () => {
     const mockFn = jest.fn();
     mockUseScreenShareToggle.mockImplementation(() => [false, mockFn]);
-    const wrapper = shallow(<ToggleScreenShareButton />);
-    wrapper.find('WithStyles(ForwardRef(Fab))').simulate('click');
+    render(<ToggleScreenShareButton />);
+    fireEvent.click(screen.getByRole('button'));
+
     expect(mockFn).toHaveBeenCalled();
   });
 
-  it('should render the screenshare button with the correct messaging if screensharing is not supported', () => {
+  it('should render the screenshare button with the correct messaging if screensharing is not supported', async () => {
     Object.defineProperty(navigator, 'mediaDevices', { value: { getDisplayMedia: undefined } });
-    const wrapper = shallow(<ToggleScreenShareButton />);
-    expect(wrapper.find('ScreenShareIcon').exists()).toBe(true);
-    expect(wrapper.find('WithStyles(ForwardRef(Fab))').prop('disabled')).toBe(true);
-    expect(wrapper.prop('title')).toBe(SHARE_NOT_SUPPORTED_TEXT);
+    render(<ToggleScreenShareButton />);
+    fireEvent.mouseOver(screen.getByRole('button'));
+
+    expect(screen.queryByTestId('screenshare-icon')).toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeDisabled();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    expect(screen.getByRole('tooltip').textContent).toBe(SHARE_NOT_SUPPORTED_TEXT);
   });
 });
