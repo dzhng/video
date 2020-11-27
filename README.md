@@ -58,6 +58,8 @@ This will open the Cypress test runner. When it's open, select a test file to ru
 
 Of the two popular testing methods for DOM, we're going to follow the strategy defined by testing-library, which tests closer to final rendered output, and not a component's internal states and methods. This is a good [summary of why](https://kentcdodds.com/blog/why-i-never-use-shallow-rendering#calling-methods-in-react-components).
 
+Last thing, familiarize yourself with [this](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library) before writing any tests. It is important that we keep the approach and style of all our tests as consistent as possible, just as much as the actual codebase itself.
+
 ## Package Management
 
 Make sure to keep all dependencies updated. Read release notes whenever there is a major update to access compatibility / learn about new features.

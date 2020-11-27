@@ -25,12 +25,10 @@ const mockVideoContext = {
 };
 
 describe('the FlipCameraButton', () => {
-  beforeEach(jest.clearAllMocks);
-
   it('should render a button when a video track exists and has the facingMode setting', () => {
     mockUserVideoContext.mockImplementation(() => mockVideoContext);
     const { container } = render(<FlipCameraButton />);
-    expect(container.querySelector('button')).toBeTruthy();
+    expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('not render a button when the video track does not have the facingMode setting', () => {
@@ -46,7 +44,7 @@ describe('the FlipCameraButton', () => {
       ],
     }));
     const { container } = render(<FlipCameraButton />);
-    expect(container.querySelector('button')).not.toBeTruthy();
+    expect(container.querySelector('button')).not.toBeInTheDocument();
   });
 
   it('should not render a button when no video track is present', () => {
@@ -55,7 +53,7 @@ describe('the FlipCameraButton', () => {
       localTracks: [],
     }));
     const { container } = render(<FlipCameraButton />);
-    expect(container.querySelector('button')).not.toBeTruthy();
+    expect(container.querySelector('button')).not.toBeInTheDocument();
   });
 
   it('should call track.replace() with the correct facing mode when clicked', async () => {

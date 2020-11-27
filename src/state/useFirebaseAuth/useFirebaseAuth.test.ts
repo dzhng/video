@@ -23,8 +23,6 @@ jest.mock('firebase/auth');
 window.fetch = jest.fn(() => Promise.resolve({ text: () => 'mockVideoToken' }));
 
 describe('the useFirebaseAuth hook', () => {
-  afterEach(jest.clearAllMocks);
-
   it('should set isAuthReady to true and set a user on load', async () => {
     const { result, waitForNextUpdate } = renderHook(() => useFirebaseAuth());
     expect(result.current.isAuthReady).toBe(false);

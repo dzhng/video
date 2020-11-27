@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import { useRouter } from 'next/router';
 
 import useRoomState from '~/hooks/useRoomState/useRoomState';
@@ -30,15 +30,13 @@ mockUseAppState.mockImplementation(() => ({ user: {} }));
 mockUseRouter.mockImplementation(() => ({ query: { slug: 'test' } }));
 
 describe('the MenuBar component', () => {
-  beforeEach(jest.clearAllMocks);
-
   it('should populate the Room name from the URL', () => {
     mockedUseRoomState.mockImplementation(() => 'connected');
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
     );
 
-    const { getByText } = render(<MenuBar />);
-    expect(getByText('test')).toBeTruthy();
+    render(<MenuBar />);
+    expect(screen.queryByText('test')).toBeInTheDocument();
   });
 });

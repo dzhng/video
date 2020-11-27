@@ -14,7 +14,6 @@ describe('the useFullScreenToggle hook', () => {
   beforeEach(() => {
     // @ts-ignore readonly property
     fscreen.fullscreenElement = null;
-    jest.clearAllMocks();
   });
 
   it('should return an array with a boolean and a toggle function', () => {
@@ -71,6 +70,9 @@ describe('the useFullScreenToggle hook', () => {
     const { unmount } = renderHook(useFullScreenToggle);
     expect(fscreen.addEventListener).toHaveBeenCalledWith('fullscreenchange', expect.any(Function));
     unmount();
-    expect(fscreen.removeEventListener).toHaveBeenCalledWith('fullscreenchange', expect.any(Function));
+    expect(fscreen.removeEventListener).toHaveBeenCalledWith(
+      'fullscreenchange',
+      expect.any(Function),
+    );
   });
 });

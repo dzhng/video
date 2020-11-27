@@ -17,7 +17,6 @@ const mockUseIsTrackSwitchedOff = useIsTrackSwitchedOff as jest.Mock<any>;
 const mockUseTrack = useTrack as jest.Mock<any>;
 
 describe('the MainParticipantInfo component', () => {
-  beforeEach(jest.clearAllMocks);
   it('should render a VideoCamOff icon when no camera tracks are published', () => {
     mockUsePublications.mockImplementation(() => []);
     render(
@@ -25,7 +24,7 @@ describe('the MainParticipantInfo component', () => {
         mock children
       </MainParticipantInfo>,
     );
-    expect(screen.queryByTestId('camoff-icon')).toBeTruthy();
+    expect(screen.queryByTestId('camoff-icon')).toBeInTheDocument();
   });
 
   it('should not render a VideoCamOff icon when a camera track is published', () => {
@@ -35,7 +34,7 @@ describe('the MainParticipantInfo component', () => {
         mock children
       </MainParticipantInfo>,
     );
-    expect(screen.queryByTestId('camoff-icon')).toBeNull();
+    expect(screen.queryByTestId('camoff-icon')).not.toBeInTheDocument();
   });
 
   it('should add isVideoSwitchedOff class to container div when video is switched off', () => {

@@ -14,7 +14,6 @@ const mockReplace = jest.fn();
 
 describe('login page', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     mockUseRouter.mockImplementation(() => ({ replace: mockReplace }));
   });
 

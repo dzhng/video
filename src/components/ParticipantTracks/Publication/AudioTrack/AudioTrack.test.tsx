@@ -14,8 +14,6 @@ const mockUseAppState = useAppState as jest.Mock<any>;
 mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 
 describe('the AudioTrack component', () => {
-  beforeEach(jest.clearAllMocks);
-
   it('should add an audio element to the DOM when the component mounts', () => {
     render(<AudioTrack track={mockTrack} />);
     expect(mockTrack.attach).toHaveBeenCalled();

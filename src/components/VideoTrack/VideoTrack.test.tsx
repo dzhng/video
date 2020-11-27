@@ -12,8 +12,6 @@ describe('the VideoTrack component', () => {
     mediaStreamTrack: { getSettings: () => ({}) },
   } as any;
 
-  afterEach(jest.clearAllMocks);
-
   it('should call the attach method when the component mounts', () => {
     render(<VideoTrack track={mockTrack} />);
     expect(mockTrack.attach).toHaveBeenCalledWith(expect.any(window.HTMLVideoElement));

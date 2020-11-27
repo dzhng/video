@@ -30,8 +30,6 @@ describe('the AttachVisibilityHandler component', () => {
       utils.isMobile = true;
     });
 
-    beforeEach(jest.clearAllMocks);
-
     it('should add a visibilitychange event handler to the document', () => {
       jest.spyOn(document, 'addEventListener');
       render(<AttachVisibilityHandler />);

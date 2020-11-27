@@ -12,8 +12,6 @@ navigator.mediaDevices = {
 };
 
 describe('the useDevices hook', () => {
-  afterEach(jest.clearAllMocks);
-
   it('should correctly return a list of devices', async () => {
     // @ts-ignore
     navigator.mediaDevices.enumerateDevices = () => Promise.resolve(mockDevices);

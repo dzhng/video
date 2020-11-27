@@ -15,7 +15,6 @@ const mockPush = jest.fn();
 
 describe.skip('index page', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     mockUseAppState.mockImplementation(() => ({ isAuthReady: true, user: {} }));
     mockUseRouter.mockImplementation(() => ({ push: mockPush }));
   });

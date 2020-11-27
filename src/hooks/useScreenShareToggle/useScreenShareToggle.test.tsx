@@ -23,7 +23,7 @@ const mockMediaDevices = {
     getDisplayMedia: jest.fn(() =>
       Promise.resolve({
         getTracks: jest.fn(() => [mockTrack]),
-      })
+      }),
     ),
   } as any,
 };
@@ -33,7 +33,6 @@ Object.defineProperty(navigator, 'mediaDevices', mockMediaDevices);
 describe('the useScreenShareToggle hook', () => {
   beforeEach(() => {
     delete mockTrack.onended;
-    jest.clearAllMocks();
   });
 
   it('should return a default value of false', () => {
@@ -47,7 +46,10 @@ describe('the useScreenShareToggle hook', () => {
       result.current[1]();
       await waitForNextUpdate();
       expect(navigator.mediaDevices.getDisplayMedia).toHaveBeenCalled();
-      expect(mockLocalParticipant.publishTrack).toHaveBeenCalledWith(mockTrack, { name: 'screen', priority: 'low' });
+      expect(mockLocalParticipant.publishTrack).toHaveBeenCalledWith(mockTrack, {
+        name: 'screen',
+        priority: 'low',
+      });
       expect(result.current[0]).toEqual(true);
     });
 

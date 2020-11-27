@@ -13,7 +13,6 @@ window.fetch = jest.fn(() => Promise.resolve({ text: () => 'mockVideoToken' }));
 const wrapper: React.FC = ({ children }) => <AppStateProvider>{children}</AppStateProvider>;
 
 describe('the useAppState hook', () => {
-  beforeEach(jest.clearAllMocks);
   beforeEach(() => (process.env = {} as any));
 
   it('should set an error', () => {

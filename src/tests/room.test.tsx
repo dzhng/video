@@ -31,8 +31,6 @@ const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 
 describe('room page', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-
     mockUseRouter.mockImplementation(() => ({ query: { slug: 'test-room' } }));
     mockUseAppState.mockImplementation(() => ({ getToken: mockGetToken }));
   });

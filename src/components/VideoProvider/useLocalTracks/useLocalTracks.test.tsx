@@ -5,8 +5,6 @@ import { EventEmitter } from 'events';
 import useLocalTracks from './useLocalTracks';
 
 describe('the useLocalTracks hook', () => {
-  afterEach(jest.clearAllMocks);
-
   it('should return an array of tracks and two functions', async () => {
     const { result, waitForNextUpdate } = renderHook(useLocalTracks);
     expect(result.current.localTracks).toEqual([]);
