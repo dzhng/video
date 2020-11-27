@@ -36,6 +36,7 @@ export default function AudioInputList() {
             <Select
               onChange={(e) => replaceTrack(e.target.value as string)}
               value={localAudioInputDeviceId || ''}
+              data-testid="select-menu"
             >
               {audioInputDevices.map((device) => (
                 <MenuItem value={device.deviceId} key={device.deviceId}>
@@ -47,7 +48,9 @@ export default function AudioInputList() {
         ) : (
           <>
             <Typography variant="h6">Audio Input:</Typography>
-            <Typography>{localAudioTrack?.mediaStreamTrack.label || 'No Local Audio'}</Typography>
+            <Typography data-testid="default-track-name">
+              {localAudioTrack?.mediaStreamTrack.label || 'No Local Audio'}
+            </Typography>
           </>
         )}
       </div>

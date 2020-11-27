@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render, fireEvent, waitFor } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import useParticipantIsReconnecting from '~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator';
 
@@ -15,9 +15,7 @@ describe('the ParticipantConnectionIndicator component', () => {
       render(<ParticipantConnectionIndicator participant={{} as any} />);
       fireEvent.mouseOver(screen.getByTestId('indicator'));
 
-      await waitFor(() => {
-        expect(screen.getByRole('tooltip')).toBeInTheDocument();
-      });
+      expect(await screen.findByRole('tooltip')).toBeInTheDocument();
 
       expect(screen.getByRole('tooltip').textContent).toBe('Participant is reconnecting');
     });
@@ -35,9 +33,7 @@ describe('the ParticipantConnectionIndicator component', () => {
       render(<ParticipantConnectionIndicator participant={{} as any} />);
       fireEvent.mouseOver(screen.getByTestId('indicator'));
 
-      await waitFor(() => {
-        expect(screen.getByRole('tooltip')).toBeInTheDocument();
-      });
+      expect(await screen.findByRole('tooltip')).toBeInTheDocument();
 
       expect(screen.getByRole('tooltip').textContent).toBe('Participant is connected');
     });

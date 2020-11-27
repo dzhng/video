@@ -1,6 +1,6 @@
 import React from 'react';
-import Participant from '../Participant/Participant';
 import { styled } from '@material-ui/core/styles';
+import Participant from '~/components/Participant/Participant';
 import useParticipants from '~/hooks/useParticipants/useParticipants';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';

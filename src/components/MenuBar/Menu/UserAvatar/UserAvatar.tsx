@@ -19,13 +19,21 @@ export function getInitials(name: string) {
     .toUpperCase();
 }
 
-export default function UserAvatar({ user }: { user: StateContextType['user'] }) {
+export default function UserAvatar({
+  user,
+  ...otherProps
+}: {
+  user: StateContextType['user'];
+  [other: string]: any;
+}) {
   const classes = useStyles();
   const { displayName, photoURL } = user!;
 
   return photoURL ? (
-    <Avatar src={photoURL} />
+    <Avatar {...otherProps} src={photoURL} />
   ) : (
-    <Avatar className={classes.red}>{displayName ? getInitials(displayName) : <Person />}</Avatar>
+    <Avatar {...otherProps} className={classes.red}>
+      {displayName ? getInitials(displayName) : <Person data-testid="person-icon" />}
+    </Avatar>
   );
 }

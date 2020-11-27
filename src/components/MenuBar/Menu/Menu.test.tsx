@@ -1,10 +1,7 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import MoreIcon from '@material-ui/icons/MoreVert';
-import { MenuItem } from '@material-ui/core';
+import { screen, render, fireEvent, within } from '@testing-library/react';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import UserAvatar from './UserAvatar/UserAvatar';
 import Menu from './Menu';
 
 jest.mock('~/state');
@@ -24,8 +21,8 @@ describe('the Menu component', () => {
   describe('when there is a user', () => {
     it('should render the UserAvatar component', () => {
       mockUseAppState.mockImplementation(() => ({ user: {}, signOut: jest.fn() }));
-      const wrapper = shallow(<Menu />);
-      expect(wrapper.exists(UserAvatar)).toBe(true);
+      render(<Menu />);
+      expect(screen.queryByTestId('avatar')).toBeInTheDocument();
     });
 
     it('should include the logout button in the menu', () => {
@@ -33,8 +30,10 @@ describe('the Menu component', () => {
         user: { displayName: 'Test User' },
         signOut: jest.fn(),
       }));
-      const wrapper = shallow(<Menu />);
-      expect(wrapper.contains('Logout')).toBe(true);
+      render(<Menu />);
+      fireEvent.click(screen.getByTestId('avatar'));
+      const menu = screen.getByTestId('menu');
+      expect(within(menu).queryByRole('menuitem', { name: /logout/i })).toBeInTheDocument();
     });
 
     it('should display the user name in the menu', () => {
@@ -42,8 +41,10 @@ describe('the Menu component', () => {
         user: { displayName: 'Test User' },
         signOut: jest.fn(),
       }));
-      const wrapper = shallow(<Menu />);
-      expect(wrapper.contains('Test User')).toBe(true);
+      render(<Menu />);
+      fireEvent.click(screen.getByTestId('avatar'));
+      const menu = screen.getByTestId('menu');
+      expect(within(menu).queryByRole('menuitem', { name: 'Test User' })).toBeInTheDocument();
     });
 
     it('should disconnect from the room and stop all tracks on signout', () => {
@@ -52,8 +53,12 @@ describe('the Menu component', () => {
         user: { displayName: 'Test User' },
         signOut: mockSignOut,
       }));
-      const wrapper = shallow(<Menu />);
-      wrapper.find(MenuItem).last().simulate('click');
+      render(<Menu />);
+      fireEvent.click(screen.getByTestId('avatar'));
+      const menu = screen.getByTestId('menu');
+      const logout = within(menu).getByRole('menuitem', { name: /logout/i });
+      fireEvent.click(logout);
+
       expect(mockDisconnect).toHaveBeenCalled();
       expect(mockTrack.stop).toHaveBeenCalled();
       expect(mockSignOut).toHaveBeenCalled();
@@ -63,8 +68,8 @@ describe('the Menu component', () => {
   describe('when there is not a user', () => {
     it('should render the "More" icon', () => {
       mockUseAppState.mockImplementation(() => ({ user: null, signOut: jest.fn() }));
-      const wrapper = shallow(<Menu />);
-      expect(wrapper.exists(MoreIcon)).toBe(true);
+      render(<Menu />);
+      expect(screen.queryByTestId('more-icon')).toBeInTheDocument();
     });
 
     it('should not display the user name in the menu', () => {
@@ -72,14 +77,18 @@ describe('the Menu component', () => {
         user: { displayName: undefined },
         signOut: jest.fn(),
       }));
-      const wrapper = shallow(<Menu />);
-      expect(wrapper.find(MenuItem).find({ disabled: true }).exists()).toBe(false);
+      render(<Menu />);
+      fireEvent.click(screen.getByTestId('avatar'));
+      const menu = screen.getByTestId('menu');
+      expect(within(menu).queryByTestId('name-item')).not.toBeInTheDocument();
     });
 
     it('should not include the logout button in the menu', () => {
       mockUseAppState.mockImplementation(() => ({ user: null }));
-      const wrapper = shallow(<Menu />);
-      expect(wrapper.contains('Logout')).toBe(false);
+      render(<Menu />);
+      fireEvent.click(screen.getByTestId('more-icon'));
+      const menu = screen.getByTestId('menu');
+      expect(within(menu).queryByRole('menuitem', { name: /logout/i })).not.toBeInTheDocument();
     });
   });
 });

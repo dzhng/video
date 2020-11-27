@@ -1,23 +1,21 @@
 import React from 'react';
-import { Avatar } from '@material-ui/core';
-import { shallow } from 'enzyme';
-import Person from '@material-ui/icons/Person';
+import { screen, render, within } from '@testing-library/react';
 import UserAvatar, { getInitials } from './UserAvatar';
 
 describe('the UserAvatar component', () => {
   it('should display the users initials when there is a displayName property', () => {
-    const wrapper = shallow(<UserAvatar user={{ displayName: 'Test User' } as any} />);
-    expect(wrapper.find(Avatar).text()).toBe('TU');
+    render(<UserAvatar data-testid="avatar" user={{ displayName: 'Test User' } as any} />);
+    expect(screen.getByTestId('avatar').textContent).toBe('TU');
   });
 
   it('should display the Person icon when there is no displayName or photoURL properties', () => {
-    const wrapper = shallow(<UserAvatar user={{} as any} />);
-    expect(wrapper.find(Person).exists()).toBe(true);
+    render(<UserAvatar user={{} as any} />);
+    expect(screen.getByTestId('person-icon')).toBeInTheDocument();
   });
 
   it('should display the users photo when the photoURL property exists', () => {
-    const wrapper = shallow(<UserAvatar user={{ photoURL: 'testURL' } as any} />);
-    expect(wrapper.find(Avatar).find({ src: 'testURL' }).exists()).toBe(true);
+    render(<UserAvatar data-testid="avatar" user={{ photoURL: 'testURL' } as any} />);
+    expect(within(screen.getByTestId('avatar')).getByRole('img')).toHaveAttribute('src', 'testURL');
   });
 
   describe('getInitials function', () => {

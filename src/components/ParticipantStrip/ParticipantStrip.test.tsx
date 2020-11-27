@@ -1,18 +1,22 @@
-import { EventEmitter } from 'events';
 import React from 'react';
-import ParticipantStrip from './ParticipantStrip';
-import { shallow } from 'enzyme';
+import { EventEmitter } from 'events';
+import { render } from '@testing-library/react';
 import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import Participant from '~/components/Participant/Participant';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import ParticipantStrip from './ParticipantStrip';
 
 jest.mock('~/hooks/useVideoContext/useVideoContext');
 jest.mock('~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant');
+jest.mock('~/components/Participant/Participant');
 const mockedVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseSelectedParticipant = useSelectedParticipant as jest.Mock<any>;
+const mockParticipant = Participant as jest.Mock<any>;
+
+mockParticipant.mockImplementation(() => null);
+mockUseSelectedParticipant.mockImplementation(() => [null, () => {}]);
 
 describe('the ParticipantStrip component', () => {
-  mockUseSelectedParticipant.mockImplementation(() => [null, () => {}]);
-
   it('should correctly render ParticipantInfo components', () => {
     const mockRoom: any = new EventEmitter();
     mockRoom.participants = new Map([
@@ -21,8 +25,23 @@ describe('the ParticipantStrip component', () => {
     ]);
     mockRoom.localParticipant = 'localParticipant';
     mockedVideoContext.mockImplementation(() => ({ room: mockRoom }));
-    const wrapper = shallow(<ParticipantStrip />);
-    expect(wrapper).toMatchSnapshot();
+    render(<ParticipantStrip />);
+    expect(mockParticipant).toBeCalledTimes(3);
+    expect(mockParticipant).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ isSelected: false, participant: 'localParticipant' }),
+      expect.anything(),
+    );
+    expect(mockParticipant).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ isSelected: false, participant: { sid: 0 } }),
+      expect.anything(),
+    );
+    expect(mockParticipant).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({ isSelected: false, participant: { sid: 1 } }),
+      expect.anything(),
+    );
   });
 
   it('should add the isSelected prop to the local participant when it is selected', () => {
@@ -34,21 +53,29 @@ describe('the ParticipantStrip component', () => {
     ]);
     mockRoom.localParticipant = 'localParticipant';
     mockedVideoContext.mockImplementation(() => ({ room: mockRoom }));
-    const wrapper = shallow(<ParticipantStrip />);
-    expect(wrapper.find('Participant').at(0).prop('isSelected')).toBe(true);
+    render(<ParticipantStrip />);
+    expect(mockParticipant).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ isSelected: true, participant: 'localParticipant' }),
+      expect.anything(),
+    );
   });
 
   it('should add the isSelected prop to the first remote participant when it is selected', () => {
-    const mockParticipant = { sid: 0 };
-    mockUseSelectedParticipant.mockImplementation(() => [mockParticipant, () => {}]);
+    const newParticipant = { sid: 0 };
+    mockUseSelectedParticipant.mockImplementation(() => [newParticipant, () => {}]);
     const mockRoom: any = new EventEmitter();
     mockRoom.participants = new Map([
-      [0, mockParticipant],
+      [0, newParticipant],
       [1, { sid: 1 }],
     ]);
     mockRoom.localParticipant = 'localParticipant';
     mockedVideoContext.mockImplementation(() => ({ room: mockRoom }));
-    const wrapper = shallow(<ParticipantStrip />);
-    expect(wrapper.find('Participant').at(1).prop('isSelected')).toBe(true);
+    render(<ParticipantStrip />);
+    expect(mockParticipant).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ isSelected: true, participant: newParticipant }),
+      expect.anything(),
+    );
   });
 });

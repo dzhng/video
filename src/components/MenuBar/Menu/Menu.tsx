@@ -29,14 +29,23 @@ export default function Menu() {
   return (
     <div ref={anchorRef}>
       <IconButton color="inherit" onClick={() => setMenuOpen((state) => !state)}>
-        {user ? <UserAvatar user={user} /> : <MoreIcon />}
+        {user ? (
+          <UserAvatar data-testid="avatar" user={user} />
+        ) : (
+          <MoreIcon data-testid="more-icon" />
+        )}
       </IconButton>
       <MenuContainer
         open={menuOpen}
         onClose={() => setMenuOpen((state) => !state)}
         anchorEl={anchorRef.current}
+        data-testid="menu"
       >
-        {user?.displayName && <MenuItem disabled>{user.displayName}</MenuItem>}
+        {user?.displayName && (
+          <MenuItem data-testid="name-item" disabled>
+            {user.displayName}
+          </MenuItem>
+        )}
         <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
         <MenuItem onClick={() => setSettingsOpen(true)}>Settings</MenuItem>
         {user && <MenuItem onClick={handleSignOut}>Logout</MenuItem>}
