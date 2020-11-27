@@ -8,7 +8,7 @@ import MainParticipantInfo from './MainParticipantInfo/MainParticipantInfo';
 import MainParticipant from './MainParticipant';
 
 jest.mock('~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant');
-jest.mock('~/hooks/useMainSpeaker/useMainSpeaker');
+jest.mock('~/hooks/useMainParticipant/useMainParticipant');
 jest.mock('~/hooks/useScreenShareParticipant/useScreenShareParticipant');
 jest.mock('~/components/ParticipantTracks/ParticipantTracks');
 jest.mock('./MainParticipantInfo/MainParticipantInfo');

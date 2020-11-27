@@ -1,7 +1,7 @@
 import React from 'react';
 import ParticipantTracks from '~/components/ParticipantTracks/ParticipantTracks';
 import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
-import useMainParticipant from '~/hooks/useMainSpeaker/useMainParticipant';
+import useMainParticipant from '~/hooks/useMainParticipant/useMainParticipant';
 import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
 import MainParticipantInfo from './MainParticipantInfo/MainParticipantInfo';
 
