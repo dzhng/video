@@ -49,8 +49,8 @@ export default function Controls() {
       <ToggleVideoButton disabled={isReconnecting} />
       {roomState !== 'disconnected' && (
         <>
-          <ToggleScreenShareButton data-testid="screenshare-button" disabled={isReconnecting} />
-          <EndCallButton data-testid="endcall-button" />
+          <ToggleScreenShareButton disabled={isReconnecting} />
+          <EndCallButton />
         </>
       )}
     </div>

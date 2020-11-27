@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { screen, render, fireEvent } from '@testing-library/react';
 import useLocalVideoToggle from '~/hooks/useLocalVideoToggle/useLocalVideoToggle';
 
 import ToggleVideoButton from './ToggleVideoButton';
@@ -9,41 +9,47 @@ jest.mock('~/hooks/useLocalVideoToggle/useLocalVideoToggle');
 const mockUseLocalVideoToggle = useLocalVideoToggle as jest.Mock<any>;
 
 describe('the ToggleVideoButton component', () => {
-  it('should render correctly when video is enabled', () => {
+  it('should render correctly when video is enabled', async () => {
     mockUseLocalVideoToggle.mockImplementation(() => [true, () => {}]);
-    const wrapper = shallow(<ToggleVideoButton />);
-    expect(wrapper.find('VideocamIcon').exists()).toBe(true);
-    expect(wrapper.find('VideocamOffIcon').exists()).toBe(false);
-    expect(wrapper.prop('title')).toBe('Mute Video');
+    render(<ToggleVideoButton />);
+    fireEvent.mouseOver(screen.getByRole('button'));
+
+    expect(screen.queryByTestId('video-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('videooff-icon')).not.toBeInTheDocument();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    expect(screen.getByRole('tooltip').textContent).toBe('Mute Video');
   });
 
-  it('should render correctly when video is disabled', () => {
+  it('should render correctly when video is disabled', async () => {
     mockUseLocalVideoToggle.mockImplementation(() => [false, () => {}]);
-    const wrapper = shallow(<ToggleVideoButton />);
-    expect(wrapper.find('VideocamIcon').exists()).toBe(false);
-    expect(wrapper.find('VideocamOffIcon').exists()).toBe(true);
-    expect(wrapper.prop('title')).toBe('Unmute Video');
+    render(<ToggleVideoButton />);
+    fireEvent.mouseOver(screen.getByRole('button'));
+
+    expect(screen.queryByTestId('video-icon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('videooff-icon')).toBeInTheDocument();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+    expect(screen.getByRole('tooltip').textContent).toBe('Unmute Video');
   });
 
   it('should call the correct toggle function when clicked', () => {
     const mockFn = jest.fn();
     mockUseLocalVideoToggle.mockImplementation(() => [false, mockFn]);
-    const wrapper = shallow(<ToggleVideoButton />);
-    wrapper.find('WithStyles(ForwardRef(Fab))').simulate('click');
+    render(<ToggleVideoButton />);
+    fireEvent.click(screen.getByRole('button'));
     expect(mockFn).toHaveBeenCalled();
   });
 
   it('should throttle the toggle function to 200ms', () => {
     const mockFn = jest.fn();
     mockUseLocalVideoToggle.mockImplementation(() => [false, mockFn]);
-    const wrapper = shallow(<ToggleVideoButton />);
-    const button = wrapper.find('WithStyles(ForwardRef(Fab))');
+    render(<ToggleVideoButton />);
+    const button = screen.getByRole('button');
     Date.now = () => 100000;
-    button.simulate('click'); // Should register
+    fireEvent.click(button); // Should register
     Date.now = () => 100100;
-    button.simulate('click'); // Should be ignored
+    fireEvent.click(button); // Should be ignored
     Date.now = () => 100300;
-    button.simulate('click'); // Should register
+    fireEvent.click(button); // Should register
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
 });

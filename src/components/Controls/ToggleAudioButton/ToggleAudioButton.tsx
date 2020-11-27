@@ -1,10 +1,8 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-import Fab from '@material-ui/core/Fab';
-import Mic from '@material-ui/icons/Mic';
-import MicOff from '@material-ui/icons/MicOff';
-import Tooltip from '@material-ui/core/Tooltip';
+import { Fab, Tooltip } from '@material-ui/core';
+import { Mic, MicOff } from '@material-ui/icons';
 
 import useLocalAudioToggle from '~/hooks/useLocalAudioToggle/useLocalAudioToggle';
 
@@ -32,7 +30,7 @@ export default function ToggleAudioButton(props: { disabled?: boolean }) {
         disabled={props.disabled}
         data-cy-audio-toggle
       >
-        {isAudioEnabled ? <Mic /> : <MicOff />}
+        {isAudioEnabled ? <Mic data-testid="mic-icon" /> : <MicOff data-testid="micoff-icon" />}
       </Fab>
     </Tooltip>
   );

@@ -35,7 +35,11 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
       PopperProps={{ disablePortal: true }}
     >
       <Fab className={classes.fab} onClick={toggleVideo} disabled={props.disabled}>
-        {isVideoEnabled ? <Videocam /> : <VideocamOff />}
+        {isVideoEnabled ? (
+          <Videocam data-testid="video-icon" />
+        ) : (
+          <VideocamOff data-testid="videooff-icon" />
+        )}
       </Fab>
     </Tooltip>
   );
