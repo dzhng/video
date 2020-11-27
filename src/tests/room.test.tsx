@@ -21,6 +21,7 @@ jest.mock('~/components/VideoProvider', () => ({
   VideoProvider: ({ children }: { children: React.ReactChildren }) => children,
 }));
 jest.mock('~/components/PrivateRoute/withPrivateRoute', () => (component: any) => component);
+jest.mock('~/components/Room/Room', () => () => null);
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;

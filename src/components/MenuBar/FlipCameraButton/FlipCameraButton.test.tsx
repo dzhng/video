@@ -8,6 +8,7 @@ import FlipCameraButton from './FlipCameraButton';
 
 jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
 jest.mock('~/hooks/useVideoContext/useVideoContext');
+jest.mock('~/hooks/deviceHooks/deviceHooks');
 const mockUserVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseVideoInputDevices = useVideoInputDevices as jest.Mock<any>;
 

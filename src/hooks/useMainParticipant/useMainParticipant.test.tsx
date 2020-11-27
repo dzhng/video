@@ -4,7 +4,7 @@ import useSelectedParticipant from '~/components/VideoProvider/useSelectedPartic
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import useMainParticipant from './useMainParticipant';
 
-jest.mock('~/useVideoContext/useVideoContext');
+jest.mock('~/hooks/useVideoContext/useVideoContext');
 jest.mock('~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant');
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 const mockSelectedParticipant = useSelectedParticipant as jest.Mock<any>;

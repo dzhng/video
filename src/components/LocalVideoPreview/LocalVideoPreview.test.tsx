@@ -6,6 +6,7 @@ import LocalVideoPreview from './LocalVideoPreview';
 
 jest.mock('~/hooks/useVideoContext/useVideoContext');
 jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
+jest.mock('~/hooks/useVideoTrackDimensions/useVideoTrackDimensions');
 
 const mockedVideoContext = useVideoContext as jest.Mock<IVideoContext>;
 
