@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { screen, render } from '@testing-library/react';
 import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import usePublications from '~/hooks/usePublications/usePublications';
 import useTrack from '~/hooks/useTrack/useTrack';
@@ -20,46 +20,42 @@ describe('the MainParticipantInfo component', () => {
   beforeEach(jest.clearAllMocks);
   it('should render a VideoCamOff icon when no camera tracks are published', () => {
     mockUsePublications.mockImplementation(() => []);
-    const wrapper = shallow(
+    render(
       <MainParticipantInfo participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </MainParticipantInfo>,
     );
-    expect(wrapper.find('VideocamOffIcon').exists()).toEqual(true);
+    expect(screen.queryByTestId('camoff-icon')).toBeTruthy();
   });
 
   it('should not render a VideoCamOff icon when a camera track is published', () => {
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
-    const wrapper = shallow(
+    render(
       <MainParticipantInfo participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </MainParticipantInfo>,
     );
-    expect(wrapper.find('VideocamOffIcon').exists()).toEqual(false);
+    expect(screen.queryByTestId('camoff-icon')).toBeNull();
   });
 
   it('should add isVideoSwitchedOff class to container div when video is switched off', () => {
     mockUseIsTrackSwitchedOff.mockImplementation(() => true);
-    const wrapper = shallow(
+    render(
       <MainParticipantInfo participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </MainParticipantInfo>,
     );
-    expect(wrapper.find('.makeStyles-container-1').prop('className')).toContain(
-      'isVideoSwitchedOff',
-    );
+    expect(screen.getByTestId('container').className).toContain('isVideoSwitchedOff');
   });
 
   it('should not add isVideoSwitchedOff class to container div when video is not switched off', () => {
     mockUseIsTrackSwitchedOff.mockImplementation(() => false);
-    const wrapper = shallow(
+    render(
       <MainParticipantInfo participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </MainParticipantInfo>,
     );
-    expect(wrapper.find('.makeStyles-container-1').prop('className')).not.toContain(
-      'isVideoSwitchedOff',
-    );
+    expect(screen.getByTestId('container').className).not.toContain('isVideoSwitchedOff');
   });
 
   it('should use the switchOff status of the screen share track when it is available', () => {
@@ -67,7 +63,7 @@ describe('the MainParticipantInfo component', () => {
       { trackName: 'screen' },
       { trackName: 'camera-123456' },
     ]);
-    shallow(
+    render(
       <MainParticipantInfo participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </MainParticipantInfo>,
@@ -78,7 +74,7 @@ describe('the MainParticipantInfo component', () => {
   it('should use the switchOff status of the camera track when the screen share track is not available', () => {
     mockUseIsTrackSwitchedOff.mockImplementation(() => false);
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
-    shallow(
+    render(
       <MainParticipantInfo participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </MainParticipantInfo>,

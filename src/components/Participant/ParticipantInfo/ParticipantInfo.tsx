@@ -1,7 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import PinIcon from './PinIcon/PinIcon';
 import ScreenShare from '@material-ui/icons/ScreenShare';
 import VideocamOff from '@material-ui/icons/VideocamOff';
 import {
@@ -22,6 +21,7 @@ import useParticipantNetworkQualityLevel from '~/hooks/useParticipantNetworkQual
 import useTrack from '~/hooks/useTrack/useTrack';
 
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
+import PinIcon from './PinIcon/PinIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -117,8 +117,12 @@ export default function ParticipantInfo({
       })}
       onClick={onClick}
       data-cy-participant={participant.identity}
+      data-testid="container"
     >
-      <div className={clsx(classes.infoContainer, { [classes.hideVideo]: !isVideoEnabled })}>
+      <div
+        className={clsx(classes.infoContainer, { [classes.hideVideo]: !isVideoEnabled })}
+        data-testid="info-container"
+      >
         <div className={classes.infoRow}>
           <h4 className={classes.identity}>
             <ParticipantConnectionIndicator participant={participant} />
@@ -128,9 +132,9 @@ export default function ParticipantInfo({
         </div>
         <div>
           <AudioLevelIndicator audioTrack={audioTrack} background="white" />
-          {!isVideoEnabled && <VideocamOff />}
-          {isScreenShareEnabled && <ScreenShare />}
-          {isSelected && <PinIcon />}
+          {!isVideoEnabled && <VideocamOff data-testid="camoff-icon" />}
+          {isScreenShareEnabled && <ScreenShare data-testid="screenshare-icon" />}
+          {isSelected && <PinIcon data-testid="pin-icon" />}
         </div>
       </div>
       {isVideoSwitchedOff && <BandwidthWarning />}

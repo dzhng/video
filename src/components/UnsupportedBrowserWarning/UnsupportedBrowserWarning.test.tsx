@@ -1,29 +1,32 @@
 import React from 'react';
 import Video from 'twilio-video';
-import { shallow } from 'enzyme';
+import { screen, render } from '@testing-library/react';
 
 import UnsupportedBrowserWarning from './UnsupportedBrowserWarning';
+
+const IsSupported = () => <span data-testid="is-supported">Is supported</span>;
 
 describe('the UnsupportedBrowserWarning component', () => {
   it('should render correctly when isSupported is false', () => {
     // @ts-ignore
     Video.isSupported = false;
-    const wrapper = shallow(
+    render(
       <UnsupportedBrowserWarning>
-        <span>Is supported</span>
+        <IsSupported />
       </UnsupportedBrowserWarning>,
     );
-    expect(wrapper).toMatchSnapshot();
+    expect(screen.queryByTestId('is-supported')).toBeNull();
+    expect(screen.queryByTestId('container')).toBeTruthy();
   });
 
   it('should render children when isSupported is true', () => {
     // @ts-ignore
     Video.isSupported = true;
-    const wrapper = shallow(
+    render(
       <UnsupportedBrowserWarning>
-        <span>Is supported</span>
+        <IsSupported />
       </UnsupportedBrowserWarning>,
     );
-    expect(wrapper.text()).toBe('Is supported');
+    expect(screen.queryByTestId('is-supported')).toBeTruthy();
   });
 });

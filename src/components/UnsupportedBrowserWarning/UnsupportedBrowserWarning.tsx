@@ -20,7 +20,7 @@ export default function UnsupportedBrowser({ children }: { children: React.React
 
   if (!Video.isSupported) {
     return (
-      <Container>
+      <Container data-testid="container">
         <Grid container justify="center" className={classes.container}>
           <Grid item xs={12} sm={6}>
             <Paper className={classes.paper}>

@@ -28,6 +28,7 @@ export default function ReconnectingNotification() {
     <Snackbar
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       open={roomState === 'reconnecting'}
+      data-testid="container"
     >
       <SnackbarContent
         className={classes.snackbar}

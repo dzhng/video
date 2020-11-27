@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { screen, render } from '@testing-library/react';
 import { useRouter } from 'next/router';
 import { useAppState } from '~/state';
 import PrivateRoute from './PrivateRoute';
@@ -9,7 +9,7 @@ jest.mock('~/state');
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseRouter = useRouter as jest.Mock<any>;
-const MockComponent = () => <h1>test</h1>;
+const MockComponent = () => <h1 data-testid="mock">test</h1>;
 
 const mockPush = jest.fn();
 mockUseRouter.mockImplementation(() => ({ push: mockPush }));
@@ -19,35 +19,35 @@ describe('the PrivateRoute component', () => {
     describe('when isAuthReady is true', () => {
       it('should redirect to /login when there is no user', () => {
         mockUseAppState.mockImplementation(() => ({ user: false, isAuthReady: true }));
-        const wrapper = mount(
+        render(
           <PrivateRoute>
             <MockComponent />
           </PrivateRoute>,
         );
         expect(mockPush).toHaveBeenCalledWith('/login');
-        expect(wrapper.exists(MockComponent)).toBe(false);
+        expect(screen.queryByTestId('mock')).toBeNull();
       });
 
       it('should render children when there is a user', () => {
         mockUseAppState.mockImplementation(() => ({ user: {}, isAuthReady: true }));
-        const wrapper = mount(
+        render(
           <PrivateRoute>
             <MockComponent />
           </PrivateRoute>,
         );
-        expect(wrapper.exists(MockComponent)).toBe(true);
+        expect(screen.queryByTestId('mock')).toBeTruthy();
       });
     });
 
     describe('when isAuthReady is false', () => {
       it('should not render children', () => {
         mockUseAppState.mockImplementation(() => ({ user: false, isAuthReady: false }));
-        const wrapper = mount(
+        render(
           <PrivateRoute>
             <MockComponent />
           </PrivateRoute>,
         );
-        expect(wrapper.exists(MockComponent)).toBe(false);
+        expect(screen.queryByTestId('mock')).toBeNull();
       });
     });
   });
