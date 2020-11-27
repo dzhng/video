@@ -1,14 +1,15 @@
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
 import VideoTrack from '~/components/VideoTrack/VideoTrack';
-import { useVideoInputDevices } from '../deviceHooks/deviceHooks';
+import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '~/constants';
 import VideoInputList from './VideoInputList';
 
 jest.mock('~/hooks/useVideoContext/useVideoContext');
 jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
+jest.mock('~/hooks/deviceHooks/deviceHooks');
 jest.mock('~/components/VideoTrack/VideoTrack');
-jest.mock('../deviceHooks/deviceHooks');
 
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseVideoInputDevices = useVideoInputDevices as jest.Mock<any>;
@@ -26,12 +27,14 @@ const mockLocalTrack = {
     label: 'mock local video track',
     getSettings: () => ({ deviceId: '123' }),
   },
+  restart: jest.fn(),
 };
 
 mockVideoTrack.mockImplementation(() => null);
 
 describe('the VideoInputList component', () => {
   beforeEach(() => {
+    window.localStorage.clear();
     mockUseVideoInputDevices.mockImplementation(() => []);
     mockUseVideoContext.mockImplementation(() => ({
       room: {},
@@ -82,5 +85,23 @@ describe('the VideoInputList component', () => {
     render(<VideoInputList />);
     expect(screen.queryByTestId('select-menu')).toBeInTheDocument();
     expect(screen.queryByTestId('default-track-name')).not.toBeInTheDocument();
+  });
+
+  it('should save the deviceId in localStorage when the video input device is changed', () => {
+    mockUseVideoInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
+    render(<VideoInputList />);
+    expect(window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)).toBe(undefined);
+    fireEvent.change(screen.getByTestId('select-menu'), { target: { value: 'mockDeviceID' } });
+    expect(window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)).toBe('mockDeviceID');
+  });
+
+  it('should call track.restart with the new deviceId when the video input device is changed', () => {
+    mockUseVideoInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
+    render(<VideoInputList />);
+    fireEvent.change(screen.getByTestId('select-menu'), { target: { value: 'mockDeviceID' } });
+    expect(mockLocalTrack.restart).toHaveBeenCalledWith({
+      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+      deviceId: { exact: 'mockDeviceID' },
+    });
   });
 });

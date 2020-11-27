@@ -2,12 +2,14 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
 import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
 import FlipCameraButton from './FlipCameraButton';
 
 jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
 jest.mock('~/hooks/useVideoContext/useVideoContext');
 const mockUserVideoContext = useVideoContext as jest.Mock<any>;
+const mockUseVideoInputDevices = useVideoInputDevices as jest.Mock<any>;
 
 const mockStreamSettings = { facingMode: 'user' };
 
@@ -25,6 +27,10 @@ const mockVideoContext = {
 };
 
 describe('the FlipCameraButton', () => {
+  beforeEach(() => {
+    mockUseVideoInputDevices.mockImplementation(() => ['mockCamera1', 'mockCamera2']);
+  });
+
   it('should render a button when a video track exists and has the facingMode setting', () => {
     mockUserVideoContext.mockImplementation(() => mockVideoContext);
     const { container } = render(<FlipCameraButton />);
@@ -54,6 +60,13 @@ describe('the FlipCameraButton', () => {
     }));
     const { container } = render(<FlipCameraButton />);
     expect(container.querySelector('button')).not.toBeInTheDocument();
+  });
+
+  it('should not render when there are less than two video input devices', () => {
+    mockUserVideoContext.mockImplementation(() => mockVideoContext);
+    mockUseVideoInputDevices.mockImplementation(() => ['mockCamera1']);
+    const { container } = render(<FlipCameraButton />);
+    expect(container.querySelector('button')).not.toBeTruthy();
   });
 
   it('should call track.replace() with the correct facing mode when clicked', async () => {

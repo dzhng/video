@@ -1,38 +1,41 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
-import useIsTrackEnabled from '~/hooks/useIsTrackEnabled/useIsTrackEnabled';
-import AudioLevelIndicator from './AudioLevelIndicator';
 
-jest.mock('~/hooks/useIsTrackEnabled/useIsTrackEnabled');
+import AudioLevelIndicator from './AudioLevelIndicator';
+import MicOff from '@material-ui/icons/MicOff';
+import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
+
+jest.mock('../../hooks/useIsTrackEnabled/useIsTrackEnabled');
 
 const mockUseIsTrackEnabled = useIsTrackEnabled as jest.Mock<boolean>;
 
 describe('the AudioLevelIndicator component', () => {
-  it('should render a MicOff icon when the audioTrack is not enabled', () => {
-    mockUseIsTrackEnabled.mockImplementationOnce(() => false);
-    render(<AudioLevelIndicator />);
-    expect(screen.queryByTestId('micoff-icon')).toBeInTheDocument();
+  describe('when the audioTrack is not enabled', () => {
+    mockUseIsTrackEnabled.mockImplementation(() => false);
+    render(<AudioLevelIndicator color="#123456" />);
+
+    it('should render a mute icon', () => {
+      expect(screen.queryByTestId('mute-icon')).toBeInTheDocument();
+    });
+
+    it('should change the color of the mute icon when color prop is used', () => {
+      const icon = screen.getByTestId('mute-icon');
+      expect(icon).toHaveAttribute('fill', '#123456');
+    });
   });
 
-  it('should not render a MicOff icon when the audioTrack is enabled', () => {
-    mockUseIsTrackEnabled.mockImplementationOnce(() => true);
-    render(<AudioLevelIndicator />);
-    expect(screen.queryByTestId('micoff-icon')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('svg')).toBeInTheDocument();
-  });
+  describe('when the audioTrack is enabled', () => {
+    mockUseIsTrackEnabled.mockImplementation(() => true);
+    render(<AudioLevelIndicator color="#123456" />);
 
-  it('should change the size of the indicator when the size prop is used', () => {
-    mockUseIsTrackEnabled.mockImplementationOnce(() => true);
-    render(<AudioLevelIndicator size={35} />);
-    const svg = screen.getByTestId('svg');
-    expect(svg).toHaveAttribute('width', '35px');
-    expect(svg).toHaveAttribute('height', '35px');
-  });
+    it('should render the audio level icon', () => {
+      expect(screen.queryByTestId('mute-icon')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('audio-icon')).toBeInTheDocument();
+    });
 
-  it('should change the background of the indicator when background prop is used', () => {
-    mockUseIsTrackEnabled.mockImplementationOnce(() => true);
-    render(<AudioLevelIndicator background="#123456" />);
-    const svg = screen.getByTestId('background');
-    expect(svg).toHaveAttribute('fill', '#123456');
+    it('should change the color of the audio level icon when color prop is used', () => {
+      const icon = screen.getByTestId('audio-icon');
+      expect(icon).toHaveAttribute('fill', '#123456');
+    });
   });
 });

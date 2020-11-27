@@ -1,14 +1,33 @@
 import React from 'react';
 import { screen, render, fireEvent } from '@testing-library/react';
 import useLocalAudioToggle from '~/hooks/useLocalAudioToggle/useLocalAudioToggle';
+import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 
 import ToggleAudioButton from './ToggleAudioButton';
 
 jest.mock('~/hooks/useLocalAudioToggle/useLocalAudioToggle');
+jest.mock('~/hooks/useVideoContext/useVideoContext');
 
 const mockUseLocalAudioToggle = useLocalAudioToggle as jest.Mock<any>;
+const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 
 describe('the ToggleAudioButton component', () => {
+  beforeEach(() => {
+    mockUseLocalAudioToggle.mockImplementation(() => [true, () => {}]);
+    mockUseVideoContext.mockImplementation(() => ({ localTracks: [{ kind: 'audio' }] }));
+  });
+
+  it('should show button if there is a local audio track', () => {
+    render(<ToggleAudioButton />);
+    expect(screen.getByRole('button')).not.toBeDisabled();
+  });
+
+  it('should disable button if there is no local audio track', () => {
+    mockUseVideoContext.mockImplementation(() => ({ localTracks: [] }));
+    render(<ToggleAudioButton />);
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
+
   it('should render correctly when audio is enabled', async () => {
     mockUseLocalAudioToggle.mockImplementation(() => [true, () => {}]);
     render(<ToggleAudioButton />);

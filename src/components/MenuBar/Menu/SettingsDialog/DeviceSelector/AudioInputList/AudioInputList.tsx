@@ -1,10 +1,12 @@
 import React from 'react';
+import { LocalAudioTrack } from 'twilio-video';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import useMediaStreamTrack from '~/hooks/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import LocalAudioLevelIndicator from '~/components/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
-import { useAudioInputDevices } from '../deviceHooks/deviceHooks';
+import { useAudioInputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import { SELECTED_AUDIO_INPUT_KEY } from '~/constants';
 
 const useStyles = makeStyles({
   container: {
@@ -19,11 +21,12 @@ export default function AudioInputList() {
   const audioInputDevices = useAudioInputDevices();
   const { localTracks } = useVideoContext();
 
-  const localAudioTrack = localTracks.find((track) => track.kind === 'audio');
+  const localAudioTrack = localTracks.find((track) => track.kind === 'audio') as LocalAudioTrack;
   const mediaStreamTrack = useMediaStreamTrack(localAudioTrack);
   const localAudioInputDeviceId = mediaStreamTrack?.getSettings().deviceId;
 
   function replaceTrack(newDeviceId: string) {
+    window.localStorage.setItem(SELECTED_AUDIO_INPUT_KEY, newDeviceId);
     localAudioTrack?.restart({ deviceId: { exact: newDeviceId } });
   }
 

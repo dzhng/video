@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import useMainSpeaker from '~/hooks/useMainSpeaker/useMainSpeaker';
+import useMainParticipant from '~/hooks/useMainParticipant/useMainParticipant';
 import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
 import ParticipantTracks from '~/components/ParticipantTracks/ParticipantTracks';
 import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
@@ -13,7 +13,7 @@ jest.mock('~/hooks/useScreenShareParticipant/useScreenShareParticipant');
 jest.mock('~/components/ParticipantTracks/ParticipantTracks');
 jest.mock('./MainParticipantInfo/MainParticipantInfo');
 
-const mockUseMainSpeaker = useMainSpeaker as jest.Mock<any>;
+const mockUseMainParticipant = useMainParticipant as jest.Mock<any>;
 const mockUseSelectedParticipant = useSelectedParticipant as jest.Mock<any>;
 const mockUseScreenShareParticipant = useScreenShareParticipant as jest.Mock<any>;
 const mockParticipantTracks = ParticipantTracks as jest.Mock<any>;
@@ -25,7 +25,7 @@ mockMainParticipantInfo.mockImplementation(({ children }) => children);
 describe('the MainParticipant component', () => {
   it('should show main participant info with correct data', () => {
     const mockParticipant = {};
-    mockUseMainSpeaker.mockImplementationOnce(() => mockParticipant);
+    mockUseMainParticipant.mockImplementationOnce(() => mockParticipant);
     mockUseSelectedParticipant.mockImplementationOnce(() => [mockParticipant]);
     mockUseScreenShareParticipant.mockImplementationOnce(() => ({}));
     render(<MainParticipant />);
@@ -37,7 +37,7 @@ describe('the MainParticipant component', () => {
 
   it('should set the videoPriority to high when the main participant is the selected participant', () => {
     const mockParticipant = {};
-    mockUseMainSpeaker.mockImplementationOnce(() => mockParticipant);
+    mockUseMainParticipant.mockImplementationOnce(() => mockParticipant);
     mockUseSelectedParticipant.mockImplementationOnce(() => [mockParticipant]);
     mockUseScreenShareParticipant.mockImplementationOnce(() => ({}));
     render(<MainParticipant />);
@@ -49,7 +49,7 @@ describe('the MainParticipant component', () => {
 
   it('should set the videoPriority to high when the main participant is sharing their screen', () => {
     const mockParticipant = {};
-    mockUseMainSpeaker.mockImplementationOnce(() => mockParticipant);
+    mockUseMainParticipant.mockImplementationOnce(() => mockParticipant);
     mockUseSelectedParticipant.mockImplementationOnce(() => [{}]);
     mockUseScreenShareParticipant.mockImplementationOnce(() => mockParticipant);
     render(<MainParticipant />);
@@ -61,7 +61,7 @@ describe('the MainParticipant component', () => {
 
   it('should set the videoPriority to null when the main participant is not the selected participant and they are not sharing their screen', () => {
     const mockParticipant = {};
-    mockUseMainSpeaker.mockImplementationOnce(() => mockParticipant);
+    mockUseMainParticipant.mockImplementationOnce(() => mockParticipant);
     mockUseSelectedParticipant.mockImplementationOnce(() => [{}]);
     mockUseScreenShareParticipant.mockImplementationOnce(() => ({}));
     render(<MainParticipant />);

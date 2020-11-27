@@ -35,6 +35,7 @@ export interface IVideoContext {
   getLocalAudioTrack: (deviceId?: string) => Promise<LocalAudioTrack>;
   isAcquiringLocalTracks: boolean;
   removeLocalVideoTrack: () => void;
+  getAudioAndVideoTracks: () => Promise<void>;
 }
 
 export const VideoContext = createContext<IVideoContext>(null!);
@@ -63,6 +64,7 @@ export function VideoProvider({
     getLocalAudioTrack,
     isAcquiringLocalTracks,
     removeLocalVideoTrack,
+    getAudioAndVideoTracks,
   } = useLocalTracks();
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
@@ -84,6 +86,7 @@ export function VideoProvider({
         connect,
         isAcquiringLocalTracks,
         removeLocalVideoTrack,
+        getAudioAndVideoTracks,
       }}
     >
       <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>

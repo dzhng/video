@@ -1,12 +1,12 @@
 import React from 'react';
 import ParticipantTracks from '~/components/ParticipantTracks/ParticipantTracks';
 import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
-import useMainSpeaker from '~/hooks/useMainSpeaker/useMainSpeaker';
+import useMainParticipant from '~/hooks/useMainSpeaker/useMainParticipant';
 import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
 import MainParticipantInfo from './MainParticipantInfo/MainParticipantInfo';
 
 export default function MainParticipant() {
-  const mainParticipant = useMainSpeaker();
+  const mainParticipant = useMainParticipant();
   const [selectedParticipant] = useSelectedParticipant();
   const screenShareParticipant = useScreenShareParticipant();
 

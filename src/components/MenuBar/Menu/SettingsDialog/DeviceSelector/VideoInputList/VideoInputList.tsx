@@ -2,11 +2,11 @@ import React from 'react';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
 import { LocalVideoTrack } from 'twilio-video';
 import { makeStyles } from '@material-ui/core/styles';
-import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
+import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '~/constants';
 import VideoTrack from '~/components/VideoTrack/VideoTrack';
 import useMediaStreamTrack from '~/hooks/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import { useVideoInputDevices } from '../deviceHooks/deviceHooks';
+import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
 
 const useStyles = makeStyles({
   preview: {
@@ -25,6 +25,7 @@ export default function VideoInputList() {
   const localVideoInputDeviceId = mediaStreamTrack?.getSettings().deviceId;
 
   function replaceTrack(newDeviceId: string) {
+    window.localStorage.setItem(SELECTED_VIDEO_INPUT_KEY, newDeviceId);
     localVideoTrack.restart({
       ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
       deviceId: { exact: newDeviceId },

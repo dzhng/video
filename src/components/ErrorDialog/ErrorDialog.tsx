@@ -24,7 +24,7 @@ export default function ErrorDialog({ dismissError, error }: PropsWithChildren<E
       <DialogTitle>ERROR</DialogTitle>
       <DialogContent>
         <DialogContentText data-testid="content-text">{enhancedMessage}</DialogContentText>
-        {code && (
+        {Boolean(code) && (
           <pre>
             <code data-testid="code">Error Code: {code}</code>
           </pre>
