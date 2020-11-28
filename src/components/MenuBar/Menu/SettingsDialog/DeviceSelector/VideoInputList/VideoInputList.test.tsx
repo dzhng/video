@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
 import VideoTrack from '~/components/VideoTrack/VideoTrack';
@@ -16,16 +17,21 @@ const mockUseVideoInputDevices = useVideoInputDevices as jest.Mock<any>;
 const mockVideoTrack = VideoTrack as jest.Mock<any>;
 const mockGetLocalVideotrack = jest.fn(() => Promise.resolve);
 
-const mockDevice = {
-  deviceId: 'mockDeviceID',
-  label: 'mock device',
+const mockDevice1 = {
+  deviceId: 'mockDeviceID_1',
+  label: 'mock device 1',
+};
+
+const mockDevice2 = {
+  deviceId: 'mockDeviceID_2',
+  label: 'mock device 2',
 };
 
 const mockLocalTrack = {
   kind: 'video',
   mediaStreamTrack: {
     label: 'mock local video track',
-    getSettings: () => ({ deviceId: 'mockDeviceID' }),
+    getSettings: () => ({ deviceId: 'mockDeviceID_1' }),
   },
   restart: jest.fn(),
 };
@@ -63,14 +69,14 @@ describe('the VideoInputList component', () => {
   });
 
   it('should not display a Select menu and instead display the name of the local video track', () => {
-    mockUseVideoInputDevices.mockImplementation(() => [mockDevice]);
+    mockUseVideoInputDevices.mockImplementation(() => [mockDevice1]);
     render(<VideoInputList />);
     expect(screen.queryByTestId('select-menu')).not.toBeInTheDocument();
     expect(screen.getByTestId('default-track-name').textContent).toBe('mock local video track');
   });
 
   it('should display "No Local Video" when there is no local video track', () => {
-    mockUseVideoInputDevices.mockImplementation(() => [mockDevice]);
+    mockUseVideoInputDevices.mockImplementation(() => [mockDevice1]);
     mockUseVideoContext.mockImplementationOnce(() => ({
       room: {},
       getLocalVideoTrack: mockGetLocalVideotrack,
@@ -81,33 +87,39 @@ describe('the VideoInputList component', () => {
   });
 
   it('should render a Select menu when there are multiple video input devices', () => {
-    mockUseVideoInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
+    mockUseVideoInputDevices.mockImplementation(() => [mockDevice1, mockDevice2]);
     render(<VideoInputList />);
     expect(screen.queryByTestId('select-menu')).toBeInTheDocument();
     expect(screen.queryByTestId('default-track-name')).not.toBeInTheDocument();
   });
 
-  it.skip('should save the deviceId in localStorage when the video input device is changed', async () => {
-    mockUseVideoInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
+  it('should save the deviceId in localStorage when the video input device is changed', async () => {
+    mockUseVideoInputDevices.mockImplementation(() => [mockDevice1, mockDevice2]);
     render(<VideoInputList />);
     expect(window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)).toBe(undefined);
 
-    fireEvent.click(screen.getByTestId('select-menu'));
-    const item = await screen.findByText('mock device');
+    const item = screen.getByRole('button');
     fireEvent.click(item);
-    expect(window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)).toBe('mockDeviceID');
+
+    const option = screen.getByRole('option', { name: 'mock device 2' });
+    fireEvent.click(option);
+
+    expect(window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)).toBe('mockDeviceID_2');
   });
 
-  it.skip('should call track.restart with the new deviceId when the video input device is changed', async () => {
-    mockUseVideoInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
+  it('should call track.restart with the new deviceId when the video input device is changed', async () => {
+    mockUseVideoInputDevices.mockImplementation(() => [mockDevice1, mockDevice2]);
     render(<VideoInputList />);
-    fireEvent.click(screen.getByRole('button'));
-    const item = await screen.findByText('mock device');
+
+    const item = screen.getByRole('button');
     fireEvent.click(item);
+
+    const option = screen.getByRole('option', { name: 'mock device 2' });
+    fireEvent.click(option);
 
     expect(mockLocalTrack.restart).toHaveBeenCalledWith({
       ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-      deviceId: { exact: 'mockDeviceID' },
+      deviceId: { exact: 'mockDeviceID_2' },
     });
   });
 });

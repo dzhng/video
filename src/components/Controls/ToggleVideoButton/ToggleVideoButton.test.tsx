@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 import useLocalVideoToggle from '~/hooks/useLocalVideoToggle/useLocalVideoToggle';
 
 import ToggleVideoButton from './ToggleVideoButton';
@@ -12,7 +13,7 @@ describe('the ToggleVideoButton component', () => {
   it('should render correctly when video is enabled', async () => {
     mockUseLocalVideoToggle.mockImplementation(() => [true, () => {}]);
     render(<ToggleVideoButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    fireEvent.hover(screen.getByRole('button'));
 
     expect(screen.queryByTestId('video-icon')).toBeInTheDocument();
     expect(screen.queryByTestId('videooff-icon')).not.toBeInTheDocument();
@@ -23,7 +24,7 @@ describe('the ToggleVideoButton component', () => {
   it('should render correctly when video is disabled', async () => {
     mockUseLocalVideoToggle.mockImplementation(() => [false, () => {}]);
     render(<ToggleVideoButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    fireEvent.hover(screen.getByRole('button'));
 
     expect(screen.queryByTestId('video-icon')).not.toBeInTheDocument();
     expect(screen.queryByTestId('videooff-icon')).toBeInTheDocument();

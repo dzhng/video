@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
 import useScreenShareToggle from '~/hooks/useScreenShareToggle/useScreenShareToggle';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
@@ -35,7 +36,7 @@ describe('the ToggleScreenShareButton component', () => {
   it('should render correctly when screenSharing is allowed', async () => {
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
     render(<ToggleScreenShareButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    fireEvent.hover(screen.getByRole('button'));
 
     expect(screen.queryByTestId('screenshare-icon')).toBeInTheDocument();
     expect(await screen.findByRole('tooltip')).toBeInTheDocument();
@@ -45,7 +46,7 @@ describe('the ToggleScreenShareButton component', () => {
   it('should render correctly when the user is sharing their screen', async () => {
     mockUseScreenShareToggle.mockImplementation(() => [true, () => {}]);
     render(<ToggleScreenShareButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    fireEvent.hover(screen.getByRole('button'));
 
     expect(screen.queryByTestId('stop-icon')).toBeInTheDocument();
     expect(await screen.findByRole('tooltip')).toBeInTheDocument();
@@ -56,7 +57,8 @@ describe('the ToggleScreenShareButton component', () => {
     mockUseScreenShareParticipant.mockImplementation(() => 'mockParticipant');
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
     render(<ToggleScreenShareButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    // get hover-div instead since disabled button don't trigger hover events
+    fireEvent.hover(screen.getByTestId('hover-div'));
 
     expect(screen.getByRole('button')).toBeDisabled();
     expect(await screen.findByRole('tooltip')).toBeInTheDocument();
@@ -74,8 +76,10 @@ describe('the ToggleScreenShareButton component', () => {
 
   it('should render the screenshare button with the correct messaging if screensharing is not supported', async () => {
     Object.defineProperty(navigator, 'mediaDevices', { value: { getDisplayMedia: undefined } });
+    mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
     render(<ToggleScreenShareButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    // get hover-div instead since disabled button don't trigger hover events
+    fireEvent.hover(screen.getByTestId('hover-div'));
 
     expect(screen.queryByTestId('screenshare-icon')).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();

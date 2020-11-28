@@ -54,11 +54,21 @@ Run end to end tests with
 
 This will open the Cypress test runner. When it's open, select a test file to run.
 
-### Approach: testing-library vs enzyme
+## Testing Approach
+
+### testing-library vs enzyme
 
 Of the two popular testing methods for DOM, we're going to follow the strategy defined by testing-library, which tests closer to final rendered output, and not a component's internal states and methods. This is a good [summary of why](https://kentcdodds.com/blog/why-i-never-use-shallow-rendering#calling-methods-in-react-components).
 
 Last thing, familiarize yourself with [this](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library) before writing any tests. It is important that we keep the approach and style of all our tests as consistent as possible, just as much as the actual codebase itself.
+
+### Best Practices
+
+Generally, we should use snapshots as least as possible. Components should be mocked explicitly instead of snapshotted. Snapshot does not encourage critical thinking of the tests itself, and would often be updated just to ensure a test passes. On the rare occassion that a snapshot is needed, use `react-test-renderer`, which will produce a JSON version of the component tree to be snapshotted.
+
+For most component tests, use `@testing-library/react`, particularly the `screen` and `render` methods. Do not use the return variables from `render`, as that is deprecated, use `screen` instead to query for rendered components.
+
+To handle user events, use `@testing-library/user-event`. The default `fireEvent` that comes with testing-library is too low level, the `user-event` package introduces a higher-level abstraction that is much closer to what the user would actually do (e.g. instead of individual mouse events, it would just be one `click` event that would also generate the necessary `hover`, `up`, and `down` states; and it will behave much closer actual UX where it will not allow clicks if a button is disabled).
 
 ## Package Management
 

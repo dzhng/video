@@ -56,7 +56,7 @@ export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
       PopperProps={{ disablePortal: true }}
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
     >
-      <div>
+      <div data-testid="hover-div">
         {/* The div element is needed because a disabled button will not emit hover events and we want to display
           a tooltip when screen sharing is disabled */}
         <Fab className={classes.fab} onClick={toggleScreenShare} disabled={isDisabled}>

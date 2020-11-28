@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 import useLocalAudioToggle from '~/hooks/useLocalAudioToggle/useLocalAudioToggle';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 
@@ -31,7 +32,7 @@ describe('the ToggleAudioButton component', () => {
   it('should render correctly when audio is enabled', async () => {
     mockUseLocalAudioToggle.mockImplementation(() => [true, () => {}]);
     render(<ToggleAudioButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    fireEvent.hover(screen.getByRole('button'));
 
     expect(screen.queryByTestId('mic-icon')).toBeInTheDocument();
     expect(screen.queryByTestId('micoff-icon')).not.toBeInTheDocument();
@@ -42,7 +43,7 @@ describe('the ToggleAudioButton component', () => {
   it('should render correctly when audio is disabled', async () => {
     mockUseLocalAudioToggle.mockImplementation(() => [false, () => {}]);
     render(<ToggleAudioButton />);
-    fireEvent.mouseOver(screen.getByRole('button'));
+    fireEvent.hover(screen.getByRole('button'));
 
     expect(screen.queryByTestId('mic-icon')).not.toBeInTheDocument();
     expect(screen.queryByTestId('micoff-icon')).toBeInTheDocument();

@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 import useParticipantIsReconnecting from '~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator';
 
@@ -13,7 +14,7 @@ describe('the ParticipantConnectionIndicator component', () => {
 
     it('should render the correct toolip', async () => {
       render(<ParticipantConnectionIndicator participant={{} as any} />);
-      fireEvent.mouseOver(screen.getByTestId('indicator'));
+      fireEvent.hover(screen.getByTestId('indicator'));
 
       expect(await screen.findByRole('tooltip')).toBeInTheDocument();
 
@@ -31,7 +32,7 @@ describe('the ParticipantConnectionIndicator component', () => {
 
     it('should render the correct tooltip', async () => {
       render(<ParticipantConnectionIndicator participant={{} as any} />);
-      fireEvent.mouseOver(screen.getByTestId('indicator'));
+      fireEvent.hover(screen.getByTestId('indicator'));
 
       expect(await screen.findByRole('tooltip')).toBeInTheDocument();
 

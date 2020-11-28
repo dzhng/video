@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';

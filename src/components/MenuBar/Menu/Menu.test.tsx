@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, fireEvent, within } from '@testing-library/react';
+import { screen, render, within } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import Menu from './Menu';

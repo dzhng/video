@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import fireEvent from '@testing-library/user-event';
 import useFullScreenToggle from '~/hooks/useFullScreenToggle/useFullScreenToggle';
 
 import ToggleFullscreenButton from './ToggleFullScreenButton';
