@@ -11,16 +11,26 @@ export default withPrivateRoute(function CallPage() {
   const [call, setCall] = useState<Call | undefined>(undefined);
 
   const callId = String(router.query.slug);
-  const hasCallStarted = Boolean(call?.startTime);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await db.collection('calls').doc(callId).get();
-      setCall(result.data() as Call);
-    };
+    const unsubscribe = db
+      .collection('calls')
+      .doc(callId)
+      .onSnapshot((result) => {
+        setCall(result.data() as Call);
+      });
 
-    fetchData();
+    return unsubscribe;
   }, [callId]);
+
+  // route to other locations if
+  useEffect(() => {
+    if (!call?.hasFinished) {
+      router.push('post');
+    } else if (!call?.hasStarted) {
+      router.push('pre');
+    }
+  }, [router, call]);
 
   return (
     <Container>

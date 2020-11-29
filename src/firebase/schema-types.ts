@@ -20,6 +20,7 @@ export declare interface Admin {
 
 export declare interface Call {
   name: string;
+  state: 'pre' | 'started' | 'finished';
   participants?: string[];
   externalEmails?: string[];
   startTime?: Date;

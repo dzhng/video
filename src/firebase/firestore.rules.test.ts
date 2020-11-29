@@ -157,12 +157,31 @@ describe('firebase cloud firestore database rules', () => {
   });
 
   describe('call', () => {
+    let requiredFields = {
+      name: 'Test Room',
+      state: 'pre',
+    };
+
     it('should let anyone create a call', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       const call = db.collection('networks').doc('network').collection('calls').doc('call');
       await firebase.assertSucceeds(
         call.set({
-          name: 'Test Room',
+          ...requiredFields,
+          participants: ['alice', 'charlie'],
+          externalEmails: ['hello@world.com'],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
+    });
+
+    it('should only allow the correct state', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const call = db.collection('networks').doc('network').collection('calls').doc('call');
+      await firebase.assertFails(
+        call.set({
+          ...requiredFields,
+          state: 'test',
           participants: ['alice', 'charlie'],
           externalEmails: ['hello@world.com'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -181,7 +200,7 @@ describe('firebase cloud firestore database rules', () => {
       const call = db.collection('networks').doc('network').collection('calls').doc('call');
       await firebase.assertFails(
         call.set({
-          name: 'Test Room',
+          ...requiredFields,
           participants: ['charlie'],
           externalEmails: ['hello@world.com'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -190,7 +209,7 @@ describe('firebase cloud firestore database rules', () => {
 
       await firebase.assertFails(
         call.set({
-          name: 'Test Room',
+          ...requiredFields,
           participants: [],
           externalEmails: ['hello@world.com'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -202,7 +221,7 @@ describe('firebase cloud firestore database rules', () => {
       const alice = getAuthedFirestore({ uid: 'alice' });
       let call = alice.collection('networks').doc('network').collection('calls').doc('call');
       call.set({
-        name: 'Test Room',
+        ...requiredFields,
         participants: ['alice', 'charlie'],
         externalEmails: ['hello@world.com'],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -222,6 +241,7 @@ describe('firebase cloud firestore database rules', () => {
       let call = db.collection('networks').doc('network').collection('calls').doc('call');
       call.set({
         name: 'Test Room',
+        state: 'pre',
         participants: ['alice', 'charlie'],
         externalEmails: ['hello@world.com'],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
