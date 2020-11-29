@@ -8,7 +8,7 @@ export default function useRoomState() {
   const [state, setState] = useState<RoomStateType>('disconnected');
 
   useEffect(() => {
-    const setRoomState = () => setState((room.state || 'disconnected') as RoomStateType);
+    const setRoomState = () => setState((room.state ?? 'disconnected') as RoomStateType);
     setRoomState();
     room
       .on('disconnected', setRoomState)
