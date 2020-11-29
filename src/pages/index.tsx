@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Grid, Card } from '@material-ui/core';
+import { Container, Typography, Grid, Card, Fab } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import Link from 'next/link';
 
 import firebase, { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
@@ -13,6 +14,7 @@ const useStyles = makeStyles(() =>
       transform: 'translateZ(0)',
     },
     callCard: {},
+    createButton: {},
   }),
 );
 
@@ -45,6 +47,9 @@ export default withPrivateRoute(function IndexPage() {
           </Grid>
         ))}
       </Grid>
+      <Link href="/call/create">
+        <Fab className={classes.createButton}>Create Call</Fab>
+      </Link>
     </Container>
   );
 });
