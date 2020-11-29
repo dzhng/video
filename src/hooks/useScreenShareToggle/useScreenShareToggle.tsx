@@ -23,7 +23,7 @@ export default function useScreenShareToggle() {
           width: 1920,
         },
       })
-      .then(stream => {
+      .then((stream) => {
         const track = stream.getTracks()[0];
 
         // All video tracks are published with 'low' priority. This works because the video
@@ -34,7 +34,7 @@ export default function useScreenShareToggle() {
             name: 'screen', // Tracks can be named to easily find them later
             priority: 'low', // Priority is set to high by the subscriber when the video track is rendered
           } as MediaStreamTrackPublishOptions)
-          .then(trackPublication => {
+          .then((trackPublication) => {
             stopScreenShareRef.current = () => {
               room.localParticipant.unpublishTrack(track);
               // TODO: remove this if the SDK is updated to emit this event
@@ -48,7 +48,7 @@ export default function useScreenShareToggle() {
           })
           .catch(onError);
       })
-      .catch(error => {
+      .catch((error) => {
         // Don't display an error if the user closes the screen share dialog
         if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') {
           onError(error);

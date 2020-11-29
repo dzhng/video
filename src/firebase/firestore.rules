@@ -35,13 +35,14 @@ service cloud.firestore {
       return key in request.resource.data ? requiredStringKey(key, maxLen) : true;
     }
 
-    function requiredIntKey(key) {
-      return request.resource.data[key] is int;
+    function requiredIntKey(key, min, max) {
+      return request.resource.data[key] is int &&
+              request.resoure.data[key] >= min &&
+              request.resource.data[key] < max;
     }
 
-    function requiredPosIntKey(key) {
-      return request.resource.data[key] is int &&
-              request.resoure.data[key] >= 0;
+    function optionalIntKey(key, min, max) {
+      return key in request.resource.data ? requiredIntKey(key, min, max) : true;
     }
 
     function requiredBoolKey(key) {
@@ -50,6 +51,10 @@ service cloud.firestore {
 
     function requiredTimeKey(key) {
       return request.resource.data[key] is timestamp;
+    }
+
+    function optionalTimeKey(key) {
+      return key in request.resource.data ? requiredTimeKey(key) : true;
     }
 
     function requiredArrayKey(key, maxLen) {
@@ -77,7 +82,7 @@ service cloud.firestore {
       allow update: if 
         request.auth != null && 
         request.auth.uid == userId &&
-        assertKeys(['bio', 'networkId', 'createdAt']) &&
+        assertKeys(['networkId', 'bio', 'createdAt']) &&
         optionalStringKey('networkId', 24) &&
         optionalStringKey('bio', 280) &&
         requiredCreatedAtKey();
@@ -122,12 +127,17 @@ service cloud.firestore {
 
         allow write: if 
           request.auth != null &&
-          assertKeys(['name', 'participants', 'externalEmails', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
+          assertKeys(['name', 'participants', 'externalEmails', 'startTime', 'durationMin', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
           requiredStringKey('name', 50) &&
           // list of internal users who have access to this call
           requiredArrayKey('participants', 10) &&
           // list of external users (in form of emails) who have access to this call
           optionalArrayKey('externalEmails', 10) &&
+
+          // presentation scheduling
+          optionalTimeKey('startTime') &&
+          optionalIntKey('durationMin', 0, 24*60) &&
+
           // set if have presentation attachment
           optionalStringKey('presentationId', 24) &&
           // set if have note attachment
@@ -137,6 +147,7 @@ service cloud.firestore {
           // set once transcrit is ready
           optionalStringKey('transcriptId', 24) &&
           requiredCreatedAtKey() &&
+
           // when creating, participants should contain at least one user which is the 
           // current user. When editing, existing doc must contain current user
           (isNewDoc() ? 
