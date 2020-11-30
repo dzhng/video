@@ -9,6 +9,7 @@ import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 import ToggleFullscreenButton from '~/components/Call/ToggleFullScreenButton/ToggleFullScreenButton';
 import FlipCameraButton from '~/components/Call/FlipCameraButton/FlipCameraButton';
 import LocalAudioLevelIndicator from '~/components/Call/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
+import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import Menu from './Menu/Menu';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -54,6 +55,7 @@ export default function MenuBar() {
           <h3>{roomName}</h3>
         )}
         <div className={classes.rightButtonContainer}>
+          <PendingWrite />
           <FlipCameraButton />
           <LocalAudioLevelIndicator />
           <ToggleFullscreenButton />

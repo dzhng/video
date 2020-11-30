@@ -7,7 +7,7 @@ import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import LoadingContainer from '~/containers/Loading/Loading';
 import SummaryContainer from '~/containers/Call/Summary';
 
-export default withPrivateRoute(function CallPage() {
+export default withPrivateRoute(function CallSummaryPage() {
   const router = useRouter();
   const [call, setCall] = useState<Call | null>(null);
 

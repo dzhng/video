@@ -80,7 +80,7 @@ To upgrade a specific package to latest major version (make sure to research com
 
 There are 3 different types of components in this app, pages (under `src/pages`), containers (under `src/containers`), and components (under `src/components`). The rule of thumb is:
 
-- A page handles data query and should just render one container; however, there can be logic that renders different containers based on states (e.g. for loading).
+- A page handles all database operations (CRUD) and should just render one container; however, there can be logic that renders different containers based on states (e.g. for loading).
 - A container takes in any necessary data from prop and render components and handle layouts; any user interaction business logic should also be here.
 - A component should be stateless independent pieces of UI that can be reused; any data should be passed in either through props or context (via providers).
 

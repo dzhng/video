@@ -1,18 +1,30 @@
 import React, { useCallback } from 'react';
-import { Container, Typography, Button } from '@material-ui/core';
+import { useRouter } from 'next/router';
 
-import { db } from '~/utils/firebase';
+import firebase, { db } from '~/utils/firebase';
+import { Call } from '~/firebase/schema-types';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
+import CreateContainer from '~/containers/Call/Create';
+import usePendingWrite from '~/hooks/usePendingWrite/usePendingWrite';
 
 export default withPrivateRoute(function CreateCallPage() {
-  const createCall = useCallback(() => {
-    db.collection('calls').add({});
-  }, []);
+  const router = useRouter();
+  const { markIsWriting } = usePendingWrite();
 
-  return (
-    <Container>
-      <Typography>Create Call</Typography>
-      <Button onClick={createCall}>Create</Button>
-    </Container>
+  const createCall = useCallback(
+    (call: Call) => {
+      // before adding, replace timestamp with server helper
+      const data = {
+        ...call,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      db.collection('calls').add(data);
+      markIsWriting();
+      router.push('/');
+    },
+    [router, markIsWriting],
   );
+
+  return <CreateContainer createCall={createCall} />;
 });
