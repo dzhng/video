@@ -103,6 +103,26 @@ import Container from '@material-ui/core/Container';
 import { Button, Container } from '@material-ui/core';
 ```
 
+Order imports in the order of: global, repo, local. Always use `~/` for local imports, unless it is in the same folder or is a child module. If it is a React component, always start file with `import React`.
+
+If there are multple global and local imports, sometimes it makes sense to put a space between global anad local imports to improve readability.
+
+```
+// bad
+import usePendingWrite from '../../hooks/usePendingWrite/usePendingWrite';
+import React from 'react';
+import Component from './component';
+import Link from 'next/link';
+
+//good
+import React from 'react';
+import Link from 'next/link';
+
+import usePendingWrite from '~/hooks/usePendingWrite/usePendingWrite';
+import Component from './component';
+
+```
+
 ## Component Structure
 
 There are 3 different types of components in this app, pages (under `src/pages`), containers (under `src/containers`), and components (under `src/components`). The rule of thumb is:
