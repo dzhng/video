@@ -3,11 +3,12 @@ import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
 import { useRouter } from 'next/router';
 
+import { Call } from '~/firebase/schema-types';
 import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 import { IVideoContext } from '~/components/Call/VideoProvider';
 import { useAppState } from '~/state';
-import RoomPage from '~/pages/room/[slug]';
+import CallContainer from './Call';
 
 jest.mock('next/router');
 jest.mock('~/state');
@@ -31,6 +32,12 @@ const mockUseRouter = useRouter as jest.Mock<any>;
 const mockConnect = jest.fn();
 const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 
+const mockCall: Call = {
+  name: 'hello',
+  state: 'started',
+  createdAt: new Date(),
+};
+
 describe('room page', () => {
   beforeEach(() => {
     mockUseRouter.mockImplementation(() => ({ query: { slug: 'test-room' } }));
@@ -42,7 +49,7 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: true, room: {}, localTracks: [] } as any),
     );
-    render(<RoomPage />);
+    render(<CallContainer call={mockCall} />);
     expect(screen.queryByTestId('progress-spinner')).toBeInTheDocument();
   });
 
@@ -52,7 +59,7 @@ describe('room page', () => {
       () => ({ isConnecting: false, room: {}, localTracks: [] } as any),
     );
     mockUseAppState.mockImplementation(() => ({ isFetching: true }));
-    render(<RoomPage />);
+    render(<CallContainer call={mockCall} />);
     expect(screen.queryByTestId('progress-spinner')).toBeInTheDocument();
   });
 
@@ -61,7 +68,7 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: true, room: {}, localTracks: [] } as any),
     );
-    render(<RoomPage />);
+    render(<CallContainer call={mockCall} />);
     expect(screen.getByTestId('join-button')).toBeDisabled();
   });
 
@@ -70,7 +77,7 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isAcquiringLocalTracks: true, room: {}, localTracks: [] } as any),
     );
-    render(<RoomPage />);
+    render(<CallContainer call={mockCall} />);
     expect(screen.getByTestId('join-button')).toBeDisabled();
   });
 
@@ -79,7 +86,7 @@ describe('room page', () => {
     mockedUseVideoContext.mockImplementation(
       () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any),
     );
-    render(<RoomPage />);
+    render(<CallContainer call={mockCall} />);
     fireEvent.click(screen.getByTestId('join-button'));
     setImmediate(() => {
       expect(mockGetToken).toHaveBeenCalledWith('test-room');

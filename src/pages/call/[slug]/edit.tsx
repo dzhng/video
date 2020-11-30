@@ -29,7 +29,7 @@ export default withPrivateRoute(function CallPage() {
       {call?.state === 'started' && (
         <>
           <Typography>The call has started, join call</Typography>
-          <Link href="start">
+          <Link href="room">
             <Button>Join</Button>
           </Link>
         </>

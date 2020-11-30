@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 
+import { Call } from '~/firebase/schema-types';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import { useAppState } from '~/state';
 import ErrorDialog from '~/components/Call/ErrorDialog/ErrorDialog';
@@ -61,7 +62,7 @@ function Lobby() {
   );
 }
 
-export default withPrivateRoute(function RoomPage() {
+export default withPrivateRoute(function CallContainer({ call }: { call: Call }) {
   const { error, setError } = useAppState();
   const connectionOptions = useConnectionOptions();
 
@@ -70,6 +71,7 @@ export default withPrivateRoute(function RoomPage() {
       <VideoProvider options={connectionOptions} onError={setError}>
         <ErrorDialog dismissError={() => setError(null)} error={error} />
         <Lobby />
+        {call}
       </VideoProvider>
     </UnsupportedBrowserWarning>
   );
