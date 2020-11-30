@@ -2,6 +2,8 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
+import { isBrowser, isTestEnv } from './index';
+
 const config =
   process.env.NODE_ENV === 'test'
     ? {
@@ -26,11 +28,13 @@ if (!firebase.apps?.length) {
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-if (process.env.NODE_ENV === 'test') {
+if (isTestEnv) {
   // use optional chaining here as sometime they are mocked
   db?.useEmulator?.('localhost', 8080);
   auth?.useEmulator?.('http://localhost:9099');
-} else {
+}
+
+if (isBrowser && !isTestEnv) {
   // enable on non-testing version only
   db.enablePersistence({ synchronizeTabs: true }).catch(function (err) {
     if (err.code === 'failed-precondition') {

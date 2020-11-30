@@ -7,6 +7,14 @@ export const isMobile = (() => {
   return /Mobile/.test(navigator.userAgent);
 })();
 
+export const isBrowser = (() => {
+  return typeof window !== 'undefined';
+})();
+
+export const isTestEnv = (() => {
+  return process.env.NODE_ENV === 'test';
+})();
+
 // This function ensures that the user has granted the browser permission to use audio and video
 // devices. If permission has not been granted, it will cause the browser to ask for permission
 // for audio and video at the same time (as opposed to separate requests).

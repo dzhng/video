@@ -1,8 +1,9 @@
 import React from 'react';
 import { Container, Typography, Button, LinearProgress } from '@material-ui/core';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import { TextField } from 'formik-material-ui';
 import * as Yup from 'yup';
+import { uniq, compact } from 'lodash';
 
 import { Call } from '~/firebase/schema-types';
 
@@ -11,7 +12,8 @@ interface CreateProps {
 }
 
 const CreateSchema = Yup.object().shape({
-  name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required('Required'),
+  name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
+  externalEmails: Yup.array().of(Yup.string().email('You must provide a valid email')),
 });
 
 export default function CreateContainer({ createCall }: CreateProps) {
@@ -22,17 +24,49 @@ export default function CreateContainer({ createCall }: CreateProps) {
         initialValues={{
           name: '',
           state: 'pre',
+          externalEmails: [],
           createdAt: new Date(),
         }}
         validationSchema={CreateSchema}
         onSubmit={(values: Call, { setSubmitting }) => {
-          createCall(values);
+          // clean up any empty emails
+          const cleanedEmails = uniq(compact(values.externalEmails));
+
+          createCall({
+            ...values,
+            externalEmails: cleanedEmails,
+          });
+
           setSubmitting(false);
         }}
       >
-        {({ submitForm, isSubmitting }) => (
+        {({ values, submitForm, isSubmitting }) => (
           <Form>
             <Field component={TextField} name="name" type="text" label="Name" />
+            <FieldArray name="externalEmails">
+              {({ remove, push }) => (
+                <div>
+                  {values.externalEmails?.map((email, index) => (
+                    <div key={index}>
+                      <Field
+                        component={TextField}
+                        name={`externalEmails.${index}`}
+                        value={email}
+                        type="text"
+                        label="Email"
+                      />
+                      <ErrorMessage name={`externalEmails.${index}`} component="div" />
+                      <Button variant="contained" color="secondary" onClick={() => remove(index)}>
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="contained" color="primary" onClick={() => push('')}>
+                    Add Email
+                  </Button>
+                </div>
+              )}
+            </FieldArray>
             {isSubmitting && <LinearProgress />}
             <br />
             <Button

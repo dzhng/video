@@ -65,7 +65,9 @@ service cloud.firestore {
 
     function requiredArrayKey(key, maxLen) {
       return request.resource.data[key] is list &&
-              request.resource.data[key].size() <= maxLen;
+              request.resource.data[key].size() <= maxLen &&
+              !('' in request.resource.data[key]) &&
+              !(null in request.resource.data[key]);
     }
 
     function optionalArrayKey(key, maxLen) {

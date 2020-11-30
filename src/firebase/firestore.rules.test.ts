@@ -187,6 +187,27 @@ describe('firebase cloud firestore database rules', () => {
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
+
+      // empty lists
+      await firebase.assertFails(
+        call.set({
+          ...requiredFields,
+          state: 'test',
+          participants: ['alice', 'charlie'],
+          externalEmails: ['', 'hello@world.com'],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
+
+      await firebase.assertFails(
+        call.set({
+          ...requiredFields,
+          state: 'test',
+          participants: [null, 'alice', 'charlie'],
+          externalEmails: ['hello@world.com'],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
     });
 
     it('should let anyone access a call', async () => {
