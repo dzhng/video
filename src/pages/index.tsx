@@ -1,27 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Grid, Card, Fab } from '@material-ui/core';
-import { createStyles, makeStyles } from '@material-ui/core/styles';
-import Link from 'next/link';
 
-import firebase, { db } from '~/utils/firebase';
+import { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
+import Home from '~/containers/Home/Home';
 import useFirebaseAuth from '~/state/useFirebaseAuth/useFirebaseAuth';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    grid: {
-      // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-      transform: 'translateZ(0)',
-    },
-    callCard: {},
-    createButton: {},
-  }),
-);
+import { Call } from '~/firebase/schema-types';
 
 export default withPrivateRoute(function IndexPage() {
   const { user } = useFirebaseAuth();
-  const classes = useStyles();
-  const [upcomingCalls, setUpcomingCalls] = useState<firebase.firestore.DocumentData>([]);
+  const [upcomingCalls, setUpcomingCalls] = useState<Call[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -32,24 +19,9 @@ export default withPrivateRoute(function IndexPage() {
       .where('participants', 'array-contains', user.uid)
       .onSnapshot(function (querySnapshot) {
         const calls = querySnapshot.docs.map((doc) => doc.data());
-        setUpcomingCalls(calls);
+        setUpcomingCalls(calls as Call[]);
       });
   }, [user]);
 
-  return (
-    <Container maxWidth={false}>
-      <Grid container className={classes.grid} wrap="nowrap" spacing={3}>
-        {upcomingCalls.map((call: any) => (
-          <Grid item>
-            <Card className={classes.callCard}>
-              <Typography>Hello World {call}</Typography>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-      <Link href="/call/create">
-        <Fab className={classes.createButton}>Create Call</Fab>
-      </Link>
-    </Container>
-  );
+  return <Home calls={upcomingCalls} />;
 });

@@ -13,7 +13,7 @@ const mockUseRouter = useRouter as jest.Mock<any>;
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockPush = jest.fn();
 
-describe.skip('index page', () => {
+describe.skip('Home container', () => {
   beforeEach(() => {
     mockUseAppState.mockImplementation(() => ({ isAuthReady: true, user: {} }));
     mockUseRouter.mockImplementation(() => ({ push: mockPush }));
