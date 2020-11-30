@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
-import ParticipantStrip from '~/components/ParticipantStrip/ParticipantStrip';
-import MainParticipant from '~/components/MainParticipant/MainParticipant';
+import ParticipantStrip from '~/components/Call/ParticipantStrip/ParticipantStrip';
+import MainParticipant from '~/components/Call/MainParticipant/MainParticipant';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',

@@ -13,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { inputLabels, Settings } from '~/state/settings/settingsReducer';
 import { RenderDimensions } from '~/state/settings/renderDimensions';
 import { useAppState } from '~/state';
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 
 const useStyles = makeStyles({
   formControl: {

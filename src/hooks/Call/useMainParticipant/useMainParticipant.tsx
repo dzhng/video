@@ -1,8 +1,8 @@
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import useDominantSpeaker from '~/hooks/useDominantSpeaker/useDominantSpeaker';
-import useParticipants from '~/hooks/useParticipants/useParticipants';
-import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
-import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import useDominantSpeaker from '~/hooks/Call/useDominantSpeaker/useDominantSpeaker';
+import useParticipants from '~/hooks/Call/useParticipants/useParticipants';
+import useScreenShareParticipant from '~/hooks/Call/useScreenShareParticipant/useScreenShareParticipant';
+import useSelectedParticipant from '~/components/Call/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 
 export default function useMainParticipant() {
   const [selectedParticipant] = useSelectedParticipant();

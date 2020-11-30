@@ -4,9 +4,9 @@ import { IconButton } from '@material-ui/core';
 import { LocalVideoTrack } from 'twilio-video';
 
 import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
-import useMediaStreamTrack from '~/hooks/useMediaStreamTrack/useMediaStreamTrack';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import useMediaStreamTrack from '~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import { useVideoInputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 
 export default function FlipCameraButton() {
   const { localTracks } = useVideoContext();

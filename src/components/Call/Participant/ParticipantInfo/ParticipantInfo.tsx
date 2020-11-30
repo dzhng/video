@@ -11,14 +11,14 @@ import {
   RemoteVideoTrack,
 } from 'twilio-video';
 
-import AudioLevelIndicator from '~/components/AudioLevelIndicator/AudioLevelIndicator';
-import BandwidthWarning from '~/components/BandwidthWarning/BandwidthWarning';
-import NetworkQualityLevel from '~/components/NetworkQualityLevel/NetworkQualityLevel';
+import AudioLevelIndicator from '~/components/Call/AudioLevelIndicator/AudioLevelIndicator';
+import BandwidthWarning from '~/components/Call/BandwidthWarning/BandwidthWarning';
+import NetworkQualityLevel from '~/components/Call/NetworkQualityLevel/NetworkQualityLevel';
 
-import usePublications from '~/hooks/usePublications/usePublications';
-import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
-import useParticipantIsReconnecting from '~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
-import useTrack from '~/hooks/useTrack/useTrack';
+import usePublications from '~/hooks/Call/usePublications/usePublications';
+import useIsTrackSwitchedOff from '~/hooks/Call/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
+import useParticipantIsReconnecting from '~/hooks/Call/useParticipantIsReconnecting/useParticipantIsReconnecting';
+import useTrack from '~/hooks/Call/useTrack/useTrack';
 
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 import PinIcon from './PinIcon/PinIcon';

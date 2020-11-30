@@ -2,14 +2,14 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
 
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import { useVideoInputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
 import FlipCameraButton from './FlipCameraButton';
 
-jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
-jest.mock('~/hooks/useVideoContext/useVideoContext');
-jest.mock('~/hooks/deviceHooks/deviceHooks');
+jest.mock('~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Call/deviceHooks/deviceHooks');
 const mockUserVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseVideoInputDevices = useVideoInputDevices as jest.Mock<any>;
 

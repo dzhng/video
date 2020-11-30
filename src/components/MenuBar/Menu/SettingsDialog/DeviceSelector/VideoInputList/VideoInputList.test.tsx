@@ -1,16 +1,16 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import { useVideoInputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import VideoTrack from '~/components/Call/VideoTrack/VideoTrack';
 import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '~/constants';
 import VideoInputList from './VideoInputList';
 
-jest.mock('~/hooks/useVideoContext/useVideoContext');
-jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
-jest.mock('~/hooks/deviceHooks/deviceHooks');
-jest.mock('~/components/VideoTrack/VideoTrack');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack');
+jest.mock('~/hooks/Call/deviceHooks/deviceHooks');
+jest.mock('~/components/Call/VideoTrack/VideoTrack');
 
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseVideoInputDevices = useVideoInputDevices as jest.Mock<any>;

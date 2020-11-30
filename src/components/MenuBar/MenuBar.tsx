@@ -5,7 +5,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, AppBar, Toolbar } from '@material-ui/core';
 
 import { useAppState } from '~/state';
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 import ToggleFullscreenButton from '~/components/Call/ToggleFullScreenButton/ToggleFullScreenButton';
 import FlipCameraButton from '~/components/Call/FlipCameraButton/FlipCameraButton';
 import LocalAudioLevelIndicator from '~/components/Call/LocalAudioLevelIndicator/LocalAudioLevelIndicator';

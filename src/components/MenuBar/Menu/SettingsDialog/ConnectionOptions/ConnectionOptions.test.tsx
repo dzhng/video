@@ -8,10 +8,10 @@ describe.skip('', () => {
 import { screen, render } from '@testing-library/react';
 import { initialSettings } from '~/state/settings/settingsReducer';
 import { useAppState } from '~/state';
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 import ConnectionOptions from './ConnectionOptions';
 
-jest.mock('~/hooks/useRoomState/useRoomState');
+jest.mock('~/hooks/Call/useRoomState/useRoomState');
 jest.mock('~/state');
 
 const mockUseAppState = useAppState as jest.Mock<any>;

@@ -1,16 +1,16 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import LocalAudioLevelIndicator from '~/components/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
-import { useAudioInputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import LocalAudioLevelIndicator from '~/components/Call/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
+import { useAudioInputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import { SELECTED_AUDIO_INPUT_KEY } from '~/constants';
 import AudioInputList from './AudioInputList';
 
-jest.mock('~/hooks/useVideoContext/useVideoContext');
-jest.mock('~/components/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator');
-jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
-jest.mock('~/hooks/deviceHooks/deviceHooks');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
+jest.mock('~/components/Call/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator');
+jest.mock('~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack');
+jest.mock('~/hooks/Call/deviceHooks/deviceHooks');
 
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseAudioInputDevices = useAudioInputDevices as jest.Mock<any>;

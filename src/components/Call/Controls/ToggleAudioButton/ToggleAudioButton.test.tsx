@@ -1,13 +1,13 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
-import useLocalAudioToggle from '~/hooks/useLocalAudioToggle/useLocalAudioToggle';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useLocalAudioToggle from '~/hooks/Call/useLocalAudioToggle/useLocalAudioToggle';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 
 import ToggleAudioButton from './ToggleAudioButton';
 
-jest.mock('~/hooks/useLocalAudioToggle/useLocalAudioToggle');
-jest.mock('~/hooks/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Call/useLocalAudioToggle/useLocalAudioToggle');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
 
 const mockUseLocalAudioToggle = useLocalAudioToggle as jest.Mock<any>;
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;

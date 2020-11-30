@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useAudioOutputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import { useAudioOutputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import { SELECTED_AUDIO_OUTPUT_KEY } from '~/constants';
 import useActiveSinkId from './useActiveSinkId';
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import useVideoTrackDimensions from '~/hooks/useVideoTrackDimensions/useVideoTrackDimensions';
+import useVideoTrackDimensions from '~/hooks/Call/useVideoTrackDimensions/useVideoTrackDimensions';
 import VideoTrack from './VideoTrack';
 
-jest.mock('~/hooks/useMediaStreamTrack/useMediaStreamTrack');
-jest.mock('~/hooks/useVideoTrackDimensions/useVideoTrackDimensions');
+jest.mock('~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack');
+jest.mock('~/hooks/Call/useVideoTrackDimensions/useVideoTrackDimensions');
 
 const mockUseVideoTrackDimensions = useVideoTrackDimensions as jest.Mock<any>;
 mockUseVideoTrackDimensions.mockImplementation(() => ({ width: 200, height: 100 }));

@@ -1,14 +1,14 @@
 import React from 'react';
 import { EventEmitter } from 'events';
 import { render } from '@testing-library/react';
-import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
-import Participant from '~/components/Participant/Participant';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useSelectedParticipant from '~/components/Call/VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import Participant from '~/components/Call/Participant/Participant';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 import ParticipantStrip from './ParticipantStrip';
 
-jest.mock('~/hooks/useVideoContext/useVideoContext');
-jest.mock('~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant');
-jest.mock('~/components/Participant/Participant');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
+jest.mock('~/components/Call/VideoProvider/useSelectedParticipant/useSelectedParticipant');
+jest.mock('~/components/Call/Participant/Participant');
 const mockedVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseSelectedParticipant = useSelectedParticipant as jest.Mock<any>;
 const mockParticipant = Participant as jest.Mock<any>;

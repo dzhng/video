@@ -2,10 +2,10 @@ import React from 'react';
 import { LocalAudioTrack } from 'twilio-video';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import useMediaStreamTrack from '~/hooks/useMediaStreamTrack/useMediaStreamTrack';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import LocalAudioLevelIndicator from '~/components/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
-import { useAudioInputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import useMediaStreamTrack from '~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import LocalAudioLevelIndicator from '~/components/Call/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
+import { useAudioInputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import { SELECTED_AUDIO_INPUT_KEY } from '~/constants';
 
 const useStyles = makeStyles({

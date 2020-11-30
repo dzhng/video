@@ -6,7 +6,7 @@ import {
   SELECTED_AUDIO_INPUT_KEY,
   SELECTED_VIDEO_INPUT_KEY,
 } from '~/constants';
-import { useAudioInputDevices, useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import { useAudioInputDevices, useVideoInputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 
 export default function useLocalTracks() {
   const [audioTrack, setAudioTrack] = useState<LocalAudioTrack>();

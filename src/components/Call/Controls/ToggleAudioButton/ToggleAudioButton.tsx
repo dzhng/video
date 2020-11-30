@@ -4,8 +4,8 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Fab, Tooltip } from '@material-ui/core';
 import { Mic, MicOff } from '@material-ui/icons';
 
-import useLocalAudioToggle from '~/hooks/useLocalAudioToggle/useLocalAudioToggle';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useLocalAudioToggle from '~/hooks/Call/useLocalAudioToggle/useLocalAudioToggle';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

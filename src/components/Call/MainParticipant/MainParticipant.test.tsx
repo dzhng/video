@@ -1,16 +1,16 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import useMainParticipant from '~/hooks/useMainParticipant/useMainParticipant';
-import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
-import ParticipantTracks from '~/components/ParticipantTracks/ParticipantTracks';
-import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import useMainParticipant from '~/hooks/Call/useMainParticipant/useMainParticipant';
+import useScreenShareParticipant from '~/hooks/Call/useScreenShareParticipant/useScreenShareParticipant';
+import ParticipantTracks from '~/components/Call/ParticipantTracks/ParticipantTracks';
+import useSelectedParticipant from '~/components/Call/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import MainParticipantInfo from './MainParticipantInfo/MainParticipantInfo';
 import MainParticipant from './MainParticipant';
 
-jest.mock('~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant');
-jest.mock('~/hooks/useMainParticipant/useMainParticipant');
-jest.mock('~/hooks/useScreenShareParticipant/useScreenShareParticipant');
-jest.mock('~/components/ParticipantTracks/ParticipantTracks');
+jest.mock('~/components/Call/VideoProvider/useSelectedParticipant/useSelectedParticipant');
+jest.mock('~/hooks/Call/useMainParticipant/useMainParticipant');
+jest.mock('~/hooks/Call/useScreenShareParticipant/useScreenShareParticipant');
+jest.mock('~/components/Call/ParticipantTracks/ParticipantTracks');
 jest.mock('./MainParticipantInfo/MainParticipantInfo');
 
 const mockUseMainParticipant = useMainParticipant as jest.Mock<any>;

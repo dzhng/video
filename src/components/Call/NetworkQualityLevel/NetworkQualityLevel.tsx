@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@material-ui/core/styles';
 import { Participant } from 'twilio-video';
 
-import useParticipantNetworkQualityLevel from '~/hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
+import useParticipantNetworkQualityLevel from '~/hooks/Call/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
 
 const Container = styled('div')({
   display: 'flex',

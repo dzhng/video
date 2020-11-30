@@ -5,7 +5,7 @@ import fireEvent from '@testing-library/user-event';
 import EndCallButton from './EndCallButton';
 
 const mockRoom: any = { disconnect: jest.fn() };
-jest.mock('~/hooks/useVideoContext/useVideoContext', () => () => ({ room: mockRoom }));
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext', () => () => ({ room: mockRoom }));
 
 describe('End Call button', () => {
   it('should disconnect from the room when clicked', () => {

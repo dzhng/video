@@ -1,9 +1,9 @@
 import React from 'react';
 import ReconnectingNotification from './ReconnectingNotification';
 import { screen, render } from '@testing-library/react';
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 
-jest.mock('~/hooks/useRoomState/useRoomState');
+jest.mock('~/hooks/Call/useRoomState/useRoomState');
 const mockUseRoomState = useRoomState as jest.Mock<string>;
 
 describe('the ReconnectingNotification component', () => {

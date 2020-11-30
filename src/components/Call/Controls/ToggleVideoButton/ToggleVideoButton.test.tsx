@@ -1,11 +1,11 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
-import useLocalVideoToggle from '~/hooks/useLocalVideoToggle/useLocalVideoToggle';
+import useLocalVideoToggle from '~/hooks/Call/useLocalVideoToggle/useLocalVideoToggle';
 
 import ToggleVideoButton from './ToggleVideoButton';
 
-jest.mock('~/hooks/useLocalVideoToggle/useLocalVideoToggle');
+jest.mock('~/hooks/Call/useLocalVideoToggle/useLocalVideoToggle');
 
 const mockUseLocalVideoToggle = useLocalVideoToggle as jest.Mock<any>;
 

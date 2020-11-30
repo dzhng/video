@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
@@ -9,7 +9,7 @@ import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
 import Controls from './Controls';
 
-jest.mock('~/hooks/useRoomState/useRoomState');
+jest.mock('~/hooks/Call/useRoomState/useRoomState');
 jest.mock('./EndCallButton/EndCallButton');
 jest.mock('./ToggleAudioButton/ToggleAudioButton');
 jest.mock('./ToggleVideoButton/ToggleVideoButton');

@@ -6,7 +6,6 @@ import AppStateProvider, { useAppState } from './index';
 import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
 
 jest.mock('./useFirebaseAuth/useFirebaseAuth', () => jest.fn(() => ({ user: 'firebaseUser' })));
-jest.mock('./useActiveSinkId/useActiveSinkId.ts', () => () => ['default', () => {}]);
 
 // @ts-ignore
 window.fetch = jest.fn(() => Promise.resolve({ text: () => 'mockVideoToken' }));

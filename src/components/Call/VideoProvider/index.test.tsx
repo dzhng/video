@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import React from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { Room, TwilioError } from 'twilio-video';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 import { VideoProvider } from './index';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
 import useRoom from './useRoom/useRoom';

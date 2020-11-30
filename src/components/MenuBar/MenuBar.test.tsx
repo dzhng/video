@@ -2,17 +2,17 @@ import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { useRouter } from 'next/router';
 
-import useRoomState from '~/hooks/useRoomState/useRoomState';
-import useFullScreenToggle from '~/hooks/useFullScreenToggle/useFullScreenToggle';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
+import useFullScreenToggle from '~/hooks/Call/useFullScreenToggle/useFullScreenToggle';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 import { useAppState } from '~/state';
-import { IVideoContext } from '~/components/VideoProvider';
+import { IVideoContext } from '~/components/Call/VideoProvider';
 import MenuBar from './MenuBar';
 
 jest.mock('next/router');
-jest.mock('~/hooks/useVideoContext/useVideoContext');
-jest.mock('~/hooks/useRoomState/useRoomState');
-jest.mock('~/hooks/useFullScreenToggle/useFullScreenToggle');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Call/useRoomState/useRoomState');
+jest.mock('~/hooks/Call/useFullScreenToggle/useFullScreenToggle');
 jest.mock('~/state');
 jest.mock('./FlipCameraButton/FlipCameraButton', () => () => null);
 

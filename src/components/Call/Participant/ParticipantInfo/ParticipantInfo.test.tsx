@@ -1,17 +1,17 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
-import usePublications from '~/hooks/usePublications/usePublications';
-import useIsTrackSwitchedOff from '~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
-import useParticipantIsReconnecting from '~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
-import NetworkQualityLevel from '~/components/NetworkQualityLevel/NetworkQualityLevel';
+import usePublications from '~/hooks/Call/usePublications/usePublications';
+import useIsTrackSwitchedOff from '~/hooks/Call/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
+import useParticipantIsReconnecting from '~/hooks/Call/useParticipantIsReconnecting/useParticipantIsReconnecting';
+import NetworkQualityLevel from '~/components/Call/NetworkQualityLevel/NetworkQualityLevel';
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 import ParticipantInfo from './ParticipantInfo';
 
-jest.mock('~/hooks/usePublications/usePublications');
-jest.mock('~/hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff');
-jest.mock('~/hooks/useTrack/useTrack');
-jest.mock('~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting');
-jest.mock('~/components/NetworkQualityLevel/NetworkQualityLevel');
+jest.mock('~/hooks/Call/usePublications/usePublications');
+jest.mock('~/hooks/Call/useIsTrackSwitchedOff/useIsTrackSwitchedOff');
+jest.mock('~/hooks/Call/useTrack/useTrack');
+jest.mock('~/hooks/Call/useParticipantIsReconnecting/useParticipantIsReconnecting');
+jest.mock('~/components/Call/NetworkQualityLevel/NetworkQualityLevel');
 jest.mock('./ParticipantConnectionIndicator/ParticipantConnectionIndicator');
 
 const mockUsePublications = usePublications as jest.Mock<any>;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
-import useParticipantIsReconnecting from '~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
+import useParticipantIsReconnecting from '~/hooks/Call/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator';
 
-jest.mock('~/hooks/useParticipantIsReconnecting/useParticipantIsReconnecting');
+jest.mock('~/hooks/Call/useParticipantIsReconnecting/useParticipantIsReconnecting');
 
 const mockUseParticipantIsReconnecting = useParticipantIsReconnecting as jest.Mock<boolean>;
 

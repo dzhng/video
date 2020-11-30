@@ -1,11 +1,11 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import usePublications from '~/hooks/usePublications/usePublications';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import usePublications from '~/hooks/Call/usePublications/usePublications';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 import Publication from './Publication/Publication';
 import ParticipantTracks from './ParticipantTracks';
 
-jest.mock('~/hooks/usePublications/usePublications', () =>
+jest.mock('~/hooks/Call/usePublications/usePublications', () =>
   jest.fn(() => [
     { trackSid: 0, kind: 'video', trackName: '' },
     { trackSid: 1, kind: 'audio', trackName: '' },

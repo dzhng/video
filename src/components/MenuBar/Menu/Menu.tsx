@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
 import { useAppState } from '~/state';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
 import SettingsDialog from './SettingsDialog/SettingsDialog';
 import UserAvatar from './UserAvatar/UserAvatar';
 

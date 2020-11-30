@@ -5,8 +5,8 @@ import { useAppState } from '~/state';
 //import IndexPage from '~/pages/index';
 
 jest.mock('next/router');
-jest.mock('~/hooks/useRoomState/useRoomState');
-jest.mock('~/hooks/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Call/useRoomState/useRoomState');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
 jest.mock('~/state');
 
 const mockUseRouter = useRouter as jest.Mock<any>;

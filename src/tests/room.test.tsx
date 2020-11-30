@@ -3,26 +3,26 @@ import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
 import { useRouter } from 'next/router';
 
-import useRoomState from '~/hooks/useRoomState/useRoomState';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import { IVideoContext } from '~/components/VideoProvider';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import { IVideoContext } from '~/components/Call/VideoProvider';
 import { useAppState } from '~/state';
 import RoomPage from '~/pages/room/[slug]';
 
 jest.mock('next/router');
 jest.mock('~/state');
-jest.mock('~/hooks/useRoomState/useRoomState');
-jest.mock('~/hooks/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Call/useRoomState/useRoomState');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
 jest.mock('~/utils/useConnectionOptions/useConnectionOptions');
 jest.mock(
-  '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning',
+  '~/components/Call/UnsupportedBrowserWarning/UnsupportedBrowserWarning',
   () => ({ children }: { children: React.ReactChildren }) => children,
 );
-jest.mock('~/components/VideoProvider', () => ({
+jest.mock('~/components/Call/VideoProvider', () => ({
   VideoProvider: ({ children }: { children: React.ReactChildren }) => children,
 }));
+jest.mock('~/components/Call/Room/Room', () => () => null);
 jest.mock('~/components/PrivateRoute/withPrivateRoute', () => (component: any) => component);
-jest.mock('~/components/Room/Room', () => () => null);
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;

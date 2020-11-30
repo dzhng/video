@@ -1,12 +1,12 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import useTrack from '~/hooks/useTrack/useTrack';
-import VideoTrack from '~/components/VideoTrack/VideoTrack';
+import useTrack from '~/hooks/Call/useTrack/useTrack';
+import VideoTrack from '~/components/Call/VideoTrack/VideoTrack';
 import AudioTrack from './AudioTrack/AudioTrack';
 import Publication from './Publication';
 
-jest.mock('~/hooks/useTrack/useTrack');
-jest.mock('~/components/VideoTrack/VideoTrack');
+jest.mock('~/hooks/Call/useTrack/useTrack');
+jest.mock('~/components/Call/VideoTrack/VideoTrack');
 jest.mock('./AudioTrack/AudioTrack');
 
 const mockUseTrack = useTrack as jest.Mock<any>;

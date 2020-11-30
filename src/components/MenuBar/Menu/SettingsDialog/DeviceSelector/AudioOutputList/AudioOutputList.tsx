@@ -1,11 +1,11 @@
 import React from 'react';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
-import { useAppState } from '~/state';
-import { useAudioOutputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import useActiveSinkId from '~/hooks/Call/useActiveSinkId/useActiveSinkId';
+import { useAudioOutputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 
 export default function AudioOutputList() {
   const audioOutputDevices = useAudioOutputDevices();
-  const { activeSinkId, setActiveSinkId } = useAppState();
+  const { activeSinkId, setActiveSinkId } = useActiveSinkId();
   const activeOutputLabel = audioOutputDevices.find((device) => device.deviceId === activeSinkId)
     ?.label;
 

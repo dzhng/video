@@ -8,7 +8,6 @@ import {
   Settings,
   SettingsAction,
 } from './settings/settingsReducer';
-import useActiveSinkId from './useActiveSinkId/useActiveSinkId';
 import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
 import firebase from 'firebase';
 
@@ -21,8 +20,6 @@ export interface StateContextType {
   signOut?(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
-  activeSinkId: string;
-  setActiveSinkId(sinkId: string): void;
   settings: Settings;
   dispatchSetting: React.Dispatch<SettingsAction>;
   roomType?: RoomType;
@@ -33,15 +30,12 @@ export const StateContext = createContext<StateContextType>(null!);
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
   const [isFetching, setIsFetching] = useState(false);
-  const [activeSinkId, setActiveSinkId] = useActiveSinkId();
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
 
   let contextValue = {
     error,
     setError,
     isFetching,
-    activeSinkId,
-    setActiveSinkId,
     settings,
     dispatchSetting,
   } as StateContextType;

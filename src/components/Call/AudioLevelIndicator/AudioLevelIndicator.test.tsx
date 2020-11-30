@@ -2,9 +2,9 @@ import React from 'react';
 import { screen, render } from '@testing-library/react';
 
 import AudioLevelIndicator from './AudioLevelIndicator';
-import useIsTrackEnabled from '~/hooks/useIsTrackEnabled/useIsTrackEnabled';
+import useIsTrackEnabled from '~/hooks/Call/useIsTrackEnabled/useIsTrackEnabled';
 
-jest.mock('~/hooks/useIsTrackEnabled/useIsTrackEnabled');
+jest.mock('~/hooks/Call/useIsTrackEnabled/useIsTrackEnabled');
 
 const mockUseIsTrackEnabled = useIsTrackEnabled as jest.Mock<boolean>;
 

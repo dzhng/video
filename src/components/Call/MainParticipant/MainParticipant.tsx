@@ -1,8 +1,8 @@
 import React from 'react';
-import ParticipantTracks from '~/components/ParticipantTracks/ParticipantTracks';
-import useSelectedParticipant from '~/components/VideoProvider/useSelectedParticipant/useSelectedParticipant';
-import useMainParticipant from '~/hooks/useMainParticipant/useMainParticipant';
-import useScreenShareParticipant from '~/hooks/useScreenShareParticipant/useScreenShareParticipant';
+import ParticipantTracks from '~/components/Call/ParticipantTracks/ParticipantTracks';
+import useSelectedParticipant from '~/components/Call/VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import useMainParticipant from '~/hooks/Call/useMainParticipant/useMainParticipant';
+import useScreenShareParticipant from '~/hooks/Call/useScreenShareParticipant/useScreenShareParticipant';
 import MainParticipantInfo from './MainParticipantInfo/MainParticipantInfo';
 
 export default function MainParticipant() {

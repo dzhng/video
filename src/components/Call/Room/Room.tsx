@@ -1,13 +1,13 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
 
-import Controls from '~/components/Controls/Controls';
-import LocalVideoPreview from '~/components/LocalVideoPreview/LocalVideoPreview';
-import MenuBar from '~/components/MenuBar/MenuBar';
-import ReconnectingNotification from '~/components/ReconnectingNotification/ReconnectingNotification';
+import Controls from '~/components/Call/Controls/Controls';
+import LocalVideoPreview from '~/components/Call/LocalVideoPreview/LocalVideoPreview';
+import MenuBar from '~/components/Call/MenuBar/MenuBar';
+import ReconnectingNotification from '~/components/Call/ReconnectingNotification/ReconnectingNotification';
 
-import useHeight from '~/hooks/useHeight/useHeight';
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import useHeight from '~/hooks/Call/useHeight/useHeight';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 
 import Participants from './Participants';
 

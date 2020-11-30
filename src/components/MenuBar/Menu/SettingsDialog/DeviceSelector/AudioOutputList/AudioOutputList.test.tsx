@@ -1,11 +1,11 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { useAppState } from '~/state';
-import { useAudioOutputDevices } from '~/hooks/deviceHooks/deviceHooks';
+import { useAudioOutputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import AudioOutputList from './AudioOutputList';
 
 jest.mock('~/state');
-jest.mock('~/hooks/deviceHooks/deviceHooks');
+jest.mock('~/hooks/Call/deviceHooks/deviceHooks');
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseAudioOutputDevices = useAudioOutputDevices as jest.Mock<any>;

@@ -8,8 +8,8 @@ import {
 } from 'twilio-video';
 
 import { IVideoTrack } from '~/utils/twilio-types';
-import useTrack from '~/hooks/useTrack/useTrack';
-import VideoTrack from '~/components/VideoTrack/VideoTrack';
+import useTrack from '~/hooks/Call/useTrack/useTrack';
+import VideoTrack from '~/components/Call/VideoTrack/VideoTrack';
 import AudioTrack from './AudioTrack/AudioTrack';
 
 interface PublicationProps {

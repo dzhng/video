@@ -2,7 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
