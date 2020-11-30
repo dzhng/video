@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { useAppState } from '~/state';
+import useActiveSinkId from '~/hooks/Call/useActiveSinkId/useActiveSinkId';
 import AudioTrack from './AudioTrack';
 
 const audioEl = document.createElement('audio');
@@ -8,10 +8,10 @@ audioEl.setSinkId = jest.fn();
 
 const mockTrack = { attach: jest.fn(() => audioEl), detach: jest.fn(() => [audioEl]) } as any;
 
-jest.mock('~/state');
-const mockUseAppState = useAppState as jest.Mock<any>;
+jest.mock('~/hooks/Call/useActiveSinkId/useActiveSinkId');
+const mockUseActiveSinkId = useActiveSinkId as jest.Mock<any>;
 
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
+mockUseActiveSinkId.mockImplementation(() => ({ activeSinkId: '' }));
 
 describe('the AudioTrack component', () => {
   it('should add an audio element to the DOM when the component mounts', () => {
@@ -31,7 +31,7 @@ describe('the AudioTrack component', () => {
 
   describe('with an activeSinkId', () => {
     it('should set the sinkId when the component mounts', () => {
-      mockUseAppState.mockImplementationOnce(() => ({ activeSinkId: 'mock-sink-id' }));
+      mockUseActiveSinkId.mockImplementationOnce(() => ({ activeSinkId: 'mock-sink-id' }));
       render(<AudioTrack track={mockTrack} />);
       expect(audioEl.setSinkId).toHaveBeenCalledWith('mock-sink-id');
     });

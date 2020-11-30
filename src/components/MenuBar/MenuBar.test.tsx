@@ -13,8 +13,8 @@ jest.mock('next/router');
 jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
 jest.mock('~/hooks/Call/useRoomState/useRoomState');
 jest.mock('~/hooks/Call/useFullScreenToggle/useFullScreenToggle');
+jest.mock('~/components/Call/FlipCameraButton/FlipCameraButton', () => () => null);
 jest.mock('~/state');
-jest.mock('./FlipCameraButton/FlipCameraButton', () => () => null);
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;
 const mockedUseFullScreenToggle = useFullScreenToggle as jest.Mock;

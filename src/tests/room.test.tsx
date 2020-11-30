@@ -15,7 +15,7 @@ jest.mock('~/hooks/Call/useRoomState/useRoomState');
 jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
 jest.mock('~/utils/useConnectionOptions/useConnectionOptions');
 jest.mock(
-  '~/components/Call/UnsupportedBrowserWarning/UnsupportedBrowserWarning',
+  '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning',
   () => ({ children }: { children: React.ReactChildren }) => children,
 );
 jest.mock('~/components/Call/VideoProvider', () => ({

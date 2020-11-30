@@ -11,7 +11,7 @@ jest.mock('~/hooks/Call/usePublications/usePublications', () =>
     { trackSid: 1, kind: 'audio', trackName: '' },
   ]),
 );
-jest.mock('../../hooks/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
 jest.mock('./Publication/Publication');
 
 const mockUsePublications = usePublications as jest.Mock<any>;

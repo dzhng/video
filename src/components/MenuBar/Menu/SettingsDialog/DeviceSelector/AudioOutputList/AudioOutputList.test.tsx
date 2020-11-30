@@ -1,16 +1,16 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
-import { useAppState } from '~/state';
+import useActiveSinkId from '~/hooks/Call/useActiveSinkId/useActiveSinkId';
 import { useAudioOutputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import AudioOutputList from './AudioOutputList';
 
-jest.mock('~/state');
+jest.mock('~/hooks/Call/useActiveSinkId/useActiveSinkId');
 jest.mock('~/hooks/Call/deviceHooks/deviceHooks');
 
-const mockUseAppState = useAppState as jest.Mock<any>;
+const mockUseActiveSinkId = useActiveSinkId as jest.Mock<any>;
 const mockUseAudioOutputDevices = useAudioOutputDevices as jest.Mock<any>;
 
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '123' }));
+mockUseActiveSinkId.mockImplementation(() => ({ activeSinkId: '123' }));
 
 const mockDevice = {
   deviceId: '123',

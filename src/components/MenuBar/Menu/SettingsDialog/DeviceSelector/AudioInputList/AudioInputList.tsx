@@ -4,7 +4,7 @@ import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import useMediaStreamTrack from '~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
-import LocalAudioLevelIndicator from '~/components/Call/MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
+import LocalAudioLevelIndicator from '~/components/Call/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import { useAudioInputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import { SELECTED_AUDIO_INPUT_KEY } from '~/constants';
 

@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { AudioTrack as IAudioTrack } from 'twilio-video';
-import { useAppState } from '~/state';
+import useActiveSinkId from '~/hooks/Call/useActiveSinkId/useActiveSinkId';
 
 interface AudioTrackProps {
   track: IAudioTrack;
 }
 
 export default function AudioTrack({ track }: AudioTrackProps) {
-  const { activeSinkId } = useAppState();
+  const { activeSinkId } = useActiveSinkId();
   const audioEl = useRef<HTMLAudioElement>();
 
   useEffect(() => {

@@ -5,13 +5,13 @@ import { Button, CircularProgress } from '@material-ui/core';
 
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import { useAppState } from '~/state';
-import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
-import { VideoProvider } from '~/components/VideoProvider';
-import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
-import useRoomState from '~/hooks/useRoomState/useRoomState';
+import ErrorDialog from '~/components/Call/ErrorDialog/ErrorDialog';
+import { VideoProvider } from '~/components/Call/VideoProvider';
+import Room from '~/components/Call/Room/Room';
+import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
-import Room from '~/components/Room/Room';
 
 const useStyles = makeStyles(() =>
   createStyles({

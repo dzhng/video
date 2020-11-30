@@ -3,7 +3,7 @@ import { useAudioOutputDevices } from '~/hooks/Call/deviceHooks/deviceHooks';
 import { SELECTED_AUDIO_OUTPUT_KEY } from '~/constants';
 import useActiveSinkId from './useActiveSinkId';
 
-jest.mock('../../hooks/deviceHooks/deviceHooks');
+jest.mock('~/hooks/Call/deviceHooks/deviceHooks');
 const mockUseAudioOutputDevices = useAudioOutputDevices as jest.Mock<any>;
 
 mockUseAudioOutputDevices.mockImplementation(() => []);
@@ -13,7 +13,7 @@ describe('the useActiveSinkId hook', () => {
 
   it('should return "default" by default', () => {
     const { result } = renderHook(useActiveSinkId);
-    expect(result.current[0]).toBe('default');
+    expect(result.current.activeSinkId).toBe('default');
   });
 
   it('should return the saved device ID when a corresponding device exists', () => {
@@ -25,7 +25,7 @@ describe('the useActiveSinkId hook', () => {
     ]);
     rerender();
 
-    expect(result.current[0]).toBe('mockAudioOutputDeviceID');
+    expect(result.current.activeSinkId).toBe('mockAudioOutputDeviceID');
   });
 
   it('should return "default" when there is a saved device ID but a corresponding device does not exist', () => {
@@ -37,13 +37,13 @@ describe('the useActiveSinkId hook', () => {
     ]);
     rerender();
 
-    expect(result.current[0]).toBe('default');
+    expect(result.current.activeSinkId).toBe('default');
   });
 
   it('should save the device ID in localStorage when it is set', () => {
     const { result } = renderHook(useActiveSinkId);
     act(() => {
-      result.current[1]('newMockAudioOutputDeviceID');
+      result.current.setActiveSinkId('newMockAudioOutputDeviceID');
     });
     expect(window.localStorage.getItem(SELECTED_AUDIO_OUTPUT_KEY)).toBe(
       'newMockAudioOutputDeviceID',
