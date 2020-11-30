@@ -94,41 +94,6 @@ service cloud.firestore {
         requiredCreatedAtKey();
     }
 
-    match /networks/{networkId} {
-
-      function currentAdmin() {
-        return get(/databases/$(database)/documents/networks/$(networkId)/admins/$(request.auth.uid)).data;
-      }
-
-      allow read;
-
-      allow update: if
-        request.auth != null &&
-        assertKeys(['name', 'logoURL', 'primaryColor', 'createdAt']) &&
-        requiredStringKey('name', 50) &&
-        optionalStringKey('logoURL', 280) &&
-        optionalStringKey('primaryColor', 10) &&
-        requiredCreatedAtKey() &&
-        // only network owners can update
-        currentAdmin().role == 'owner';
-
-      match /admins/{adminId} {
-        allow read: if
-          request.auth != null &&
-          // make sure only users in the same network can read admin list
-          exists(/database/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid));
-
-        allow write: if
-          assertKeys(['role', 'createdAt']) &&
-          requiredStringKey('role', 10) &&
-          requiredCreatedAtKey() &&
-          // make sure only owners can create another admin
-          currentAdmin().role == 'owner' &&
-          // make sure this admin is also an user and belongs to same network
-          getUser(adminId).networkId == networkId;
-      }
-    } // match network
-
     match /calls/{callId} {
       allow read;
 
@@ -181,6 +146,41 @@ service cloud.firestore {
         assertKeys(['fileId']) &&
         requiredStringKey('fileId', 24);
     }
+
+    match /networks/{networkId} {
+
+      function currentAdmin() {
+        return get(/databases/$(database)/documents/networks/$(networkId)/admins/$(request.auth.uid)).data;
+      }
+
+      allow read;
+
+      allow update: if
+        request.auth != null &&
+        assertKeys(['name', 'logoURL', 'primaryColor', 'createdAt']) &&
+        requiredStringKey('name', 50) &&
+        optionalStringKey('logoURL', 280) &&
+        optionalStringKey('primaryColor', 10) &&
+        requiredCreatedAtKey() &&
+        // only network owners can update
+        currentAdmin().role == 'owner';
+
+      match /admins/{adminId} {
+        allow read: if
+          request.auth != null &&
+          // make sure only users in the same network can read admin list
+          exists(/database/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid));
+
+        allow write: if
+          assertKeys(['role', 'createdAt']) &&
+          requiredStringKey('role', 10) &&
+          requiredCreatedAtKey() &&
+          // make sure only owners can create another admin
+          currentAdmin().role == 'owner' &&
+          // make sure this admin is also an user and belongs to same network
+          getUser(adminId).networkId == networkId;
+      }
+    } // match network
 
   } // match database
 } // service firestore
