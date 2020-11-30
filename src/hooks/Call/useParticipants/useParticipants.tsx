@@ -13,18 +13,18 @@ export default function useParticipants() {
   // ParticipantStrip component.
   useEffect(() => {
     if (dominantSpeaker) {
-      setParticipants(prevParticipants => [
+      setParticipants((prevParticipants) => [
         dominantSpeaker,
-        ...prevParticipants.filter(participant => participant !== dominantSpeaker),
+        ...prevParticipants.filter((participant) => participant !== dominantSpeaker),
       ]);
     }
   }, [dominantSpeaker]);
 
   useEffect(() => {
     const participantConnected = (participant: RemoteParticipant) =>
-      setParticipants(prevParticipants => [...prevParticipants, participant]);
+      setParticipants((prevParticipants) => [...prevParticipants, participant]);
     const participantDisconnected = (participant: RemoteParticipant) =>
-      setParticipants(prevParticipants => prevParticipants.filter(p => p !== participant));
+      setParticipants((prevParticipants) => prevParticipants.filter((p) => p !== participant));
     room.on('participantConnected', participantConnected);
     room.on('participantDisconnected', participantDisconnected);
     return () => {

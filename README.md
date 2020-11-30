@@ -76,6 +76,14 @@ To upgrade a specific package to latest major version (make sure to research com
 
     $ npm install <package_name>@latest
 
+## Component Structure
+
+There are 3 different types of components in this app, pages (under `src/pages`), containers (under `src/containers`), and components (under `src/components`). The rule of thumb is:
+
+- A page handles data query and should just render one container.
+- A container takes in any necessary data from prop and render components and handle layouts; any user interaction business logic should also be here. Generally keep it to one container per page.
+- A component should be stateless independent pieces of UI that can be reused; any data should be passed in either through props or context (via providers).
+
 ## Video Architecture
 
 The state of this application (with a few exceptions) is managed by the [room object](https://media.twiliocdn.com/sdk/js/video/releases/2.0.0/docs/Room.html) that is supplied by the SDK. The `room` object contains all information about the room that the user is connected to. The class hierarchy of the `room` object can be viewed [here](https://www.twilio.com/docs/video/migrating-1x-2x#object-model).

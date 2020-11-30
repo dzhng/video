@@ -2,15 +2,13 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-import AppBar from '@material-ui/core/AppBar';
-import { Typography } from '@material-ui/core';
-import Toolbar from '@material-ui/core/Toolbar';
+import { Typography, AppBar, Toolbar } from '@material-ui/core';
 
 import { useAppState } from '~/state';
 import useRoomState from '~/hooks/useRoomState/useRoomState';
-import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
-import FlipCameraButton from './FlipCameraButton/FlipCameraButton';
-import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
+import ToggleFullscreenButton from '~/components/Call/ToggleFullScreenButton/ToggleFullScreenButton';
+import FlipCameraButton from '~/components/Call/FlipCameraButton/FlipCameraButton';
+import LocalAudioLevelIndicator from '~/components/Call/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import Menu from './Menu/Menu';
 
 const useStyles = makeStyles((theme: Theme) =>

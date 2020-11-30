@@ -3,7 +3,7 @@ import { screen, render } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
 import useVideoContext from '~/hooks/useVideoContext/useVideoContext';
 import { useVideoInputDevices } from '~/hooks/deviceHooks/deviceHooks';
-import VideoTrack from '~/components/VideoTrack/VideoTrack';
+import VideoTrack from '~/components/Call/VideoTrack/VideoTrack';
 import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '~/constants';
 import VideoInputList from './VideoInputList';
 

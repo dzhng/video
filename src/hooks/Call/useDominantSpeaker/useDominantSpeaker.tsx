@@ -20,7 +20,7 @@ export default function useDominantSpeaker() {
     // Since 'null' values are ignored, we will need to listen for the 'participantDisconnected'
     // event, so we can set the dominantSpeaker to 'null' when they disconnect.
     const handleParticipantDisconnected = (participant: RemoteParticipant) => {
-      setDominantSpeaker(prevDominantSpeaker => {
+      setDominantSpeaker((prevDominantSpeaker) => {
         return prevDominantSpeaker === participant ? null : prevDominantSpeaker;
       });
     };

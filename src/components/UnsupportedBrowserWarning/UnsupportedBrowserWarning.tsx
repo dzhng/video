@@ -25,7 +25,7 @@ export default function UnsupportedBrowser({ children }: { children: React.React
           <Grid item xs={12} sm={6}>
             <Paper className={classes.paper}>
               <Typography variant="h4" className={classes.heading}>
-                Browser or context not supported
+                Browser not supported
               </Typography>
               <Typography>
                 Please open this application in one of the{' '}
@@ -37,16 +37,6 @@ export default function UnsupportedBrowser({ children }: { children: React.React
                   supported browsers
                 </Link>
                 .
-                <br />
-                If you are using a supported browser, please ensure that this app is served over a{' '}
-                <Link
-                  href="https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  secure context
-                </Link>{' '}
-                (e.g. https or localhost).
               </Typography>
             </Paper>
           </Grid>
