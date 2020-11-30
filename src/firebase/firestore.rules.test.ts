@@ -164,7 +164,7 @@ describe('firebase cloud firestore database rules', () => {
 
     it('should let anyone create a call', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const call = db.collection('networks').doc('network').collection('calls').doc('call');
+      const call = db.collection('calls').doc('call');
       await firebase.assertSucceeds(
         call.set({
           ...requiredFields,
@@ -177,7 +177,7 @@ describe('firebase cloud firestore database rules', () => {
 
     it('should only allow the correct state', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const call = db.collection('networks').doc('network').collection('calls').doc('call');
+      const call = db.collection('calls').doc('call');
       await firebase.assertFails(
         call.set({
           ...requiredFields,
@@ -191,13 +191,19 @@ describe('firebase cloud firestore database rules', () => {
 
     it('should let anyone access a call', async () => {
       const db = getAuthedFirestore(null);
-      const call = db.collection('networks').doc('network').collection('calls').doc('call');
+      const call = db.collection('calls').doc('call');
       await firebase.assertSucceeds(call.get());
+    });
+
+    it('should let anyone query for calls they belong to', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const calls = db.collection('calls').where('participants', 'array-contains', 'alice');
+      await firebase.assertSucceeds(calls.get());
     });
 
     it('should force the creator of the call to be a participant', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const call = db.collection('networks').doc('network').collection('calls').doc('call');
+      const call = db.collection('calls').doc('call');
       await firebase.assertFails(
         call.set({
           ...requiredFields,
@@ -219,7 +225,7 @@ describe('firebase cloud firestore database rules', () => {
 
     it('should only let call participants update the call', async () => {
       const alice = getAuthedFirestore({ uid: 'alice' });
-      let call = alice.collection('networks').doc('network').collection('calls').doc('call');
+      let call = alice.collection('calls').doc('call');
       call.set({
         ...requiredFields,
         participants: ['alice', 'charlie'],
@@ -228,7 +234,7 @@ describe('firebase cloud firestore database rules', () => {
       });
 
       const bob = getAuthedFirestore({ uid: 'bob' });
-      call = bob.collection('networks').doc('network').collection('calls').doc('call');
+      call = bob.collection('calls').doc('call');
       await firebase.assertFails(
         call.update({
           name: 'Test Room 2',
@@ -238,7 +244,7 @@ describe('firebase cloud firestore database rules', () => {
 
     it('should let existing participants remove themselves from the call', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      let call = db.collection('networks').doc('network').collection('calls').doc('call');
+      let call = db.collection('calls').doc('call');
       call.set({
         name: 'Test Room',
         state: 'pre',

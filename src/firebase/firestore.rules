@@ -127,58 +127,59 @@ service cloud.firestore {
           // make sure this admin is also an user and belongs to same network
           getUser(adminId).networkId == networkId;
       }
+    } // match network
 
-      match /calls/{callId} {
-        allow read;
+    match /calls/{callId} {
+      allow read;
 
-        allow write: if 
-          request.auth != null &&
-          assertKeys(['name', 'state', 'participants', 'externalEmails', 'startTime', 'durationMin', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
-          requiredStringKey('name', 50) &&
-          requiredEnumKey('state', ['pre', 'started', 'finished']) &&
+      allow write: if 
+        request.auth != null &&
+        assertKeys(['name', 'state', 'networkId', 'participants', 'externalEmails', 'startTime', 'durationMin', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
+        requiredStringKey('name', 50) &&
+        requiredEnumKey('state', ['pre', 'started', 'finished']) &&
+        optionalStringKey('networkId', 24) &&
 
-          // list of internal users who have access to this call
-          requiredArrayKey('participants', 10) &&
-          // list of external users (in form of emails) who have access to this call
-          optionalArrayKey('externalEmails', 10) &&
+        // list of internal users who have access to this call
+        requiredArrayKey('participants', 10) &&
+        // list of external users (in form of emails) who have access to this call
+        optionalArrayKey('externalEmails', 10) &&
 
-          // presentation scheduling
-          optionalTimeKey('startTime') &&
-          optionalIntKey('durationMin', 0, 24*60) &&
+        // presentation scheduling
+        optionalTimeKey('startTime') &&
+        optionalIntKey('durationMin', 0, 24*60) &&
 
-          // set if have presentation attachment
-          optionalStringKey('presentationId', 24) &&
-          // set if have note attachment
-          optionalStringKey('noteId', 24) &&
-          // set if have chat attachment
-          optionalStringKey('chatId', 24) &&
-          // set once transcrit is ready
-          optionalStringKey('transcriptId', 24) &&
-          requiredCreatedAtKey() &&
+        // set if have presentation attachment
+        optionalStringKey('presentationId', 24) &&
+        // set if have note attachment
+        optionalStringKey('noteId', 24) &&
+        // set if have chat attachment
+        optionalStringKey('chatId', 24) &&
+        // set once transcrit is ready
+        optionalStringKey('transcriptId', 24) &&
+        requiredCreatedAtKey() &&
 
-          // when creating, participants should contain at least one user which is the 
-          // current user. When editing, existing doc must contain current user
-          (isNewDoc() ? 
-            (request.resource.data.participants.size() >= 1 &&
-              request.resource.data.participants.hasAny([request.auth.uid])) : 
-            (resource.data.participants.hasAny([request.auth.uid])));
+        // when creating, participants should contain at least one user which is the 
+        // current user. When editing, existing doc must contain current user
+        (isNewDoc() ? 
+         (request.resource.data.participants.size() >= 1 &&
+          request.resource.data.participants.hasAny([request.auth.uid])) : 
+         (resource.data.participants.hasAny([request.auth.uid])));
 
-        match /notes/{noteId} {
-          allow read;
-
-          allow write: if
-            assertKeys(['text']) &&
-            requiredStringKey('text', 50000);
-        }
-      }
-
-      match /presentations/{presentationId} {
+      match /notes/{noteId} {
         allow read;
 
         allow write: if
-          assertKeys(['fileId']) &&
-          requiredStringKey('fileId', 24);
+          assertKeys(['text']) &&
+          requiredStringKey('text', 50000);
       }
+    } // match call
+
+    match /presentations/{presentationId} {
+      allow read;
+
+      allow write: if
+        assertKeys(['fileId']) &&
+        requiredStringKey('fileId', 24);
     }
 
   } // match database
