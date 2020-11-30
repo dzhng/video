@@ -84,24 +84,24 @@ There are a few things to enforce outside of auto formatting though.
 
 Ensure that imports are destructured whenever possible
 
-`
+```
 // bad
 import lodash from 'lodash';
 
 // good
 import { uniq, compact } from 'lodash';
-`
+```
 
 Combine imports whenever possible
 
-`
+```
 // bad
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 
 // good
 import { Button, Container } from '@material-ui/core';
-`
+```
 
 ## Component Structure
 
