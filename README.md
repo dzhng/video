@@ -22,8 +22,6 @@ To run the app locally:
 
 ## Tests
 
-This application has unit tests (using [Jest](https://jestjs.io/)) and E2E tests (using [Cypress](https://www.cypress.io/)). You can run the tests with the following scripts.
-
 ### Unit Tests
 
 Run unit tests with
@@ -46,17 +44,9 @@ If you need to pass more arguments into jest, add a `--` before adding additiona
 
     $ npm test <SEARCH_TERM> -- --watch
 
-### E2E Tests (WORK IN PROGRESS)
-
-Run end to end tests with
-
-    $ npm run cypress:open
-
-This will open the Cypress test runner. When it's open, select a test file to run.
-
 ## Testing Approach
 
-### testing-library vs enzyme
+### Rendering in Virtual DOM: testing-library vs enzyme
 
 Of the two popular testing methods for DOM, we're going to follow the strategy defined by testing-library, which tests closer to final rendered output, and not a component's internal states and methods. This is a good [summary of why](https://kentcdodds.com/blog/why-i-never-use-shallow-rendering#calling-methods-in-react-components).
 
