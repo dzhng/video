@@ -1,9 +1,9 @@
 import React from 'react';
+import * as Yup from 'yup';
+import { uniq, compact } from 'lodash';
 import { Container, Typography, Button, LinearProgress } from '@material-ui/core';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from 'formik';
 import { TextField } from 'formik-material-ui';
-import * as Yup from 'yup';
-import { uniq, compact } from 'lodash';
 
 import { Call } from '~/firebase/schema-types';
 
