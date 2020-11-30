@@ -82,7 +82,7 @@
     "start": "next start",
     "test": "sh -c 'firebase emulators:exec \"jest $0 $1 $2 $3 $4\"' '--passWithNoTests'",
     "test:dev": "sh -c 'firebase emulators:exec \"jest --watch --runInBand --reporters=default --reporters=jest-junit --coverage $0 $1 $2 $3 $4\"' '--passWithNoTests'",
-    "lint": "eslint src/**/*.{ts,tsx}",
+    "lint": "eslint src/**/*.{ts,tsx} --fix",
     "tsc": "tsc",
     "server": "node server.js",
     "deploy:firebase": "firebase deploy --only firestore:rules"

@@ -76,6 +76,33 @@ To upgrade a specific package to latest major version (make sure to research com
 
     $ npm install <package_name>@latest
 
+## Style Guides
+
+Style will be automatically enforced via prettier and eslint. An autoformatter will be run on every git commit via lint-staged, and a linting script is available if you want to manually run it.
+
+There are a few things to enforce outside of auto formatting though.
+
+Ensure that imports are destructured whenever possible
+
+`
+// bad
+import lodash from 'lodash';
+
+// good
+import { uniq, compact } from 'lodash';
+`
+
+Combine imports whenever possible
+
+`
+// bad
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+
+// good
+import { Button, Container } from '@material-ui/core';
+`
+
 ## Component Structure
 
 There are 3 different types of components in this app, pages (under `src/pages`), containers (under `src/containers`), and components (under `src/components`). The rule of thumb is:
