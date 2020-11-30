@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 import { Call } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
+import LoadingContainer from '~/containers/Loading/Loading';
+import SummaryContainer from '~/containers/Call/Summary';
 
 export default withPrivateRoute(function CallPage() {
   const router = useRouter();
-  const [call, setCall] = useState<Call | undefined>(undefined);
+  const [call, setCall] = useState<Call | null>(null);
 
   const callId = String(router.query.slug);
 
@@ -24,13 +24,5 @@ export default withPrivateRoute(function CallPage() {
     return unsubscribe;
   }, [callId]);
 
-  return (
-    <Container>
-      <Link href="edit">
-        <Button>Edit Call</Button>
-      </Link>
-      <Typography>Call</Typography>
-      {call}
-    </Container>
-  );
+  return call ? <SummaryContainer call={call} /> : <LoadingContainer />;
 });
