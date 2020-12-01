@@ -15,10 +15,16 @@ export default withPrivateRoute(function CreateCallPage() {
 
   const createCall = useCallback(
     (call: Call) => {
+      if (!user) {
+        // do nothing if user doesn't exist
+        console.warn('Trying to create call without signed in user');
+        return;
+      }
+
       // before adding, replace timestamp with server helper
       const data = {
         ...call,
-        users: [user?.uid],
+        users: [user.uid],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
 
