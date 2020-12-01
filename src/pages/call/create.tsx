@@ -6,9 +6,11 @@ import { Call } from '~/firebase/schema-types';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import CreateContainer from '~/containers/Call/Create';
 import usePendingWrite from '~/hooks/usePendingWrite/usePendingWrite';
+import useFirebaseAuth from '~/state/useFirebaseAuth/useFirebaseAuth';
 
 export default withPrivateRoute(function CreateCallPage() {
   const router = useRouter();
+  const { user } = useFirebaseAuth();
   const { markIsWriting } = usePendingWrite();
 
   const createCall = useCallback(
@@ -16,6 +18,7 @@ export default withPrivateRoute(function CreateCallPage() {
       // before adding, replace timestamp with server helper
       const data = {
         ...call,
+        users: [user?.uid],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
 
@@ -23,7 +26,7 @@ export default withPrivateRoute(function CreateCallPage() {
       markIsWriting();
       router.push('/');
     },
-    [router, markIsWriting],
+    [router, user, markIsWriting],
   );
 
   return <CreateContainer createCall={createCall} />;

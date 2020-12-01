@@ -160,6 +160,7 @@ describe('firebase cloud firestore database rules', () => {
     let requiredFields = {
       name: 'Test Room',
       state: 'pre',
+      users: [],
     };
 
     it('should let anyone create a call', async () => {
@@ -168,8 +169,8 @@ describe('firebase cloud firestore database rules', () => {
       await firebase.assertSucceeds(
         call.set({
           ...requiredFields,
-          participants: ['alice', 'charlie'],
-          externalEmails: ['hello@world.com'],
+          users: ['alice', 'charlie'],
+          guestEmails: ['hello@world.com'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
@@ -182,8 +183,8 @@ describe('firebase cloud firestore database rules', () => {
         call.set({
           ...requiredFields,
           state: 'test',
-          participants: ['alice', 'charlie'],
-          externalEmails: ['hello@world.com'],
+          users: ['alice', 'charlie'],
+          guestEmails: ['hello@world.com'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
@@ -193,8 +194,8 @@ describe('firebase cloud firestore database rules', () => {
         call.set({
           ...requiredFields,
           state: 'test',
-          participants: ['alice', 'charlie'],
-          externalEmails: ['', 'hello@world.com'],
+          users: ['alice', 'charlie'],
+          guestEmails: ['', 'hello@world.com'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
@@ -203,8 +204,8 @@ describe('firebase cloud firestore database rules', () => {
         call.set({
           ...requiredFields,
           state: 'test',
-          participants: [null, 'alice', 'charlie'],
-          externalEmails: ['hello@world.com'],
+          users: [null, 'alice', 'charlie'],
+          guestEmails: ['hello@world.com'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
@@ -218,18 +219,17 @@ describe('firebase cloud firestore database rules', () => {
 
     it('should let anyone query for calls they belong to', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const calls = db.collection('calls').where('participants', 'array-contains', 'alice');
+      const calls = db.collection('calls').where('users', 'array-contains', 'alice');
       await firebase.assertSucceeds(calls.get());
     });
 
-    it('should force the creator of the call to be a participant', async () => {
+    it('should force the creator of the call to be a user', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       const call = db.collection('calls').doc('call');
       await firebase.assertFails(
         call.set({
           ...requiredFields,
-          participants: ['charlie'],
-          externalEmails: ['hello@world.com'],
+          users: ['charlie'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
@@ -237,20 +237,18 @@ describe('firebase cloud firestore database rules', () => {
       await firebase.assertFails(
         call.set({
           ...requiredFields,
-          participants: [],
-          externalEmails: ['hello@world.com'],
+          users: [],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
     });
 
-    it('should only let call participants update the call', async () => {
+    it('should only let call users update the call', async () => {
       const alice = getAuthedFirestore({ uid: 'alice' });
       let call = alice.collection('calls').doc('call');
       call.set({
         ...requiredFields,
-        participants: ['alice', 'charlie'],
-        externalEmails: ['hello@world.com'],
+        users: ['alice', 'charlie'],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -263,20 +261,19 @@ describe('firebase cloud firestore database rules', () => {
       );
     });
 
-    it('should let existing participants remove themselves from the call', async () => {
+    it('should let existing users remove themselves from the call', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       let call = db.collection('calls').doc('call');
       call.set({
         name: 'Test Room',
         state: 'pre',
-        participants: ['alice', 'charlie'],
-        externalEmails: ['hello@world.com'],
+        users: ['alice', 'charlie'],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       await firebase.assertSucceeds(
         call.update({
-          participants: firebase.firestore.FieldValue.arrayRemove('alice'),
+          users: firebase.firestore.FieldValue.arrayRemove('alice'),
         }),
       );
     });
