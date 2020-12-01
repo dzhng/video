@@ -18,7 +18,11 @@ export default withPrivateRoute(function IndexPage() {
     db.collection('calls')
       .where('participants', 'array-contains', user.uid)
       .onSnapshot(function (querySnapshot) {
-        const calls = querySnapshot.docs.map((doc) => doc.data());
+        const calls = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
         setUpcomingCalls(calls as Call[]);
       });
   }, [user]);

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import firebase, { db } from '~/utils/firebase';
 import { Call } from '~/firebase/schema-types';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
-import CreateContainer from '~/containers/Call/Create';
+import EditContainer from '~/containers/EditCall/EditCall';
 import usePendingWrite from '~/hooks/usePendingWrite/usePendingWrite';
 import useFirebaseAuth from '~/state/useFirebaseAuth/useFirebaseAuth';
 
@@ -29,5 +29,5 @@ export default withPrivateRoute(function CreateCallPage() {
     [router, user, markIsWriting],
   );
 
-  return <CreateContainer createCall={createCall} />;
+  return <EditContainer saveCall={createCall} />;
 });

@@ -1,12 +1,14 @@
 // NOTE: make sure these types are aligned with firebase type checking rules in firestore.rules!
 
 export declare interface User {
+  id?: string;
   networkId?: string;
   bio?: string;
   createdAt: Date;
 }
 
 export declare interface Network {
+  id?: string;
   name: string;
   logoURL?: string;
   primaryColor?: string;
@@ -14,15 +16,18 @@ export declare interface Network {
 }
 
 export declare interface Admin {
+  id?: string;
   role: 'owner' | 'admin';
   createdAt: string;
 }
 
 export declare interface Call {
+  id?: string;
   name: string;
   state: 'pre' | 'started' | 'finished';
-  participants?: string[];
-  externalEmails?: string[];
+  users: string[];
+  guests?: string[];
+  guestEmails?: string[];
   startTime?: Date;
   durationMin?: number;
   presentationId?: string;
