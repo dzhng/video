@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AudioTrack, LocalAudioTrack, RemoteAudioTrack } from 'twilio-video';
 import { interval } from 'd3-timer';
+
+import { isBrowser } from '~/utils';
 import useIsTrackEnabled from '~/hooks/Call/useIsTrackEnabled/useIsTrackEnabled';
 import useMediaStreamTrack from '~/hooks/Call/useMediaStreamTrack/useMediaStreamTrack';
 
@@ -8,11 +10,11 @@ let clipId = 0;
 const getUniqueClipId = () => clipId++;
 
 // @ts-ignore
-const AudioContext = window.AudioContext || window.webkitAudioContext;
+const AudioContext = isBrowser ? window.AudioContext || window.webkitAudioContext : Object;
 let audioContext: AudioContext;
 
-export function initializeAnalyser(stream: MediaStream) {
-  audioContext = audioContext || new AudioContext();
+function initializeAnalyser(stream: MediaStream) {
+  audioContext = audioContext ?? new AudioContext();
   const audioSource = audioContext.createMediaStreamSource(stream);
 
   const analyser = audioContext.createAnalyser();

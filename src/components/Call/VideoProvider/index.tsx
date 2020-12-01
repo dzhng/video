@@ -42,7 +42,7 @@ export const VideoContext = createContext<IVideoContext>(null!);
 
 interface VideoProviderProps {
   options?: ConnectOptions;
-  onError: ErrorCallback;
+  onError?: ErrorCallback;
   onDisconnect?: Callback;
   children: ReactNode;
 }

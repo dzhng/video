@@ -4,7 +4,6 @@ import { styled } from '@material-ui/core/styles';
 import Controls from '~/components/Call/Controls/Controls';
 import LocalVideoPreview from '~/components/Call/LocalVideoPreview/LocalVideoPreview';
 import ReconnectingNotification from '~/components/Call/ReconnectingNotification/ReconnectingNotification';
-import MenuBar from '~/components/MenuBar/MenuBar';
 
 import useHeight from '~/hooks/Call/useHeight/useHeight';
 import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
@@ -32,7 +31,6 @@ export default function Layout() {
 
   return (
     <Container style={{ height }}>
-      <MenuBar />
       <Main>
         {roomState === 'disconnected' ? <LocalVideoPreview /> : <Participants />}
         <Controls />

@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { EventEmitter } from 'events';
 import Video, { ConnectOptions, LocalTrack, Room } from 'twilio-video';
-import { isMobile } from '~/utils';
+import { isMobile, isBrowser } from '~/utils';
 import { Callback } from '~/utils/twilio-types';
 
-// @ts-ignore
-window.TwilioVideo = Video;
+if (isBrowser) {
+  // @ts-ignore
+  window.TwilioVideo = Video;
+}
 
 export default function useRoom(
   localTracks: LocalTrack[],
