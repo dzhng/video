@@ -1,17 +1,17 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { styled } from '@material-ui/core/styles';
 import useLayout from '~/hooks/useLayout/useLayout';
 import MenuBar from '~/components/MenuBar/MenuBar';
 
+const Container = styled('div')({});
+
 export default function Layout({ children }: { children?: React.ReactNode }) {
-  const { showLayout } = useLayout();
+  const { showLayout, title } = useLayout();
 
   return showLayout ? (
     <>
-      <MenuBar />
-      <Grid container justify="center">
-        {children}
-      </Grid>
+      <MenuBar title={title} />
+      <Container>{children}</Container>
     </>
   ) : (
     children
