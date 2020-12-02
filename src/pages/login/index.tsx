@@ -4,7 +4,6 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
@@ -42,12 +41,6 @@ const useStyles = makeStyles({
   },
 });
 
-const theme = createMuiTheme({
-  palette: {
-    type: 'light',
-  },
-});
-
 const GoogleLogo = <img src="/google-logo.svg" />;
 
 export default function LoginPage(props: { previousPage?: string }) {
@@ -74,33 +67,31 @@ export default function LoginPage(props: { previousPage?: string }) {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Grid
-        container
-        justify="center"
-        alignItems="flex-start"
-        className={classes.container}
-        data-testid="container"
-      >
-        <Paper className={classes.paper} elevation={6}>
-          <div>
-            {authError && (
-              <Typography variant="caption" className={classes.errorMessage}>
-                <ErrorOutlineIcon />
-                {authError.message}
-              </Typography>
-            )}
-          </div>
-          <Button
-            variant="contained"
-            className={classes.button}
-            onClick={login}
-            startIcon={GoogleLogo}
-          >
-            Sign in with Google
-          </Button>
-        </Paper>
-      </Grid>
-    </ThemeProvider>
+    <Grid
+      container
+      justify="center"
+      alignItems="flex-start"
+      className={classes.container}
+      data-testid="container"
+    >
+      <Paper className={classes.paper} elevation={6}>
+        <div>
+          {authError && (
+            <Typography variant="caption" className={classes.errorMessage}>
+              <ErrorOutlineIcon />
+              {authError.message}
+            </Typography>
+          )}
+        </div>
+        <Button
+          variant="contained"
+          className={classes.button}
+          onClick={login}
+          startIcon={GoogleLogo}
+        >
+          Sign in with Google
+        </Button>
+      </Paper>
+    </Grid>
   );
 }

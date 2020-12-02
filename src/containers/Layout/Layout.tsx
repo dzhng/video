@@ -1,14 +1,22 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
+import { useRouter } from 'next/router';
 import MenuBar from '~/components/MenuBar/MenuBar';
 
 const Container = styled('div')({});
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
-  return (
+  const router = useRouter();
+
+  // make special exception for room page to not wrap anything
+  const showLayout = router.pathname !== '/call/[slug]/room';
+
+  return showLayout ? (
     <>
       <MenuBar />
       <Container>{children}</Container>
     </>
+  ) : (
+    <>children</>
   );
 }

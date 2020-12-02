@@ -15,10 +15,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 
 export default createMuiTheme({
   palette: {
-    type: 'dark',
-    primary: {
-      main: '#F22F46',
-    },
+    type: 'light',
   },
   sidebarWidth: 260,
   sidebarMobileHeight: 90,

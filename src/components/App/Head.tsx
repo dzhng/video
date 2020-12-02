@@ -6,10 +6,10 @@ const defaultOGURL = '';
 const defaultOGImage = '';
 
 interface HeadProps {
-  title: string;
-  description: string;
-  url: string;
-  ogImage: string;
+  title?: string;
+  description?: string;
+  url?: string;
+  ogImage?: string;
 }
 
 export default function Head({ title, description, url, ogImage }: HeadProps) {

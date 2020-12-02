@@ -11,9 +11,9 @@ import AppStateProvider from '~/state';
 
 let previousPage = '';
 
-Router.beforeHistoryChange = (url) => {
+Router.events.on('beforeHistoryChange', (url) => {
   previousPage = url;
-};
+});
 
 class MyApp extends App {
   render() {
