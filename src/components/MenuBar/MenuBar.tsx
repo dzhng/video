@@ -30,13 +30,12 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function MenuBar({ title }: { title: string }) {
+export default function MenuBar() {
   const classes = useStyles();
   const { user } = useAppState();
 
   return (
     <AppBar className={classes.container} position="static">
-      <Typography variant="h1">{title}</Typography>
       <Toolbar className={classes.toolbar}>
         <Typography className={classes.displayName} variant="body1">
           {user?.displayName}
