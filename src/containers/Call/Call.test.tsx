@@ -4,25 +4,25 @@ import fireEvent from '@testing-library/user-event';
 import { useRouter } from 'next/router';
 
 import { Call } from '~/firebase/schema-types';
-import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
-import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
-import { IVideoContext } from '~/components/Call/VideoProvider';
+import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import { IVideoContext } from '~/components/Video/VideoProvider';
 import { useAppState } from '~/state';
 import CallContainer from './Call';
 
 jest.mock('next/router');
 jest.mock('~/state');
-jest.mock('~/hooks/Call/useRoomState/useRoomState');
-jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Video/useRoomState/useRoomState');
+jest.mock('~/hooks/Video/useVideoContext/useVideoContext');
 jest.mock('~/utils/useConnectionOptions/useConnectionOptions');
 jest.mock(
   '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning',
   () => ({ children }: { children: React.ReactChildren }) => children,
 );
-jest.mock('~/components/Call/VideoProvider', () => ({
+jest.mock('~/components/Video/VideoProvider', () => ({
   VideoProvider: ({ children }: { children: React.ReactChildren }) => children,
 }));
-jest.mock('~/components/Call/Room/Room', () => () => null);
+jest.mock('~/components/Video/Room/Room', () => () => null);
 jest.mock('~/components/PrivateRoute/withPrivateRoute', () => (component: any) => component);
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;
@@ -35,6 +35,7 @@ const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 const mockCall: Call = {
   name: 'hello',
   state: 'started',
+  users: [],
   createdAt: new Date(),
 };
 

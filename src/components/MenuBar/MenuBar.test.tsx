@@ -2,18 +2,18 @@ import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { useRouter } from 'next/router';
 
-import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
-import useFullScreenToggle from '~/hooks/Call/useFullScreenToggle/useFullScreenToggle';
-import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
+import useFullScreenToggle from '~/hooks/Video/useFullScreenToggle/useFullScreenToggle';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import { useAppState } from '~/state';
-import { IVideoContext } from '~/components/Call/VideoProvider';
+import { IVideoContext } from '~/components/Video/VideoProvider';
 import MenuBar from './MenuBar';
 
 jest.mock('next/router');
-jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
-jest.mock('~/hooks/Call/useRoomState/useRoomState');
-jest.mock('~/hooks/Call/useFullScreenToggle/useFullScreenToggle');
-jest.mock('~/components/Call/FlipCameraButton/FlipCameraButton', () => () => null);
+jest.mock('~/hooks/Video/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Video/useRoomState/useRoomState');
+jest.mock('~/hooks/Video/useFullScreenToggle/useFullScreenToggle');
+jest.mock('~/components/Video/FlipCameraButton/FlipCameraButton', () => () => null);
 jest.mock('~/state');
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;

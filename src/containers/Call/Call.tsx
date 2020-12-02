@@ -5,11 +5,11 @@ import { Button, CircularProgress } from '@material-ui/core';
 
 import { Call } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
-import ErrorDialog from '~/components/Call/ErrorDialog/ErrorDialog';
-import { VideoProvider } from '~/components/Call/VideoProvider';
-import Room from '~/components/Call/Room/Room';
-import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
-import useRoomState from '~/hooks/Call/useRoomState/useRoomState';
+import ErrorDialog from '~/components/Video/ErrorDialog/ErrorDialog';
+import { VideoProvider } from '~/components/Video/VideoProvider';
+import Room from '~/components/Video/Room/Room';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 

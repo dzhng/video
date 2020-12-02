@@ -2,11 +2,11 @@ import React from 'react';
 import { screen, render, within } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
 import { useAppState } from '~/state';
-import useVideoContext from '~/hooks/Call/useVideoContext/useVideoContext';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import Menu from './Menu';
 
 jest.mock('~/state');
-jest.mock('~/hooks/Call/useVideoContext/useVideoContext');
+jest.mock('~/hooks/Video/useVideoContext/useVideoContext');
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
