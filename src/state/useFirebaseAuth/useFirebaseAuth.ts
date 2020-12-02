@@ -7,10 +7,12 @@ export default function useFirebaseAuth() {
   const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
-    auth.onAuthStateChanged((newUser) => {
+    const unsubscribe = auth.onAuthStateChanged((newUser) => {
       setUser(newUser);
       setIsAuthReady(true);
     });
+
+    return unsubscribe;
   }, []);
 
   // fetch twilio token for call from internal endpoint (which talks to twilio admin API)

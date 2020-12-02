@@ -1,10 +1,10 @@
 import React from 'react';
 import { CircularProgress } from '@material-ui/core';
 
-import usePendingWrite from '~/hooks/usePendingWrite/usePendingWrite';
+import { useAppState } from '~/state';
 
 export default function PendingWrite() {
-  const { isWriting } = usePendingWrite();
+  const { isWriting } = useAppState();
 
   return isWriting ? <CircularProgress color="primary" variant="indeterminate" /> : null;
 }

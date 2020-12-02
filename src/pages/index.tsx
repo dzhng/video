@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import Home from '~/containers/Home/Home';
-import useFirebaseAuth from '~/state/useFirebaseAuth/useFirebaseAuth';
+import { useAppState } from '~/state';
 import { Call } from '~/firebase/schema-types';
 
 export default withPrivateRoute(function IndexPage() {
-  const { user } = useFirebaseAuth();
+  const { user } = useAppState();
   const [upcomingCalls, setUpcomingCalls] = useState<Call[]>([]);
 
   useEffect(() => {

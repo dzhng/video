@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, useState } from 'react';
+import firebase from 'firebase';
 import { TwilioError } from 'twilio-video';
 
 import { RoomType } from '~/utils/twilio-types';
@@ -9,17 +10,25 @@ import {
   SettingsAction,
 } from './settings/settingsReducer';
 import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
-import firebase from 'firebase';
+import usePendingWrite from './usePendingWrite/usePendingWrite';
 
 export interface StateContextType {
   error: TwilioError | null;
   setError(error: TwilioError | null): void;
+
+  // auth
   getToken(room: string): Promise<string>;
-  user?: firebase.User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
+  user?: firebase.User | null;
   signIn?(passcode?: string): Promise<void>;
   signOut?(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
+
+  // ux state
+  isWriting: boolean;
+  markIsWriting(): void;
+
+  // video settings
   settings: Settings;
   dispatchSetting: React.Dispatch<SettingsAction>;
   roomType?: RoomType;
@@ -43,6 +52,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   contextValue = {
     ...contextValue,
     ...useFirebaseAuth(),
+    ...usePendingWrite(),
   };
 
   const getToken: StateContextType['getToken'] = async (room) => {
