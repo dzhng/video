@@ -3,9 +3,12 @@ import { styled } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import MenuBar from '~/components/MenuBar/MenuBar';
 
-const Container = styled('div')({});
+const Container = styled('div')(({ theme }) => ({
+  paddingTop: theme.spacing(4),
+  paddingBottom: theme.spacing(4),
+}));
 
-export default function Layout({ children }: { children?: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactChild }) {
   const router = useRouter();
 
   // make special exception for room page to not wrap anything

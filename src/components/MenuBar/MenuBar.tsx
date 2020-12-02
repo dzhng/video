@@ -9,9 +9,6 @@ import Menu from './Menu/Menu';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    container: {
-      backgroundColor: theme.palette.background.default,
-    },
     toolbar: {
       [theme.breakpoints.down('xs')]: {
         padding: 0,
@@ -35,7 +32,7 @@ export default function MenuBar() {
   const { user } = useAppState();
 
   return (
-    <AppBar className={classes.container} position="static">
+    <AppBar position="static">
       <Toolbar className={classes.toolbar}>
         <Typography className={classes.displayName} variant="body1">
           {user?.displayName}

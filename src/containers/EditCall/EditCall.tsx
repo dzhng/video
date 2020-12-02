@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
 import { uniq, compact } from 'lodash';
-import { Grid, Button, LinearProgress } from '@material-ui/core';
+import { Grid, Button, LinearProgress, Paper } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 
@@ -19,18 +20,69 @@ const CallSchema = Yup.object().shape({
   guestEmails: Yup.array().of(Yup.string().email('You must provide a valid email')),
 });
 
-const LeftColumn = () => (
-  <Grid container>
-    <Grid item xs={12}>
-      <Field component={TextField} name="name" type="text" label="Name" />
-    </Grid>
-  </Grid>
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      padding: theme.spacing(3),
+    },
+  }),
 );
 
-const RightColumn = ({ values }: { values: Call }) => (
-  <Grid container>
-    <Grid item xs={12}>
-      <EmailsField name="guestEmails" values={values.guestEmails ?? []} />
+const LeftColumn = ({
+  isSubmitting,
+  submitForm,
+}: {
+  isSubmitting: boolean;
+  submitForm(): Promise<any>;
+}) => {
+  const classes = useStyles();
+
+  return (
+    <Grid container>
+      <Grid item xs={12}>
+        <Paper className={classes.paper}>
+          <Field component={TextField} name="name" type="text" label="Name" />
+
+          <br />
+          {isSubmitting && <LinearProgress />}
+          <Button variant="contained" color="primary" disabled={isSubmitting} onClick={submitForm}>
+            Submit
+          </Button>
+        </Paper>
+      </Grid>
+    </Grid>
+  );
+};
+
+const RightColumn = ({ values }: { values: Call }) => {
+  const classes = useStyles();
+
+  return (
+    <Grid container>
+      <Grid item xs={12}>
+        <Paper className={classes.paper}>
+          <EmailsField name="guestEmails" values={values.guestEmails ?? []} />
+        </Paper>
+      </Grid>
+    </Grid>
+  );
+};
+
+const CallForm = ({
+  values,
+  isSubmitting,
+  submitForm,
+}: {
+  values: Call;
+  isSubmitting: boolean;
+  submitForm(): Promise<any>;
+}) => (
+  <Grid container spacing={3}>
+    <Grid item xs={9}>
+      <LeftColumn isSubmitting={isSubmitting} submitForm={submitForm} />
+    </Grid>
+    <Grid item xs={3}>
+      <RightColumn values={values} />
     </Grid>
   </Grid>
 );
@@ -67,30 +119,15 @@ export default function EditContainer({ call, saveCall }: PropTypes) {
         {!isCreating && call && <InfoBar call={call} />}
       </Grid>
 
-      <Formik initialValues={initialValues} validationSchema={CallSchema} onSubmit={submitCall}>
-        {({ values, submitForm, isSubmitting }) => (
-          <Form>
-            <Grid item xs={9}>
-              <LeftColumn />
-            </Grid>
-            <Grid item xs={3}>
-              <RightColumn values={values} />
-            </Grid>
-
-            <Grid item xs={12}>
-              {isSubmitting && <LinearProgress />}
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={isSubmitting}
-                onClick={submitForm}
-              >
-                Submit
-              </Button>
-            </Grid>
-          </Form>
-        )}
-      </Formik>
+      <Grid item xs={12}>
+        <Formik initialValues={initialValues} validationSchema={CallSchema} onSubmit={submitCall}>
+          {({ values, submitForm, isSubmitting }) => (
+            <Form>
+              <CallForm values={values} submitForm={submitForm} isSubmitting={isSubmitting} />
+            </Form>
+          )}
+        </Formik>
+      </Grid>
     </Grid>
   );
 }
