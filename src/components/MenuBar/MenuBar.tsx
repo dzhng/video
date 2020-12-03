@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import { Typography, AppBar, Toolbar } from '@material-ui/core';
@@ -19,8 +20,14 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       marginLeft: 'auto',
     },
-    displayName: {
+    title: {
       margin: '1.1em 0.6em',
+      minWidth: '200px',
+      fontWeight: 600,
+      cursor: 'pointer',
+    },
+    displayName: {
+      textAlign: 'right',
       minWidth: '200px',
       fontWeight: 600,
     },
@@ -34,11 +41,16 @@ export default function MenuBar() {
   return (
     <AppBar position="static">
       <Toolbar className={classes.toolbar}>
-        <Typography className={classes.displayName} variant="body1">
-          {user?.displayName}
-        </Typography>
+        <Link href="/">
+          <Typography className={classes.title} variant="body1">
+            Aomni
+          </Typography>
+        </Link>
         <div className={classes.rightButtonContainer}>
           <PendingWrite />
+          <Typography className={classes.displayName} variant="body1">
+            {user?.displayName}
+          </Typography>
           <Menu />
         </div>
       </Toolbar>

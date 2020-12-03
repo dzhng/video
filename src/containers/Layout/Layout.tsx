@@ -4,8 +4,7 @@ import { useRouter } from 'next/router';
 import MenuBar from '~/components/MenuBar/MenuBar';
 
 const Container = styled('div')(({ theme }) => ({
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(4),
+  padding: theme.spacing(4),
 }));
 
 export default function Layout({ children }: { children: React.ReactChild }) {
