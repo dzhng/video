@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, render, waitFor, within } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
 import { Formik, Form } from 'formik';
 import EmailsField from './EmailsField';
@@ -48,5 +48,49 @@ describe('the EmailsField component', () => {
 
     expect(mockSubmit).toBeCalledTimes(1);
     expect(mockSubmit).toBeCalledWith(expect.objectContaining(initialValues), expect.anything());
+  });
+
+  describe('adding emails', () => {
+    beforeEach(() => {
+      const initialValues = { name: [] };
+      render(<WrappedComponent name="name" initialValues={initialValues} />);
+    });
+
+    it('should allow users to add valid emails, and then clear inputs and refocuses', async () => {
+      fireEvent.type(screen.getByTestId('email-input'), 'hello@world.com');
+
+      await waitFor(() => {
+        fireEvent.click(screen.getByTestId('add-button'));
+      });
+
+      expect(within(screen.getByTestId('email-item')).getByRole('textbox')).toHaveAttribute(
+        'value',
+        'hello@world.com',
+      );
+
+      const textbox = within(screen.getByTestId('email-input')).getByRole('textbox');
+      expect(textbox).toHaveAttribute('value', '');
+      expect(textbox).toEqual(document.activeElement);
+    });
+
+    it('should not allow invalid emails', async () => {
+      fireEvent.type(screen.getByTestId('email-input'), 'hello2@world');
+
+      await waitFor(() => {
+        fireEvent.click(screen.getByTestId('add-button'));
+      });
+
+      expect(screen.queryByTestId('email-item')).not.toBeInTheDocument();
+      expect(screen.getByTestId('email-error').textContent).toMatch(/valid email/i);
+    });
+
+    it('should allow submission via enter', () => {
+      fireEvent.type(screen.getByTestId('email-input'), 'hello3@world.com{enter}');
+
+      expect(within(screen.getByTestId('email-item')).getByRole('textbox')).toHaveAttribute(
+        'value',
+        'hello3@world.com',
+      );
+    });
   });
 });

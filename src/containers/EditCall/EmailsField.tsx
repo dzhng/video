@@ -53,6 +53,7 @@ const EmailFieldItem = ({
         component={InputBase}
         name={`${name}.${index}`}
         value={value}
+        data-testid="email-item"
       />
       <IconButton className={classes.iconButton} onClick={() => remove(index)}>
         <RemoveIcon />
@@ -91,6 +92,7 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
           value={text}
           inputRef={inputRef}
           onChange={(e) => setText(e.target.value)}
+          data-testid="email-input"
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
@@ -98,11 +100,11 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
             }
           }}
         />
-        <IconButton className={classes.iconButton} onClick={submitEmail}>
+        <IconButton data-testid="add-button" className={classes.iconButton} onClick={submitEmail}>
           <AddIcon />
         </IconButton>
       </Paper>
-      <EmailError>{error}</EmailError>
+      <EmailError data-testid="email-error">{error}</EmailError>
     </>
   );
 };
