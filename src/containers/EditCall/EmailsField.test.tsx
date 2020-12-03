@@ -50,6 +50,19 @@ describe('the EmailsField component', () => {
     expect(mockSubmit).toBeCalledWith(expect.objectContaining(initialValues), expect.anything());
   });
 
+  it('should allow users to remove emails', async () => {
+    const initialValues = { name: ['test@test.com'] };
+    render(<WrappedComponent name="name" initialValues={initialValues} />);
+
+    expect(screen.queryByTestId('email-item')).toBeInTheDocument();
+
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId('remove-button'));
+    });
+
+    expect(screen.queryByTestId('email-item')).not.toBeInTheDocument();
+  });
+
   describe('adding emails', () => {
     beforeEach(() => {
       const initialValues = { name: [] };

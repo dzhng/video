@@ -55,7 +55,11 @@ const EmailFieldItem = ({
         value={value}
         data-testid="email-item"
       />
-      <IconButton className={classes.iconButton} onClick={() => remove(index)}>
+      <IconButton
+        data-testid="remove-button"
+        className={classes.iconButton}
+        onClick={() => remove(index)}
+      >
         <RemoveIcon />
       </IconButton>
     </Paper>
