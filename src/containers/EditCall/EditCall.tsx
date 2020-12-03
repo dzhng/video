@@ -1,12 +1,14 @@
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
 import { uniq, compact } from 'lodash';
-import { Grid, Button, LinearProgress, Paper } from '@material-ui/core';
+import { Typography, Grid, Button, LinearProgress, Paper } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 
 import { Call } from '~/firebase/schema-types';
+import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
+import NotesEditor from '~/components/NotesEditor/NotesEditor';
 import InfoBar from './InfoBar';
 import EmailsField from './EmailsField';
 
@@ -38,17 +40,39 @@ const LeftColumn = ({
   const classes = useStyles();
 
   return (
-    <Grid container>
+    <Grid container spacing={3}>
       <Grid item xs={12}>
         <Paper className={classes.paper}>
-          <Field component={TextField} name="name" type="text" label="Name" />
-
-          <br />
-          {isSubmitting && <LinearProgress />}
-          <Button variant="contained" color="primary" disabled={isSubmitting} onClick={submitForm}>
-            Submit
-          </Button>
+          <Typography variant="h6">Call Info</Typography>
+          <Field
+            component={TextField}
+            name="name"
+            type="text"
+            label="Name"
+            placeholder="What is this call about?"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
         </Paper>
+      </Grid>
+
+      <Grid item xs={6}>
+        <PresentationPicker />
+      </Grid>
+
+      <Grid item xs={6}>
+        <NotesEditor />
+      </Grid>
+
+      <Grid item xs={12}>
+        {isSubmitting && <LinearProgress />}
+        <Button variant="contained" color="primary" disabled={isSubmitting} onClick={submitForm}>
+          Submit
+        </Button>
       </Grid>
     </Grid>
   );
@@ -61,6 +85,7 @@ const RightColumn = ({ values }: { values: Call }) => {
     <Grid container>
       <Grid item xs={12}>
         <Paper className={classes.paper}>
+          <Typography variant="h6">Invite Guests</Typography>
           <EmailsField name="guestEmails" values={values.guestEmails ?? []} />
         </Paper>
       </Grid>
