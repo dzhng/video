@@ -30,13 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const LeftColumn = ({
-  isSubmitting,
-  submitForm,
-}: {
-  isSubmitting: boolean;
-  submitForm(): Promise<any>;
-}) => {
+const LeftColumn = ({ isSubmitting }: { isSubmitting: boolean }) => {
   const classes = useStyles();
 
   return (
@@ -70,7 +64,7 @@ const LeftColumn = ({
 
       <Grid item xs={12}>
         {isSubmitting && <LinearProgress />}
-        <Button variant="contained" color="primary" disabled={isSubmitting} onClick={submitForm}>
+        <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
           Submit
         </Button>
       </Grid>
@@ -80,31 +74,24 @@ const LeftColumn = ({
 
 const RightColumn = ({ values }: { values: Call }) => {
   const classes = useStyles();
+  const fieldName = 'guestEmails';
 
   return (
     <Grid container>
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           <Typography variant="h6">Invite Guests</Typography>
-          <EmailsField name="guestEmails" values={values.guestEmails ?? []} />
+          <EmailsField name={fieldName} values={values[fieldName] ?? []} />
         </Paper>
       </Grid>
     </Grid>
   );
 };
 
-const CallForm = ({
-  values,
-  isSubmitting,
-  submitForm,
-}: {
-  values: Call;
-  isSubmitting: boolean;
-  submitForm(): Promise<any>;
-}) => (
+const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolean }) => (
   <Grid container spacing={3}>
     <Grid item xs={9}>
-      <LeftColumn isSubmitting={isSubmitting} submitForm={submitForm} />
+      <LeftColumn isSubmitting={isSubmitting} />
     </Grid>
     <Grid item xs={3}>
       <RightColumn values={values} />
@@ -146,9 +133,9 @@ export default function EditContainer({ call, saveCall }: PropTypes) {
 
       <Grid item xs={12}>
         <Formik initialValues={initialValues} validationSchema={CallSchema} onSubmit={submitCall}>
-          {({ values, submitForm, isSubmitting }) => (
+          {({ values, isSubmitting }) => (
             <Form>
-              <CallForm values={values} submitForm={submitForm} isSubmitting={isSubmitting} />
+              <CallForm values={values} isSubmitting={isSubmitting} />
             </Form>
           )}
         </Formik>

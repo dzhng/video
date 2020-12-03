@@ -26,7 +26,8 @@ export default withPrivateRoute(function CreateCallPage() {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
 
-      db.collection('calls').add(data);
+      console.log(data);
+      //db.collection('calls').add(data);
       markIsWriting();
       router.push('/');
     },
