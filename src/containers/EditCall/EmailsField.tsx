@@ -10,6 +10,7 @@ import { Field, FieldArray } from 'formik';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     itemPaper: {
+      marginTop: theme.spacing(2),
       padding: '2px 4px',
       display: 'flex',
       alignItems: 'center',

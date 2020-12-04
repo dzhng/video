@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
 import { uniq, compact } from 'lodash';
-import { Typography, Grid, Button, LinearProgress, Paper } from '@material-ui/core';
+import { Typography, Grid, Button, CircularProgress, Paper } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -13,6 +13,7 @@ import InfoBar from './InfoBar';
 import EmailsField from './EmailsField';
 
 interface PropTypes {
+  currentUserId: string;
   call?: Call;
   saveCall(call: Call, note: Note): void;
   note?: Note;
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const LeftColumn = () => {
+const LeftColumn = ({ currentUserId }: { currentUserId: string }) => {
   const classes = useStyles();
 
   return (
@@ -62,7 +63,7 @@ const LeftColumn = () => {
       </Grid>
 
       <Grid item xs={6}>
-        <PresentationPicker name="presentationId" />
+        <PresentationPicker name="presentationId" currentUserId={currentUserId} />
       </Grid>
 
       <Grid item xs={6}>
@@ -86,7 +87,6 @@ const RightColumn = ({ values, isSubmitting }: { values: Call; isSubmitting: boo
       </Grid>
 
       <Grid item xs={12}>
-        {isSubmitting && <LinearProgress />}
         <Button
           fullWidth
           className={classes.submitButton}
@@ -96,17 +96,25 @@ const RightColumn = ({ values, isSubmitting }: { values: Call; isSubmitting: boo
           color="primary"
           disabled={isSubmitting}
         >
-          Submit
+          {isSubmitting ? <CircularProgress /> : 'Submit'}
         </Button>
       </Grid>
     </Grid>
   );
 };
 
-const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolean }) => (
+const CallForm = ({
+  currentUserId,
+  values,
+  isSubmitting,
+}: {
+  currentUserId: string;
+  values: Call;
+  isSubmitting: boolean;
+}) => (
   <Grid container spacing={3}>
     <Grid item xs={9}>
-      <LeftColumn />
+      <LeftColumn currentUserId={currentUserId} />
     </Grid>
     <Grid item xs={3}>
       <RightColumn values={values} isSubmitting={isSubmitting} />
@@ -114,7 +122,7 @@ const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolea
   </Grid>
 );
 
-export default function EditContainer({ call, saveCall, note }: PropTypes) {
+export default function EditContainer({ currentUserId, call, saveCall, note }: PropTypes) {
   const isCreating = Boolean(!call);
 
   const defaultNoteData = {
@@ -124,6 +132,7 @@ export default function EditContainer({ call, saveCall, note }: PropTypes) {
   const initialValues = {
     name: call?.name ?? '',
     state: call?.state ?? 'pre',
+    creatorId: call?.creatorId ?? currentUserId,
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
     note: note ?? defaultNoteData,
@@ -160,7 +169,7 @@ export default function EditContainer({ call, saveCall, note }: PropTypes) {
         <Formik initialValues={initialValues} validationSchema={CallSchema} onSubmit={submitCall}>
           {({ values, isSubmitting }) => (
             <Form>
-              <CallForm values={values} isSubmitting={isSubmitting} />
+              <CallForm currentUserId={currentUserId} values={values} isSubmitting={isSubmitting} />
             </Form>
           )}
         </Formik>

@@ -45,5 +45,5 @@ export default withPrivateRoute(function CreateCallPage() {
     [router, user, markIsWriting],
   );
 
-  return <EditContainer saveCall={createCall} />;
+  return user ? <EditContainer currentUserId={user.uid} saveCall={createCall} /> : null;
 });

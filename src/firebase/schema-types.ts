@@ -25,6 +25,7 @@ export declare interface Call {
   id?: string;
   name: string;
   state: 'pre' | 'started' | 'finished';
+  creatorId: string;
   users: string[];
   guests?: string[];
   guestEmails?: string[];
@@ -40,4 +41,11 @@ export declare interface Call {
 export declare interface Note {
   id?: string;
   text: string;
+}
+
+export declare interface Presentation {
+  id?: string;
+  creatorId: string;
+  fileId: string;
+  networkId?: string;
 }

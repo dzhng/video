@@ -1,67 +1,128 @@
-import React, { useEffect, useState } from 'react';
-import { Typography, Paper, TextField } from '@material-ui/core';
+import React, { useEffect, useState, useCallback } from 'react';
+import { trim, truncate } from 'lodash';
+import { Typography, Paper, Fab, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Add } from '@material-ui/icons';
 import { useField } from 'formik';
-import { Note } from '~/firebase/schema-types';
-import { db } from '~/utils/firebase';
+
+import { Presentation } from '~/firebase/schema-types';
+import firebase, { db, storage } from '~/utils/firebase';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
       padding: theme.spacing(3),
     },
+    uploadSpinner: {
+      position: 'absolute',
+      top: -6,
+      left: -6,
+      zIndex: 1,
+    },
   }),
 );
 
-export default function PresentationPicker({ name }: { name: string }) {
+const UploadButton = ({ currentUserId }: { currentUserId: string }) => {
+  const classes = useStyles();
+  const [isUploading, setIsUploading] = useState(true);
+
+  const handleFile = useCallback(
+    async (e) => {
+      const { files } = e.target;
+
+      if (files.length < 1) {
+        console.warn('No file was selected');
+        return;
+      }
+
+      setIsUploading(true);
+
+      const file = files[0];
+      // first create a presentation doc
+      const doc = db.collection('presentations').doc();
+
+      // use the doc id as the filename
+      const ref = storage.ref(`presentations/${doc.id}`);
+      await ref.put(file);
+
+      await doc.set({
+        name: truncate(trim(file.name), { length: 50 }),
+        creatorId: currentUserId,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      setIsUploading(false);
+    },
+    [currentUserId],
+  );
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        style={{ display: 'none' }}
+        id="contained-button"
+        type="file"
+        accept=".pdf,.ppt,.pptx"
+        onChange={handleFile}
+      />
+      <label htmlFor="contained-button">
+        <Fab
+          color="primary"
+          aria-label="upload presentation"
+          component="span"
+          disabled={isUploading}
+        >
+          <Add />
+        </Fab>
+        {isUploading && <CircularProgress size={68} className={classes.uploadSpinner} />}
+      </label>
+    </div>
+  );
+};
+
+export default function PresentationPicker({
+  name,
+  currentUserId,
+}: {
+  name: string;
+  currentUserId: string;
+}) {
   const classes = useStyles();
   const [field, meta, helpers] = useField({
     name,
     type: 'text',
     multiple: false,
   });
-  const [noteData, setNoteData] = useState<Note | null>(null);
   const [isQueryingOrCreating, setIsQueryingOrCreating] = useState(true);
+  const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
   const { value } = field;
   const { setValue } = helpers;
 
-  /*useEffect(() => {
-    setIsQueryingOrCreating(true);
-
-    const queryNote = async (noteId: string) => {
-      const doc = await db.collection('notes').doc(noteId).get();
+  useEffect(() => {
+    const query = async (presentationId: string) => {
+      const doc = await db.collection('presentations').doc(presentationId).get();
       if (doc.exists) {
-        setNoteData(doc.data() as Note);
+        setPresentationData(doc.data() as Presentation);
         setIsQueryingOrCreating(false);
-      } else {
-        // if cannot find doc, create a new note (this should not happen)
-        console.error('ERROR: cannot find note doc for call');
-        await createNote();
       }
     };
 
-    const createNote = async () => {
-      const data = { text: '' };
-      const doc = await db.collection('notes').add(data);
-
-      setValue(doc.id);
-      setIsQueryingOrCreating(false);
-      setNoteData(data);
-    };
-
-    // get note if it exist, or create a new doc
     if (value) {
-      queryNote(value);
+      setIsQueryingOrCreating(true);
+      query(value);
     } else {
-      createNote();
+      setIsQueryingOrCreating(false);
     }
-    }, [value, setValue]);*/
+  }, [value, setValue]);
 
   return (
     <Paper className={classes.paper}>
       <Typography variant="h6">Presentation</Typography>
-      <TextField multiline={true} defaultValue={noteData?.text} />
+      {isQueryingOrCreating && <CircularProgress />}
+      {!presentationData && !isQueryingOrCreating && <UploadButton currentUserId={currentUserId} />}
+
+      {presentationData && <div>PresentationData</div>}
     </Paper>
   );
 }

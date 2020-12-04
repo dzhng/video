@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/storage';
 
 import { isBrowser, isTestEnv } from './index';
 
@@ -28,10 +29,14 @@ if (!firebase.apps?.length) {
 const db = firebase.firestore();
 const auth = firebase.auth();
 
+// storage is only available in the browser
+const storage = (isBrowser && !isTestEnv ? firebase.storage() : {}) as firebase.storage.Storage;
+
 if (isTestEnv) {
   // use optional chaining here as sometime they are mocked
   db?.useEmulator?.('localhost', 8080);
   auth?.useEmulator?.('http://localhost:9099');
+  // TODO: add storage emulator when it becomes available
 }
 
 if (isBrowser && !isTestEnv) {
@@ -46,4 +51,4 @@ if (isBrowser && !isTestEnv) {
 }
 
 export default firebase;
-export { db, auth };
+export { db, auth, storage };

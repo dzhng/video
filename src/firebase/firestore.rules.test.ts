@@ -160,6 +160,7 @@ describe('firebase cloud firestore database rules', () => {
     let requiredFields = {
       name: 'Test Room',
       state: 'pre',
+      creatorId: 'alice',
       users: [],
     };
 
@@ -223,7 +224,7 @@ describe('firebase cloud firestore database rules', () => {
       await firebase.assertSucceeds(calls.get());
     });
 
-    it('should force the creator of the call to be a user', async () => {
+    it('should force the creator of the call to be a user, and have the correct creatorId', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       const call = db.collection('calls').doc('call');
       await firebase.assertFails(
@@ -238,6 +239,15 @@ describe('firebase cloud firestore database rules', () => {
         call.set({
           ...requiredFields,
           users: [],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
+
+      await firebase.assertFails(
+        call.set({
+          ...requiredFields,
+          creatorId: 'bob',
+          users: ['alice'],
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );

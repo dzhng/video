@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Grid, Card, Fab } from '@material-ui/core';
+import { Typography, Grid, Card, Button } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
 
@@ -20,19 +20,22 @@ export default function Home({ calls }: { calls: Call[] }) {
   const classes = useStyles();
 
   return (
-    <Container maxWidth={false}>
-      <Grid container className={classes.grid} wrap="nowrap" spacing={3}>
-        {calls.map((call: any) => (
-          <Grid item>
-            <Card className={classes.callCard}>
-              <Typography>Hello World {call}</Typography>
-            </Card>
-          </Grid>
-        ))}
+    <Grid container className={classes.grid} wrap="nowrap" spacing={3}>
+      {calls.map((call: any) => (
+        <Grid item>
+          <Card className={classes.callCard}>
+            <Typography>Hello World {call}</Typography>
+          </Card>
+        </Grid>
+      ))}
+
+      <Grid item xs={12}>
+        <Link href="/call/create">
+          <Button color="primary" variant="contained" size="large" className={classes.createButton}>
+            Create Call
+          </Button>
+        </Link>
       </Grid>
-      <Link href="/call/create">
-        <Fab className={classes.createButton}>Create Call</Fab>
-      </Link>
-    </Container>
+    </Grid>
   );
 }
