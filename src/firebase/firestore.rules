@@ -134,15 +134,15 @@ service cloud.firestore {
          (request.resource.data.users.size() >= 1 &&
           request.resource.data.users.hasAny([request.auth.uid])) : 
          (resource.data.users.hasAny([request.auth.uid])));
-
-      match /notes/{noteId} {
-        allow read;
-
-        allow write: if
-          assertKeys(['text']) &&
-          requiredStringKey('text', 50000);
-      }
     } // match call
+
+    match /notes/{noteId} {
+      allow read;
+
+      allow write: if
+        assertKeys(['text']) &&
+        requiredStringKey('text', 50000);
+    }
 
     match /presentations/{presentationId} {
       allow read;

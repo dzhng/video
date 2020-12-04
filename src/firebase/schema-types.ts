@@ -36,3 +36,8 @@ export declare interface Call {
   transcriptId?: string;
   createdAt: Date;
 }
+
+export declare interface Note {
+  id?: string;
+  text: string;
+}

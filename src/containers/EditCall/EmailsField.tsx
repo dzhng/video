@@ -83,7 +83,7 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
       setError('You must provide a valid email');
     }
 
-    // either way, make sure to focus baack on input
+    // either way, make sure to focus back on input
     inputRef.current?.focus();
   }, [text, setError, pushEmail]);
 

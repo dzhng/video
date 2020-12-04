@@ -20,6 +20,7 @@ interface PropTypes {
 const CallSchema = Yup.object().shape({
   name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
   guestEmails: Yup.array().of(Yup.string().email('You must provide a valid email')),
+  noteId: Yup.string().min(1, 'Invalid ID').max(24, 'Invalid ID'),
 });
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -59,7 +60,7 @@ const LeftColumn = ({ isSubmitting }: { isSubmitting: boolean }) => {
       </Grid>
 
       <Grid item xs={6}>
-        <NotesEditor />
+        <NotesEditor name="noteId" />
       </Grid>
 
       <Grid item xs={12}>
@@ -107,6 +108,7 @@ export default function EditContainer({ call, saveCall }: PropTypes) {
     state: call?.state ?? 'pre',
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
+    noteId: call?.noteId ?? null,
     createdAt: call?.createdAt ?? new Date(),
   };
 
