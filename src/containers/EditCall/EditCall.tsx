@@ -6,7 +6,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 
-import { Call } from '~/firebase/schema-types';
+import { Call, Note } from '~/firebase/schema-types';
 import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
 import NotesEditor from '~/components/NotesEditor/NotesEditor';
 import InfoBar from './InfoBar';
@@ -14,13 +14,16 @@ import EmailsField from './EmailsField';
 
 interface PropTypes {
   call?: Call;
-  saveCall(values: Call): void;
+  saveCall(call: Call, note: Note): void;
+  note?: Note;
 }
 
 const CallSchema = Yup.object().shape({
   name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
   guestEmails: Yup.array().of(Yup.string().email('You must provide a valid email')),
-  noteId: Yup.string().min(1, 'Invalid ID').max(24, 'Invalid ID'),
+  note: Yup.object().shape({
+    text: Yup.string().max(50000),
+  }),
 });
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -56,11 +59,11 @@ const LeftColumn = ({ isSubmitting }: { isSubmitting: boolean }) => {
       </Grid>
 
       <Grid item xs={6}>
-        <PresentationPicker />
+        <PresentationPicker name="presentationId" />
       </Grid>
 
       <Grid item xs={6}>
-        <NotesEditor name="noteId" />
+        <NotesEditor name="note" />
       </Grid>
 
       <Grid item xs={12}>
@@ -100,27 +103,36 @@ const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolea
   </Grid>
 );
 
-export default function EditContainer({ call, saveCall }: PropTypes) {
+export default function EditContainer({ call, saveCall, note }: PropTypes) {
   const isCreating = Boolean(!call);
+
+  const defaultNoteData = {
+    text: '',
+  };
 
   const initialValues = {
     name: call?.name ?? '',
     state: call?.state ?? 'pre',
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
-    noteId: call?.noteId ?? null,
+    note: note ?? defaultNoteData,
     createdAt: call?.createdAt ?? new Date(),
   };
 
   const submitCall = useCallback(
-    (values: Call, { setSubmitting }) => {
-      // clean up any empty emails
-      const cleanedEmails = uniq(compact(values.guestEmails));
+    (values: Call & { note: Note }, { setSubmitting }) => {
+      const { note: noteData, ...callData } = values;
 
-      saveCall({
-        ...values,
-        guestEmails: cleanedEmails,
-      });
+      // clean up any empty emails
+      const cleanedEmails = uniq(compact(callData.guestEmails));
+
+      saveCall(
+        {
+          ...callData,
+          guestEmails: cleanedEmails,
+        },
+        noteData,
+      );
 
       setSubmitting(false);
     },
