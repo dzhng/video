@@ -31,10 +31,13 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       padding: theme.spacing(3),
     },
+    submitButton: {
+      marginTop: theme.spacing(3),
+    },
   }),
 );
 
-const LeftColumn = ({ isSubmitting }: { isSubmitting: boolean }) => {
+const LeftColumn = () => {
   const classes = useStyles();
 
   return (
@@ -65,18 +68,11 @@ const LeftColumn = ({ isSubmitting }: { isSubmitting: boolean }) => {
       <Grid item xs={6}>
         <NotesEditor name="note" />
       </Grid>
-
-      <Grid item xs={12}>
-        {isSubmitting && <LinearProgress />}
-        <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-          Submit
-        </Button>
-      </Grid>
     </Grid>
   );
 };
 
-const RightColumn = ({ values }: { values: Call }) => {
+const RightColumn = ({ values, isSubmitting }: { values: Call; isSubmitting: boolean }) => {
   const classes = useStyles();
   const fieldName = 'guestEmails';
 
@@ -88,6 +84,21 @@ const RightColumn = ({ values }: { values: Call }) => {
           <EmailsField name={fieldName} values={values[fieldName] ?? []} />
         </Paper>
       </Grid>
+
+      <Grid item xs={12}>
+        {isSubmitting && <LinearProgress />}
+        <Button
+          fullWidth
+          className={classes.submitButton}
+          size="large"
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={isSubmitting}
+        >
+          Submit
+        </Button>
+      </Grid>
     </Grid>
   );
 };
@@ -95,10 +106,10 @@ const RightColumn = ({ values }: { values: Call }) => {
 const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolean }) => (
   <Grid container spacing={3}>
     <Grid item xs={9}>
-      <LeftColumn isSubmitting={isSubmitting} />
+      <LeftColumn />
     </Grid>
     <Grid item xs={3}>
-      <RightColumn values={values} />
+      <RightColumn values={values} isSubmitting={isSubmitting} />
     </Grid>
   </Grid>
 );

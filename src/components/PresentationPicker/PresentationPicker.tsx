@@ -26,7 +26,7 @@ export default function PresentationPicker({ name }: { name: string }) {
   const { value } = field;
   const { setValue } = helpers;
 
-  useEffect(() => {
+  /*useEffect(() => {
     setIsQueryingOrCreating(true);
 
     const queryNote = async (noteId: string) => {
@@ -56,7 +56,7 @@ export default function PresentationPicker({ name }: { name: string }) {
     } else {
       createNote();
     }
-  }, [value, setValue]);
+    }, [value, setValue]);*/
 
   return (
     <Paper className={classes.paper}>
