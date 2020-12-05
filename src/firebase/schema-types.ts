@@ -45,7 +45,8 @@ export declare interface Note {
 
 export declare interface Presentation {
   id?: string;
+  name: string;
   creatorId: string;
-  fileId: string;
   networkId?: string;
+  createdAt: Date;
 }

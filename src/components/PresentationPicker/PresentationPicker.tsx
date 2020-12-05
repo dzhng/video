@@ -14,21 +14,31 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(3),
     },
     uploadSpinner: {
-      position: 'absolute',
-      top: -6,
-      left: -6,
-      zIndex: 1,
+      color: theme.palette.grey[600],
+    },
+    pickerPaper: {
+      marginTop: theme.spacing(2),
+      padding: theme.spacing(3),
+      backgroundColor: theme.palette.grey[100],
+      textAlign: 'center',
+      color: theme.palette.grey[600],
+      cursor: 'pointer',
     },
   }),
 );
 
-const UploadButton = ({ currentUserId }: { currentUserId: string }) => {
+const Picker = ({ currentUserId }: { currentUserId: string }) => {
   const classes = useStyles();
-  const [isUploading, setIsUploading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFile = useCallback(
     async (e) => {
       const { files } = e.target;
+
+      if (isUploading) {
+        console.warn('Already uploading');
+        return;
+      }
 
       if (files.length < 1) {
         console.warn('No file was selected');
@@ -53,11 +63,14 @@ const UploadButton = ({ currentUserId }: { currentUserId: string }) => {
 
       setIsUploading(false);
     },
-    [currentUserId],
+    [currentUserId, isUploading],
   );
 
   return (
-    <div style={{ position: 'relative' }}>
+    <>
+      <Typography variant="body2">
+        Upload a presentation for this call. We support either PDF or Powerpoint format.
+      </Typography>
       <input
         style={{ display: 'none' }}
         id="contained-button"
@@ -66,17 +79,18 @@ const UploadButton = ({ currentUserId }: { currentUserId: string }) => {
         onChange={handleFile}
       />
       <label htmlFor="contained-button">
-        <Fab
-          color="primary"
-          aria-label="upload presentation"
-          component="span"
-          disabled={isUploading}
-        >
-          <Add />
-        </Fab>
-        {isUploading && <CircularProgress size={68} className={classes.uploadSpinner} />}
+        <Paper className={classes.pickerPaper} elevation={0} variant="outlined">
+          {isUploading ? (
+            <CircularProgress size={50} className={classes.uploadSpinner} />
+          ) : (
+            <>
+              <Add />
+              <Typography variant="body2">Upload</Typography>
+            </>
+          )}
+        </Paper>
       </label>
-    </div>
+    </>
   );
 };
 
@@ -120,7 +134,7 @@ export default function PresentationPicker({
     <Paper className={classes.paper}>
       <Typography variant="h6">Presentation</Typography>
       {isQueryingOrCreating && <CircularProgress />}
-      {!presentationData && !isQueryingOrCreating && <UploadButton currentUserId={currentUserId} />}
+      {!presentationData && !isQueryingOrCreating && <Picker currentUserId={currentUserId} />}
 
       {presentationData && <div>PresentationData</div>}
     </Paper>

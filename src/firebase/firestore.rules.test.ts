@@ -164,7 +164,7 @@ describe('firebase cloud firestore database rules', () => {
       users: [],
     };
 
-    it('should let anyone create a call', async () => {
+    it('should let logged in users create a call', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       const call = db.collection('calls').doc('call');
       await firebase.assertSucceeds(
@@ -275,8 +275,7 @@ describe('firebase cloud firestore database rules', () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       let call = db.collection('calls').doc('call');
       call.set({
-        name: 'Test Room',
-        state: 'pre',
+        ...requiredFields,
         users: ['alice', 'charlie'],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
@@ -284,6 +283,40 @@ describe('firebase cloud firestore database rules', () => {
       await firebase.assertSucceeds(
         call.update({
           users: firebase.firestore.FieldValue.arrayRemove('alice'),
+        }),
+      );
+    });
+  });
+
+  describe('presentation', () => {
+    it('should let logged in userse create a presentation and enforce creatorId', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const presentation = db.collection('presentations').doc('p');
+      await firebase.assertSucceeds(
+        presentation.set({
+          name: 'hello',
+          creatorId: 'alice',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
+
+      // should be update now since record already created
+      await firebase.assertSucceeds(
+        presentation.update({
+          name: 'hello world',
+          creatorId: 'alice',
+        }),
+      );
+    });
+
+    it('should enforce the correct creatorId value', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const presentation = db.collection('presentations').doc('p');
+      await firebase.assertFails(
+        presentation.set({
+          name: 'hello',
+          creatorId: 'bob',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
     });
