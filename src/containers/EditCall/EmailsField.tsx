@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Paper, InputBase, IconButton } from '@material-ui/core';
-import { Autocomplete, AutocompleteRenderInputParams, createFilterOptions } from '@material-ui/lab';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import { Add as AddIcon, HighlightOff as RemoveIcon } from '@material-ui/icons';
 import { createStyles, makeStyles, styled, Theme } from '@material-ui/core/styles';
 import { Field, FieldArray } from 'formik';
@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
     },
     iconButton: {
-      padding: 10,
+      padding: 3,
+      marginRight: theme.spacing(1),
     },
   }),
 );
@@ -78,6 +79,7 @@ const filter = createFilterOptions<EmailOptionType>();
 const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
   const classes = useStyles();
   const inputRef = useRef<HTMLInputElement>();
+  const [inputValue, setInputValue] = useState<string>('hello');
   const [error, setError] = useState<string | null>(null);
 
   const submitEmail = useCallback(
@@ -85,6 +87,7 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
       if (emailSchema.isValidSync(text)) {
         pushEmail(text);
         setError(null);
+        setInputValue('');
       } else {
         setError('You must provide a valid email');
       }
@@ -102,11 +105,17 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
         selectOnFocus
         handleHomeEndKeys
         autoHighlight
+        inputValue={inputValue}
         options={[] as EmailOptionType[]}
-        onChange={(event, newValue) => {
-          console.log(newValue);
-          //submitEmail(newValue);
+        onChange={(_, newValue) => {
+          if (typeof newValue === 'string') {
+            submitEmail(newValue);
+          } else if (newValue) {
+            const email = newValue.inputValue;
+            submitEmail(email);
+          }
         }}
+        onInputChange={(_, value) => setInputValue(value)}
         filterOptions={(options, state) => {
           const filtered = filter(options, state);
 
@@ -132,7 +141,12 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
           // Regular option
           return option.title;
         }}
-        renderOption={(option) => option.title}
+        renderOption={(option) => (
+          <>
+            <AddIcon className={classes.iconButton} />
+            {option.title}
+          </>
+        )}
         renderInput={(params) => (
           <Paper variant="outlined" className={classes.itemPaper} ref={params.InputProps.ref}>
             <InputBase
@@ -141,14 +155,11 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
               placeholder="Add guests"
               inputRef={inputRef}
               data-testid="email-input"
+              onKeyPress={(e) => {
+                // prevent auto form submission
+                e.key === 'Enter' && e.preventDefault();
+              }}
             />
-            <IconButton
-              data-testid="add-button"
-              className={classes.iconButton}
-              onClick={submitEmail}
-            >
-              <AddIcon />
-            </IconButton>
           </Paper>
         )}
       />

@@ -108,7 +108,7 @@ export default function PresentationPicker({
   currentUserId: string;
 }) {
   const classes = useStyles();
-  const [field, meta, helpers] = useField({
+  const [field, , helpers] = useField({
     name,
     type: 'text',
     multiple: false,
