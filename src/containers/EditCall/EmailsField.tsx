@@ -78,21 +78,22 @@ const filter = createFilterOptions<EmailOptionType>();
 const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
   const classes = useStyles();
   const inputRef = useRef<HTMLInputElement>();
-  const [text, setText] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const submitEmail = useCallback(() => {
-    if (emailSchema.isValidSync(text)) {
-      pushEmail(text);
-      setError(null);
-      setText('');
-    } else {
-      setError('You must provide a valid email');
-    }
+  const submitEmail = useCallback(
+    (text) => {
+      if (emailSchema.isValidSync(text)) {
+        pushEmail(text);
+        setError(null);
+      } else {
+        setError('You must provide a valid email');
+      }
 
-    // either way, make sure to focus back on input
-    inputRef.current?.focus();
-  }, [text, setError, pushEmail]);
+      // either way, make sure to focus back on input
+      inputRef.current?.focus();
+    },
+    [setError, pushEmail],
+  );
 
   return (
     <>
@@ -103,7 +104,8 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
         autoHighlight
         options={[] as EmailOptionType[]}
         onChange={(event, newValue) => {
-          submitEmail();
+          console.log(newValue);
+          //submitEmail(newValue);
         }}
         filterOptions={(options, state) => {
           const filtered = filter(options, state);
@@ -137,9 +139,7 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
               className={classes.input}
               inputProps={params.inputProps}
               placeholder="Add guests"
-              value={text}
               inputRef={inputRef}
-              onChange={(e) => setText(e.target.value)}
               data-testid="email-input"
             />
             <IconButton

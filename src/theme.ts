@@ -1,5 +1,5 @@
 import { createMuiTheme } from '@material-ui/core';
-import '@material-ui/lab/themeAugmentation';
+import type {} from '@material-ui/lab/themeAugmentation';
 
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
