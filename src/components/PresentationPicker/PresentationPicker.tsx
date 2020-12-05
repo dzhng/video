@@ -48,15 +48,21 @@ const Picker = ({ currentUserId }: { currentUserId: string }) => {
       setIsUploading(true);
 
       const file = files[0];
+      const metadata = {
+        customMetadata: {
+          originalName: file.name,
+        },
+      };
+
       // first create a presentation doc
       const doc = db.collection('presentations').doc();
 
       // use the doc id as the filename
       const ref = storage.ref(`presentations/${doc.id}`);
-      await ref.put(file);
+      await ref.put(file, metadata);
 
       await doc.set({
-        name: truncate(trim(file.name), { length: 50 }),
+        name: truncate(trim(file.name), { length: 50 }) ?? 'New Presentation',
         creatorId: currentUserId,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });

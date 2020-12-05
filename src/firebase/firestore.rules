@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // FOR DATA LENGTH:
-    // id should be 24
+    // id should be 30
     // short text like names should be 50
     // URLs should be 280
     // short descriptions should be 280
@@ -91,7 +91,7 @@ service cloud.firestore {
         request.auth != null && 
         request.auth.uid == userId &&
         assertKeys(['networkId', 'bio', 'createdAt']) &&
-        optionalStringKey('networkId', 24) &&
+        optionalStringKey('networkId', 30) &&
         optionalStringKey('bio', 280) &&
         requiredCreatedAtKey();
     }
@@ -104,8 +104,8 @@ service cloud.firestore {
         assertKeys(['name', 'state', 'creatorId', 'networkId', 'users', 'guests', 'guestEmails', 'startTime', 'durationMin', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
         requiredStringKey('name', 50) &&
         requiredEnumKey('state', ['pre', 'started', 'finished']) &&
-        requiredStringKey('creatorId', 24) &&
-        optionalStringKey('networkId', 24) &&
+        requiredStringKey('creatorId', 30) &&
+        optionalStringKey('networkId', 30) &&
 
         // list of users who can manage and start the call
         requiredArrayKey('users', 50) &&
@@ -120,13 +120,13 @@ service cloud.firestore {
         optionalIntKey('durationMin', 0, 24*60) &&
 
         // set if have presentation attachment
-        optionalStringKey('presentationId', 24) &&
+        optionalStringKey('presentationId', 30) &&
         // set if have note attachment
-        optionalStringKey('noteId', 24) &&
+        optionalStringKey('noteId', 30) &&
         // set if have chat attachment
-        optionalStringKey('chatId', 24) &&
+        optionalStringKey('chatId', 30) &&
         // set once transcrit is ready
-        optionalStringKey('transcriptId', 24) &&
+        optionalStringKey('transcriptId', 30) &&
         requiredCreatedAtKey() &&
 
         // when creating, users should contain at least one user which is the 
@@ -153,8 +153,8 @@ service cloud.firestore {
         request.auth != null &&
         assertKeys(['name', 'creatorId', 'networkId', 'createdAt']) &&
         requiredStringKey('name', 50) &&
-        requiredStringKey('creatorId', 24) &&
-        optionalStringKey('networkId', 24) &&
+        requiredStringKey('creatorId', 30) &&
+        optionalStringKey('networkId', 30) &&
         requiredCreatedAtKey() &&
         // when creating, creatorId should be the current user, 
         // when editing, make sure it's the same user
