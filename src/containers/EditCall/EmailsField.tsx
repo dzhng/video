@@ -2,8 +2,8 @@ import React, { useState, useCallback, useRef } from 'react';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Paper, InputBase, IconButton } from '@material-ui/core';
+import { Autocomplete, AutocompleteRenderInputParams, createFilterOptions } from '@material-ui/lab';
 import { Add as AddIcon, HighlightOff as RemoveIcon } from '@material-ui/icons';
-
 import { createStyles, makeStyles, styled, Theme } from '@material-ui/core/styles';
 import { Field, FieldArray } from 'formik';
 
@@ -67,7 +67,13 @@ const EmailFieldItem = ({
   );
 };
 
+interface EmailOptionType {
+  title: string;
+  inputValue?: string;
+}
+
 const emailSchema = Yup.string().email().required();
+const filter = createFilterOptions<EmailOptionType>();
 
 const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
   const classes = useStyles();
@@ -90,25 +96,62 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
 
   return (
     <>
-      <Paper variant="outlined" className={classes.itemPaper}>
-        <InputBase
-          className={classes.input}
-          placeholder="Add guests"
-          value={text}
-          inputRef={inputRef}
-          onChange={(e) => setText(e.target.value)}
-          data-testid="email-input"
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              submitEmail();
-            }
-          }}
-        />
-        <IconButton data-testid="add-button" className={classes.iconButton} onClick={submitEmail}>
-          <AddIcon />
-        </IconButton>
-      </Paper>
+      <Autocomplete
+        freeSolo
+        selectOnFocus
+        handleHomeEndKeys
+        autoHighlight
+        options={[] as EmailOptionType[]}
+        onChange={(event, newValue) => {
+          submitEmail();
+        }}
+        filterOptions={(options, state) => {
+          const filtered = filter(options, state);
+
+          // Suggest the creation of a new value
+          if (state.inputValue !== '') {
+            filtered.push({
+              title: `Add "${state.inputValue}"`,
+              inputValue: state.inputValue,
+            });
+          }
+
+          return filtered;
+        }}
+        getOptionLabel={(option) => {
+          // Value selected with enter, right from the input
+          if (typeof option === 'string') {
+            return option;
+          }
+          // Add "xxx" option created dynamically
+          if (option.inputValue) {
+            return option.inputValue;
+          }
+          // Regular option
+          return option.title;
+        }}
+        renderOption={(option) => option.title}
+        renderInput={(params) => (
+          <Paper variant="outlined" className={classes.itemPaper} ref={params.InputProps.ref}>
+            <InputBase
+              className={classes.input}
+              inputProps={params.inputProps}
+              placeholder="Add guests"
+              value={text}
+              inputRef={inputRef}
+              onChange={(e) => setText(e.target.value)}
+              data-testid="email-input"
+            />
+            <IconButton
+              data-testid="add-button"
+              className={classes.iconButton}
+              onClick={submitEmail}
+            >
+              <AddIcon />
+            </IconButton>
+          </Paper>
+        )}
+      />
       <EmailError data-testid="email-error">{error}</EmailError>
     </>
   );

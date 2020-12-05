@@ -24,7 +24,7 @@ export default function Home({ calls }: { calls: Call[] }) {
       {calls.map((call: any) => (
         <Grid item>
           <Card className={classes.callCard}>
-            <Typography>Hello World {call}</Typography>
+            <Typography>Hello World {JSON.stringify(call)}</Typography>
           </Card>
         </Grid>
       ))}
