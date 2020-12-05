@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { includes, trim } from 'lodash';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Paper, InputBase, IconButton } from '@material-ui/core';
@@ -76,18 +77,35 @@ interface EmailOptionType {
 const emailSchema = Yup.string().email().required();
 const filter = createFilterOptions<EmailOptionType>();
 
-const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
+const EmailTextField = ({
+  values,
+  pushEmail,
+}: {
+  values: string[];
+  pushEmail(email: string): void;
+}) => {
   const classes = useStyles();
   const inputRef = useRef<HTMLInputElement>();
-  const [inputValue, setInputValue] = useState<string>('hello');
   const [error, setError] = useState<string | null>(null);
 
   const submitEmail = useCallback(
     (text) => {
-      if (emailSchema.isValidSync(text)) {
-        pushEmail(text);
+      const email = trim(text);
+
+      if (includes(values, email)) {
+        setError('This email has already been added');
+      } else if (emailSchema.isValidSync(email)) {
+        pushEmail(email);
         setError(null);
-        setInputValue('');
+
+        // HACK:
+        // There doesn't seem to be any good way to clear values in autocomplete component
+        // so we do it imperatively via ref. Need the setTimeout there since it'll render to its internal value first
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.value = '';
+          }
+        });
       } else {
         setError('You must provide a valid email');
       }
@@ -95,7 +113,7 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
       // either way, make sure to focus back on input
       inputRef.current?.focus();
     },
-    [setError, pushEmail],
+    [setError, pushEmail, values],
   );
 
   return (
@@ -105,7 +123,6 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
         selectOnFocus
         handleHomeEndKeys
         autoHighlight
-        inputValue={inputValue}
         options={[] as EmailOptionType[]}
         onChange={(_, newValue) => {
           if (typeof newValue === 'string') {
@@ -115,7 +132,6 @@ const EmailTextField = ({ pushEmail }: { pushEmail(email: string): void }) => {
             submitEmail(email);
           }
         }}
-        onInputChange={(_, value) => setInputValue(value)}
         filterOptions={(options, state) => {
           const filtered = filter(options, state);
 
@@ -176,7 +192,7 @@ export default function EmailsField({ name, values }: { name: string; values: st
           {values.map((email, index) => (
             <EmailFieldItem key={index} name={name} value={email} index={index} remove={remove} />
           ))}
-          <Field component={EmailTextField} name="email" pushEmail={push} />
+          <Field component={EmailTextField} name="email" pushEmail={push} values={values} />
         </>
       )}
     </FieldArray>
