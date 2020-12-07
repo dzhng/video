@@ -11,7 +11,9 @@ const useStyles = makeStyles(() =>
       // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
       transform: 'translateZ(0)',
     },
-    callCard: {},
+    callCard: {
+      cursor: 'pointer',
+    },
     createButton: {},
   }),
 );
@@ -21,11 +23,13 @@ export default function Home({ calls }: { calls: Call[] }) {
 
   return (
     <Grid container className={classes.grid} wrap="nowrap" spacing={3}>
-      {calls.map((call: any) => (
-        <Grid item>
-          <Card className={classes.callCard}>
-            <Typography>Hello World {JSON.stringify(call)}</Typography>
-          </Card>
+      {calls.map((call) => (
+        <Grid item key={call.id}>
+          <Link href={`/call/${call.id}/edit`}>
+            <Card className={classes.callCard}>
+              <Typography>Hello World {JSON.stringify(call)}</Typography>
+            </Card>
+          </Link>
         </Grid>
       ))}
 

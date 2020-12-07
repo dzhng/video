@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
-import { Call } from '~/firebase/schema-types';
+import { Call, Note } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
@@ -10,7 +10,8 @@ import EditContainer from '~/containers/EditCall/EditCall';
 
 export default withPrivateRoute(function CallEditPage() {
   const router = useRouter();
-  const [call, setCall] = useState<Call | null>(null);
+  const [call, setCall] = useState<Call | undefined>(undefined);
+  const [note, setNote] = useState<Note | undefined>(undefined);
   const { markIsWriting } = useAppState();
 
   const callId = String(router.query.slug);
@@ -26,14 +27,36 @@ export default withPrivateRoute(function CallEditPage() {
     return unsubscribe;
   }, [callId]);
 
+  useEffect(() => {
+    const unsubscribe = db
+      .collection('notes')
+      .doc(callId)
+      .onSnapshot((result) => {
+        setNote(result.data() as Note);
+      });
+
+    return unsubscribe;
+  }, [callId]);
+
   const saveCall = useCallback(
-    ({ id, ...updateData }: Call) => {
-      db.collection('calls').doc(id).update(updateData);
+    (callData: Call, noteData: Note) => {
+      const batch = db.batch();
+      const callRef = db.collection('calls').doc(callId);
+      const noteRef = db.collection('notes').doc(callId);
+
+      batch.update(callRef, callData);
+      batch.update(noteRef, noteData);
+
+      batch.commit();
       markIsWriting();
       router.push('/');
     },
-    [markIsWriting, router],
+    [callId, markIsWriting, router],
   );
 
-  return call ? <EditContainer call={call} saveCall={saveCall} /> : <LoadingContainer />;
+  return call && note ? (
+    <EditContainer call={call} note={note} saveCall={saveCall} />
+  ) : (
+    <LoadingContainer />
+  );
 });

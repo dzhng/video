@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function NotesEditor({ name }: { name: string }) {
   const classes = useStyles();
-  const [field, meta, helpers] = useField({
+  const [field, , helpers] = useField({
     name,
     type: 'text',
     multiple: false,

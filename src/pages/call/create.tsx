@@ -22,6 +22,7 @@ export default withPrivateRoute(function CreateCallPage() {
       // before adding, replace timestamp with server helper
       const data = {
         ...call,
+        creatorId: [user.uid],
         users: [user.uid],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
@@ -29,7 +30,7 @@ export default withPrivateRoute(function CreateCallPage() {
       console.log('Creating with data: ', data, note);
 
       // batch the writes so that both notes and call is created at the same time
-      let batch = db.batch();
+      const batch = db.batch();
 
       const callRef = db.collection('calls').doc();
       batch.set(callRef, data);
@@ -45,5 +46,5 @@ export default withPrivateRoute(function CreateCallPage() {
     [router, user, markIsWriting],
   );
 
-  return user ? <EditContainer currentUserId={user.uid} saveCall={createCall} /> : null;
+  return <EditContainer saveCall={createCall} />;
 });

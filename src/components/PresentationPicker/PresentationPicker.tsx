@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { trim, truncate } from 'lodash';
-import { Typography, Paper, Fab, CircularProgress } from '@material-ui/core';
+import { Typography, Paper, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Add } from '@material-ui/icons';
 import { useField } from 'formik';
 
+import { useAppState } from '~/state';
 import { Presentation } from '~/firebase/schema-types';
 import firebase, { db, storage } from '~/utils/firebase';
 
@@ -27,13 +28,19 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const Picker = ({ currentUserId }: { currentUserId: string }) => {
+const Picker = () => {
+  const { user } = useAppState();
   const classes = useStyles();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFile = useCallback(
     async (e) => {
       const { files } = e.target;
+
+      if (!user) {
+        console.warn('No authenticated user');
+        return;
+      }
 
       if (isUploading) {
         console.warn('Already uploading');
@@ -63,13 +70,13 @@ const Picker = ({ currentUserId }: { currentUserId: string }) => {
 
       await doc.set({
         name: truncate(trim(file.name), { length: 50 }) ?? 'New Presentation',
-        creatorId: currentUserId,
+        creatorId: user.uid,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       setIsUploading(false);
     },
-    [currentUserId, isUploading],
+    [user, isUploading],
   );
 
   return (
@@ -100,13 +107,7 @@ const Picker = ({ currentUserId }: { currentUserId: string }) => {
   );
 };
 
-export default function PresentationPicker({
-  name,
-  currentUserId,
-}: {
-  name: string;
-  currentUserId: string;
-}) {
+export default function PresentationPicker({ name }: { name: string }) {
   const classes = useStyles();
   const [field, , helpers] = useField({
     name,
@@ -140,7 +141,7 @@ export default function PresentationPicker({
     <Paper className={classes.paper}>
       <Typography variant="h6">Presentation</Typography>
       {isQueryingOrCreating && <CircularProgress />}
-      {!presentationData && !isQueryingOrCreating && <Picker currentUserId={currentUserId} />}
+      {!presentationData && !isQueryingOrCreating && <Picker />}
 
       {presentationData && <div>PresentationData</div>}
     </Paper>

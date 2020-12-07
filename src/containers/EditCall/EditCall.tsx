@@ -13,7 +13,6 @@ import InfoBar from './InfoBar';
 import EmailsField from './EmailsField';
 
 interface PropTypes {
-  currentUserId: string;
   call?: Call;
   saveCall(call: Call, note: Note): void;
   note?: Note;
@@ -38,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const LeftColumn = ({ currentUserId }: { currentUserId: string }) => {
+const LeftColumn = () => {
   const classes = useStyles();
 
   return (
@@ -63,7 +62,7 @@ const LeftColumn = ({ currentUserId }: { currentUserId: string }) => {
       </Grid>
 
       <Grid item xs={6}>
-        <PresentationPicker name="presentationId" currentUserId={currentUserId} />
+        <PresentationPicker name="presentationId" />
       </Grid>
 
       <Grid item xs={6}>
@@ -103,18 +102,10 @@ const RightColumn = ({ values, isSubmitting }: { values: Call; isSubmitting: boo
   );
 };
 
-const CallForm = ({
-  currentUserId,
-  values,
-  isSubmitting,
-}: {
-  currentUserId: string;
-  values: Call;
-  isSubmitting: boolean;
-}) => (
+const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolean }) => (
   <Grid container spacing={3}>
     <Grid item xs={9}>
-      <LeftColumn currentUserId={currentUserId} />
+      <LeftColumn />
     </Grid>
     <Grid item xs={3}>
       <RightColumn values={values} isSubmitting={isSubmitting} />
@@ -122,7 +113,7 @@ const CallForm = ({
   </Grid>
 );
 
-export default function EditContainer({ currentUserId, call, saveCall, note }: PropTypes) {
+export default function EditContainer({ call, saveCall, note }: PropTypes) {
   const isCreating = Boolean(!call);
 
   const defaultNoteData = {
@@ -132,7 +123,7 @@ export default function EditContainer({ currentUserId, call, saveCall, note }: P
   const initialValues = {
     name: call?.name ?? '',
     state: call?.state ?? 'pre',
-    creatorId: call?.creatorId ?? currentUserId,
+    creatorId: call?.creatorId ?? '', // here purely to satisfy Call type
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
     note: note ?? defaultNoteData,
@@ -169,7 +160,7 @@ export default function EditContainer({ currentUserId, call, saveCall, note }: P
         <Formik initialValues={initialValues} validationSchema={CallSchema} onSubmit={submitCall}>
           {({ values, isSubmitting }) => (
             <Form>
-              <CallForm currentUserId={currentUserId} values={values} isSubmitting={isSubmitting} />
+              <CallForm values={values} isSubmitting={isSubmitting} />
             </Form>
           )}
         </Formik>
