@@ -95,7 +95,7 @@ const RightColumn = ({ values, isSubmitting }: { values: Call; isSubmitting: boo
           color="primary"
           disabled={isSubmitting}
         >
-          {isSubmitting ? <CircularProgress /> : 'Submit'}
+          {isSubmitting ? <CircularProgress /> : 'Save'}
         </Button>
       </Grid>
     </Grid>

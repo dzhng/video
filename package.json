@@ -23,6 +23,7 @@
     "d3-timer": "^2.0.0",
     "firebase": "^8.1.1",
     "firebase-admin": "^9.4.1",
+    "firebase-functions": "^3.12.0",
     "formik": "^2.2.5",
     "formik-material-ui": "^3.0.0",
     "fscreen": "^1.1.0",
