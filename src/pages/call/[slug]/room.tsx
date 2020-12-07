@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 
 import { Call } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
-import useLayout from '~/hooks/useLayout/useLayout';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import LoadingContainer from '~/containers/Loading/Loading';
 import CallContainer from '~/containers/Call/Call';
@@ -11,10 +10,6 @@ import CallContainer from '~/containers/Call/Call';
 export default withPrivateRoute(function CallPage() {
   const router = useRouter();
   const [call, setCall] = useState<Call | null>(null);
-  const { setShowLayout } = useLayout();
-
-  // a room is a full screen experience, hide all nav bars
-  setShowLayout(false);
 
   const callId = String(router.query.slug);
 

@@ -92,6 +92,8 @@ describe('the useConnectionOptions function', () => {
     };
 
     mockUseAppState.mockImplementationOnce(() => ({ settings, roomType: 'peer-to-peer' }));
-    expect(useConnectionOptions()).toMatchObject({ preferredVideoCodecs: [{ codec: 'VP8', simulcast: false }] });
+    expect(useConnectionOptions()).toMatchObject({
+      preferredVideoCodecs: [{ codec: 'VP8', simulcast: false }],
+    });
   });
 });

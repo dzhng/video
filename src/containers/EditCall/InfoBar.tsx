@@ -1,9 +1,9 @@
 import React from 'react';
 import { Typography, Button } from '@material-ui/core';
 import Link from 'next/link';
-import { Call } from '~/firebase/schema-types';
+import { LocalModel, Call } from '~/firebase/schema-types';
 
-export default function SummaryContainer({ call }: { call: Call }) {
+export default function SummaryContainer({ call }: { call: LocalModel<Call> }) {
   return (
     <>
       {call.state === 'started' && (

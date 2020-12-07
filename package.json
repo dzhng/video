@@ -23,7 +23,6 @@
     "d3-timer": "^2.0.0",
     "firebase": "^8.1.1",
     "firebase-admin": "^9.4.1",
-    "firebase-functions": "^3.12.0",
     "formik": "^2.2.5",
     "formik-material-ui": "^3.0.0",
     "fscreen": "^1.1.0",
@@ -34,7 +33,6 @@
     "next": "^10.0.3",
     "nookies": "^2.5.0",
     "nprogress": "^0.2.0",
-    "prettier": "^2.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^5.2.1",
@@ -54,7 +52,8 @@
     "@vercel/node": "^1.8.5",
     "babel-plugin-inline-react-svg": "^1.1.2",
     "babel-plugin-styled-components": "^1.12.0",
-    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-prettier": "^3.2.0",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^26.6.3",
     "jest-junit": "^12.0.0",
@@ -62,6 +61,7 @@
     "mocha": "^8.2.1",
     "mocha-junit-reporter": "^2.0.0",
     "node-mocks-http": "^1.9.0",
+    "prettier": "2.2.1",
     "react-scripts": "^4.0.1",
     "react-test-renderer": "^17.0.1",
     "start-server-and-test": "^1.11.6",
@@ -85,15 +85,19 @@
     "start": "next start",
     "test": "sh -c 'firebase emulators:exec \"jest $0 $1 $2 $3 $4\"' '--passWithNoTests'",
     "test:dev": "sh -c 'firebase emulators:exec \"jest --watch --runInBand --reporters=default --reporters=jest-junit --coverage $0 $1 $2 $3 $4\"' '--passWithNoTests'",
-    "lint": "eslint src/**/*.{ts,tsx} --fix",
-    "tsc": "tsc",
+    "lint": "tsc && eslint src/**/*.{ts,tsx} --fix",
     "server": "node server.js",
-    "deploy:firebase": "firebase deploy --only firestore:rules"
+    "deploy:firebase": "firebase deploy --only firestore,storage"
   },
   "eslintConfig": {
+    "root": true,
+    "plugins": [
+      "prettier"
+    ],
     "extends": [
       "react-app",
       "prettier",
+      "prettier/prettier",
       "prettier/@typescript-eslint",
       "prettier/babel",
       "prettier/react"
@@ -104,6 +108,7 @@
       "sourceType": "module"
     },
     "rules": {
+      "prettier/prettier": "error",
       "no-shadow": "warn",
       "react/react-in-jsx-scope": "off",
       "react/jsx-props-no-spreading": "off",

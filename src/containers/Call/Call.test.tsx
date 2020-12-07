@@ -35,6 +35,7 @@ const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 const mockCall: Call = {
   name: 'hello',
   state: 'started',
+  creatorId: 'alice',
   users: [],
   createdAt: new Date(),
 };

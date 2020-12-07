@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
-import { Call, Note } from '~/firebase/schema-types';
+import { LocalModel, Call, Note } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
@@ -10,8 +10,8 @@ import EditContainer from '~/containers/EditCall/EditCall';
 
 export default withPrivateRoute(function CallEditPage() {
   const router = useRouter();
-  const [call, setCall] = useState<Call | undefined>(undefined);
-  const [note, setNote] = useState<Note | undefined>(undefined);
+  const [call, setCall] = useState<LocalModel<Call> | undefined>(undefined);
+  const [note, setNote] = useState<LocalModel<Note> | undefined>(undefined);
   const { markIsWriting } = useAppState();
 
   const callId = String(router.query.slug);
@@ -21,7 +21,10 @@ export default withPrivateRoute(function CallEditPage() {
       .collection('calls')
       .doc(callId)
       .onSnapshot((result) => {
-        setCall(result.data() as Call);
+        setCall({
+          id: callId,
+          ...(result.data() as Call),
+        });
       });
 
     return unsubscribe;
@@ -32,7 +35,10 @@ export default withPrivateRoute(function CallEditPage() {
       .collection('notes')
       .doc(callId)
       .onSnapshot((result) => {
-        setNote(result.data() as Note);
+        setNote({
+          id: callId,
+          ...(result.data() as Note),
+        });
       });
 
     return unsubscribe;

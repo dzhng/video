@@ -6,16 +6,16 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 
-import { Call, Note } from '~/firebase/schema-types';
+import { LocalModel, Call, Note } from '~/firebase/schema-types';
 import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
 import NotesEditor from '~/components/NotesEditor/NotesEditor';
 import InfoBar from './InfoBar';
 import EmailsField from './EmailsField';
 
 interface PropTypes {
-  call?: Call;
+  call?: LocalModel<Call>;
   saveCall(call: Call, note: Note): void;
-  note?: Note;
+  note?: LocalModel<Note>;
 }
 
 const CallSchema = Yup.object().shape({
