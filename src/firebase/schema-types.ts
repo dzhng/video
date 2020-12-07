@@ -1,5 +1,9 @@
 // NOTE: make sure these types are aligned with firebase type checking rules in firestore.rules!
 
+import firebase from '~/utils/firebase';
+
+type Date = firebase.firestore.Timestamp | firebase.firestore.FieldValue;
+
 export declare interface User {
   id?: string;
   networkId?: string;
@@ -18,7 +22,7 @@ export declare interface Network {
 export declare interface Admin {
   id?: string;
   role: 'owner' | 'admin';
-  createdAt: string;
+  createdAt: Date;
 }
 
 export declare interface Call {

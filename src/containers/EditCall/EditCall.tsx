@@ -126,6 +126,7 @@ export default function EditContainer({ call, saveCall, note }: PropTypes) {
     creatorId: call?.creatorId ?? '', // here purely to satisfy Call type
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
+    presentationId: call?.presentationId ?? undefined,
     note: note ?? defaultNoteData,
     createdAt: call?.createdAt ?? new Date(),
   };
