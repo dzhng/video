@@ -3,7 +3,7 @@ import { Typography, Grid, Card, Button } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
 
-import { Call } from '~/firebase/schema-types';
+import { LocalModel, Call } from '~/firebase/schema-types';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -18,7 +18,7 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-export default function Home({ calls }: { calls: Call[] }) {
+export default function Home({ calls }: { calls: LocalModel<Call>[] }) {
   const classes = useStyles();
 
   return (

@@ -2,55 +2,52 @@
 
 import firebase from '~/utils/firebase';
 
-type Date = firebase.firestore.Timestamp | firebase.firestore.FieldValue;
+type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
+
+// extends the type with properties that is needed for client operations (such as id)
+export type LocalModel<T> = T & { id: string };
 
 export declare interface User {
-  id?: string;
   networkId?: string;
   bio?: string;
-  createdAt: Date;
+  createdAt: FbDate;
 }
 
 export declare interface Network {
-  id?: string;
   name: string;
   logoURL?: string;
   primaryColor?: string;
-  createdAt: Date;
+  createdAt: FbDate;
 }
 
 export declare interface Admin {
-  id?: string;
   role: 'owner' | 'admin';
-  createdAt: Date;
+  createdAt: FbDate;
 }
 
 export declare interface Call {
-  id?: string;
   name: string;
   state: 'pre' | 'started' | 'finished';
   creatorId: string;
   users: string[];
   guests?: string[];
   guestEmails?: string[];
-  startTime?: Date;
+  startTime?: FbDate;
   durationMin?: number;
   presentationId?: string;
   noteId?: string;
   chatId?: string;
   transcriptId?: string;
-  createdAt: Date;
+  createdAt: FbDate;
 }
 
 export declare interface Note {
-  id?: string;
   text: string;
 }
 
 export declare interface Presentation {
-  id?: string;
   name: string;
   creatorId: string;
   networkId?: string;
-  createdAt: Date;
+  createdAt: FbDate;
 }

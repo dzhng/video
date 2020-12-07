@@ -4,11 +4,11 @@ import { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import Home from '~/containers/Home/Home';
 import { useAppState } from '~/state';
-import { Call } from '~/firebase/schema-types';
+import { LocalModel, Call } from '~/firebase/schema-types';
 
 export default withPrivateRoute(function IndexPage() {
   const { user } = useAppState();
-  const [upcomingCalls, setUpcomingCalls] = useState<Call[]>([]);
+  const [upcomingCalls, setUpcomingCalls] = useState<LocalModel<Call>[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -18,12 +18,15 @@ export default withPrivateRoute(function IndexPage() {
     db.collection('calls')
       .where('users', 'array-contains', user.uid)
       .onSnapshot(function (querySnapshot) {
-        const calls = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const calls = querySnapshot.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as LocalModel<Call>),
+        );
 
-        setUpcomingCalls(calls as Call[]);
+        setUpcomingCalls(calls);
       });
   }, [user]);
 

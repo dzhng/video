@@ -4,7 +4,7 @@ import { Typography, Paper, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Add } from '@material-ui/icons';
 
-import { Presentation } from '~/firebase/schema-types';
+import { LocalModel, Presentation } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import firebase, { db, storage } from '~/utils/firebase';
 
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function Uploader({ setData }: { setData(data: Presentation): void }) {
+export default function Uploader({ setData }: { setData(data: LocalModel<Presentation>): void }) {
   const { user } = useAppState();
   const classes = useStyles();
   const [isUploading, setIsUploading] = useState(false);
@@ -64,15 +64,18 @@ export default function Uploader({ setData }: { setData(data: Presentation): voi
       const ref = storage.ref(`presentations/${doc.id}`);
       await ref.put(file, metadata);
 
-      await doc.set({
+      const data: Presentation = {
         name: truncate(trim(file.name), { length: 50 }) ?? 'New Presentation',
         creatorId: user.uid,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      } as Presentation);
+      };
 
+      await doc.set(data);
+
+      setData({ id: doc.id, ...data });
       setIsUploading(false);
     },
-    [user, isUploading],
+    [user, isUploading, setData],
   );
 
   return (

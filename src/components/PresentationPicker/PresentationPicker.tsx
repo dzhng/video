@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Typography, Paper, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useField } from 'formik';
 
-import { Presentation } from '~/firebase/schema-types';
+import { LocalModel, Presentation } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import Uploader from './Uploader';
 
@@ -43,15 +43,23 @@ export default function PresentationPicker({ name }: { name: string }) {
     } else {
       setIsQueryingOrCreating(false);
     }
-  }, [value, setValue]);
+  }, [value]);
+
+  const setData = useCallback(
+    (data: LocalModel<Presentation>) => {
+      setPresentationData(data);
+      setValue(data.id);
+    },
+    [setValue],
+  );
 
   return (
     <Paper className={classes.paper}>
       <Typography variant="h6">Presentation</Typography>
       {isQueryingOrCreating && <CircularProgress />}
-      {!presentationData && !isQueryingOrCreating && <Uploader />}
+      {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
 
-      {presentationData && <div>PresentationData</div>}
+      {presentationData && <div>PresentationData {JSON.stringify(presentationData)}</div>}
     </Paper>
   );
 }
