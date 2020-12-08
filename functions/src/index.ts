@@ -31,7 +31,7 @@ export const processPresentation = functions
     // next upload all downloaded files into storage, returning an array of storage paths
     const paths: string[] = await Promise.all(
       buffers.map(async (buffer, idx) => {
-        const path = `/presentations/${context.params.presentationId}/${idx}`;
+        const path = `presentations/${context.params.presentationId}/${idx}`;
         const file = bucket.file(path);
         await file.save(Buffer.from(buffer), { resumable: false });
         return path;
