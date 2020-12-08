@@ -24,14 +24,16 @@ export const processPresentation = functions
     const responses: Response[] = await Promise.all<Response>(
       doc.slides.map((slide) => fetch(slide)),
     );
-    const blobs: Blob[] = await Promise.all(responses.map((response) => response.blob()));
+    const buffers: ArrayBuffer[] = await Promise.all(
+      responses.map((response) => response.arrayBuffer()),
+    );
 
     // next upload all downloaded files into storage, returning an array of storage paths
     const paths: string[] = await Promise.all(
-      blobs.map(async (blob, idx) => {
+      buffers.map(async (buffer, idx) => {
         const path = `/presentations/${context.params.presentationId}/${idx}`;
         const file = bucket.file(path);
-        await file.save(blob, { resumable: false });
+        await file.save(Buffer.from(buffer), { resumable: false });
         return path;
       }),
     );

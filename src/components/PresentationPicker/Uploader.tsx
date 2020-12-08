@@ -67,7 +67,6 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
       setIsUploading(true);
 
       const file = files[0];
-      console.log(file);
       const ext = file.name.split('.').pop()?.toLowerCase();
 
       let fileType: string | null = null;
