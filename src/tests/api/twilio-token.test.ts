@@ -1,6 +1,6 @@
 import { createMocks, createResponse } from 'node-mocks-http';
 import twilio from 'twilio';
-import token from '~/pages/api/token';
+import token from '~/pages/api/twilio-token';
 //import admin from '~/utils/firebase-admin';
 
 jest.mock('twilio', () => {

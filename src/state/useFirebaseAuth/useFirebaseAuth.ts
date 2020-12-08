@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
+import fetch from 'isomorphic-unfetch';
 import firebase, { auth } from '~/utils/firebase';
-import { TOKEN_ENDPOINT } from '~/constants';
+import { TWILIO_TOKEN_ENDPOINT } from '~/constants';
 
 export default function useFirebaseAuth() {
   const [user, setUser] = useState<firebase.User | null>(null);
@@ -21,7 +22,7 @@ export default function useFirebaseAuth() {
       const idToken = await user!.getIdToken();
       const params = JSON.stringify({ idToken, roomName });
 
-      return fetch(`${TOKEN_ENDPOINT}`, {
+      return fetch(`${TWILIO_TOKEN_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

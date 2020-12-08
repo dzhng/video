@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import 'isomorphic-fetch';
+import 'isomorphic-unfetch';
 import 'jest-ts-auto-mock';
 
 // Mocks the Fullscreen API. This is needed for ToggleFullScreenButton.test.tsx.

@@ -1,6 +1,7 @@
 import useFirebaseAuth from './useFirebaseAuth';
+import fetch from 'isomorphic-unfetch';
 import { renderHook } from '@testing-library/react-hooks';
-import { TOKEN_ENDPOINT } from '~/constants';
+import { TWILIO_TOKEN_ENDPOINT } from '~/constants';
 
 const mockUser = { getIdToken: () => Promise.resolve('idToken') };
 
@@ -19,10 +20,11 @@ jest.mock('firebase/app', () => {
   };
 });
 
+jest.mock('isomorphic-unfetch');
 jest.mock('firebase/auth');
 
-// @ts-ignore
-window.fetch = jest.fn(() => Promise.resolve({ text: () => 'mockVideoToken' }));
+const mockFetch = fetch as jest.Mock<any>;
+mockFetch.mockImplementation(() => Promise.resolve({ text: () => 'mockVideoToken' }));
 
 describe('the useFirebaseAuth hook', () => {
   it('should set isAuthReady to true and set a user on load', async () => {
@@ -57,7 +59,7 @@ describe('the useFirebaseAuth hook', () => {
     result.current.signIn();
     await waitForNextUpdate();
     await result.current.getToken('testroom');
-    expect(fetch).toHaveBeenCalledWith(TOKEN_ENDPOINT, {
+    expect(mockFetch).toHaveBeenCalledWith(TWILIO_TOKEN_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
