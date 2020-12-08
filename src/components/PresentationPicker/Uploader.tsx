@@ -1,5 +1,4 @@
 import React, { useState, useCallback, ChangeEvent } from 'react';
-import path from 'path';
 import { trim, truncate } from 'lodash';
 import clsx from 'clsx';
 import { Typography, Paper, CircularProgress } from '@material-ui/core';
@@ -68,8 +67,8 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
       setIsUploading(true);
 
       const file = files[0];
-      const parsedName = path.parse(file.name);
-      const { ext } = parsedName;
+      console.log(file);
+      const ext = file.name.split('.').pop()?.toLowerCase();
 
       let fileType: string | null = null;
       if (file.type === 'application/pdf' || ext === 'pdf') {
@@ -120,6 +119,7 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
       <Typography variant="body2">
         Upload a presentation for this call. We support either PDF or Powerpoint format.
       </Typography>
+      {error && <Typography variant="body2">Error uploading presentation: {error}</Typography>}
       <input
         style={{ display: 'none' }}
         id="contained-button"

@@ -28,7 +28,6 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "baseUrl": "./",
     "paths": {
       "~/*": ["./src/*"]
     }

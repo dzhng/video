@@ -1,14 +1,13 @@
 import * as functions from 'firebase-functions';
 import admin from 'firebase-admin';
 import fetch from 'isomorphic-unfetch';
-import { Presentation } from '~/firebase/schema-types';
 
 admin.initializeApp();
 
-export const helloWorld = functions.region('europe-west1').https.onRequest((_, response) => {
-  functions.logger.info('Hello logs!', { structuredData: true });
-  response.send('Hello from Firebase!');
-});
+interface Presentation {
+  slides: string[];
+  isProcessed: boolean;
+}
 
 export const processPresentation = functions
   .region('europe-west1')
