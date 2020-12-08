@@ -30,11 +30,11 @@ export default async (req: NowRequest, res: NowResponse) => {
   );
 
   const convertResponse = await result.json();
-  if (!(convertResponse.tokens && convertResponse.tokens.length > 0)) {
+  if (!(convertResponse.Tokens && convertResponse.Tokens.length > 0)) {
     res.status(400).send('Convert API invalid response');
   }
 
-  const token = convertResponse.tokens[0];
+  const token = convertResponse.Tokens[0];
   if (!token.Id) {
     res.status(400).send('Convert API invalid response');
   }

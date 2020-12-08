@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useAppState } from '~/state';
 import { CONVERT_TOKEN_ENDPOINT } from '~/constants';
 
-export default function useConvert() {
+export default function useConvertToken() {
   const { user } = useAppState();
   const [token, setToken] = useState<string | null>(null);
-  const [isFetchingToken, setIsFetchingToken] = useState(false);
+  const [isFetchingToken, setIsFetchingToken] = useState(true);
 
   useEffect(() => {
     const getToken = async () => {
@@ -34,5 +34,5 @@ export default function useConvert() {
     getToken();
   }, [user]);
 
-  return [token, isFetchingToken];
+  return { token, isFetchingToken };
 }
