@@ -1,4 +1,5 @@
 import React, { useState, useCallback, ChangeEvent } from 'react';
+import path from 'path';
 import { trim, truncate } from 'lodash';
 import clsx from 'clsx';
 import { Typography, Paper, CircularProgress } from '@material-ui/core';
@@ -8,7 +9,7 @@ import { Add } from '@material-ui/icons';
 import { LocalModel, Presentation } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import useConvert from '~/hooks/useConvert/useConvert';
-import firebase, { db, storage } from '~/utils/firebase';
+import firebase, { db } from '~/utils/firebase';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,6 +36,7 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
   const { user } = useAppState();
   const classes = useStyles();
   const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const disableUpload = isUploading || isPreparing;
 
@@ -62,36 +64,52 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
         return;
       }
 
+      setError(null);
       setIsUploading(true);
+
       const file = files[0];
-      console.log(file);
+      const parsedName = path.parse(file.name);
+      const { ext } = parsedName;
 
-      const convertResult = await convert('pdf', 'png', file);
-      console.log(convertResult);
+      let fileType: string | null = null;
+      if (file.type === 'application/pdf' || ext === 'pdf') {
+        fileType = 'pdf';
+      } else if (file.type === 'application/vnd.ms-powerpoint' || ext === '.ppt') {
+        fileType = 'ppt';
+      } else if (
+        file.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+        ext === '.pptx'
+      ) {
+        fileType = 'pptx';
+      }
 
-      /*
-      const metadata = {
-        customMetadata: {
-          originalName: file.name,
-        },
-      };
+      if (fileType === null) {
+        console.warn('Invalid file type uploaded');
+        setError('An invalid file type was selected');
+        return;
+      }
 
-      // first create a presentation doc
-      const doc = db.collection('presentations').doc();
+      const convertResult = await convert(fileType, 'png', file);
+      if (!convertResult || convertResult.length <= 0) {
+        console.warn('Convert result undefined');
+        setError('Error processing file, please try another file');
+        return;
+      }
 
-      // use the doc id as the filename
-      const ref = storage.ref(`presentations/${doc.id}`);
-      await ref.put(file, metadata);
+      const fileUrls = convertResult.map((res) => res.Url);
 
       const data: Presentation = {
         name: truncate(trim(file.name), { length: 50 }) ?? 'New Presentation',
         creatorId: user.uid,
+        isProcessed: false, // mark for processing in cloud function
+        slides: fileUrls,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
 
-      await doc.set(data);
+      // first create a presentation doc
+      const doc = await db.collection('presentations').add(data);
 
-      setData({ id: doc.id, ...data });*/
+      setData({ id: doc.id, ...data });
       setIsUploading(false);
     },
     [user, isUploading, setData, convert],

@@ -162,6 +162,7 @@ describe('firebase cloud firestore database rules', () => {
       state: 'pre',
       creatorId: 'alice',
       users: [],
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
     it('should let logged in users create a call', async () => {
@@ -172,7 +173,6 @@ describe('firebase cloud firestore database rules', () => {
           ...requiredFields,
           users: ['alice', 'charlie'],
           guestEmails: ['hello@world.com'],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
     });
@@ -186,7 +186,6 @@ describe('firebase cloud firestore database rules', () => {
           state: 'test',
           users: ['alice', 'charlie'],
           guestEmails: ['hello@world.com'],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
 
@@ -197,7 +196,6 @@ describe('firebase cloud firestore database rules', () => {
           state: 'test',
           users: ['alice', 'charlie'],
           guestEmails: ['', 'hello@world.com'],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
 
@@ -207,7 +205,6 @@ describe('firebase cloud firestore database rules', () => {
           state: 'test',
           users: [null, 'alice', 'charlie'],
           guestEmails: ['hello@world.com'],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
     });
@@ -231,7 +228,6 @@ describe('firebase cloud firestore database rules', () => {
         call.set({
           ...requiredFields,
           users: ['charlie'],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
 
@@ -239,7 +235,6 @@ describe('firebase cloud firestore database rules', () => {
         call.set({
           ...requiredFields,
           users: [],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
 
@@ -248,7 +243,6 @@ describe('firebase cloud firestore database rules', () => {
           ...requiredFields,
           creatorId: 'bob',
           users: ['alice'],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
     });
@@ -259,7 +253,6 @@ describe('firebase cloud firestore database rules', () => {
       call.set({
         ...requiredFields,
         users: ['alice', 'charlie'],
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       const bob = getAuthedFirestore({ uid: 'bob' });
@@ -277,7 +270,6 @@ describe('firebase cloud firestore database rules', () => {
       call.set({
         ...requiredFields,
         users: ['alice', 'charlie'],
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       await firebase.assertSucceeds(
@@ -289,22 +281,23 @@ describe('firebase cloud firestore database rules', () => {
   });
 
   describe('presentation', () => {
+    const requiredFields = {
+      name: 'hello',
+      creatorId: 'alice',
+      slides: [],
+      isProcessed: true,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
     it('should let logged in userse create a presentation and enforce creatorId', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       const presentation = db.collection('presentations').doc('p');
-      await firebase.assertSucceeds(
-        presentation.set({
-          name: 'hello',
-          creatorId: 'alice',
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        }),
-      );
+      await firebase.assertSucceeds(presentation.set(requiredFields));
 
       // should be update now since record already created
       await firebase.assertSucceeds(
         presentation.update({
           name: 'hello world',
-          creatorId: 'alice',
         }),
       );
     });
@@ -314,9 +307,22 @@ describe('firebase cloud firestore database rules', () => {
       const presentation = db.collection('presentations').doc('p');
       await firebase.assertFails(
         presentation.set({
-          name: 'hello',
+          ...requiredFields,
           creatorId: 'bob',
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
+    });
+
+    it('should not let other users update the presentation', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const presentation = db.collection('presentations').doc('p');
+      await presentation.set(requiredFields);
+
+      const bob = getAuthedFirestore({ uid: 'bob' });
+      const bobPresentation = bob.collection('presentations').doc('p');
+      await firebase.assertFails(
+        bobPresentation.set({
+          name: 'hello world',
         }),
       );
     });

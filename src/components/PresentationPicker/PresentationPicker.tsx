@@ -56,6 +56,9 @@ export default function PresentationPicker({ name }: { name: string }) {
   return (
     <Paper className={classes.paper}>
       <Typography variant="h6">Presentation</Typography>
+      <Typography variant="body2">
+        Upload the presentation to be used in this call. We support PDF or Powerpoint formats.
+      </Typography>
       {isQueryingOrCreating && <CircularProgress />}
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
 

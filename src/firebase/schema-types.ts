@@ -49,5 +49,7 @@ export declare interface Presentation {
   name: string;
   creatorId: string;
   networkId?: string;
+  slides: string[];
+  isProcessed: boolean;
   createdAt: FbDate;
 }
