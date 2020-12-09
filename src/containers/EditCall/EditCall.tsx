@@ -24,6 +24,7 @@ const CallSchema = Yup.object().shape({
   note: Yup.object().shape({
     text: Yup.string().max(50000),
   }),
+  presentationId: Yup.string(),
 });
 
 const useStyles = makeStyles((theme: Theme) =>

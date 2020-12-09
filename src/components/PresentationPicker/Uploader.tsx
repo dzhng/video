@@ -7,7 +7,7 @@ import { Add } from '@material-ui/icons';
 
 import { LocalModel, Presentation } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
-import useConvert from '~/hooks/useConvert/useConvert';
+import useConvert, { fromType } from '~/hooks/useConvert/useConvert';
 import firebase, { db } from '~/utils/firebase';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -69,7 +69,7 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
       const file = files[0];
       const ext = file.name.split('.').pop()?.toLowerCase();
 
-      let fileType: string | null = null;
+      let fileType: fromType | null = null;
       if (file.type === 'application/pdf' || ext === 'pdf') {
         fileType = 'pdf';
       } else if (file.type === 'application/vnd.ms-powerpoint' || ext === '.ppt') {
@@ -87,7 +87,7 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
         return;
       }
 
-      const convertResult = await convert(fileType, 'png', file);
+      const convertResult = await convert(fileType, 'jpg', file);
       if (!convertResult || convertResult.length <= 0) {
         console.warn('Convert result undefined');
         setError('Error processing file, please try another file');

@@ -6,6 +6,7 @@ import { useField } from 'formik';
 import { LocalModel, Presentation } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import Uploader from './Uploader';
+import Preview from './Preview';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,9 +47,14 @@ export default function PresentationPicker({ name }: { name: string }) {
   }, [value]);
 
   const setData = useCallback(
-    (data: LocalModel<Presentation>) => {
-      setPresentationData(data);
-      setValue(data.id);
+    (data: LocalModel<Presentation> | null) => {
+      if (data) {
+        setPresentationData(data);
+        setValue(data.id);
+      } else {
+        setPresentationData(null);
+        setValue(undefined);
+      }
     },
     [setValue],
   );
@@ -62,7 +68,7 @@ export default function PresentationPicker({ name }: { name: string }) {
       {isQueryingOrCreating && <CircularProgress />}
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
 
-      {presentationData && <div>PresentationData {JSON.stringify(presentationData)}</div>}
+      {presentationData && <Preview data={presentationData} />}
     </Paper>
   );
 }

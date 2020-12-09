@@ -33,7 +33,10 @@ export const processPresentation = functions
       buffers.map(async (buffer, idx) => {
         const path = `presentations/${context.params.presentationId}/${idx}`;
         const file = bucket.file(path);
-        await file.save(Buffer.from(buffer), { resumable: false });
+        await file.save(Buffer.from(buffer), {
+          resumable: false,
+          contentType: responses[idx].headers.get('content-type') ?? undefined,
+        });
         return path;
       }),
     );
