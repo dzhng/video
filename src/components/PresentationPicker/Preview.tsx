@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import React from 'react';
 import { Grid, Typography, Divider, Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Presentation } from '~/firebase/schema-types';
-import firebase, { storage } from '~/utils/firebase';
+import firebase from '~/utils/firebase';
 import { formatDate } from '~/utils';
+import PresentationDisplay from '~/components/Presentation/Presentation';
 
-interface Props {
+interface PropTypes {
   presentation: Presentation;
   removePresentation(): void;
 }
@@ -30,54 +30,28 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function Preview({ presentation, removePresentation }: Props) {
+export default function Preview({ presentation, removePresentation }: PropTypes) {
   const classes = useStyles();
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-  const previewImage = presentation.slides[0];
-  const isHostedImage = previewImage.startsWith('http');
-
-  useEffect(() => {
-    if (isHostedImage) {
-      setImageUrl(previewImage);
-      return;
-    }
-
-    // if the image is not hosted, it must be a google storage file id
-    storage
-      .ref(previewImage)
-      .getDownloadURL()
-      .then((url) => setImageUrl(url));
-  }, [previewImage, isHostedImage]);
 
   return (
     <Grid container className={classes.container}>
       <Grid item xs={8} className={classes.imageGridItem}>
-        <div className={classes.imageContainer}>
-          {imageUrl && (
-            <Image
-              src={imageUrl}
-              alt="Presentation preview"
-              layout="fill"
-              objectFit="contain"
-              quality={100}
-            />
-          )}
-        </div>
+        <PresentationDisplay presentation={presentation} startAt={0} />
       </Grid>
 
       <Grid item xs={4}>
         <Typography variant="body2" className={classes.name}>
-          {presentation.name}
+          <b>{presentation.name}</b>
         </Typography>
         <br />
         <Divider />
         <br />
         <Typography variant="body2" className={classes.info}>
-          Total slides: {presentation.slides.length}
+          <b>Total slides:</b> {presentation.slides.length}
         </Typography>
         <Typography variant="body2" className={classes.info}>
-          Uploaded: {formatDate((presentation.createdAt as firebase.firestore.Timestamp).toDate())}
+          <b>Uploaded:</b>{' '}
+          {formatDate((presentation.createdAt as firebase.firestore.Timestamp).toDate())}
         </Typography>
         <br />
         <Divider />
