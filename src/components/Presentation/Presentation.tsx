@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { IconButton } from '@material-ui/core';
+import { NavigateBefore, NavigateNext } from '@material-ui/icons';
 import { Presentation } from '~/firebase/schema-types';
 import Slide from './Slide';
 
@@ -10,22 +12,49 @@ interface PropTypes {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    imageContainer: {
-      position: 'relative',
-      backgroundColor: theme.palette.grey[900],
-
-      // trick to lock this component in 4/3 aspect ratio
-      width: '100%',
-      height: 0,
-      paddingBottom: '75%',
+    controls: {
+      backgroundColor: theme.palette.background.default,
+      textAlign: 'center',
+    },
+    pageNumber: {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      verticalAlign: 'middle',
+      margin: theme.spacing(1),
     },
   }),
 );
 
 export default function PresentationDisplay({ presentation, startAt }: PropTypes) {
+  const [index, setIndex] = useState<number>(startAt);
   const classes = useStyles();
 
-  const previewImage = presentation.slides[startAt];
+  const previousSlide = useCallback(() => {
+    if (index > 0) {
+      setIndex(index - 1);
+    }
+  }, [index]);
 
-  return <Slide slideUrl={previewImage} />;
+  const nextSlide = useCallback(() => {
+    if (index < presentation.slides.length - 1) {
+      setIndex(index + 1);
+    }
+  }, [index, presentation]);
+
+  return (
+    <>
+      <Slide slideUrl={presentation.slides[index]} />
+      <div className={classes.controls}>
+        <IconButton size="small" onClick={previousSlide}>
+          <NavigateBefore />
+        </IconButton>
+
+        <span className={classes.pageNumber}>{index + 1}</span>
+
+        <IconButton size="small" onClick={nextSlide}>
+          <NavigateNext />
+        </IconButton>
+      </div>
+    </>
+  );
 }
