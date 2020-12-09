@@ -6,16 +6,17 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 
-import { LocalModel, Call, Note } from '~/firebase/schema-types';
+import { Call, Note } from '~/firebase/schema-types';
 import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
 import NotesEditor from '~/components/NotesEditor/NotesEditor';
 import InfoBar from './InfoBar';
 import EmailsField from './EmailsField';
 
 interface PropTypes {
-  call?: LocalModel<Call>;
+  callId?: string;
+  call?: Call;
   saveCall(call: Call, note: Note): void;
-  note?: LocalModel<Note>;
+  note?: Note;
 }
 
 const CallSchema = Yup.object().shape({
@@ -114,7 +115,7 @@ const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolea
   </Grid>
 );
 
-export default function EditContainer({ call, saveCall, note }: PropTypes) {
+export default function EditContainer({ callId, call, saveCall, note }: PropTypes) {
   const isCreating = Boolean(!call);
 
   const defaultNoteData = {
@@ -156,7 +157,7 @@ export default function EditContainer({ call, saveCall, note }: PropTypes) {
   return (
     <Grid container>
       <Grid item xs={12}>
-        {!isCreating && call && <InfoBar call={call} />}
+        {!isCreating && call && callId && <InfoBar callId={callId} call={call} />}
       </Grid>
 
       <Grid item xs={12}>

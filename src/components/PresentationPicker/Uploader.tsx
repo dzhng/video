@@ -5,7 +5,7 @@ import { Typography, Paper, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Add } from '@material-ui/icons';
 
-import { LocalModel, Presentation } from '~/firebase/schema-types';
+import { Presentation } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import useConvert, { fromType } from '~/hooks/useConvert/useConvert';
 import firebase, { db } from '~/utils/firebase';
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function Uploader({ setData }: { setData(data: LocalModel<Presentation>): void }) {
+export default function Uploader({ setData }: { setData(id: string, data: Presentation): void }) {
   const { convert, isPreparing } = useConvert();
   const { user } = useAppState();
   const classes = useStyles();
@@ -107,7 +107,7 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
       // first create a presentation doc
       const doc = await db.collection('presentations').add(data);
 
-      setData({ id: doc.id, ...data });
+      setData(doc.id, data);
       setIsUploading(false);
     },
     [user, isUploading, setData, convert],

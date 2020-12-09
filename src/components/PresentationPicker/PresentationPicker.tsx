@@ -3,7 +3,7 @@ import { Typography, Paper, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useField } from 'formik';
 
-import { LocalModel, Presentation } from '~/firebase/schema-types';
+import { Presentation } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import Uploader from './Uploader';
 import Preview from './Preview';
@@ -47,10 +47,10 @@ export default function PresentationPicker({ name }: { name: string }) {
   }, [value]);
 
   const setData = useCallback(
-    (data: LocalModel<Presentation> | null) => {
-      if (data) {
+    (id: string | null, data: Presentation | null) => {
+      if (id) {
         setPresentationData(data);
-        setValue(data.id);
+        setValue(id);
       } else {
         setPresentationData(null);
         setValue(undefined);
@@ -66,7 +66,7 @@ export default function PresentationPicker({ name }: { name: string }) {
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
 
       {presentationData && (
-        <Preview data={presentationData} removePresentation={() => setData(null)} />
+        <Preview data={presentationData} removePresentation={() => setData(null, null)} />
       )}
     </Paper>
   );

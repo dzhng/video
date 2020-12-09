@@ -5,17 +5,18 @@ import firebase from '~/utils/firebase';
 type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
 
 // extends the type with properties that is needed for client operations (such as id)
+// becareful with this in components that deal with saving because it is very easy to get into a situation where you end up saving data that's extended for local, which would be rejected on server.
 export type LocalModel<T> = T & { id: string };
 
 export declare interface User {
-  networkId?: string;
+  networkId?: string | null;
   bio?: string;
   createdAt: FbDate;
 }
 
 export declare interface Network {
   name: string;
-  logoURL?: string;
+  logoURL?: string | null;
   primaryColor?: string;
   createdAt: FbDate;
 }
@@ -32,9 +33,9 @@ export declare interface Call {
   users: string[];
   guests?: string[];
   guestEmails?: string[];
-  startTime?: FbDate;
+  startTime?: FbDate | null;
   durationMin?: number;
-  presentationId?: string;
+  presentationId?: string | null;
   createdAt: FbDate;
 }
 
@@ -45,7 +46,7 @@ export declare interface Note {
 export declare interface Presentation {
   name: string;
   creatorId: string;
-  networkId?: string;
+  networkId?: string | null;
   slides: string[];
   isProcessed: boolean;
   createdAt: FbDate;

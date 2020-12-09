@@ -27,7 +27,7 @@ export default withPrivateRoute(function CreateCallPage() {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
 
-      console.log('Creating with data: ', data, note);
+      console.log('Creating:', data, note);
 
       // batch the writes so that both notes and call is created at the same time
       const batch = db.batch();
