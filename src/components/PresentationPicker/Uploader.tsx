@@ -113,6 +113,7 @@ export default function Uploader({ setData }: { setData(data: LocalModel<Present
     [user, isUploading, setData, convert],
   );
 
+  // TODO: add a drag/drop uploader here
   return (
     <>
       <Typography variant="body2">

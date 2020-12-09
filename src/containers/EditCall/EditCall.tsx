@@ -24,7 +24,7 @@ const CallSchema = Yup.object().shape({
   note: Yup.object().shape({
     text: Yup.string().max(50000),
   }),
-  presentationId: Yup.string(),
+  presentationId: Yup.string().nullable(),
 });
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -121,13 +121,14 @@ export default function EditContainer({ call, saveCall, note }: PropTypes) {
     text: '',
   };
 
+  // A lot of these values are not editable in the UI, but we initialize them anyways with existing or default values so that we get nice typescript checking via the Presentation model. Maybe there's a better way to do this in the future that's cleaner and still get same type checking.
   const initialValues = {
     name: call?.name ?? '',
     state: call?.state ?? 'pre',
     creatorId: call?.creatorId ?? '', // here purely to satisfy Call type
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
-    presentationId: call?.presentationId ?? undefined,
+    presentationId: call?.presentationId ?? null,
     note: note ?? defaultNoteData,
     createdAt: call?.createdAt ?? new Date(),
   };

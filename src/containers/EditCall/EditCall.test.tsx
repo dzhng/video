@@ -10,6 +10,8 @@ describe.skip('the EditCall component', () => {
 
   it('should show error when required fields are not in place', () => {});
 
+  it('should omit any undefined data when updating', () => {});
+
   it('should allow presentation uploads', () => {});
 
   it('should allow users to remove uploaded presentations', () => {});

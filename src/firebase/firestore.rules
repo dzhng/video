@@ -32,7 +32,9 @@ service cloud.firestore {
     }
 
     function optionalStringKey(key, maxLen) {
-      return key in request.resource.data ? requiredStringKey(key, maxLen) : true;
+      return (key in request.resource.data && 
+          request.resource.data[key] != null) ? 
+        requiredStringKey(key, maxLen) : true;
     }
 
     function requiredIntKey(key, min, max) {
@@ -60,7 +62,9 @@ service cloud.firestore {
     }
 
     function optionalTimeKey(key) {
-      return key in request.resource.data ? requiredTimeKey(key) : true;
+      return (key in request.resource.data &&
+          request.resource.data[key] != null) ? 
+        requiredTimeKey(key) : true;
     }
 
     function requiredArrayKey(key, maxLen) {
@@ -71,7 +75,9 @@ service cloud.firestore {
     }
 
     function optionalArrayKey(key, maxLen) {
-      return key in request.resource.data ? requiredArrayKey(key, maxLen) : true;
+      return (key in request.resource.data &&
+          request.resource.data[key] != null) ? 
+        requiredArrayKey(key, maxLen) : true;
     }
 
     function requiredObjectKey(key) {
@@ -101,7 +107,7 @@ service cloud.firestore {
 
       allow write: if 
         request.auth != null &&
-        assertKeys(['name', 'state', 'creatorId', 'networkId', 'users', 'guests', 'guestEmails', 'startTime', 'durationMin', 'presentationId', 'noteId', 'chatId', 'transcriptId', 'createdAt']) &&
+        assertKeys(['name', 'state', 'creatorId', 'networkId', 'users', 'guests', 'guestEmails', 'startTime', 'durationMin', 'presentationId', 'createdAt']) &&
         requiredStringKey('name', 50) &&
         requiredEnumKey('state', ['pre', 'started', 'finished']) &&
         requiredStringKey('creatorId', 30) &&
@@ -121,12 +127,6 @@ service cloud.firestore {
 
         // set if have presentation attachment
         optionalStringKey('presentationId', 30) &&
-        // set if have note attachment
-        optionalStringKey('noteId', 30) &&
-        // set if have chat attachment
-        optionalStringKey('chatId', 30) &&
-        // set once transcrit is ready
-        optionalStringKey('transcriptId', 30) &&
         requiredCreatedAtKey() &&
 
         // when creating, users should contain at least one user which is the 

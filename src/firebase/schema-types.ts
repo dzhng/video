@@ -35,9 +35,6 @@ export declare interface Call {
   startTime?: FbDate;
   durationMin?: number;
   presentationId?: string;
-  noteId?: string;
-  chatId?: string;
-  transcriptId?: string;
   createdAt: FbDate;
 }
 

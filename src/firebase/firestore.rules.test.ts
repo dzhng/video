@@ -278,6 +278,22 @@ describe('firebase cloud firestore database rules', () => {
         }),
       );
     });
+
+    it('should let existing users remove presentations by setting the property to null', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      let call = db.collection('calls').doc('call');
+      call.set({
+        ...requiredFields,
+        presentationId: 'hello',
+        users: ['alice', 'charlie'],
+      });
+
+      await firebase.assertSucceeds(
+        call.update({
+          presentationId: null,
+        }),
+      );
+    });
   });
 
   describe('presentation', () => {
