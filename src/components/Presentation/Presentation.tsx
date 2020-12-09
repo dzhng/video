@@ -22,6 +22,12 @@ const useStyles = makeStyles((theme: Theme) =>
       verticalAlign: 'middle',
       margin: theme.spacing(1),
     },
+    showSlide: {
+      display: 'flex',
+    },
+    hideSlide: {
+      display: 'none',
+    },
   }),
 );
 
@@ -41,9 +47,17 @@ export default function PresentationDisplay({ presentation, startAt }: PropTypes
     }
   }, [index, presentation]);
 
+  // we want to load all slides at once, so that the ones to be displayed will load in the background. We toggle which slide to display via CSS
   return (
     <>
-      <Slide slideUrl={presentation.slides[index]} />
+      {presentation.slides.map((slide, idx) => (
+        <Slide
+          key={slide}
+          slideUrl={slide}
+          className={idx === index ? classes.showSlide : classes.hideSlide}
+          priority={idx === index}
+        />
+      ))}
       <div className={classes.controls}>
         <IconButton size="small" onClick={previousSlide}>
           <NavigateBefore />
