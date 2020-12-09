@@ -21,7 +21,6 @@ export const isTestEnv = (() => {
 
 export function formatDate(date: Date) {
   const OneDayAgo = new Date().getTime() - 1 * 24 * 60 * 60 * 1000;
-
   return date.getTime() < OneDayAgo ? dayjs(date).format('dddd, MMMM D') : dayjs(date).fromNow();
 }
 
