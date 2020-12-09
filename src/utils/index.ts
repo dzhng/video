@@ -1,4 +1,8 @@
 import isPlainObject from 'is-plain-object';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 export const isMobile = (() => {
   if (typeof navigator === 'undefined' || typeof navigator.userAgent !== 'string') {
@@ -14,6 +18,12 @@ export const isBrowser = (() => {
 export const isTestEnv = (() => {
   return process.env.NODE_ENV === 'test';
 })();
+
+export function formatDate(date: Date) {
+  const OneDayAgo = new Date().getTime() - 1 * 24 * 60 * 60 * 1000;
+
+  return date.getTime() < OneDayAgo ? dayjs(date).format('dddd, MMMM D') : dayjs(date).fromNow();
+}
 
 // This function ensures that the user has granted the browser permission to use audio and video
 // devices. If permission has not been granted, it will cause the browser to ask for permission

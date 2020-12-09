@@ -66,7 +66,7 @@ export default function PresentationPicker({ name }: { name: string }) {
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
 
       {presentationData && (
-        <Preview data={presentationData} removePresentation={() => setData(null, null)} />
+        <Preview presentation={presentationData} removePresentation={() => setData(null, null)} />
       )}
     </Paper>
   );
