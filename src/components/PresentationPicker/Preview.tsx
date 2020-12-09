@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Grid, Typography, Divider } from '@material-ui/core';
+import { Grid, Typography, Divider, Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Presentation } from '~/firebase/schema-types';
 import firebase, { storage } from '~/utils/firebase';
@@ -79,6 +79,12 @@ export default function Preview({ presentation, removePresentation }: Props) {
         <Typography variant="body2" className={classes.info}>
           Uploaded: {formatDate((presentation.createdAt as firebase.firestore.Timestamp).toDate())}
         </Typography>
+        <br />
+        <Divider />
+        <br />
+        <Button variant="outlined" color="secondary" onClick={removePresentation}>
+          Change
+        </Button>
       </Grid>
     </Grid>
   );
