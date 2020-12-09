@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1),
     },
     showSlide: {
-      display: 'flex',
+      display: 'block',
     },
     hideSlide: {
       display: 'none',

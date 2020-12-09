@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Typography, Paper, CircularProgress } from '@material-ui/core';
+import { Typography, Paper } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useField } from 'formik';
 
@@ -62,9 +63,8 @@ export default function PresentationPicker({ name }: { name: string }) {
   return (
     <Paper className={classes.paper}>
       <Typography variant="h6">Presentation</Typography>
-      {isQueryingOrCreating && <CircularProgress />}
+      {isQueryingOrCreating && <Skeleton variant="rect" height={150} animation="wave" />}
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
-
       {presentationData && (
         <Preview presentation={presentationData} removePresentation={() => setData(null, null)} />
       )}
