@@ -159,7 +159,7 @@ describe('the useLocalVideoToggle hook', () => {
     });
 
     it('should call getLocalVideoTrack with the deviceId of the previously active track', async () => {
-      const mockGetLocalVideoTrack = jest.fn(() => Promise.resolve('mockTrack'));
+      const mockGetLocalVideoTrack = jest.fn((_) => Promise.resolve('mockTrack'));
 
       mockUseVideoContext.mockImplementation(() => ({
         localTracks: [getMockTrack('camera', 'testDeviceID')],

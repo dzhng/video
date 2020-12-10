@@ -29,8 +29,8 @@ const mockedUseRoomState = useRoomState as jest.Mock<string>;
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseRouter = useRouter as jest.Mock<any>;
-const mockConnect = jest.fn();
-const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
+const mockConnect = jest.fn((_) => null);
+const mockGetToken = jest.fn((_) => Promise.resolve('mockToken'));
 
 const mockCall: Call = {
   name: 'hello',
