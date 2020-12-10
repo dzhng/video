@@ -29,13 +29,12 @@ interface PropTypes {
   note?: Note;
 }
 
-// special case startTimeDate because the model passed in Call is of type FbDate which the form cannot parse
-type FormPropTypes = Call & { note: Note } & { startTimeDate: Date };
+type FormPropTypes = Call & { note: Note };
 
 const CallSchema = Yup.object().shape({
   name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
   guestEmails: Yup.array().of(Yup.string().email('You must provide a valid email')),
-  startTimeDate: Yup.date().nullable(),
+  startTime: Yup.object().nullable(),
   durationMin: Yup.number().nullable(),
   note: Yup.object().shape({
     text: Yup.string().max(50000),
@@ -64,7 +63,7 @@ const TimePickerField = ({ field, form, ...props }: FieldProps<Date>) => {
         placeholder="When will this call start?"
         name={field.name}
         value={field.value}
-        onChange={(date) => form.setFieldValue(field.name, date, true)}
+        onChange={(date) => form.setFieldValue(field.name, date?.toDate(), true)}
         helperText={currentError}
         error={Boolean(currentError)}
         onError={() => {
@@ -110,7 +109,7 @@ const InfoFields = () => {
         </Grid>
 
         <Grid item xs={6}>
-          <Field component={TimePickerField} name="startTimeDate" />
+          <Field component={TimePickerField} name="startTime" />
         </Grid>
 
         <Grid item xs={6}>
@@ -207,9 +206,7 @@ export default function EditContainer({ callId, call, saveCall, note }: PropType
     creatorId: call?.creatorId ?? '', // here purely to satisfy Call type
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
-    startTimeDate: call?.startTime
-      ? (call?.startTime as firebase.firestore.Timestamp).toDate()
-      : null,
+    startTime: call?.startTime ? (call.startTime as firebase.firestore.Timestamp).toDate() : null,
     durationMin: call?.durationMin ?? 60,
     presentationId: call?.presentationId ?? null,
     note: note ?? defaultNoteData,
@@ -218,20 +215,15 @@ export default function EditContainer({ callId, call, saveCall, note }: PropType
 
   const submitCall = useCallback(
     (values: FormPropTypes, { setSubmitting }) => {
-      const { note: noteData, startTimeDate, ...callData } = values;
+      const { note: noteData, ...callData } = values;
 
       // clean up any empty emails
       const cleanedEmails = uniq(compact(callData.guestEmails));
-
-      // start time needs to be explicitly transformed into date since it arrives as string
-      const cleanedStartTime =
-        startTimeDate && firebase.firestore.Timestamp.fromDate(startTimeDate);
 
       saveCall(
         {
           ...callData,
           guestEmails: cleanedEmails,
-          startTime: cleanedStartTime,
         },
         noteData,
       );
