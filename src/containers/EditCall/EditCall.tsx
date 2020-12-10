@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
-import dayjs from 'dayjs';
 import { uniq, compact } from 'lodash';
 import {
   Typography,
@@ -11,9 +10,12 @@ import {
   InputAdornment,
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Formik, Form, Field } from 'formik';
+import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateUtils from '@date-io/dayjs';
+import { Formik, Form, Field, FieldProps } from 'formik';
 import { TextField } from 'formik-material-ui';
 
+import firebase from '~/utils/firebase';
 import { Call, Note } from '~/firebase/schema-types';
 import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
 import NotesEditor from '~/components/NotesEditor/NotesEditor';
@@ -27,11 +29,14 @@ interface PropTypes {
   note?: Note;
 }
 
+// special case startTimeDate because the model passed in Call is of type FbDate which the form cannot parse
+type FormPropTypes = Call & { note: Note } & { startTimeDate: Date };
+
 const CallSchema = Yup.object().shape({
   name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
   guestEmails: Yup.array().of(Yup.string().email('You must provide a valid email')),
-  startTime: Yup.date().nullable().required(),
-  durationMin: Yup.number().nullable().required(),
+  startTimeDate: Yup.date().nullable(),
+  durationMin: Yup.number().nullable(),
   note: Yup.object().shape({
     text: Yup.string().max(50000),
   }),
@@ -48,6 +53,38 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+
+const TimePickerField = ({ field, form, ...props }: FieldProps<Date>) => {
+  const currentError = form.errors[field.name];
+
+  return (
+    <MuiPickersUtilsProvider utils={DateUtils}>
+      <DateTimePicker
+        label="Start Time"
+        placeholder="When will this call start?"
+        name={field.name}
+        value={field.value}
+        onChange={(date) => form.setFieldValue(field.name, date, true)}
+        helperText={currentError}
+        error={Boolean(currentError)}
+        onError={() => {
+          // handle as a side effect
+          //form.setFieldError(field.name, 'Date picker error');
+        }}
+        fullWidth
+        clearable
+        disablePast
+        showTodayButton
+        minutesStep={5}
+        inputVariant="outlined"
+        InputLabelProps={{
+          shrink: true,
+        }}
+        {...props}
+      />
+    </MuiPickersUtilsProvider>
+  );
+};
 
 const InfoFields = () => {
   const classes = useStyles();
@@ -73,17 +110,7 @@ const InfoFields = () => {
         </Grid>
 
         <Grid item xs={6}>
-          <Field
-            component={TextField}
-            name="startTime"
-            type="datetime-local"
-            label="Start Time"
-            fullWidth
-            variant="outlined"
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
+          <Field component={TimePickerField} name="startTimeDate" />
         </Grid>
 
         <Grid item xs={6}>
@@ -173,9 +200,6 @@ export default function EditContainer({ callId, call, saveCall, note }: PropType
     text: '',
   };
 
-  // default start time is tomorrow same time
-  const defaultStartTime = dayjs(Date.now() + 24 * 3600 * 1000).format('YYYY-MM-DDTHH:mm');
-
   // A lot of these values are not editable in the UI, but we initialize them anyways with existing or default values so that we get nice typescript checking via the Presentation model. Maybe there's a better way to do this in the future that's cleaner and still get same type checking.
   const initialValues = {
     name: call?.name ?? '',
@@ -183,22 +207,25 @@ export default function EditContainer({ callId, call, saveCall, note }: PropType
     creatorId: call?.creatorId ?? '', // here purely to satisfy Call type
     users: call?.users ?? [],
     guestEmails: call?.guestEmails ?? [],
-    startTime: call?.startTime ?? defaultStartTime,
+    startTimeDate: call?.startTime
+      ? (call?.startTime as firebase.firestore.Timestamp).toDate()
+      : null,
     durationMin: call?.durationMin ?? 60,
     presentationId: call?.presentationId ?? null,
     note: note ?? defaultNoteData,
-    createdAt: call?.createdAt ?? new Date(),
+    createdAt: call?.createdAt ?? firebase.firestore.FieldValue.serverTimestamp(),
   };
 
   const submitCall = useCallback(
-    (values: Call & { note: Note }, { setSubmitting }) => {
-      const { note: noteData, startTime, ...callData } = values;
+    (values: FormPropTypes, { setSubmitting }) => {
+      const { note: noteData, startTimeDate, ...callData } = values;
 
       // clean up any empty emails
       const cleanedEmails = uniq(compact(callData.guestEmails));
 
       // start time needs to be explicitly transformed into date since it arrives as string
-      const cleanedStartTime = typeof startTime === 'string' ? new Date(startTime) : startTime;
+      const cleanedStartTime =
+        startTimeDate && firebase.firestore.Timestamp.fromDate(startTimeDate);
 
       saveCall(
         {
