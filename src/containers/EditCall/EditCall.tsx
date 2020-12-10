@@ -66,10 +66,6 @@ const TimePickerField = ({ field, form, ...props }: FieldProps<Date>) => {
         onChange={(date) => form.setFieldValue(field.name, date?.toDate(), true)}
         helperText={currentError}
         error={Boolean(currentError)}
-        onError={() => {
-          // handle as a side effect
-          //form.setFieldError(field.name, 'Date picker error');
-        }}
         fullWidth
         clearable
         disablePast

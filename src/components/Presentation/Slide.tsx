@@ -22,6 +22,12 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 0,
       paddingBottom: '75%',
     },
+    show: {
+      visibility: 'visible',
+    },
+    hide: {
+      visibility: 'hidden',
+    },
     innerContainer: {
       // this 'fixes' the 0 height div of aspect ratio trick
       position: 'absolute',
@@ -66,6 +72,7 @@ export default function Slide({ slideUrl, className, priority }: PropTypes) {
         {imageUrl && (
           <Image
             src={imageUrl}
+            className={isLoading ? classes.hide : classes.show}
             alt="Presentation preview"
             layout="fill"
             objectFit="contain"

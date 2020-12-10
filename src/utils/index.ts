@@ -19,9 +19,14 @@ export const isTestEnv = (() => {
   return process.env.NODE_ENV === 'test';
 })();
 
-export function formatDate(date: Date) {
-  const OneDayAgo = new Date().getTime() - 1 * 24 * 60 * 60 * 1000;
+export function formatPastDate(date: Date, hourCutoff = 24) {
+  const OneDayAgo = new Date().getTime() - hourCutoff * 60 * 60 * 1000;
   return date.getTime() < OneDayAgo ? dayjs(date).format('dddd, MMMM D') : dayjs(date).fromNow();
+}
+
+export function formatFutureDate(date: Date, hourCutoff = 1) {
+  const OneHourFromNow = new Date().getTime() + hourCutoff * 60 * 60 * 1000;
+  return date.getTime() > OneHourFromNow ? dayjs(date).format('dddd, MMMM D') : dayjs(date).toNow();
 }
 
 // This function ensures that the user has granted the browser permission to use audio and video

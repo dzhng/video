@@ -3,7 +3,7 @@ import { Grid, Typography, Divider, Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Presentation } from '~/firebase/schema-types';
 import firebase from '~/utils/firebase';
-import { formatDate } from '~/utils';
+import { formatPastDate } from '~/utils';
 import PresentationDisplay from '~/components/Presentation/Presentation';
 
 interface PropTypes {
@@ -51,7 +51,7 @@ export default function Preview({ presentation, removePresentation }: PropTypes)
         </Typography>
         <Typography variant="body2" className={classes.info}>
           <b>Uploaded:</b>{' '}
-          {formatDate((presentation.createdAt as firebase.firestore.Timestamp).toDate())}
+          {formatPastDate((presentation.createdAt as firebase.firestore.Timestamp).toDate())}
         </Typography>
         <br />
         <Divider />
