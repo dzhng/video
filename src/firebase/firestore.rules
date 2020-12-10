@@ -39,7 +39,7 @@ service cloud.firestore {
 
     function requiredIntKey(key, min, max) {
       return request.resource.data[key] is int &&
-              request.resoure.data[key] >= min &&
+              request.resource.data[key] >= min &&
               request.resource.data[key] < max;
     }
 

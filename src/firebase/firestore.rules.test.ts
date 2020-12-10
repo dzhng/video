@@ -250,7 +250,7 @@ describe('firebase cloud firestore database rules', () => {
     it('should only let call users update the call', async () => {
       const alice = getAuthedFirestore({ uid: 'alice' });
       let call = alice.collection('calls').doc('call');
-      call.set({
+      await call.set({
         ...requiredFields,
         users: ['alice', 'charlie'],
       });
@@ -267,7 +267,7 @@ describe('firebase cloud firestore database rules', () => {
     it('should let existing users remove themselves from the call', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       let call = db.collection('calls').doc('call');
-      call.set({
+      await call.set({
         ...requiredFields,
         users: ['alice', 'charlie'],
       });
@@ -279,18 +279,27 @@ describe('firebase cloud firestore database rules', () => {
       );
     });
 
-    it('should let existing users remove presentations by setting the property to null', async () => {
+    it('should let existing users update the call', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       let call = db.collection('calls').doc('call');
-      call.set({
+      await call.set({
         ...requiredFields,
         presentationId: 'hello',
         users: ['alice', 'charlie'],
       });
 
+      // unsetting a presentation
       await firebase.assertSucceeds(
         call.update({
           presentationId: null,
+        }),
+      );
+
+      // setting startTime and durationMin
+      await firebase.assertSucceeds(
+        call.update({
+          startTime: new Date(),
+          durationMin: 60,
         }),
       );
     });
