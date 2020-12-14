@@ -23,10 +23,11 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBottom: '75%',
     },
     show: {
-      visibility: 'visible',
+      opacity: 1,
+      transition: 'opacity 0.3s ease-out',
     },
     hide: {
-      visibility: 'hidden',
+      opacity: 0,
     },
     innerContainer: {
       // this 'fixes' the 0 height div of aspect ratio trick

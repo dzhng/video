@@ -81,12 +81,12 @@ const TimePickerField = ({ field, form, ...props }: FieldProps<Date>) => {
   );
 };
 
-const InfoFields = () => {
+const InfoFields = ({ isCreate }: { isCreate: boolean }) => {
   const classes = useStyles();
 
   return (
     <Paper className={classes.paper}>
-      <Typography variant="h6">Call Info</Typography>
+      <Typography variant="h6">{isCreate ? 'Call Info' : 'Edit Call Info'}</Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Field
@@ -129,11 +129,11 @@ const InfoFields = () => {
   );
 };
 
-const LeftColumn = () => {
+const LeftColumn = ({ isCreate }: { isCreate: boolean }) => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <InfoFields />
+        <InfoFields isCreate={isCreate} />
       </Grid>
 
       <Grid item xs={6}>
@@ -147,7 +147,15 @@ const LeftColumn = () => {
   );
 };
 
-const RightColumn = ({ values, isSubmitting }: { values: Call; isSubmitting: boolean }) => {
+const RightColumn = ({
+  values,
+  isSubmitting,
+  isCreate,
+}: {
+  values: Call;
+  isSubmitting: boolean;
+  isCreate: boolean;
+}) => {
   const classes = useStyles();
   const fieldName = 'guestEmails';
 
@@ -170,26 +178,34 @@ const RightColumn = ({ values, isSubmitting }: { values: Call; isSubmitting: boo
           color="primary"
           disabled={isSubmitting}
         >
-          {isSubmitting ? <CircularProgress /> : 'Save'}
+          {isSubmitting ? <CircularProgress /> : isCreate ? 'Create' : 'Save'}
         </Button>
       </Grid>
     </Grid>
   );
 };
 
-const CallForm = ({ values, isSubmitting }: { values: Call; isSubmitting: boolean }) => (
+const CallForm = ({
+  values,
+  isSubmitting,
+  isCreate,
+}: {
+  values: Call;
+  isSubmitting: boolean;
+  isCreate: boolean;
+}) => (
   <Grid container spacing={3}>
     <Grid item xs={9}>
-      <LeftColumn />
+      <LeftColumn isCreate={isCreate} />
     </Grid>
     <Grid item xs={3}>
-      <RightColumn values={values} isSubmitting={isSubmitting} />
+      <RightColumn values={values} isSubmitting={isSubmitting} isCreate={isCreate} />
     </Grid>
   </Grid>
 );
 
 export default function EditContainer({ callId, call, saveCall, note }: PropTypes) {
-  const isCreating = Boolean(!call);
+  const isCreate = Boolean(!call);
 
   const defaultNoteData = {
     text: '',
@@ -232,14 +248,14 @@ export default function EditContainer({ callId, call, saveCall, note }: PropType
   return (
     <Grid container>
       <Grid item xs={12}>
-        {!isCreating && call && callId && <InfoBar callId={callId} call={call} />}
+        {!isCreate && call && callId && <InfoBar callId={callId} call={call} />}
       </Grid>
 
       <Grid item xs={12}>
         <Formik initialValues={initialValues} validationSchema={CallSchema} onSubmit={submitCall}>
           {({ values, isSubmitting }) => (
             <Form>
-              <CallForm values={values} isSubmitting={isSubmitting} />
+              <CallForm values={values} isCreate={isCreate} isSubmitting={isSubmitting} />
             </Form>
           )}
         </Formik>
