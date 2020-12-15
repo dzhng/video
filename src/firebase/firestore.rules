@@ -102,49 +102,46 @@ service cloud.firestore {
         requiredCreatedAtKey();
     }
 
-    match /calls/{callId} {
+    match /templates/{templateId} {
       allow read;
 
       allow write: if 
         request.auth != null &&
-        assertKeys(['name', 'state', 'creatorId', 'networkId', 'users', 'guests', 'guestEmails', 'startTime', 'durationMin', 'presentationId', 'createdAt']) &&
+        assertKeys(['name', 'state', 'creatorId', 'networkId', 'steps', 'notes', 'createdAt']) &&
         requiredStringKey('name', 50) &&
-        requiredEnumKey('state', ['pre', 'started', 'finished']) &&
         requiredStringKey('creatorId', 30) &&
         optionalStringKey('networkId', 30) &&
-
-        // list of users who can manage and start the call
-        requiredArrayKey('users', 50) &&
-        // list of users who are the guests in the call
-        optionalArrayKey('guests', 50) &&
-        // emails of guests who have access to this call
-        // note that this array should be converted to uids in guest array post create
-        optionalArrayKey('guestEmails', 50) &&
-
-        // presentation scheduling
-        optionalTimeKey('startTime') &&
-        optionalIntKey('durationMin', 0, 24*60) &&
-
-        // set if have presentation attachment
-        optionalStringKey('presentationId', 30) &&
         requiredCreatedAtKey() &&
 
-        // when creating, users should contain at least one user which is the 
-        // current user. When editing, existing doc must contain current user
-        (isNewDoc() ? 
-         (request.resource.data.users.size() >= 1 &&
-          request.resource.data.users.hasAny([request.auth.uid]) &&
-          request.resource.data.creatorId == request.auth.uid) : 
-         (resource.data.users.hasAny([request.auth.uid])));
-    } // match call
+        // array of step objects that define the call
+        requiredArrayKey('steps', 100) &&
 
-    match /notes/{noteId} {
+        // presenter notes, in markdown format
+        requiredStringKey('notes', 50000) &&
+
+        // when creating, make sure creatorId is set
+        // when editing, make sure only creator can edit
+        (isNewDoc() ? 
+          (request.resource.data.creatorId == request.auth.uid) : 
+          (resource.data.creatorId == request.auth.uid));
+    } // match template
+
+    match /calls/{callId} {
       allow read;
 
       allow write: if
-        assertKeys(['text']) &&
-        requiredStringKey('text', 50000);
-    }
+        request.auth != null &&
+        assertKeys(['state', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
+        requiredEnumKey('state', ['started', 'finished']) &&
+        requiredCreatedAtKey() &&
+        requiredIntKey('currentStep', 0, 100) &&
+
+        // map of step IDs and the metadata for each step
+        requiredObjectKey('stepData') &&
+
+        // meeting notes, in markdown format
+        requiredStringKey('notes', 50000);
+    } // match call
 
     match /presentations/{presentationId} {
       allow read;
@@ -177,10 +174,11 @@ service cloud.firestore {
 
       allow update: if
         request.auth != null &&
-        assertKeys(['name', 'logoURL', 'primaryColor', 'createdAt']) &&
+        assertKeys(['name', 'logoURL', 'primaryColor', 'backgroundColor', 'createdAt']) &&
         requiredStringKey('name', 50) &&
         optionalStringKey('logoURL', 280) &&
         optionalStringKey('primaryColor', 10) &&
+        optionalStringKey('backgroundColor', 10) &&
         requiredCreatedAtKey() &&
         // only network owners can update
         currentAdmin().role == 'owner';
