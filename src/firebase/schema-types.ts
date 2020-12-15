@@ -26,21 +26,26 @@ export declare interface Admin {
   createdAt: FbDate;
 }
 
-export declare interface Call {
+export declare interface Step {
+  type: 'chat' | 'presentaion';
+}
+
+export declare interface Template {
   name: string;
-  state: 'pre' | 'started' | 'finished';
   creatorId: string;
-  users: string[];
-  guests?: string[];
-  guestEmails?: string[];
-  startTime?: FbDate | null;
-  durationMin?: number;
-  presentationId?: string | null;
+  networkId?: string;
+  steps: Step[];
+  notes: string;
   createdAt: FbDate;
 }
 
-export declare interface Note {
-  text: string;
+export declare interface Call {
+  templateId: string;
+  state: 'started' | 'finished';
+  currentStep: string;
+  stepData: object;
+  notes: string;
+  createdAt: FbDate;
 }
 
 export declare interface Presentation {

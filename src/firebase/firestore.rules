@@ -107,7 +107,7 @@ service cloud.firestore {
 
       allow write: if 
         request.auth != null &&
-        assertKeys(['name', 'state', 'creatorId', 'networkId', 'steps', 'notes', 'createdAt']) &&
+        assertKeys(['name', 'creatorId', 'networkId', 'steps', 'notes', 'createdAt']) &&
         requiredStringKey('name', 50) &&
         requiredStringKey('creatorId', 30) &&
         optionalStringKey('networkId', 30) &&
@@ -131,7 +131,8 @@ service cloud.firestore {
 
       allow write: if
         request.auth != null &&
-        assertKeys(['state', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
+        assertKeys(['templateId', 'state', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
+        requiredStringKey('templateId', 30) &&
         requiredEnumKey('state', ['started', 'finished']) &&
         requiredCreatedAtKey() &&
         requiredIntKey('currentStep', 0, 100) &&
