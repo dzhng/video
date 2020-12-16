@@ -156,150 +156,86 @@ describe('firebase cloud firestore database rules', () => {
     });
   });
 
-  describe('call', () => {
+  describe('template', () => {
     let requiredFields = {
-      name: 'Test Room',
-      state: 'pre',
+      name: 'Test call template',
       creatorId: 'alice',
-      users: [],
+      steps: ['hello'],
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
-    it('should let logged in users create a call', async () => {
+    it('should let logged in users create a template', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const call = db.collection('calls').doc('call');
+      const template = db.collection('templates').doc('doc');
       await firebase.assertSucceeds(
-        call.set({
+        template.set({
           ...requiredFields,
-          users: ['alice', 'charlie'],
-          guestEmails: ['hello@world.com'],
         }),
       );
     });
 
     it('should only allow the correct state', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const call = db.collection('calls').doc('call');
+      const template = db.collection('templates').doc('doc');
+      // need at least one step
       await firebase.assertFails(
-        call.set({
+        template.set({
           ...requiredFields,
-          state: 'test',
-          users: ['alice', 'charlie'],
-          guestEmails: ['hello@world.com'],
+          steps: [],
         }),
       );
 
-      // empty lists
+      // empty steps
       await firebase.assertFails(
-        call.set({
+        template.set({
           ...requiredFields,
-          state: 'test',
-          users: ['alice', 'charlie'],
-          guestEmails: ['', 'hello@world.com'],
-        }),
-      );
-
-      await firebase.assertFails(
-        call.set({
-          ...requiredFields,
-          state: 'test',
-          users: [null, 'alice', 'charlie'],
-          guestEmails: ['hello@world.com'],
+          steps: [null, 'alice', 'charlie'],
         }),
       );
     });
 
-    it('should let anyone access a call', async () => {
+    it('should let anyone access a template', async () => {
       const db = getAuthedFirestore(null);
-      const call = db.collection('calls').doc('call');
-      await firebase.assertSucceeds(call.get());
+      const template = db.collection('templates').doc('doc');
+      await firebase.assertSucceeds(template.get());
     });
 
-    it('should let anyone query for calls they belong to', async () => {
+    it('should let anyone query for templates created by them', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const calls = db.collection('calls').where('users', 'array-contains', 'alice');
-      await firebase.assertSucceeds(calls.get());
+      const templates = db.collection('templates').where('creatorId', '==', 'alice');
+      await firebase.assertSucceeds(templates.get());
     });
 
-    it('should force the creator of the call to be a user, and have the correct creatorId', async () => {
+    it('should force the creator of the template to have the correct creatorId', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
-      const call = db.collection('calls').doc('call');
+      const template = db.collection('templates').doc('doc');
       await firebase.assertFails(
-        call.set({
+        template.set({
           ...requiredFields,
-          users: ['charlie'],
-        }),
-      );
-
-      await firebase.assertFails(
-        call.set({
-          ...requiredFields,
-          users: [],
-        }),
-      );
-
-      await firebase.assertFails(
-        call.set({
-          ...requiredFields,
-          creatorId: 'bob',
-          users: ['alice'],
+          creatorId: 'charlie',
         }),
       );
     });
 
-    it('should only let call users update the call', async () => {
-      const alice = getAuthedFirestore({ uid: 'alice' });
-      let call = alice.collection('calls').doc('call');
-      await call.set({
+    it('should let creators update the template', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      let template = db.collection('templates').doc('doc');
+      await template.set({
         ...requiredFields,
-        users: ['alice', 'charlie'],
+        steps: ['hello', 'world'],
       });
 
-      const bob = getAuthedFirestore({ uid: 'bob' });
-      call = bob.collection('calls').doc('call');
-      await firebase.assertFails(
-        call.update({
-          name: 'Test Room 2',
-        }),
-      );
-    });
-
-    it('should let existing users remove themselves from the call', async () => {
-      const db = getAuthedFirestore({ uid: 'alice' });
-      let call = db.collection('calls').doc('call');
-      await call.set({
-        ...requiredFields,
-        users: ['alice', 'charlie'],
-      });
-
+      // unsetting a step
       await firebase.assertSucceeds(
-        call.update({
-          users: firebase.firestore.FieldValue.arrayRemove('alice'),
-        }),
-      );
-    });
-
-    it('should let existing users update the call', async () => {
-      const db = getAuthedFirestore({ uid: 'alice' });
-      let call = db.collection('calls').doc('call');
-      await call.set({
-        ...requiredFields,
-        presentationId: 'hello',
-        users: ['alice', 'charlie'],
-      });
-
-      // unsetting a presentation
-      await firebase.assertSucceeds(
-        call.update({
-          presentationId: null,
+        template.update({
+          steps: ['hello'],
         }),
       );
 
-      // setting startTime and durationMin
+      // unsetting notes
       await firebase.assertSucceeds(
-        call.update({
-          startTime: new Date(),
-          durationMin: 60,
+        template.update({
+          notes: null,
         }),
       );
     });
@@ -309,7 +245,7 @@ describe('firebase cloud firestore database rules', () => {
     const requiredFields = {
       name: 'hello',
       creatorId: 'alice',
-      slides: [],
+      slides: ['yo'],
       isProcessed: true,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };

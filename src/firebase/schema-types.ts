@@ -27,7 +27,8 @@ export declare interface Admin {
 }
 
 export declare interface Step {
-  type: 'chat' | 'presentaion';
+  type: 'video' | 'presentaion';
+  presentaionId?: string;
 }
 
 export declare interface Template {

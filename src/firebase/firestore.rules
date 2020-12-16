@@ -40,7 +40,7 @@ service cloud.firestore {
     function requiredIntKey(key, min, max) {
       return request.resource.data[key] is int &&
               request.resource.data[key] >= min &&
-              request.resource.data[key] < max;
+              request.resource.data[key] <= max;
     }
 
     function optionalIntKey(key, min, max) {
@@ -67,17 +67,18 @@ service cloud.firestore {
         requiredTimeKey(key) : true;
     }
 
-    function requiredArrayKey(key, maxLen) {
+    function requiredArrayKey(key, minLen, maxLen) {
       return request.resource.data[key] is list &&
               request.resource.data[key].size() <= maxLen &&
+              request.resource.data[key].size() >= minLen &&
               !('' in request.resource.data[key]) &&
               !(null in request.resource.data[key]);
     }
 
-    function optionalArrayKey(key, maxLen) {
+    function optionalArrayKey(key, minLen, maxLen) {
       return (key in request.resource.data &&
           request.resource.data[key] != null) ? 
-        requiredArrayKey(key, maxLen) : true;
+        requiredArrayKey(key, minLen, maxLen) : true;
     }
 
     function requiredObjectKey(key) {
@@ -114,10 +115,10 @@ service cloud.firestore {
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call
-        requiredArrayKey('steps', 100) &&
+        requiredArrayKey('steps', 1, 100) &&
 
         // presenter notes, in markdown format
-        requiredStringKey('notes', 50000) &&
+        optionalStringKey('notes', 50000) &&
 
         // when creating, make sure creatorId is set
         // when editing, make sure only creator can edit
@@ -141,7 +142,7 @@ service cloud.firestore {
         requiredObjectKey('stepData') &&
 
         // meeting notes, in markdown format
-        requiredStringKey('notes', 50000);
+        optionalStringKey('notes', 50000);
     } // match call
 
     match /presentations/{presentationId} {
@@ -154,7 +155,7 @@ service cloud.firestore {
         requiredStringKey('creatorId', 30) &&
         optionalStringKey('networkId', 30) &&
         // array of URLs or path in bucket
-        requiredArrayKey('slides', 1000) &&
+        requiredArrayKey('slides', 1, 1000) &&
         // set to true when all slides have been processed
         requiredBoolKey('isProcessed') &&
         requiredCreatedAtKey() &&
