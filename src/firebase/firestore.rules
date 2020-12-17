@@ -25,15 +25,16 @@ service cloud.firestore {
       return resource == null;
     }
 
-    function requiredStringKey(key, maxLen) {
+    function requiredStringKey(key, minLen, maxLen) {
       return request.resource.data[key] is string && 
+              request.resource.data[key].size() >= minLen &&
               request.resource.data[key].size() <= maxLen;
     }
 
     function optionalStringKey(key, maxLen) {
       return (key in request.resource.data && 
           request.resource.data[key] != null) ? 
-        requiredStringKey(key, maxLen) : true;
+        requiredStringKey(key, 0, maxLen) : true;
     }
 
     function requiredIntKey(key, min, max) {
@@ -52,7 +53,7 @@ service cloud.firestore {
 
     function requiredEnumKey(key, enums) {
       let item = request.resource.data[key];
-      return requiredStringKey(key, 10) &&
+      return requiredStringKey(key, 1, 10) &&
               item in enums.toSet();
     }
 
@@ -108,8 +109,8 @@ service cloud.firestore {
       allow write: if 
         request.auth != null &&
         assertKeys(['name', 'creatorId', 'networkId', 'steps', 'notes', 'createdAt']) &&
-        requiredStringKey('name', 50) &&
-        requiredStringKey('creatorId', 30) &&
+        requiredStringKey('name', 1, 50) &&
+        requiredStringKey('creatorId', 1, 30) &&
         optionalStringKey('networkId', 30) &&
         requiredCreatedAtKey() &&
 
@@ -131,8 +132,9 @@ service cloud.firestore {
 
       allow write: if
         request.auth != null &&
-        assertKeys(['templateId', 'state', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
-        requiredStringKey('templateId', 30) &&
+        assertKeys(['templateId', 'creatorId', 'state', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
+        requiredStringKey('templateId', 1, 30) &&
+        requiredStringKey('creatorId', 1, 30) &&
         requiredEnumKey('state', ['started', 'finished']) &&
         requiredCreatedAtKey() &&
         requiredIntKey('currentStep', 0, 100) &&
@@ -150,8 +152,8 @@ service cloud.firestore {
       allow write: if
         request.auth != null &&
         assertKeys(['name', 'creatorId', 'networkId', 'slides', 'isProcessed', 'createdAt']) &&
-        requiredStringKey('name', 50) &&
-        requiredStringKey('creatorId', 30) &&
+        requiredStringKey('name', 1, 50) &&
+        requiredStringKey('creatorId', 1, 30) &&
         optionalStringKey('networkId', 30) &&
         // array of URLs or path in bucket
         requiredArrayKey('slides', 1, 1000) &&
@@ -176,7 +178,7 @@ service cloud.firestore {
       allow update: if
         request.auth != null &&
         assertKeys(['name', 'logoURL', 'primaryColor', 'backgroundColor', 'createdAt']) &&
-        requiredStringKey('name', 50) &&
+        requiredStringKey('name', 1, 50) &&
         optionalStringKey('logoURL', 280) &&
         optionalStringKey('primaryColor', 10) &&
         optionalStringKey('backgroundColor', 10) &&
@@ -192,7 +194,7 @@ service cloud.firestore {
 
         allow write: if
           assertKeys(['role', 'createdAt']) &&
-          requiredStringKey('role', 10) &&
+          requiredStringKey('role', 1, 10) &&
           requiredCreatedAtKey() &&
           // make sure only owners can create another admin
           currentAdmin().role == 'owner' &&

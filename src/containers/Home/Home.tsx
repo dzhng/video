@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid, Button, Divider } from '@material-ui/core';
+import { Typography, Grid, Button } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
 

@@ -33,10 +33,11 @@ const mockConnect = jest.fn((_) => null);
 const mockGetToken = jest.fn((_) => Promise.resolve('mockToken'));
 
 const mockCall: Call = {
-  name: 'hello',
-  state: 'started',
+  templateId: 'template',
   creatorId: 'alice',
-  users: [],
+  state: 'started',
+  currentStep: 0,
+  stepData: {},
   createdAt: new Date(),
 };
 

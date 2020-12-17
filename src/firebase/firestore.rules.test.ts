@@ -158,7 +158,7 @@ describe('firebase cloud firestore database rules', () => {
 
   describe('template', () => {
     let requiredFields = {
-      name: 'Test call template',
+      name: 'Test template',
       creatorId: 'alice',
       steps: ['hello'],
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -177,11 +177,11 @@ describe('firebase cloud firestore database rules', () => {
     it('should only allow the correct state', async () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       const template = db.collection('templates').doc('doc');
-      // need at least one step
+      // need at least a non-empty name
       await firebase.assertFails(
         template.set({
           ...requiredFields,
-          steps: [],
+          name: '',
         }),
       );
 

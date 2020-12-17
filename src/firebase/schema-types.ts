@@ -27,6 +27,7 @@ export declare interface Network {
   name: string;
   logoURL?: string | null;
   primaryColor?: string | null;
+  backgroundColor?: string | null;
   createdAt: FbDate;
 }
 
@@ -51,8 +52,9 @@ export declare interface Template {
 
 export declare interface Call {
   templateId: string;
+  creatorId: string;
   state: 'started' | 'finished';
-  currentStep: string;
+  currentStep: number;
   stepData: object;
   notes?: string;
   createdAt: FbDate;
