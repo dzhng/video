@@ -1,63 +1,41 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
-import { Call, Note } from '~/firebase/schema-types';
+import { Collections, Template } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import LoadingContainer from '~/containers/Loading/Loading';
-import EditContainer from '~/containers/EditCall/EditCall';
+import EditContainer from '~/containers/EditTemplate/EditTemplate';
 
 export default withPrivateRoute(function CallEditPage() {
   const router = useRouter();
-  const [call, setCall] = useState<Call | undefined>(undefined);
-  const [note, setNote] = useState<Note | undefined>(undefined);
+  const [template, setTemplate] = useState<Template | undefined>(undefined);
   const { markIsWriting } = useAppState();
 
-  const callId = String(router.query.slug);
+  const templateId = String(router.query.slug);
 
   useEffect(() => {
     const unsubscribe = db
-      .collection('calls')
-      .doc(callId)
+      .collection(Collections.TEMPLATES)
+      .doc(templateId)
       .onSnapshot((result) => {
-        setCall(result.data() as Call);
+        setTemplate(result.data() as Template);
       });
 
     return unsubscribe;
-  }, [callId]);
+  }, [templateId]);
 
-  useEffect(() => {
-    const unsubscribe = db
-      .collection('notes')
-      .doc(callId)
-      .onSnapshot((result) => {
-        setNote(result.data() as Note);
-      });
+  const save = useCallback(
+    (values: Template) => {
+      console.log('Saving:', template);
+      db.collection(Collections.TEMPLATES).doc(templateId).update(values);
 
-    return unsubscribe;
-  }, [callId]);
-
-  const saveCall = useCallback(
-    (callData: Call, noteData: Note) => {
-      console.log('Saving:', callData, noteData);
-      const batch = db.batch();
-      const callRef = db.collection('calls').doc(callId);
-      const noteRef = db.collection('notes').doc(callId);
-
-      batch.update(callRef, callData);
-      batch.update(noteRef, noteData);
-
-      batch.commit();
       markIsWriting();
       router.push('/');
     },
-    [callId, markIsWriting, router],
+    [templateId, template, markIsWriting, router],
   );
 
-  return call && note ? (
-    <EditContainer callId={callId} call={call} note={note} saveCall={saveCall} />
-  ) : (
-    <LoadingContainer />
-  );
+  return template ? <EditContainer template={template} save={save} /> : <LoadingContainer />;
 });

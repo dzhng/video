@@ -2,6 +2,15 @@
 
 import firebase from '~/utils/firebase';
 
+export enum Collections {
+  USERS = 'users',
+  TEMPLATES = 'templates',
+  CALLS = 'calls',
+  PRESENTATIONS = 'presentations',
+  NETWORKS = 'networks',
+  ADMINS = 'admins', // this is a subcollection of networks
+}
+
 export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
 
 // extends the type with properties that is needed for client operations (such as id)
