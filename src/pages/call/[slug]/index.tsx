@@ -26,9 +26,7 @@ export default withPrivateRoute(function CallPage() {
 
   // route to other locations if in pre or post state
   useEffect(() => {
-    if (call?.state === 'pre') {
-      router.push('edit');
-    } else if (call?.state === 'finished') {
+    if (call?.state === 'finished') {
       router.push('summary');
     }
   }, [router, call]);
