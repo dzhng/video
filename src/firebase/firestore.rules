@@ -27,7 +27,6 @@ service cloud.firestore {
 
     function requiredStringKey(key, maxLen) {
       return request.resource.data[key] is string && 
-              request.resource.data[key].size() > 0 &&
               request.resource.data[key].size() <= maxLen;
     }
 
@@ -115,7 +114,7 @@ service cloud.firestore {
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call
-        requiredArrayKey('steps', 1, 100) &&
+        requiredArrayKey('steps', 0, 100) &&
 
         // presenter notes, in markdown format
         optionalStringKey('notes', 50000) &&

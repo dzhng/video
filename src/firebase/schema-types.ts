@@ -17,7 +17,7 @@ export declare interface User {
 export declare interface Network {
   name: string;
   logoURL?: string | null;
-  primaryColor?: string;
+  primaryColor?: string | null;
   createdAt: FbDate;
 }
 
@@ -28,15 +28,15 @@ export declare interface Admin {
 
 export declare interface Step {
   type: 'video' | 'presentaion';
-  presentaionId?: string;
+  presentaionId?: string | null;
 }
 
 export declare interface Template {
   name: string;
   creatorId: string;
-  networkId?: string;
+  networkId?: string | null;
   steps: Step[];
-  notes: string;
+  notes?: string;
   createdAt: FbDate;
 }
 
@@ -45,7 +45,7 @@ export declare interface Call {
   state: 'started' | 'finished';
   currentStep: string;
   stepData: object;
-  notes: string;
+  notes?: string;
   createdAt: FbDate;
 }
 
