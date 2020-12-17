@@ -29,6 +29,14 @@ export function formatFutureDate(date: Date, hourCutoff = 1) {
   return date.getTime() > OneHourFromNow ? dayjs(date).format('dddd, MMMM D') : dayjs(date).toNow();
 }
 
+export function formatRelativeDate(date: Date) {
+  if (date.getTime() > Date.now()) {
+    return formatFutureDate(date);
+  } else {
+    return formatPastDate(date);
+  }
+}
+
 // This function ensures that the user has granted the browser permission to use audio and video
 // devices. If permission has not been granted, it will cause the browser to ask for permission
 // for audio and video at the same time (as opposed to separate requests).

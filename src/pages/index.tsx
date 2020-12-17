@@ -4,7 +4,7 @@ import firebase, { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import Home from '~/containers/Home/Home';
 import { useAppState } from '~/state';
-import { LocalModel, Call } from '~/firebase/schema-types';
+import { LocalModel, Template } from '~/firebase/schema-types';
 
 const snapshotToCall = (
   snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>,
@@ -14,15 +14,13 @@ const snapshotToCall = (
       ({
         id: doc.id,
         ...doc.data(),
-      } as LocalModel<Call>),
+      } as LocalModel<Template>),
   );
 };
 
 export default withPrivateRoute(function IndexPage() {
   const { user } = useAppState();
-  const [upcomingCalls, setUpcomingCalls] = useState<LocalModel<Call>[]>([]);
-  const [pastCalls, setPastCalls] = useState<LocalModel<Call>[]>([]);
-  const [ongoingCalls, setOngoingCalls] = useState<LocalModel<Call>[]>([]);
+  const [templates, setTemplates] = useState<LocalModel<Template>[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -30,29 +28,12 @@ export default withPrivateRoute(function IndexPage() {
     }
 
     db.collection('calls')
-      .where('users', 'array-contains', user.uid)
-      .where('state', '==', 'pre')
+      .where('templates', '==', user.uid)
       .onSnapshot(function (querySnapshot) {
-        const calls = snapshotToCall(querySnapshot);
-        setUpcomingCalls(calls);
-      });
-
-    db.collection('calls')
-      .where('users', 'array-contains', user.uid)
-      .where('state', '==', 'finished')
-      .onSnapshot(function (querySnapshot) {
-        const calls = snapshotToCall(querySnapshot);
-        setPastCalls(calls);
-      });
-
-    db.collection('calls')
-      .where('users', 'array-contains', user.uid)
-      .where('state', '==', 'started')
-      .onSnapshot(function (querySnapshot) {
-        const calls = snapshotToCall(querySnapshot);
-        setOngoingCalls(calls);
+        const docs = snapshotToCall(querySnapshot);
+        setTemplates(docs);
       });
   }, [user]);
 
-  return <Home upcomingCalls={upcomingCalls} pastCalls={pastCalls} ongoingCalls={ongoingCalls} />;
+  return <Home templates={templates} />;
 });

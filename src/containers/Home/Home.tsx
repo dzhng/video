@@ -3,13 +3,11 @@ import { Typography, Grid, Button, Divider } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link';
 
-import { LocalModel, Call } from '~/firebase/schema-types';
-import CallCard from './CallCard';
+import { LocalModel, Template } from '~/firebase/schema-types';
+import TemplateCard from './TemplateCard';
 
 interface PropTypes {
-  upcomingCalls: LocalModel<Call>[];
-  pastCalls: LocalModel<Call>[];
-  ongoingCalls: LocalModel<Call>[];
+  templates: LocalModel<Template>[];
 }
 
 const useStyles = makeStyles((theme) =>
@@ -27,66 +25,37 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function Home({ upcomingCalls, pastCalls, ongoingCalls }: PropTypes) {
+export default function Home({ templates }: PropTypes) {
   const classes = useStyles();
 
   return (
     <>
-      <Typography variant="h4">Upcoming Calls</Typography>
+      <Typography variant="h4">Templates</Typography>
       <Grid container className={classes.grid} spacing={3}>
-        {/* Put ongoing calls in the same section as upcoming, but put it in front of the list so it is noticable */}
-        {ongoingCalls.map((call) => (
-          <Grid item xs={3} key={call.id}>
-            <Link href={`/call/${call.id}/room`}>
-              {/* Need to wrap CallCard in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
+        {templates.map((template) => (
+          <Grid item xs={3} key={template.id}>
+            <Link href={`/template/${template.id}`}>
+              {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
               <div>
-                <CallCard call={call} />
-              </div>
-            </Link>
-          </Grid>
-        ))}
-
-        {upcomingCalls.map((call) => (
-          <Grid item xs={3} key={call.id}>
-            <Link href={`/call/${call.id}/edit`}>
-              <div>
-                <CallCard call={call} />
+                <TemplateCard template={template} />
               </div>
             </Link>
           </Grid>
         ))}
 
         <Grid item xs={12}>
-          <Link href="/call/create">
+          <Link href="/template/create">
             <Button
               color="primary"
               variant="contained"
               size="large"
               className={classes.createButton}
             >
-              Create Call
+              Create Template
             </Button>
           </Link>
         </Grid>
       </Grid>
-
-      {pastCalls.length > 0 && (
-        <>
-          <Divider className={classes.divider} />
-          <Typography variant="h4">Past Calls</Typography>
-          <Grid container className={classes.grid} spacing={3}>
-            {pastCalls.map((call) => (
-              <Grid item xs={3} key={call.id}>
-                <Link href={`/call/${call.id}/summary`}>
-                  <div>
-                    <CallCard call={call} />
-                  </div>
-                </Link>
-              </Grid>
-            ))}
-          </Grid>
-        </>
-      )}
     </>
   );
 }
