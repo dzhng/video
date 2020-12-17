@@ -1,11 +1,6 @@
 import React from 'react';
-import { styled } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import MenuBar from '~/components/MenuBar/MenuBar';
-
-const Container = styled('div')(({ theme }) => ({
-  padding: theme.spacing(4),
-}));
 
 export default function Layout({ children }: { children: React.ReactChild }) {
   const router = useRouter();
@@ -16,8 +11,7 @@ export default function Layout({ children }: { children: React.ReactChild }) {
 
   return showLayout ? (
     <>
-      <MenuBar />
-      <Container>{children}</Container>
+      <MenuBar>{children}</MenuBar>
     </>
   ) : (
     <>children</>
