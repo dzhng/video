@@ -97,8 +97,8 @@ service cloud.firestore {
       allow update: if 
         request.auth != null && 
         request.auth.uid == userId &&
-        assertKeys(['workspaceId', 'bio', 'createdAt']) &&
-        optionalStringKey('workspaceId', 30) &&
+        assertKeys(['workspaceIds', 'bio', 'createdAt']) &&
+        requiredArrayKey('workspaceIds', 0, 10) &&
         optionalStringKey('bio', 280) &&
         requiredCreatedAtKey();
     }
@@ -111,7 +111,7 @@ service cloud.firestore {
         assertKeys(['name', 'creatorId', 'workspaceId', 'activities', 'notes', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
-        optionalStringKey('workspaceId', 30) &&
+        requiredStringKey('workspaceId', 1, 30) &&
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call
@@ -154,7 +154,7 @@ service cloud.firestore {
         assertKeys(['name', 'creatorId', 'workspaceId', 'slides', 'isProcessed', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
-        optionalStringKey('workspaceId', 30) &&
+        requiredStringKey('workspaceId', 1, 30) &&
         // array of URLs or path in bucket
         requiredArrayKey('slides', 1, 1000) &&
         // set to true when all slides have been processed

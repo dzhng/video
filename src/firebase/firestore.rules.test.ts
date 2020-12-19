@@ -63,14 +63,20 @@ describe('firebase cloud firestore database rules', () => {
     });
 
     // create a few sample user accounts first so it can be updated later
-    await admin.collection('users').doc('charlie').set({
-      workspaceId: 'workspace',
-      createdAt: new Date(),
-    });
-    await admin.collection('users').doc('alice').set({
-      workspaceId: 'workspace',
-      createdAt: new Date(),
-    });
+    await admin
+      .collection('users')
+      .doc('charlie')
+      .set({
+        workspaceIds: ['workspace'],
+        createdAt: new Date(),
+      });
+    await admin
+      .collection('users')
+      .doc('alice')
+      .set({
+        workspaceIds: ['workspace'],
+        createdAt: new Date(),
+      });
   });
 
   describe('workspace', () => {
@@ -160,6 +166,7 @@ describe('firebase cloud firestore database rules', () => {
     let requiredFields = {
       name: 'Test template',
       creatorId: 'alice',
+      workspaceId: 'workspace',
       activities: ['hello'],
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
@@ -245,6 +252,7 @@ describe('firebase cloud firestore database rules', () => {
     const requiredFields = {
       name: 'hello',
       creatorId: 'alice',
+      workspaceId: 'workspace',
       slides: ['yo'],
       isProcessed: true,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),

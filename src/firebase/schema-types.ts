@@ -18,7 +18,7 @@ export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.Fi
 export type LocalModel<T> = T & { id: string };
 
 export declare interface User {
-  workspaceId?: string | null;
+  workspaceIds: string[];
   bio?: string;
   createdAt: FbDate;
 }
@@ -44,7 +44,7 @@ export declare interface Activity {
 export declare interface Template {
   name: string;
   creatorId: string;
-  workspaceId?: string | null;
+  workspaceId: string | null;
   activities: Activity[];
   notes?: string;
   createdAt: FbDate;
@@ -63,7 +63,7 @@ export declare interface Call {
 export declare interface Presentation {
   name: string;
   creatorId: string;
-  workspaceId?: string | null;
+  workspaceId: string | null;
   slides: string[];
   isProcessed: boolean;
   createdAt: FbDate;
