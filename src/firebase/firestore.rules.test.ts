@@ -160,7 +160,7 @@ describe('firebase cloud firestore database rules', () => {
     let requiredFields = {
       name: 'Test template',
       creatorId: 'alice',
-      steps: ['hello'],
+      activities: ['hello'],
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -185,11 +185,11 @@ describe('firebase cloud firestore database rules', () => {
         }),
       );
 
-      // empty steps
+      // empty activities
       await firebase.assertFails(
         template.set({
           ...requiredFields,
-          steps: [null, 'alice', 'charlie'],
+          activities: [null, 'alice', 'charlie'],
         }),
       );
     });
@@ -222,13 +222,13 @@ describe('firebase cloud firestore database rules', () => {
       let template = db.collection('templates').doc('doc');
       await template.set({
         ...requiredFields,
-        steps: ['hello', 'world'],
+        activities: ['hello', 'world'],
       });
 
       // unsetting a step
       await firebase.assertSucceeds(
         template.update({
-          steps: ['hello'],
+          activities: ['hello'],
         }),
       );
 

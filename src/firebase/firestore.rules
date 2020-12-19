@@ -108,14 +108,14 @@ service cloud.firestore {
 
       allow write: if 
         request.auth != null &&
-        assertKeys(['name', 'creatorId', 'networkId', 'steps', 'notes', 'createdAt']) &&
+        assertKeys(['name', 'creatorId', 'networkId', 'activities', 'notes', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
         optionalStringKey('networkId', 30) &&
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call
-        requiredArrayKey('steps', 0, 100) &&
+        requiredArrayKey('activities', 0, 100) &&
 
         // presenter notes, in markdown format
         optionalStringKey('notes', 50000) &&

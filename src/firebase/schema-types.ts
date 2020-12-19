@@ -36,7 +36,7 @@ export declare interface Admin {
   createdAt: FbDate;
 }
 
-export declare interface Step {
+export declare interface Activity {
   type: 'video' | 'presentaion';
   presentaionId?: string | null;
 }
@@ -45,7 +45,7 @@ export declare interface Template {
   name: string;
   creatorId: string;
   networkId?: string | null;
-  steps: Step[];
+  activities: Activity[];
   notes?: string;
   createdAt: FbDate;
 }

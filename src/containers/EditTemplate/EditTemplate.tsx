@@ -122,7 +122,7 @@ export default function EditContainer({ template, save }: PropTypes) {
   const initialValues = {
     name: template?.name ?? '',
     creatorId: template?.creatorId ?? '', // here purely to satisfy Call type
-    steps: template?.steps ?? [],
+    activities: template?.activities ?? [],
     notes: template?.notes ?? '',
     createdAt: template?.createdAt ?? firebase.firestore.FieldValue.serverTimestamp(),
   };
