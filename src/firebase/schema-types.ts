@@ -7,8 +7,8 @@ export enum Collections {
   TEMPLATES = 'templates',
   CALLS = 'calls',
   PRESENTATIONS = 'presentations',
-  NETWORKS = 'networks',
-  ADMINS = 'admins', // this is a subcollection of networks
+  WORKSPACES = 'workspaces',
+  ADMINS = 'admins', // this is a subcollection of workspaces
 }
 
 export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
@@ -18,12 +18,12 @@ export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.Fi
 export type LocalModel<T> = T & { id: string };
 
 export declare interface User {
-  networkId?: string | null;
+  workspaceId?: string | null;
   bio?: string;
   createdAt: FbDate;
 }
 
-export declare interface Network {
+export declare interface Workspace {
   name: string;
   logoURL?: string | null;
   primaryColor?: string | null;
@@ -44,7 +44,7 @@ export declare interface Activity {
 export declare interface Template {
   name: string;
   creatorId: string;
-  networkId?: string | null;
+  workspaceId?: string | null;
   activities: Activity[];
   notes?: string;
   createdAt: FbDate;
@@ -63,7 +63,7 @@ export declare interface Call {
 export declare interface Presentation {
   name: string;
   creatorId: string;
-  networkId?: string | null;
+  workspaceId?: string | null;
   slides: string[];
   isProcessed: boolean;
   createdAt: FbDate;

@@ -97,8 +97,8 @@ service cloud.firestore {
       allow update: if 
         request.auth != null && 
         request.auth.uid == userId &&
-        assertKeys(['networkId', 'bio', 'createdAt']) &&
-        optionalStringKey('networkId', 30) &&
+        assertKeys(['workspaceId', 'bio', 'createdAt']) &&
+        optionalStringKey('workspaceId', 30) &&
         optionalStringKey('bio', 280) &&
         requiredCreatedAtKey();
     }
@@ -108,10 +108,10 @@ service cloud.firestore {
 
       allow write: if 
         request.auth != null &&
-        assertKeys(['name', 'creatorId', 'networkId', 'activities', 'notes', 'createdAt']) &&
+        assertKeys(['name', 'creatorId', 'workspaceId', 'activities', 'notes', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
-        optionalStringKey('networkId', 30) &&
+        optionalStringKey('workspaceId', 30) &&
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call
@@ -151,10 +151,10 @@ service cloud.firestore {
 
       allow write: if
         request.auth != null &&
-        assertKeys(['name', 'creatorId', 'networkId', 'slides', 'isProcessed', 'createdAt']) &&
+        assertKeys(['name', 'creatorId', 'workspaceId', 'slides', 'isProcessed', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
-        optionalStringKey('networkId', 30) &&
+        optionalStringKey('workspaceId', 30) &&
         // array of URLs or path in bucket
         requiredArrayKey('slides', 1, 1000) &&
         // set to true when all slides have been processed
@@ -167,10 +167,10 @@ service cloud.firestore {
           (resource.data.creatorId == request.auth.uid));
     }
 
-    match /networks/{networkId} {
+    match /workspaces/{workspaceId} {
 
       function currentAdmin() {
-        return get(/databases/$(database)/documents/networks/$(networkId)/admins/$(request.auth.uid)).data;
+        return get(/databases/$(database)/documents/workspaces/$(workspaceId)/admins/$(request.auth.uid)).data;
       }
 
       allow read;
@@ -183,14 +183,14 @@ service cloud.firestore {
         optionalStringKey('primaryColor', 10) &&
         optionalStringKey('backgroundColor', 10) &&
         requiredCreatedAtKey() &&
-        // only network owners can update
+        // only workspace owners can update
         currentAdmin().role == 'owner';
 
       match /admins/{adminId} {
         allow read: if
           request.auth != null &&
-          // make sure only users in the same network can read admin list
-          exists(/database/$(database)/documents/networks/$(networkId)/users/$(request.auth.uid));
+          // make sure only users in the same workspace can read admin list
+          exists(/database/$(database)/documents/workspaces/$(workspaceId)/users/$(request.auth.uid));
 
         allow write: if
           assertKeys(['role', 'createdAt']) &&
@@ -198,10 +198,10 @@ service cloud.firestore {
           requiredCreatedAtKey() &&
           // make sure only owners can create another admin
           currentAdmin().role == 'owner' &&
-          // make sure this admin is also an user and belongs to same network
-          getUser(adminId).networkId == networkId;
+          // make sure this admin is also an user and belongs to same workspace 
+          getUser(adminId).workspaceId == workspaceId;
       }
-    } // match network
+    } // match workspace 
 
   } // match database
 } // service firestore

@@ -43,18 +43,18 @@ describe('firebase cloud firestore database rules', () => {
 
     const admin = getAdminFirestore();
 
-    // create a network
-    const network = admin.collection('networks').doc('network');
-    await network.set({ createdAt: new Date(), name: 'A Network' });
+    // create a workspace
+    const workspace = admin.collection('workspaces').doc('workspace');
+    await workspace.set({ createdAt: new Date(), name: 'My Workspace' });
 
     // Create an owner user
     await admin.collection('users').doc('OwnerUser').set({
-      networkId: 'network',
+      workspaceId: 'workspace',
     });
 
     const profile = admin
-      .collection('networks')
-      .doc('network')
+      .collection('workspaces')
+      .doc('workspace')
       .collection('admins')
       .doc('OwnerUser');
     await profile.set({
@@ -64,45 +64,45 @@ describe('firebase cloud firestore database rules', () => {
 
     // create a few sample user accounts first so it can be updated later
     await admin.collection('users').doc('charlie').set({
-      networkId: 'network',
+      workspaceId: 'workspace',
       createdAt: new Date(),
     });
     await admin.collection('users').doc('alice').set({
-      networkId: 'network',
+      workspaceId: 'workspace',
       createdAt: new Date(),
     });
   });
 
-  describe('network', () => {
-    it('allows anyone to read network data', async () => {
+  describe('workspace', () => {
+    it('allows anyone to read workspace data', async () => {
       const db = getAuthedFirestore(null);
-      const network = db.collection('networks').doc('network');
-      const doc = await firebase.assertSucceeds(network.get());
-      expect(doc.data().name).toEqual('A Network');
+      const workspace = db.collection('workspaces').doc('workspace');
+      const doc = await firebase.assertSucceeds(workspace.get());
+      expect(doc.data().name).toEqual('My Workspace');
     });
 
-    it('require users to log in and be owner before updating network', async () => {
+    it('require users to log in and be owner before updating workspace', async () => {
       const db = getAuthedFirestore(null);
-      const network = db.collection('networks').doc('network');
-      await firebase.assertFails(network.set({ name: 'hello world' }));
+      const workspace = db.collection('workspaces').doc('workspace');
+      await firebase.assertFails(workspace.set({ name: 'hello world' }));
     });
 
-    it('does not allow anyone to create a new network', async () => {
+    it('does not allow anyone to create a new workspace', async () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
-      const network = db.collection('networks').doc('test');
-      await firebase.assertFails(network.set({ name: 'hello world' }));
+      const workspace = db.collection('workspaces').doc('test');
+      await firebase.assertFails(workspace.set({ name: 'hello world' }));
     });
 
-    it('allows logged in owners to update network', async () => {
+    it('allows logged in owners to update workspace', async () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
-      const network = db.collection('networks').doc('network');
-      await firebase.assertSucceeds(network.update({ name: 'hello world' }));
+      const workspace = db.collection('workspaces').doc('workspace');
+      await firebase.assertSucceeds(workspace.update({ name: 'hello world' }));
     });
 
-    it('does not allow random data to be added to network', async () => {
+    it('does not allow random data to be added to workspace', async () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
-      const network = db.collection('networks').doc('network');
-      await firebase.assertFails(network.update({ name: 'hello world', random: 'data' }));
+      const workspace = db.collection('workspaces').doc('workspace');
+      await firebase.assertFails(workspace.update({ name: 'hello world', random: 'data' }));
     });
   });
 
