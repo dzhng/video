@@ -194,9 +194,17 @@ service cloud.firestore {
           request.auth != null;
 
         allow write: if
+          request.auth != null &&
           assertKeys(['role', 'createdAt']) &&
           requiredStringKey('role', 1, 10) &&
-          requiredCreatedAtKey();
+          requiredCreatedAtKey() &&
+          // if promoting self, make sure its a new workspace (should not exist)
+          // if promoting others, make sure only owners can create another admin
+          (request.auth.uid == adminId ? 
+            !exists(/databases/$(database)/documents/workspaces/$(workspaceId)) : 
+          currentAdmin().role == 'owner') &&
+          // make sure this admin is also an user and belongs to same workspace 
+          workspaceId in getUser(adminId).workspaceIds;
       }
     } // match workspace 
 
