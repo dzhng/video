@@ -100,6 +100,15 @@ describe('firebase cloud firestore database rules', () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
       const workspace = db.collection('workspaces').doc('test');
       await firebase.assertFails(workspace.set(requiredFields));
+
+      // try batching creating workspace and user, but not admin
+      const batch = db.batch();
+      const workspaceRef = db.collection('workspaces').doc();
+      batch.set(workspaceRef, requiredFields);
+
+      const userRef = db.collection('users').doc('OwnerUser');
+      batch.set(userRef, { workspaceIds: [workspaceRef.id] });
+      await firebase.assertFails(batch.commit());
     });
 
     it('allows a new user to create a new workspace via batch with user as owner', async () => {
