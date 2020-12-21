@@ -20,7 +20,6 @@ export type LocalModel<T> = T & { id: string };
 export declare interface User {
   workspaceIds: string[];
   bio?: string;
-  createdAt: FbDate;
 }
 
 export declare interface Workspace {

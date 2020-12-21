@@ -28,6 +28,8 @@ export interface StateContextType {
   isFetching: boolean;
 
   // workspaces
+  currentWorkspaceId?: string | null;
+  setCurrentWorkspaceId(workspaceId: string | null): void;
   userRecord?: User | null;
   workspaces?: LocalModel<Workspace>[];
   isWorkspacesReady: boolean;
@@ -46,6 +48,7 @@ export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
 
@@ -55,6 +58,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     isFetching,
     settings,
     dispatchSetting,
+    currentWorkspaceId,
+    setCurrentWorkspaceId,
   } as StateContextType;
 
   contextValue = {

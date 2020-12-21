@@ -68,14 +68,12 @@ describe('firebase cloud firestore database rules', () => {
       .doc('charlie')
       .set({
         workspaceIds: ['workspace'],
-        createdAt: new Date(),
       });
     await admin
       .collection('users')
       .doc('alice')
       .set({
         workspaceIds: ['workspace'],
-        createdAt: new Date(),
       });
   });
 
@@ -150,7 +148,6 @@ describe('firebase cloud firestore database rules', () => {
       await firebase.assertFails(
         db.collection('users').doc('bob').set({
           bio: 'hello world',
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         }),
       );
     });

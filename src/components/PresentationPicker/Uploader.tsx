@@ -5,7 +5,7 @@ import { Typography, Paper, CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Add } from '@material-ui/icons';
 
-import { Presentation } from '~/firebase/schema-types';
+import { Collections, Presentation } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import useConvert, { fromType } from '~/hooks/useConvert/useConvert';
 import firebase, { db } from '~/utils/firebase';
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Uploader({ setData }: { setData(id: string, data: Presentation): void }) {
   const { convert, isPreparing } = useConvert();
-  const { user } = useAppState();
+  const { user, currentWorkspaceId } = useAppState();
   const classes = useStyles();
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
     async (e: ChangeEvent<HTMLInputElement>) => {
       const { files } = e.target;
 
-      if (!user) {
+      if (!user || !currentWorkspaceId) {
         console.warn('No authenticated user');
         return;
       }
@@ -98,6 +98,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
 
       const data: Presentation = {
         name: truncate(trim(file.name), { length: 50 }) ?? 'New Presentation',
+        workspaceId: currentWorkspaceId,
         creatorId: user.uid,
         isProcessed: false, // mark for processing in cloud function
         slides: fileUrls,
@@ -105,12 +106,12 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
       };
 
       // first create a presentation doc
-      const doc = await db.collection('presentations').add(data);
+      const doc = await db.collection(Collections.PRESENTATIONS).add(data);
 
       setData(doc.id, data);
       setIsUploading(false);
     },
-    [user, isUploading, setData, convert],
+    [user, currentWorkspaceId, isUploading, setData, convert],
   );
 
   // TODO: add a drag/drop uploader here

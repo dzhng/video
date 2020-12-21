@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { VideoCall as VideoCallIcon, PresentToAll as PresentIcon } from '@material-ui/icons';
@@ -83,19 +83,33 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MenuBar({ children }: { children: React.ReactChild }) {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, workspaces, isWorkspacesReady } = useAppState();
+  const {
+    user,
+    workspaces,
+    isWorkspacesReady,
+    currentWorkspaceId,
+    setCurrentWorkspaceId,
+  } = useAppState();
 
-  const handleDrawerToggle = () => {
+  const handleDrawerToggle = useCallback(() => {
     setMobileOpen(!mobileOpen);
-  };
+  }, [mobileOpen]);
+
+  const handleWorkspaceChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      setCurrentWorkspaceId(event.target.value as string);
+    },
+    [setCurrentWorkspaceId],
+  );
 
   const drawer = (
     <div>
       <div className={classes.toolbar} />
+
       {isWorkspacesReady && workspaces ? (
         <FormControl variant="outlined" className={classes.select}>
           <InputLabel>Workspace</InputLabel>
-          <Select label="Workspace">
+          <Select label="Workspace" value={currentWorkspaceId} onChange={handleWorkspaceChange}>
             {workspaces.map((workspace) => (
               <MenuItem value={workspace.id}>{workspace.name}</MenuItem>
             ))}
@@ -104,6 +118,7 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
       ) : (
         <Skeleton variant="rect" height={45} className={classes.select} />
       )}
+
       <List>
         <Link href="/">
           <ListItem button>
