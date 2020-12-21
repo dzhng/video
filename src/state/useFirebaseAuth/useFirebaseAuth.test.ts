@@ -1,7 +1,7 @@
-import useFirebaseAuth from './useFirebaseAuth';
 import fetch from 'isomorphic-unfetch';
 import { renderHook } from '@testing-library/react-hooks';
 import { TWILIO_TOKEN_ENDPOINT } from '~/constants';
+import useFirebaseAuth from './useFirebaseAuth';
 
 const mockUser = { getIdToken: () => Promise.resolve('idToken') };
 
