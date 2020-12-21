@@ -102,14 +102,39 @@ describe('firebase cloud firestore database rules', () => {
       await firebase.assertFails(workspace.set(requiredFields));
     });
 
-    it('allows a user to create a new workspace via batch with user as owner', async () => {
+    it('allows a new user to create a new workspace via batch with user as owner', async () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
       const batch = db.batch();
 
-      const workspaceRef = db.collection('workspaces').doc('test');
+      const workspaceRef = db.collection('workspaces').doc();
       batch.set(workspaceRef, requiredFields);
 
+      const userRef = db.collection('users').doc('OwnerUser');
+      batch.set(userRef, { workspaceIds: [workspaceRef.id] });
+
       const adminRef = workspaceRef.collection('admins').doc('OwnerUser');
+      batch.set(adminRef, {
+        role: 'owner',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      await firebase.assertSucceeds(batch.commit());
+    });
+
+    it('allows an existing user to create a new workspace with himself as admin', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const batch = db.batch();
+
+      const workspaceRef = db.collection('workspaces').doc();
+      batch.set(workspaceRef, requiredFields);
+
+      const userRef = db.collection('users').doc('alice');
+      batch.update(userRef, {
+        workspaceIds: firebase.firestore.FieldValue.arrayUnion(workspaceRef.id),
+        defaultWorkspaceId: workspaceRef.id,
+      });
+
+      const adminRef = workspaceRef.collection('admins').doc('alice');
       batch.set(adminRef, {
         role: 'owner',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),

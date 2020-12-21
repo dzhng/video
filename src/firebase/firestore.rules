@@ -15,6 +15,10 @@ service cloud.firestore {
     function getUser(userId) {
       return get(/databases/$(database)/documents/users/$(userId)).data;
     }
+    
+    function getUserAfter(userId) {
+      return getAfter(/databases/$(database)/documents/users/$(userId)).data;
+    }
 
     // ensures that only the input list of keys are used, and no others
     function assertKeys(keys) {
@@ -204,7 +208,7 @@ service cloud.firestore {
             !exists(/databases/$(database)/documents/workspaces/$(workspaceId)) : 
           currentAdmin().role == 'owner') &&
           // make sure this admin is also an user and belongs to same workspace 
-          workspaceId in getUser(adminId).workspaceIds;
+          workspaceId in getUserAfter(adminId).workspaceIds;
       }
     } // match workspace 
 
