@@ -17,6 +17,7 @@ import {
   Select,
   MenuItem,
 } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 
 import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
@@ -82,7 +83,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MenuBar({ children }: { children: React.ReactChild }) {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user } = useAppState();
+  const { user, workspaces, isWorkspacesReady } = useAppState();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -91,19 +92,18 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-
-      <FormControl variant="outlined" className={classes.select}>
-        <InputLabel>Workspace</InputLabel>
-        <Select label="Age">
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      </FormControl>
-
+      {isWorkspacesReady && workspaces ? (
+        <FormControl variant="outlined" className={classes.select}>
+          <InputLabel>Workspace</InputLabel>
+          <Select label="Workspace">
+            {workspaces.map((workspace) => (
+              <MenuItem value={workspace.id}>{workspace.name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ) : (
+        <Skeleton variant="rect" height={45} className={classes.select} />
+      )}
       <List>
         <Link href="/">
           <ListItem button>

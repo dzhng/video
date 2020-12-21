@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import firebase, { db } from '~/utils/firebase';
-import { Collections, User, Workspace } from '~/firebase/schema-types';
+import { Collections, User, Workspace, LocalModel } from '~/firebase/schema-types';
 import useFirebaseAuth from '../useFirebaseAuth/useFirebaseAuth';
 
 export default function useWorkspaces() {
   const { user, isAuthReady } = useFirebaseAuth();
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<LocalModel<Workspace>[]>([]);
   const [userRecord, setUserRecord] = useState<User | null>(null);
   const [isWorkspacesReady, setIsWorkspacesReady] = useState(false);
 
@@ -27,7 +27,14 @@ export default function useWorkspaces() {
         .collection(Collections.WORKSPACES)
         .where(firebase.firestore.FieldPath.documentId(), 'in', _userRecord.workspaceIds)
         .get();
-      const records = workspaceDocs.docs.map((doc) => doc.data() as Workspace);
+      const records = workspaceDocs.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          } as LocalModel<Workspace>),
+      );
+
       setWorkspaces(records);
       setIsWorkspacesReady(true);
     };

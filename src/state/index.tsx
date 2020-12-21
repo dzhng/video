@@ -3,7 +3,7 @@ import firebase from 'firebase';
 import { TwilioError } from 'twilio-video';
 
 import { RoomType } from '~/utils/twilio-types';
-import { User, Workspace } from '~/firebase/schema-types';
+import { User, Workspace, LocalModel } from '~/firebase/schema-types';
 
 import {
   settingsReducer,
@@ -29,7 +29,7 @@ export interface StateContextType {
 
   // workspaces
   userRecord?: User | null;
-  workspaces?: Workspace[];
+  workspaces?: LocalModel<Workspace>[];
   isWorkspacesReady: boolean;
 
   // ux state
