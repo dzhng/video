@@ -72,25 +72,33 @@ export default function useWorkspaces() {
   );
 
   const createWorkspace = useCallback(
-    async (name: string) => {
-      if (user) {
-        setIsWorkspacesReady(false);
-        const newWorkspace = await db.collection(Collections.WORKSPACES).add({
-          name,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    async (name: string): Promise<LocalModel<Workspace> | null> => {
+      if (!user) {
+        return null;
+      }
+
+      setIsWorkspacesReady(false);
+      const newWorkspace = await db.collection(Collections.WORKSPACES).add({
+        name,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      await db
+        .collection(Collections.USERS)
+        .doc(user.uid)
+        .update({
+          defaultWorkspaceId: newWorkspace.id,
+          workspaceIds: firebase.firestore.FieldValue.arrayUnion(newWorkspace.id),
         });
 
-        await db
-          .collection(Collections.USERS)
-          .doc(user.uid)
-          .update({
-            defaultWorkspaceId: newWorkspace.id,
-            workspaceIds: firebase.firestore.FieldValue.arrayUnion(newWorkspace.id),
-          });
+      _setCurrentWorkspaceId(newWorkspace.id);
+      setIsWorkspacesReady(true);
 
-        _setCurrentWorkspaceId(newWorkspace.id);
-        setIsWorkspacesReady(true);
-      }
+      return {
+        id: newWorkspace.id,
+        name,
+        createdAt: new Date(),
+      } as LocalModel<Workspace>;
     },
     [user],
   );
