@@ -78,6 +78,11 @@ describe('firebase cloud firestore database rules', () => {
   });
 
   describe('workspace', () => {
+    const requiredFields = {
+      name: 'workspace',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
     it('allows anyone to read workspace data', async () => {
       const db = getAuthedFirestore(null);
       const workspace = db.collection('workspaces').doc('workspace');
@@ -88,13 +93,29 @@ describe('firebase cloud firestore database rules', () => {
     it('require users to log in and be owner before updating workspace', async () => {
       const db = getAuthedFirestore(null);
       const workspace = db.collection('workspaces').doc('workspace');
-      await firebase.assertFails(workspace.set({ name: 'hello world' }));
+      await firebase.assertFails(workspace.set(requiredFields));
     });
 
-    it('does not allow anyone to create a new workspace', async () => {
+    it('does not allow a user to create a new workspace without admin', async () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
       const workspace = db.collection('workspaces').doc('test');
-      await firebase.assertFails(workspace.set({ name: 'hello world' }));
+      await firebase.assertFails(workspace.set(requiredFields));
+    });
+
+    it('allows a user to create a new workspace via batch with user as owner', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+      const batch = db.batch();
+
+      const workspaceRef = db.collection('workspaces').doc('test');
+      batch.set(workspaceRef, requiredFields);
+
+      const adminRef = workspaceRef.collection('admins').doc('OwnerUser');
+      batch.set(adminRef, {
+        role: 'owner',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      await firebase.assertSucceeds(batch.commit());
     });
 
     it('allows logged in owners to update workspace', async () => {

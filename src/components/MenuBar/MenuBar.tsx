@@ -16,6 +16,13 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 
@@ -24,6 +31,7 @@ import { useAppState } from '~/state';
 import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import Menu from './Menu/Menu';
 
+const NewWorkspaceValue = '__New_Workspace__';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -83,12 +91,15 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MenuBar({ children }: { children: React.ReactChild }) {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
+  const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const {
     user,
     workspaces,
     isWorkspacesReady,
     currentWorkspaceId,
     setCurrentWorkspaceId,
+    createWorkspace,
   } = useAppState();
 
   const handleDrawerToggle = useCallback(() => {
@@ -97,10 +108,20 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
 
   const handleWorkspaceChange = useCallback(
     (event: React.ChangeEvent<{ value: unknown }>) => {
-      setCurrentWorkspaceId(event.target.value as string);
+      const value = event.target.value as string;
+      if (value === NewWorkspaceValue) {
+        setIsCreatingWorkspace(true);
+      } else {
+        setCurrentWorkspaceId(value);
+      }
     },
     [setCurrentWorkspaceId],
   );
+
+  const handleCreateWorkspace = useCallback(() => {
+    createWorkspace(newWorkspaceName);
+    setIsCreatingWorkspace(false);
+  }, [newWorkspaceName, createWorkspace]);
 
   const drawer = (
     <div>
@@ -111,8 +132,11 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
           <InputLabel>Workspace</InputLabel>
           <Select label="Workspace" value={currentWorkspaceId} onChange={handleWorkspaceChange}>
             {workspaces.map((workspace) => (
-              <MenuItem value={workspace.id}>{workspace.name}</MenuItem>
+              <MenuItem key={workspace.id} value={workspace.id}>
+                {workspace.name}
+              </MenuItem>
             ))}
+            <MenuItem value={NewWorkspaceValue}>New Workspace</MenuItem>
           </Select>
         </FormControl>
       ) : (
@@ -141,6 +165,36 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
     </div>
   );
 
+  const createWorkspaceModal = (
+    <Dialog open={isCreatingWorkspace} onClose={() => setIsCreatingWorkspace(false)}>
+      <DialogTitle>Create New Workspace</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          To subscribe to this website, please enter your email address here. We will send updates
+          occasionally.
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Workspace Name"
+          type="text"
+          fullWidth
+          value={newWorkspaceName}
+          onChange={(e) => setNewWorkspaceName(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setIsCreatingWorkspace(false)} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleCreateWorkspace} color="primary">
+          Create
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   const container = isBrowser ? () => window.document.body : undefined;
 
   return (
@@ -161,6 +215,9 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
           </div>
         </Toolbar>
       </AppBar>
+
+      {createWorkspaceModal}
+
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">

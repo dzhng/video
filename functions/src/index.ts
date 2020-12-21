@@ -31,6 +31,11 @@ export declare interface Workspace {
   createdAt: admin.firestore.FieldValue;
 }
 
+export declare interface Admin {
+  role: 'owner' | 'admin';
+  createdAt: admin.firestore.FieldValue;
+}
+
 // TODO: test this
 export const processPresentation = functions
   .region('europe-west1')
@@ -76,16 +81,29 @@ export const createDefaultUserRecords = functions
     const store = admin.firestore();
     const firstName = user.displayName ? capitalize(words(user.displayName)[0]) : null;
 
+    const batch = store.batch();
+
     const workspaceData = {
       name: firstName ? `${firstName}'s Workspace` : 'My Workspace',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     } as Workspace;
-    const workspaceRecord = await store.collection(Collections.WORKSPACES).add(workspaceData);
+    const workspaceRef = store.collection(Collections.WORKSPACES).doc();
+    batch.set(workspaceRef, workspaceData);
 
     const userData = {
-      workspaceIds: [workspaceRecord.id],
+      workspaceIds: [workspaceRef.id],
     } as User;
-
     // share same uid as auth user record
-    await store.collection(Collections.USERS).doc(user.uid).set(userData);
+    const userRef = store.collection(Collections.USERS).doc(user.uid);
+    batch.set(userRef, userData);
+
+    const adminData = {
+      role: 'owner',
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    } as Admin;
+    // share the same uid as auth user record
+    const adminRef = workspaceRef.collection(Collections.ADMINS).doc(user.uid);
+    batch.set(adminRef, adminData);
+
+    await batch.commit();
   });

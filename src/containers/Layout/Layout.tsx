@@ -6,14 +6,8 @@ export default function Layout({ children }: { children: React.ReactChild }) {
   const router = useRouter();
 
   // make special exception for room page to not wrap anything
-  // this is hacky, but for now we only have 1 path that needs this
-  const showLayout = router.pathname !== '/call/[slug]/room';
+  // this is hacky, but for now we only have 2 path that needs this
+  const showLayout = !['/call/[slug]/room', '/login'].includes(router.pathname);
 
-  return showLayout ? (
-    <>
-      <MenuBar>{children}</MenuBar>
-    </>
-  ) : (
-    <>children</>
-  );
+  return showLayout ? <MenuBar>{children}</MenuBar> : children;
 }

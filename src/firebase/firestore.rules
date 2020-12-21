@@ -97,8 +97,9 @@ service cloud.firestore {
       allow update: if 
         request.auth != null && 
         request.auth.uid == userId &&
-        assertKeys(['workspaceIds', 'bio']) &&
+        assertKeys(['workspaceIds', 'defaultWorkspaceId', 'bio']) &&
         requiredArrayKey('workspaceIds', 0, 10) &&
+        optionalStringKey('defaultWorkspaceId', 30) &&
         optionalStringKey('bio', 280);
     }
 
@@ -174,7 +175,7 @@ service cloud.firestore {
 
       allow read;
 
-      allow update: if
+      allow write: if
         request.auth != null &&
         assertKeys(['name', 'logoURL', 'primaryColor', 'backgroundColor', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
@@ -182,23 +183,20 @@ service cloud.firestore {
         optionalStringKey('primaryColor', 10) &&
         optionalStringKey('backgroundColor', 10) &&
         requiredCreatedAtKey() &&
+        // make sure admin doc is also created
         // only workspace owners can update
-        currentAdmin().role == 'owner';
+        (isNewDoc() ? 
+          getAfter(/databases/$(database)/documents/workspaces/$(request.resource.id)/admins/$(request.auth.uid)).data.role == 'owner' : 
+          currentAdmin().role == 'owner');
 
       match /admins/{adminId} {
         allow read: if
-          request.auth != null &&
-          // make sure only users in the same workspace can read admin list
-          exists(/database/$(database)/documents/workspaces/$(workspaceId)/users/$(request.auth.uid));
+          request.auth != null;
 
         allow write: if
           assertKeys(['role', 'createdAt']) &&
           requiredStringKey('role', 1, 10) &&
-          requiredCreatedAtKey() &&
-          // make sure only owners can create another admin
-          currentAdmin().role == 'owner' &&
-          // make sure this admin is also an user and belongs to same workspace 
-          getUser(adminId).workspaceId == workspaceId;
+          requiredCreatedAtKey();
       }
     } // match workspace 
 

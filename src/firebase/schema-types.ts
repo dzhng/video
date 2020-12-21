@@ -19,6 +19,7 @@ export type LocalModel<T> = T & { id: string };
 
 export declare interface User {
   workspaceIds: string[];
+  defaultWorkspaceId?: string;
   bio?: string;
 }
 
