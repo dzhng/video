@@ -12,6 +12,10 @@ import {
   ListItemText,
   Hidden,
   Drawer,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@material-ui/core';
 
 import { isBrowser } from '~/utils';
@@ -36,6 +40,10 @@ const useStyles = makeStyles((theme: Theme) =>
         width: drawerWidth,
         flexShrink: 0,
       },
+    },
+    select: {
+      width: drawerWidth - theme.spacing(2) * 2,
+      margin: theme.spacing(2),
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -83,6 +91,19 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
   const drawer = (
     <div>
       <div className={classes.toolbar} />
+
+      <FormControl variant="outlined" className={classes.select}>
+        <InputLabel>Workspace</InputLabel>
+        <Select label="Age">
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+      </FormControl>
+
       <List>
         <Link href="/">
           <ListItem button>

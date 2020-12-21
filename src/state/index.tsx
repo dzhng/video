@@ -3,6 +3,8 @@ import firebase from 'firebase';
 import { TwilioError } from 'twilio-video';
 
 import { RoomType } from '~/utils/twilio-types';
+import { User, Workspace } from '~/firebase/schema-types';
+
 import {
   settingsReducer,
   initialSettings,
@@ -10,6 +12,7 @@ import {
   SettingsAction,
 } from './settings/settingsReducer';
 import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
+import useWorkspaces from './useWorkspaces/useWorkspaces';
 import usePendingWrite from './usePendingWrite/usePendingWrite';
 
 export interface StateContextType {
@@ -23,6 +26,11 @@ export interface StateContextType {
   signOut?(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
+
+  // workspaces
+  userRecord?: User | null;
+  workspaces?: Workspace[];
+  isWorkspacesReady: boolean;
 
   // ux state
   isWriting: boolean;
@@ -52,6 +60,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   contextValue = {
     ...contextValue,
     ...useFirebaseAuth(),
+    ...useWorkspaces(),
     ...usePendingWrite(),
   };
 
