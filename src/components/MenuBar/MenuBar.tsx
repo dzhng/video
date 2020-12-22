@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { VideoCall as VideoCallIcon, PresentToAll as PresentIcon } from '@material-ui/icons';
 import {
@@ -91,7 +90,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function MenuBar({ children }: { children: React.ReactChild }) {
   const classes = useStyles();
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
@@ -121,10 +119,9 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
   );
 
   const handleCreateWorkspace = useCallback(async () => {
-    const workspace = await createWorkspace(newWorkspaceName);
+    await createWorkspace(newWorkspaceName);
     setIsCreatingWorkspace(false);
-    workspace && router.push(`/workspace/${workspace.id}`);
-  }, [newWorkspaceName, createWorkspace, router]);
+  }, [newWorkspaceName, createWorkspace]);
 
   const drawer = (
     <div>
