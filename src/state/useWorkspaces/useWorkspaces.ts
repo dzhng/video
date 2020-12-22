@@ -11,6 +11,24 @@ export default function useWorkspaces() {
   const [currentWorkspaceId, _setCurrentWorkspaceId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!(isAuthReady && user)) {
+      return;
+    }
+
+    const unsubscribe = db
+      .collection(Collections.USERS)
+      .doc(user.uid)
+      .onSnapshot((snapshot) => {
+        const data = snapshot.data() as User;
+        setUserRecord(data);
+      });
+
+    return unsubscribe;
+  }, [isAuthReady, user]);
+
+  useEffect(() => {}, [isAuthReady, user]);
+
+  useEffect(() => {
     const queryWorkspaces = async (uid: string) => {
       // if user ever changes, make sure to unset readiness
       setIsWorkspacesReady(false);
@@ -78,24 +96,32 @@ export default function useWorkspaces() {
       }
 
       setIsWorkspacesReady(false);
-      const newWorkspace = await db.collection(Collections.WORKSPACES).add({
+      const batch = db.batch();
+
+      const newWorkspaceRef = db.collection(Collections.WORKSPACES).doc();
+      batch.set(newWorkspaceRef, {
         name,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
-      await db
-        .collection(Collections.USERS)
-        .doc(user.uid)
-        .update({
-          defaultWorkspaceId: newWorkspace.id,
-          workspaceIds: firebase.firestore.FieldValue.arrayUnion(newWorkspace.id),
-        });
+      const userRef = db.collection(Collections.USERS).doc(user.uid);
+      batch.update(userRef, {
+        defaultWorkspaceId: newWorkspaceRef.id,
+        workspaceIds: firebase.firestore.FieldValue.arrayUnion(newWorkspaceRef.id),
+      });
 
-      _setCurrentWorkspaceId(newWorkspace.id);
+      const adminRef = newWorkspaceRef.collection(Collections.ADMINS).doc(user.uid);
+      batch.set(adminRef, {
+        role: 'owner',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      await batch.commit();
+      _setCurrentWorkspaceId(newWorkspaceRef.id);
       setIsWorkspacesReady(true);
 
       return {
-        id: newWorkspace.id,
+        id: newWorkspaceRef.id,
         name,
         createdAt: new Date(),
       } as LocalModel<Workspace>;

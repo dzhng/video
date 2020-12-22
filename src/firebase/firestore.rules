@@ -8,18 +8,6 @@ service cloud.firestore {
     // URLs should be 280
     // short descriptions should be 280
 
-    function currentUser() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
-    }
-
-    function getUser(userId) {
-      return get(/databases/$(database)/documents/users/$(userId)).data;
-    }
-    
-    function getUserAfter(userId) {
-      return getAfter(/databases/$(database)/documents/users/$(userId)).data;
-    }
-
     // ensures that only the input list of keys are used, and no others
     function assertKeys(keys) {
       return request.resource.data.keys().toSet().hasOnly(keys.toSet());
@@ -101,8 +89,7 @@ service cloud.firestore {
       allow update: if 
         request.auth != null && 
         request.auth.uid == userId &&
-        assertKeys(['workspaceIds', 'defaultWorkspaceId', 'bio']) &&
-        requiredArrayKey('workspaceIds', 0, 10) &&
+        assertKeys(['defaultWorkspaceId', 'bio']) &&
         optionalStringKey('defaultWorkspaceId', 30) &&
         optionalStringKey('bio', 280);
     }
@@ -193,7 +180,7 @@ service cloud.firestore {
           getAfter(/databases/$(database)/documents/workspaces/$(request.resource.id)/admins/$(request.auth.uid)).data.role == 'owner' : 
           currentAdmin().role == 'owner');
 
-      match /admins/{adminId} {
+      match /members/{memberId} {
         allow read: if
           request.auth != null;
 
@@ -206,9 +193,7 @@ service cloud.firestore {
           // if promoting others, make sure only owners can create another admin
           (request.auth.uid == adminId ? 
             !exists(/databases/$(database)/documents/workspaces/$(workspaceId)) : 
-          currentAdmin().role == 'owner') &&
-          // make sure this admin is also an user and belongs to same workspace 
-          workspaceId in getUserAfter(adminId).workspaceIds;
+          currentAdmin().role == 'owner');
       }
     } // match workspace 
 
