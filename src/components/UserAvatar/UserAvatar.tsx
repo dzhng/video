@@ -1,7 +1,7 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
+import { Avatar } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { Person, MoreVert as MoreIcon } from '@material-ui/icons';
+import { Person } from '@material-ui/icons';
 import { StateContextType } from '~/state';
 import { User } from '~/firebase/schema-types';
 

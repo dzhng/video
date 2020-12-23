@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Typography, Grid, Button, Menu, MenuItem, IconButton } from '@material-ui/core';
+import { Typography, Grid, Button, Menu, IconButton } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { LocalModel, Template, Workspace, User } from '~/firebase/schema-types';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import TemplateCard from './TemplateCard';
+import AddMemberMenuItem from './AddMemberMenuItem';
+import LeaveMenuItem from './LeaveMenuItem';
+import DeleteMenuItem from './DeleteMenuItem';
 
 interface PropTypes {
   workspace?: LocalModel<Workspace>;
@@ -19,6 +22,7 @@ interface PropTypes {
   leaveWorkspace(): void;
   deleteWorkspace(): void;
   addMember(email: string): void;
+  removeMember(id: string): void;
 }
 
 const avatarSize = 30;
@@ -79,22 +83,13 @@ export default function Home({
   leaveWorkspace,
   deleteWorkspace,
   addMember,
+  removeMember,
 }: PropTypes) {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
 
-  const handleLeave = useCallback(() => {
-    setSettingsMenuOpen(false);
-    leaveWorkspace();
-  }, [leaveWorkspace]);
-
-  const handleDelete = useCallback(() => {
-    setSettingsMenuOpen(false);
-    deleteWorkspace();
-  }, [deleteWorkspace]);
-
-  const handleAddMember = useCallback(() => {
+  const handleMenuClick = useCallback(() => {
     setSettingsMenuOpen(false);
   }, []);
 
@@ -130,11 +125,20 @@ export default function Home({
                 onClose={() => setSettingsMenuOpen((state) => !state)}
                 anchorEl={anchorRef.current}
               >
-                <MenuItem onClick={handleAddMember}>Add Workspace Member</MenuItem>
-                <MenuItem onClick={handleLeave}>Leave Workspace</MenuItem>
-                <MenuItem onClick={handleDelete} className={classes.deleteButtonMenu}>
-                  Delete Workspace
-                </MenuItem>
+                <AddMemberMenuItem
+                  onClick={handleMenuClick}
+                  addMember={addMember}
+                  removeMember={removeMember}
+                  members={members}
+                />
+                <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
+                {isAdmin && (
+                  <DeleteMenuItem
+                    onClick={handleMenuClick}
+                    deleteWorkspace={deleteWorkspace}
+                    className={classes.deleteButtonMenu}
+                  />
+                )}
               </Menu>
             </div>
           </span>

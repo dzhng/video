@@ -170,8 +170,7 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
       <DialogTitle>Create New Workspace</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          To subscribe to this website, please enter your email address here. We will send updates
-          occasionally.
+          A workspace allows you to collaborate with a group of co-workers on calls.
         </DialogContentText>
         <TextField
           autoFocus
