@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
-import { IconButton, Menu as MenuContainer, MenuItem } from '@material-ui/core';
+import { IconButton, Menu as MenuContainer, MenuItem, Tooltip } from '@material-ui/core';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
 
 import { useAppState } from '~/state';
@@ -26,11 +26,13 @@ export default function Menu() {
   return (
     <div ref={anchorRef}>
       <IconButton color="inherit" onClick={() => setMenuOpen((state) => !state)}>
-        {user ? (
-          <UserAvatar data-testid="avatar" user={user} />
-        ) : (
-          <MoreIcon data-testid="more-icon" />
-        )}
+        <Tooltip title="Settings" placement="bottom">
+          {user ? (
+            <UserAvatar data-testid="avatar" user={user} />
+          ) : (
+            <MoreIcon data-testid="more-icon" />
+          )}
+        </Tooltip>
       </IconButton>
       <MenuContainer
         open={menuOpen}

@@ -20,4 +20,14 @@ export default createMuiTheme({
   },
   sidebarWidth: 260,
   sidebarMobileHeight: 90,
+  overrides: {
+    MuiTooltip: {
+      arrow: {
+        backgroundColor: 'black',
+      },
+      tooltip: {
+        backgroundColor: 'black',
+      },
+    },
+  },
 });

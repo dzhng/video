@@ -32,7 +32,6 @@ import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import Menu from './Menu/Menu';
 
 const NewWorkspaceValue = '__New_Workspace__';
-const drawerWidth = 240;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,12 +45,12 @@ const useStyles = makeStyles((theme: Theme) =>
     toolbar: theme.mixins.toolbar,
     drawer: {
       [theme.breakpoints.up('sm')]: {
-        width: drawerWidth,
+        width: theme.sidebarWidth,
         flexShrink: 0,
       },
     },
     select: {
-      width: drawerWidth - theme.spacing(2) * 2,
+      width: theme.sidebarWidth - theme.spacing(2) * 2,
       margin: theme.spacing(2),
     },
     menuButton: {
@@ -61,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     drawerPaper: {
-      width: drawerWidth,
+      width: theme.sidebarWidth,
     },
     rightButtonContainer: {
       display: 'flex',
