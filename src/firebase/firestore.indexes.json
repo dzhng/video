@@ -1,27 +1,19 @@
 {
-  "indexes": [],
-  "fieldOverrides": [
+  "indexes": [
     {
       "collectionGroup": "members",
-      "fieldPath": "memberId",
-      "indexes": [
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
         {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION"
+          "fieldPath": "memberId",
+          "order": "ASCENDING"
         },
         {
-          "order": "DESCENDING",
-          "queryScope": "COLLECTION"
-        },
-        {
-          "arrayConfig": "CONTAINS",
-          "queryScope": "COLLECTION"
-        },
-        {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION_GROUP"
+          "fieldPath": "role",
+          "order": "ASCENDING"
         }
       ]
     }
-  ]
+  ],
+  "fieldOverrides": []
 }
