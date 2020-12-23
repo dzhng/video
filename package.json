@@ -112,7 +112,6 @@
       "sourceType": "module"
     },
     "rules": {
-      "prettier/prettier": "warn",
       "no-shadow": "off",
       "@typescript-eslint/no-shadow": "warn",
       "react/react-in-jsx-scope": "off",

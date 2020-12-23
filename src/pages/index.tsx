@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import firebase, { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
@@ -19,7 +19,7 @@ const snapshotToCall = (
 };
 
 export default withPrivateRoute(function IndexPage() {
-  const { user, currentWorkspaceId, workspaces } = useAppState();
+  const { user, currentWorkspaceId, setCurrentWorkspaceId, workspaces } = useAppState();
   const [templates, setTemplates] = useState<LocalModel<Template>[]>([]);
   const [members, setMembers] = useState<LocalModel<User>[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -94,6 +94,44 @@ export default withPrivateRoute(function IndexPage() {
     loadMemberUsers(currentWorkspaceId);
   }, [currentWorkspaceId, user]);
 
+  const leaveWorkspace = useCallback(() => {
+    if (!user || !currentWorkspaceId) {
+      return;
+    }
+
+    // remove self from workspace membership
+    db.collection(Collections.WORKSPACES)
+      .doc(currentWorkspaceId)
+      .collection(Collections.MEMBERS)
+      .doc(user.uid)
+      .delete();
+
+    // set a new current workspace
+    const newCurrentWorkspace = workspaces?.find((model) => model.id !== currentWorkspaceId);
+    setCurrentWorkspaceId(newCurrentWorkspace?.id ?? null);
+  }, [user, currentWorkspaceId]);
+
+  const deleteWorkspace = useCallback(() => {
+    if (!currentWorkspaceId) {
+      return;
+    }
+
+    // once the workspace doc is deleted, a cloud function will auto delete the members subcollection
+    db.collection(Collections.WORKSPACES).doc(currentWorkspaceId).delete();
+  }, [currentWorkspaceId]);
+
+  const addMember = useCallback((email: string) => {
+    if (!user) {
+      return;
+    }
+  }, []);
+
+  const removeMember = useCallback((id: string) => {
+    if (!user) {
+      return;
+    }
+  }, []);
+
   const currentWorkspace = workspaces?.find((model) => model.id === currentWorkspaceId);
 
   return (
@@ -104,6 +142,10 @@ export default withPrivateRoute(function IndexPage() {
       isLoadingMembers={isLoadingMembers}
       templates={templates}
       isLoadingTemplates={isLoadingTemplates}
+      leaveWorkspace={leaveWorkspace}
+      deleteWorkspace={deleteWorkspace}
+      addMember={addMember}
+      removeMember={removeMember}
     />
   );
 });

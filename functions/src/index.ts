@@ -78,7 +78,6 @@ export const processPresentation = functions
     return snap.ref.update({ slides: paths });
   });
 
-// TODO: test this
 export const createDefaultUserRecords = functions
   .region('europe-west1')
   .auth.user()
@@ -114,5 +113,22 @@ export const createDefaultUserRecords = functions
     const memberRef = workspaceRef.collection(Collections.MEMBERS).doc(user.uid);
     batch.set(memberRef, memberData);
 
+    await batch.commit();
+  });
+
+export const deleteWorkspaceMembers = functions
+  .region('europe-west1')
+  .firestore.document(`${Collections.WORKSPACES}/{workspaceId}`)
+  .onDelete(async (_, context) => {
+    const store = admin.firestore();
+
+    const members = await store
+      .collection(Collections.WORKSPACES)
+      .doc(context.params.workspaceId)
+      .collection(Collections.MEMBERS)
+      .get();
+
+    const batch = store.batch();
+    members.forEach((member) => batch.delete(member.ref));
     await batch.commit();
   });

@@ -99,7 +99,7 @@ export default function useWorkspaces() {
 
       // set the new workspace as the new default
       const userRef = db.collection(Collections.USERS).doc(user.uid);
-      const userData: User = {
+      const userData = {
         defaultWorkspaceId: newWorkspaceRef.id,
       };
       batch.update(userRef, userData);
