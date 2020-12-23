@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Avatar } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { Person } from '@material-ui/icons';
@@ -20,21 +20,24 @@ export function getInitials(name: string) {
     .toUpperCase();
 }
 
-export default function UserAvatar({
-  user,
-  ...otherProps
-}: {
-  user: StateContextType['user'] | User;
-  [other: string]: any;
-}) {
+export default forwardRef(function UserAvatar(
+  {
+    user,
+    ...otherProps
+  }: {
+    user: StateContextType['user'] | User;
+    [other: string]: any;
+  },
+  ref,
+) {
   const classes = useStyles();
   const { displayName, photoURL } = user!;
 
   return photoURL ? (
-    <Avatar {...otherProps} src={photoURL} />
+    <Avatar ref={ref as React.RefObject<HTMLDivElement>} {...otherProps} src={photoURL} />
   ) : (
-    <Avatar {...otherProps} className={classes.red}>
+    <Avatar ref={ref as React.RefObject<HTMLDivElement>} {...otherProps} className={classes.red}>
       {displayName ? getInitials(displayName) : <Person data-testid="person-icon" />}
     </Avatar>
   );
-}
+});

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Typography, Grid, Button, Menu, IconButton } from '@material-ui/core';
+import { Typography, Grid, Button, Menu, IconButton, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
@@ -114,12 +114,16 @@ export default function Home({
             {isLoadingMembers
               ? loadingMemberSkeletons
               : members.map((member) => (
-                  <UserAvatar key={member.id} className={classes.avatar} user={member} />
+                  <Tooltip key={member.id} title={member.displayName} placement="bottom">
+                    <UserAvatar className={classes.avatar} user={member} />
+                  </Tooltip>
                 ))}
             <div className={classes.settingsContainer} ref={anchorRef}>
-              <IconButton color="inherit" onClick={() => setSettingsMenuOpen((state) => !state)}>
-                <MoreIcon />
-              </IconButton>
+              <Tooltip title="Settings" placement="bottom">
+                <IconButton color="inherit" onClick={() => setSettingsMenuOpen((state) => !state)}>
+                  <MoreIcon />
+                </IconButton>
+              </Tooltip>
               <Menu
                 open={settingsMenuOpen}
                 onClose={() => setSettingsMenuOpen((state) => !state)}
