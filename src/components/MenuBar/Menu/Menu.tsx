@@ -1,10 +1,8 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
-import IconButton from '@material-ui/core/IconButton';
-import MenuContainer from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreIcon from '@material-ui/icons/MoreVert';
+import { IconButton, Menu as MenuContainer, MenuItem } from '@material-ui/core';
+import { MoreVert as MoreIcon } from '@material-ui/icons';
 
 import { useAppState } from '~/state';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';

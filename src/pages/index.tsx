@@ -21,7 +21,7 @@ const snapshotToCall = (
 export default withPrivateRoute(function IndexPage() {
   const { currentWorkspaceId, workspaces } = useAppState();
   const [templates, setTemplates] = useState<LocalModel<Template>[]>([]);
-  const [members, setMembers] = useState<User[]>([]);
+  const [members, setMembers] = useState<LocalModel<User>[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
   const [isLoadingMembers, setIsLoadingMembers] = useState(true);
 
@@ -69,7 +69,13 @@ export default withPrivateRoute(function IndexPage() {
         .where(firebase.firestore.FieldPath.documentId(), 'in', ids)
         .get();
 
-      const users = userRecords.docs.map((doc) => doc.data() as User);
+      const users = userRecords.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          } as LocalModel<User>),
+      );
       setMembers(users);
       setIsLoadingMembers(false);
     };

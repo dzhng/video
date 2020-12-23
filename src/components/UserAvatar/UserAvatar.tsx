@@ -1,8 +1,9 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import makeStyles from '@material-ui/styles/makeStyles';
-import Person from '@material-ui/icons/Person';
+import { Person, MoreVert as MoreIcon } from '@material-ui/icons';
 import { StateContextType } from '~/state';
+import { User } from '~/firebase/schema-types';
 
 const useStyles = makeStyles({
   red: {
@@ -23,7 +24,7 @@ export default function UserAvatar({
   user,
   ...otherProps
 }: {
-  user: StateContextType['user'];
+  user: StateContextType['user'] | User;
   [other: string]: any;
 }) {
   const classes = useStyles();
