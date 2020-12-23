@@ -118,9 +118,9 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
     [setCurrentWorkspaceId],
   );
 
-  const handleCreateWorkspace = useCallback(async () => {
-    await createWorkspace(newWorkspaceName);
+  const handleCreateWorkspace = useCallback(() => {
     setIsCreatingWorkspace(false);
+    createWorkspace(newWorkspaceName);
   }, [newWorkspaceName, createWorkspace]);
 
   const drawer = (

@@ -7,8 +7,8 @@ export default function useWorkspaces() {
   const { user, isAuthReady } = useFirebaseAuth();
   const [workspaces, setWorkspaces] = useState<LocalModel<Workspace>[]>([]);
   const [userRecord, setUserRecord] = useState<User | null>(null);
+  const [workspaceIds, setWorkspaceIds] = useState<string[]>([]);
   const [isWorkspacesReady, setIsWorkspacesReady] = useState(false);
-  const [currentWorkspaceId, _setCurrentWorkspaceId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!(isAuthReady && user)) {
@@ -26,27 +26,34 @@ export default function useWorkspaces() {
     return unsubscribe;
   }, [isAuthReady, user]);
 
-  useEffect(() => {}, [isAuthReady, user]);
+  useEffect(() => {
+    if (!(isAuthReady && user)) {
+      return;
+    }
+
+    const unsubscribe = db
+      .collectionGroup(Collections.MEMBERS)
+      .where('memberId', '==', user.uid)
+      .onSnapshot((snapshot) => {
+        const ids = snapshot.docs.map((doc) => doc.ref.parent.parent!.id);
+        setWorkspaceIds(ids);
+      });
+
+    return unsubscribe;
+  }, [isAuthReady, user]);
 
   useEffect(() => {
-    const queryWorkspaces = async (uid: string) => {
-      // if user ever changes, make sure to unset readiness
-      setIsWorkspacesReady(false);
-
-      const userDoc = await db.collection(Collections.USERS).doc(uid).get();
-      const _userRecord = userDoc.data() as User;
-      if (!_userRecord) {
-        // regularly ping the server until the records are successfully created (should be done by cloud function)
-        console.warn('User record does not exist!');
-        setTimeout(() => queryWorkspaces(uid), 1000);
+    const queryWorkspaces = async () => {
+      if (workspaceIds.length <= 0) {
+        setWorkspaces([]);
         return;
       }
 
-      setUserRecord(_userRecord);
+      setIsWorkspacesReady(false);
 
       const workspaceDocs = await db
         .collection(Collections.WORKSPACES)
-        .where(firebase.firestore.FieldPath.documentId(), 'in', _userRecord.workspaceIds)
+        .where(firebase.firestore.FieldPath.documentId(), 'in', workspaceIds)
         .get();
       const records = workspaceDocs.docs.map(
         (doc) =>
@@ -60,26 +67,11 @@ export default function useWorkspaces() {
       setIsWorkspacesReady(true);
     };
 
-    if (isAuthReady && user) {
-      queryWorkspaces(user.uid);
-    }
-  }, [isAuthReady, user]);
-
-  useEffect(() => {
-    if (userRecord) {
-      const defaultIsValid = userRecord.workspaceIds.includes(userRecord.defaultWorkspaceId ?? '');
-
-      const workspaceId = defaultIsValid
-        ? (userRecord.defaultWorkspaceId as string)
-        : userRecord.workspaceIds[0];
-      _setCurrentWorkspaceId(workspaceId);
-    }
-  }, [userRecord]);
+    queryWorkspaces();
+  }, [workspaceIds]);
 
   const setCurrentWorkspaceId = useCallback(
     (workspaceId: string | null) => {
-      _setCurrentWorkspaceId(workspaceId);
-
       if (user) {
         db.collection(Collections.USERS).doc(user.uid).update({
           defaultWorkspaceId: workspaceId,
@@ -104,20 +96,19 @@ export default function useWorkspaces() {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
+      // set the new workspace as the new default
       const userRef = db.collection(Collections.USERS).doc(user.uid);
       batch.update(userRef, {
         defaultWorkspaceId: newWorkspaceRef.id,
-        workspaceIds: firebase.firestore.FieldValue.arrayUnion(newWorkspaceRef.id),
       });
 
-      const adminRef = newWorkspaceRef.collection(Collections.ADMINS).doc(user.uid);
-      batch.set(adminRef, {
+      const memberRef = newWorkspaceRef.collection(Collections.MEMBERS).doc(user.uid);
+      batch.set(memberRef, {
         role: 'owner',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       await batch.commit();
-      _setCurrentWorkspaceId(newWorkspaceRef.id);
       setIsWorkspacesReady(true);
 
       return {
@@ -128,6 +119,13 @@ export default function useWorkspaces() {
     },
     [user],
   );
+
+  // always make sure current workspace id exist in actual workspace list first (might take time since workspace list can be delayed due to querying
+  const currentWorkspaceId = workspaces
+    .map((doc) => doc.id)
+    .includes(userRecord?.defaultWorkspaceId ?? '')
+    ? userRecord?.defaultWorkspaceId
+    : workspaceIds[0];
 
   return {
     userRecord,

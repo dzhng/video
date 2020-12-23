@@ -14,7 +14,7 @@ export enum Collections {
   CALLS = 'calls',
   PRESENTATIONS = 'presentations',
   WORKSPACES = 'workspaces',
-  ADMINS = 'admins', // this is a subcollection of workspaces
+  MEMBERS = 'members', // this is a subcollection of workspaces
 }
 
 interface Presentation {
@@ -23,7 +23,7 @@ interface Presentation {
 }
 
 export declare interface User {
-  workspaceIds: string[];
+  defaultWorkspaceId?: string;
 }
 
 export declare interface Workspace {
@@ -31,8 +31,9 @@ export declare interface Workspace {
   createdAt: admin.firestore.FieldValue;
 }
 
-export declare interface Admin {
-  role: 'owner' | 'admin';
+export declare interface Member {
+  memberId: string;
+  role: 'owner' | 'admin' | 'member';
   createdAt: admin.firestore.FieldValue;
 }
 
@@ -91,19 +92,20 @@ export const createDefaultUserRecords = functions
     batch.set(workspaceRef, workspaceData);
 
     const userData = {
-      workspaceIds: [workspaceRef.id],
+      defaultWorkspaceId: workspaceRef.id,
     } as User;
     // share same uid as auth user record
     const userRef = store.collection(Collections.USERS).doc(user.uid);
     batch.set(userRef, userData);
 
-    const adminData = {
+    const memberData = {
+      memberId: user.uid,
       role: 'owner',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    } as Admin;
+    } as Member;
     // share the same uid as auth user record
-    const adminRef = workspaceRef.collection(Collections.ADMINS).doc(user.uid);
-    batch.set(adminRef, adminData);
+    const memberRef = workspaceRef.collection(Collections.MEMBERS).doc(user.uid);
+    batch.set(memberRef, memberData);
 
     await batch.commit();
   });

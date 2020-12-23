@@ -52,29 +52,24 @@ describe('firebase cloud firestore database rules', () => {
       workspaceId: 'workspace',
     });
 
-    const profile = admin
+    const member = admin
       .collection('workspaces')
       .doc('workspace')
-      .collection('admins')
+      .collection('members')
       .doc('OwnerUser');
-    await profile.set({
+    await member.set({
       role: 'owner',
+      memberId: 'OwnerUser',
       createdAt: new Date(),
     });
 
     // create a few sample user accounts first so it can be updated later
-    await admin
-      .collection('users')
-      .doc('charlie')
-      .set({
-        workspaceIds: ['workspace'],
-      });
-    await admin
-      .collection('users')
-      .doc('alice')
-      .set({
-        workspaceIds: ['workspace'],
-      });
+    await admin.collection('users').doc('charlie').set({
+      bio: 'hello',
+    });
+    await admin.collection('users').doc('alice').set({
+      bio: 'hello',
+    });
   });
 
   describe('workspace', () => {
@@ -106,8 +101,12 @@ describe('firebase cloud firestore database rules', () => {
       const workspaceRef = db.collection('workspaces').doc();
       batch.set(workspaceRef, requiredFields);
 
-      const userRef = db.collection('users').doc('OwnerUser');
-      batch.set(userRef, { workspaceIds: [workspaceRef.id] });
+      const adminRef = workspaceRef.collection('members').doc('OwnerUser');
+      batch.set(adminRef, {
+        role: 'member',
+        memberId: 'OwnerUser',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
       await firebase.assertFails(batch.commit());
     });
 
@@ -118,12 +117,10 @@ describe('firebase cloud firestore database rules', () => {
       const workspaceRef = db.collection('workspaces').doc();
       batch.set(workspaceRef, requiredFields);
 
-      const userRef = db.collection('users').doc('OwnerUser');
-      batch.set(userRef, { workspaceIds: [workspaceRef.id] });
-
-      const adminRef = workspaceRef.collection('admins').doc('OwnerUser');
+      const adminRef = workspaceRef.collection('members').doc('OwnerUser');
       batch.set(adminRef, {
         role: 'owner',
+        memberId: 'OwnerUser',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -139,13 +136,13 @@ describe('firebase cloud firestore database rules', () => {
 
       const userRef = db.collection('users').doc('alice');
       batch.update(userRef, {
-        workspaceIds: firebase.firestore.FieldValue.arrayUnion(workspaceRef.id),
         defaultWorkspaceId: workspaceRef.id,
       });
 
-      const adminRef = workspaceRef.collection('admins').doc('alice');
+      const adminRef = workspaceRef.collection('members').doc('alice');
       batch.set(adminRef, {
         role: 'owner',
+        memberId: 'alice',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -162,6 +159,45 @@ describe('firebase cloud firestore database rules', () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
       const workspace = db.collection('workspaces').doc('workspace');
       await firebase.assertFails(workspace.update({ name: 'hello world', random: 'data' }));
+    });
+
+    it('does not allow memberId to deviate', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+      await firebase.assertFails(
+        db.collection('workspaces').doc('workspace').collection('members').doc('charlie').set({
+          role: 'member',
+          memberId: 'bob',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
+
+      await firebase.assertSucceeds(
+        db.collection('workspaces').doc('workspace').collection('members').doc('charlie').set({
+          role: 'member',
+          memberId: 'charlie',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }),
+      );
+    });
+
+    it('allows logged in users to query for their workspaces based on members', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+
+      await firebase.assertSucceeds(
+        db.collectionGroup('members').where('memberId', '==', 'OwnerUser').get(),
+      );
+
+      await firebase.assertFails(
+        db.collectionGroup('members').where('memberId', '==', 'alice').get(),
+      );
+    });
+
+    it('allows logged in users to query for members in a workspace', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+
+      await firebase.assertSucceeds(
+        db.collection('workspaces').doc('workspace').collection('members').get(),
+      );
     });
   });
 

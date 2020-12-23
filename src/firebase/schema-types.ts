@@ -8,7 +8,7 @@ export enum Collections {
   CALLS = 'calls',
   PRESENTATIONS = 'presentations',
   WORKSPACES = 'workspaces',
-  ADMINS = 'admins', // this is a subcollection of workspaces
+  MEMBERS = 'members', // this is a subcollection of workspaces
 }
 
 export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
@@ -18,7 +18,6 @@ export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.Fi
 export type LocalModel<T> = T & { id: string };
 
 export declare interface User {
-  workspaceIds: string[];
   defaultWorkspaceId?: string;
   bio?: string;
 }
@@ -31,8 +30,9 @@ export declare interface Workspace {
   createdAt: FbDate;
 }
 
-export declare interface Admin {
-  role: 'owner' | 'admin';
+export declare interface Member {
+  memberId: string;
+  role: 'owner' | 'admin' | 'member';
   createdAt: FbDate;
 }
 

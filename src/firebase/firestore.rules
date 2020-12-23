@@ -158,10 +158,19 @@ service cloud.firestore {
           (resource.data.creatorId == request.auth.uid));
     }
 
+    // for members collectionGroup queries
+    // only allow collection group queries for members to get their own workspaces
+    match /{path=**}/members/{memberId} {
+      allow read: if 
+        request.auth != null &&
+        resource.data.memberId == request.auth.uid;
+
+    }
+
     match /workspaces/{workspaceId} {
 
-      function currentAdmin() {
-        return get(/databases/$(database)/documents/workspaces/$(workspaceId)/admins/$(request.auth.uid)).data;
+      function currentMember() {
+        return get(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid)).data;
       }
 
       allow read;
@@ -174,11 +183,11 @@ service cloud.firestore {
         optionalStringKey('primaryColor', 10) &&
         optionalStringKey('backgroundColor', 10) &&
         requiredCreatedAtKey() &&
-        // make sure admin doc is also created
+        // make sure member doc is also created
         // only workspace owners can update
         (isNewDoc() ? 
-          getAfter(/databases/$(database)/documents/workspaces/$(request.resource.id)/admins/$(request.auth.uid)).data.role == 'owner' : 
-          currentAdmin().role == 'owner');
+          getAfter(/databases/$(database)/documents/workspaces/$(request.resource.id)/members/$(request.auth.uid)).data.role == 'owner' : 
+          currentMember().role == 'owner');
 
       match /members/{memberId} {
         allow read: if
@@ -186,14 +195,20 @@ service cloud.firestore {
 
         allow write: if
           request.auth != null &&
-          assertKeys(['role', 'createdAt']) &&
-          requiredStringKey('role', 1, 10) &&
+          assertKeys(['memberId', 'role', 'createdAt']) &&
+          // have explicit memberId for collectionGroup indexing
+          requiredStringKey('memberId', 1, 30) &&
+          requiredEnumKey('role', ['owner', 'admin', 'member']) &&
           requiredCreatedAtKey() &&
-          // if promoting self, make sure its a new workspace (should not exist)
-          // if promoting others, make sure only owners can create another admin
-          (request.auth.uid == adminId ? 
+
+          // make sure memberId is always equal to the docId
+          request.resource.data.memberId == memberId &&
+
+          // if adding self, make sure its a new workspace (should not exist)
+          // if adding others, make sure only admins can add another admin
+          (request.auth.uid == memberId ? 
             !exists(/databases/$(database)/documents/workspaces/$(workspaceId)) : 
-          currentAdmin().role == 'owner');
+          currentMember().role in ['owner', 'admin']);
       }
     } // match workspace 
 
