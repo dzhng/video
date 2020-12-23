@@ -1,5 +1,5 @@
-import React from 'react';
-import { Typography, Grid, Button } from '@material-ui/core';
+import React, { useRef, useState, useCallback } from 'react';
+import { Typography, Grid, Button, Menu, MenuItem, IconButton } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
@@ -17,6 +17,8 @@ interface PropTypes {
   isLoadingTemplates: boolean;
 }
 
+const avatarSize = 30;
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     grid: {
@@ -31,8 +33,8 @@ const useStyles = makeStyles((theme) =>
       verticalAlign: 'top',
     },
     avatar: {
-      width: 30,
-      height: 30,
+      width: avatarSize,
+      height: avatarSize,
       backgroundColor: theme.palette.grey[300],
     },
     divider: {
@@ -50,15 +52,11 @@ const useStyles = makeStyles((theme) =>
     settingsContainer: {
       marginLeft: theme.spacing(1),
       display: 'inline',
-      width: 30,
-      height: 30,
-      backgroundColor: theme.palette.grey[300],
-      borderRadius: 15,
-      cursor: 'pointer',
 
-      '& svg': {
-        marginLeft: 3,
-        marginTop: 3,
+      '& button': {
+        width: avatarSize,
+        height: avatarSize,
+        backgroundColor: theme.palette.grey[300],
       },
     },
   }),
@@ -71,7 +69,13 @@ export default function Home({
   templates,
   isLoadingTemplates,
 }: PropTypes) {
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
+
+  const handleLeave = useCallback(() => {}, []);
+
+  const handleAddMember = useCallback(() => {}, []);
 
   const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
     <Grid item xs={3} key={key}>
@@ -79,7 +83,9 @@ export default function Home({
     </Grid>
   ));
 
-  const loadingMemberSkeletons = <Skeleton variant="circle" height={30} />;
+  const loadingMemberSkeletons = (
+    <Skeleton variant="circle" height={avatarSize} width={avatarSize} />
+  );
 
   return (
     <>
@@ -94,8 +100,18 @@ export default function Home({
               : members.map((member) => (
                   <UserAvatar key={member.id} className={classes.avatar} user={member} />
                 ))}
-            <div className={classes.settingsContainer}>
-              <MoreIcon />
+            <div className={classes.settingsContainer} ref={anchorRef}>
+              <IconButton color="inherit" onClick={() => setSettingsMenuOpen((state) => !state)}>
+                <MoreIcon />
+              </IconButton>
+              <Menu
+                open={settingsMenuOpen}
+                onClose={() => setSettingsMenuOpen((state) => !state)}
+                anchorEl={anchorRef.current}
+              >
+                <MenuItem onClick={handleAddMember}>Add Workspace Member</MenuItem>
+                <MenuItem onClick={handleLeave}>Leave Workspace</MenuItem>
+              </Menu>
             </div>
           </span>
         </Grid>
