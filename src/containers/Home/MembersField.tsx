@@ -79,6 +79,7 @@ const EmailTextField = ({
   const classes = useStyles();
   const inputRef = useRef<HTMLInputElement>();
   const [error, setError] = useState<string | null>(null);
+  const [key, setKey] = useState(0);
 
   const submitEmail = useCallback(
     (text) => {
@@ -91,19 +92,24 @@ const EmailTextField = ({
         setError(null);
 
         // HACK:
-        // There doesn't seem to be any good way to clear values in autocomplete component
-        // so we do it imperatively via ref. Need the setTimeout there since it'll render to its internal value first
-        setTimeout(() => {
-          if (inputRef.current) {
-            inputRef.current.value = '';
-          }
-        });
+        // there is a bug/issue with autocomplete where the
+        // previously submitted inputValue will reappear
+        // on blur. Setting inputValue/onChange does not
+        // fix this issue, must be some internal state that
+        // keeps the old value.
+        //
+        // We get around this by forcing autocomplete to
+        // rerender via a key prop that changes on submit
+        setKey((state) => state + 1);
       } else {
         setError('You must provide a valid email');
       }
 
       // either way, make sure to focus back on input
-      inputRef.current?.focus();
+      // need setTimeout here since we rerender autocomplete component via key
+      setTimeout(() => {
+        inputRef.current?.focus();
+      });
     },
     [setError, pushEmail, values],
   );
@@ -117,8 +123,8 @@ const EmailTextField = ({
   return (
     <>
       <Autocomplete
+        key={key}
         freeSolo
-        selectOnFocus
         handleHomeEndKeys
         autoHighlight
         options={[] as EmailOptionType[]}
@@ -189,29 +195,36 @@ export default function MembersField({
   const [addedEmails, setAddedEmails] = useState<string[]>([]);
   const [currentUsers, setCurrentUsers] = useState<LocalModel<User>[]>(users);
 
-  // auto call onChange whenever anything changes
-  useEffect(() => {
-    onChange(addedEmails, removedUsers);
-  }, [onChange, addedEmails, removedUsers]);
-
   const removeUser = useCallback(
     (userId: string) => {
       const user = currentUsers.find((u) => u.id === userId);
       if (user) {
-        setRemovedUsers((state) => [...state, user]);
-        setCurrentUsers((state) => without(state, user));
+        const newRemovedUsers = [...removedUsers, user];
+        setRemovedUsers(newRemovedUsers);
+        setCurrentUsers(without(currentUsers, user));
+        onChange(addedEmails, newRemovedUsers);
       }
     },
-    [currentUsers],
+    [currentUsers, onChange, addedEmails, removedUsers],
   );
 
-  const removeAddedEmail = useCallback((email: string) => {
-    setAddedEmails((state) => without(state, email));
-  }, []);
+  const removeAddedEmail = useCallback(
+    (email: string) => {
+      const newAddedEmails = without(addedEmails, email);
+      setAddedEmails(newAddedEmails);
+      onChange(newAddedEmails, removedUsers);
+    },
+    [onChange, addedEmails, removedUsers],
+  );
 
-  const addUser = useCallback((email: string) => {
-    setAddedEmails((state) => [...state, email]);
-  }, []);
+  const addUser = useCallback(
+    (email: string) => {
+      const newAddedEmails = [...addedEmails, email];
+      setAddedEmails(newAddedEmails);
+      onChange(newAddedEmails, removedUsers);
+    },
+    [onChange, addedEmails, removedUsers],
+  );
 
   const emails: string[] = currentUsers.map((user) => user.email ?? '').concat(addedEmails);
 

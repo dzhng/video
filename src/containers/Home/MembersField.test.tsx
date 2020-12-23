@@ -1,58 +1,46 @@
 import React from 'react';
 import { screen, render, waitFor, within } from '@testing-library/react';
 import fireEvent from '@testing-library/user-event';
-import { Formik, Form } from 'formik';
-import EmailsField from './EmailsField';
+import { LocalModel, User } from '~/firebase/schema-types';
+import MembersField from './MembersField';
 
-const WrappedComponent = ({
-  name,
-  initialValues,
-  onSubmit,
-  ...otherProps
-}: {
-  name: string;
-  initialValues: object;
-  onSubmit?(): void;
-  otherProps?: any;
-}) => (
-  <Formik initialValues={initialValues} onSubmit={onSubmit ?? (() => null)} validate={() => {}}>
-    {({ values }) => (
-      <Form>
-        <EmailsField name={name} values={(values as any)[name]} {...otherProps} />
-        <button data-testid="mock-submit" type="submit">
-          Submit
-        </button>
-      </Form>
-    )}
-  </Formik>
-);
+const mockOnChange = jest.fn();
 
-describe('the EmailsField component', () => {
+describe('the MembersField component', () => {
   it('should render correct values', () => {
-    const initialValues = { name: ['test@test.com', 'test2@test.com'] };
-    render(<WrappedComponent name="name" initialValues={initialValues} />);
+    const values: LocalModel<User>[] = [
+      { id: '1', displayName: 'hello world', email: '1' },
+      { id: '2', displayName: 'steve appleseed', email: '2' },
+    ];
+
+    render(<MembersField users={values} onChange={mockOnChange} />);
     expect(screen.getAllByRole('textbox').map((e) => e.getAttribute('value'))).toEqual(
-      expect.arrayContaining(initialValues.name),
+      expect.arrayContaining(['Hello (1)', 'Steve (2)']),
     );
   });
 
   it('should submit with the correct name', async () => {
-    const mockSubmit = jest.fn();
-    const initialValues = { name: ['test@test.com', 'test2@test.com'] };
+    const values: LocalModel<User>[] = [
+      { id: '1', displayName: 'test1', email: '1' },
+      { id: '2', displayName: 'test2', email: '2' },
+    ];
 
-    render(<WrappedComponent name="name" initialValues={initialValues} onSubmit={mockSubmit} />);
+    render(<MembersField users={values} onChange={mockOnChange} />);
+
+    fireEvent.type(screen.getByTestId('email-input'), 'hello3@world.com{enter}');
+
+    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toBeCalledWith(['hello3@world.com'], []);
 
     await waitFor(() => {
-      fireEvent.click(screen.getByTestId('mock-submit'));
+      fireEvent.click(screen.queryAllByTestId('remove-button')[2]);
     });
-
-    expect(mockSubmit).toBeCalledTimes(1);
-    expect(mockSubmit).toBeCalledWith(expect.objectContaining(initialValues), expect.anything());
+    expect(mockOnChange).toBeCalledWith([], []);
   });
 
   it('should allow users to remove emails', async () => {
-    const initialValues = { name: ['test@test.com'] };
-    render(<WrappedComponent name="name" initialValues={initialValues} />);
+    const values: LocalModel<User>[] = [{ id: '1', displayName: '', email: 'test@test.com' }];
+    render(<MembersField users={values} onChange={mockOnChange} />);
 
     expect(screen.queryByTestId('email-item')).toBeInTheDocument();
 
@@ -61,12 +49,14 @@ describe('the EmailsField component', () => {
     });
 
     expect(screen.queryByTestId('email-item')).not.toBeInTheDocument();
+    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toBeCalledWith([], [values[0]]);
   });
 
   describe('adding emails', () => {
     beforeEach(() => {
-      const initialValues = { name: [] };
-      render(<WrappedComponent name="name" initialValues={initialValues} />);
+      const values: LocalModel<User>[] = [];
+      render(<MembersField users={values} onChange={mockOnChange} />);
     });
 
     it('should allow users to add valid emails, and then clear inputs and refocuses', async () => {
@@ -79,8 +69,7 @@ describe('the EmailsField component', () => {
 
       const textbox = within(screen.getByTestId('email-input')).getByRole('textbox');
 
-      // TODO: the line for checking input is empty doesn't seem to work
-      // await waitFor(() => expect(textbox).toHaveAttribute('value', ''));
+      await waitFor(() => expect(textbox).toHaveAttribute('value', ''));
       expect(textbox).toEqual(document.activeElement);
     });
 
