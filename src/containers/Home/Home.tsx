@@ -134,13 +134,17 @@ export default function Home({
                   onClose={() => setSettingsMenuOpen((state) => !state)}
                   anchorEl={anchorRef.current}
                 >
-                  <AddMemberMenuItem
-                    onClick={handleMenuClick}
-                    addMember={addMember}
-                    removeMember={removeMember}
-                    members={members}
-                  />
+                  {isAdmin && (
+                    <AddMemberMenuItem
+                      onClick={handleMenuClick}
+                      addMember={addMember}
+                      removeMember={removeMember}
+                      members={members}
+                    />
+                  )}
+
                   <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
+
                   {isAdmin && (
                     <DeleteMenuItem
                       onClick={handleMenuClick}
