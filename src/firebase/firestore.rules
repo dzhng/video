@@ -212,11 +212,13 @@ service cloud.firestore {
           // make sure memberId is always equal to the docId
           request.resource.data.memberId == memberId &&
 
-          // if adding self, make sure its a new workspace (should not exist)
-          // if adding others, make sure only admins can add another admin
+          // if operating on self, can only do it on new workspace creation as part of batch, OR marking self as deleted
+          // if operating on others, can only do it if you are owner of current workspace
           (request.auth.uid == memberId ? 
-            !exists(/databases/$(database)/documents/workspaces/$(workspaceId)) : 
-          currentMember().role in ['owner']);
+            (!exists(/databases/$(database)/documents/workspaces/$(workspaceId)) ||
+              request.resource.data.role == 'deleted') : 
+            (currentMember().role in ['owner'])
+          );
       }
     } // match workspace 
 

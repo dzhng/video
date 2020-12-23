@@ -202,6 +202,16 @@ describe('firebase cloud firestore database rules', () => {
       );
     });
 
+    it('allows members to change role to deleted', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+
+      await firebase.assertSucceeds(
+        db.collection('workspaces').doc('workspace').collection('members').doc('OwnerUser').update({
+          role: 'deleted',
+        }),
+      );
+    });
+
     it('does not allow workspaces to be deleted', async () => {
       const db = getAuthedFirestore({ uid: 'OwnerUser' });
 
