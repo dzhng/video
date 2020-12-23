@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) =>
     avatar: {
       width: avatarSize,
       height: avatarSize,
+      marginRight: theme.spacing(1),
       backgroundColor: theme.palette.grey[300],
     },
     divider: {
@@ -58,7 +59,6 @@ const useStyles = makeStyles((theme) =>
       marginLeft: theme.spacing(2),
     },
     settingsContainer: {
-      marginLeft: theme.spacing(1),
       display: 'inline',
 
       '& button': {
