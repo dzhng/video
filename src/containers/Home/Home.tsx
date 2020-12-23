@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) =>
       '& button': {
         width: avatarSize,
         height: avatarSize,
-        backgroundColor: theme.palette.grey[300],
+        backgroundColor: theme.palette.grey[200],
       },
     },
     deleteButtonMenu: {
@@ -119,42 +119,41 @@ export default function Home({
                   </Tooltip>
                 ))}
 
-            {workspace && (
-              <div className={classes.settingsContainer} ref={anchorRef}>
-                <Tooltip title="Settings" placement="bottom">
-                  <IconButton
-                    color="inherit"
-                    onClick={() => setSettingsMenuOpen((state) => !state)}
-                  >
-                    <MoreIcon />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  open={settingsMenuOpen}
-                  onClose={() => setSettingsMenuOpen((state) => !state)}
-                  anchorEl={anchorRef.current}
+            <div className={classes.settingsContainer} ref={anchorRef}>
+              <Tooltip title="Settings" placement="bottom">
+                <IconButton
+                  color="inherit"
+                  disabled={!workspace}
+                  onClick={() => setSettingsMenuOpen((state) => !state)}
                 >
-                  {isAdmin && (
-                    <AddMemberMenuItem
-                      onClick={handleMenuClick}
-                      addMembers={addMembers}
-                      removeMembers={removeMembers}
-                      members={members}
-                    />
-                  )}
+                  <MoreIcon />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                open={settingsMenuOpen}
+                onClose={() => setSettingsMenuOpen((state) => !state)}
+                anchorEl={anchorRef.current}
+              >
+                {isAdmin && (
+                  <AddMemberMenuItem
+                    onClick={handleMenuClick}
+                    addMembers={addMembers}
+                    removeMembers={removeMembers}
+                    members={members}
+                  />
+                )}
 
-                  <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
+                <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
 
-                  {isAdmin && (
-                    <DeleteMenuItem
-                      onClick={handleMenuClick}
-                      deleteWorkspace={deleteWorkspace}
-                      className={classes.deleteButtonMenu}
-                    />
-                  )}
-                </Menu>
-              </div>
-            )}
+                {isAdmin && (
+                  <DeleteMenuItem
+                    onClick={handleMenuClick}
+                    deleteWorkspace={deleteWorkspace}
+                    className={classes.deleteButtonMenu}
+                  />
+                )}
+              </Menu>
+            </div>
           </span>
         </Grid>
 
