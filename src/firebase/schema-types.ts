@@ -30,12 +30,13 @@ export declare interface Workspace {
   logoURL?: string | null;
   primaryColor?: string | null;
   backgroundColor?: string | null;
+  isDeleted?: boolean;
   createdAt: FbDate;
 }
 
 export declare interface Member {
   memberId: string;
-  role: 'owner' | 'member';
+  role: 'owner' | 'member' | 'deleted';
   createdAt: FbDate;
 }
 
@@ -68,6 +69,6 @@ export declare interface Presentation {
   creatorId: string;
   workspaceId: string | null;
   slides: string[];
-  isProcessed: boolean;
+  isProcessed?: boolean;
   createdAt: FbDate;
 }

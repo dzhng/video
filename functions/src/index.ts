@@ -19,7 +19,7 @@ export enum Collections {
 
 interface Presentation {
   slides: string[];
-  isProcessed: boolean;
+  isProcessed?: boolean;
 }
 
 export declare interface User {
@@ -32,12 +32,13 @@ export declare interface User {
 
 export declare interface Workspace {
   name: string;
+  isDeleted?: boolean;
   createdAt: admin.firestore.FieldValue;
 }
 
 export declare interface Member {
   memberId: string;
-  role: 'owner' | 'admin' | 'member';
+  role: 'owner' | 'member' | 'deleted';
   createdAt: admin.firestore.FieldValue;
 }
 
@@ -119,7 +120,12 @@ export const createDefaultUserRecords = functions
 export const deleteWorkspaceMembers = functions
   .region('europe-west1')
   .firestore.document(`${Collections.WORKSPACES}/{workspaceId}`)
-  .onDelete(async (_, context) => {
+  .onWrite(async (change, context) => {
+    // operate on any doc that has isDeleted marked as true
+    if (!(change.after.data() as Workspace).isDeleted) {
+      return;
+    }
+
     const store = admin.firestore();
 
     const members = await store
@@ -129,6 +135,10 @@ export const deleteWorkspaceMembers = functions
       .get();
 
     const batch = store.batch();
-    members.forEach((member) => batch.delete(member.ref));
+    members.forEach((member) =>
+      batch.update(member.ref, {
+        role: 'deleted',
+      }),
+    );
     await batch.commit();
   });

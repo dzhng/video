@@ -201,6 +201,12 @@ describe('firebase cloud firestore database rules', () => {
         db.collection('workspaces').doc('workspace').collection('members').get(),
       );
     });
+
+    it('does not allow workspaces to be deleted', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+
+      await firebase.assertFails(db.collection('workspaces').doc('workspace').delete());
+    });
   });
 
   describe('user', () => {
@@ -345,7 +351,6 @@ describe('firebase cloud firestore database rules', () => {
       creatorId: 'alice',
       workspaceId: 'workspace',
       slides: ['yo'],
-      isProcessed: true,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 

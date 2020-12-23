@@ -43,6 +43,10 @@ service cloud.firestore {
       return request.resource.data[key] is bool;
     }
 
+    function optionalBoolKey(key) {
+      return key in request.resource.data ? requiredBoolKey(key) : true;
+    }
+
     function requiredEnumKey(key, enums) {
       let item = request.resource.data[key];
       return requiredStringKey(key, 1, 10) &&
@@ -100,7 +104,7 @@ service cloud.firestore {
     match /templates/{templateId} {
       allow read;
 
-      allow write: if 
+      allow create, update: if 
         request.auth != null &&
         assertKeys(['name', 'creatorId', 'workspaceId', 'activities', 'notes', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
@@ -124,7 +128,7 @@ service cloud.firestore {
     match /calls/{callId} {
       allow read;
 
-      allow write: if
+      allow create, update: if
         request.auth != null &&
         assertKeys(['templateId', 'creatorId', 'state', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
         requiredStringKey('templateId', 1, 30) &&
@@ -143,7 +147,7 @@ service cloud.firestore {
     match /presentations/{presentationId} {
       allow read;
 
-      allow write: if
+      allow create, update: if
         request.auth != null &&
         assertKeys(['name', 'creatorId', 'workspaceId', 'slides', 'isProcessed', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
@@ -152,7 +156,7 @@ service cloud.firestore {
         // array of URLs or path in bucket
         requiredArrayKey('slides', 1, 1000) &&
         // set to true when all slides have been processed
-        requiredBoolKey('isProcessed') &&
+        optionalBoolKey('isProcessed') &&
         requiredCreatedAtKey() &&
         // when creating, creatorId should be the current user, 
         // when editing, make sure it's the same user
@@ -178,13 +182,14 @@ service cloud.firestore {
 
       allow read;
 
-      allow write: if
+      allow create, update: if
         request.auth != null &&
-        assertKeys(['name', 'logoURL', 'primaryColor', 'backgroundColor', 'createdAt']) &&
+        assertKeys(['name', 'logoURL', 'primaryColor', 'backgroundColor', 'isDeleted', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         optionalStringKey('logoURL', 280) &&
         optionalStringKey('primaryColor', 10) &&
         optionalStringKey('backgroundColor', 10) &&
+        optionalBoolKey('isDeleted') &&
         requiredCreatedAtKey() &&
         // make sure member doc is also created
         // only workspace owners can update
@@ -196,12 +201,12 @@ service cloud.firestore {
         allow read: if
           request.auth != null;
 
-        allow write: if
+        allow create, update: if
           request.auth != null &&
           assertKeys(['memberId', 'role', 'createdAt']) &&
           // have explicit memberId for collectionGroup indexing
           requiredStringKey('memberId', 1, 30) &&
-          requiredEnumKey('role', ['owner', 'member']) &&
+          requiredEnumKey('role', ['owner', 'member', 'deleted']) &&
           requiredCreatedAtKey() &&
 
           // make sure memberId is always equal to the docId

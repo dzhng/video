@@ -99,25 +99,29 @@ export default withPrivateRoute(function IndexPage() {
       return;
     }
 
-    // remove self from workspace membership
+    // remove self by changing role to deleted
     db.collection(Collections.WORKSPACES)
       .doc(currentWorkspaceId)
       .collection(Collections.MEMBERS)
       .doc(user.uid)
-      .delete();
+      .update({
+        role: 'deleted',
+      });
 
     // set a new current workspace
     const newCurrentWorkspace = workspaces?.find((model) => model.id !== currentWorkspaceId);
     setCurrentWorkspaceId(newCurrentWorkspace?.id ?? null);
-  }, [user, currentWorkspaceId]);
+  }, [user, currentWorkspaceId, setCurrentWorkspaceId, workspaces]);
 
   const deleteWorkspace = useCallback(() => {
     if (!currentWorkspaceId) {
       return;
     }
 
-    // once the workspace doc is deleted, a cloud function will auto delete the members subcollection
-    db.collection(Collections.WORKSPACES).doc(currentWorkspaceId).delete();
+    // once the workspace doc is deleted, a cloud function will mark all members as deleted as well
+    db.collection(Collections.WORKSPACES).doc(currentWorkspaceId).update({
+      isDeleted: true,
+    });
   }, [currentWorkspaceId]);
 
   const addMember = useCallback((email: string) => {

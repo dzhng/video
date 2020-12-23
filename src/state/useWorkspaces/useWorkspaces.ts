@@ -34,6 +34,7 @@ export default function useWorkspaces() {
     const unsubscribe = db
       .collectionGroup(Collections.MEMBERS)
       .where('memberId', '==', user.uid)
+      .where('role', '!=', 'deleted')
       .onSnapshot((snapshot) => {
         const ids = snapshot.docs.map((doc) => doc.ref.parent.parent!.id);
         setWorkspaceIds(ids);
