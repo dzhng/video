@@ -108,6 +108,12 @@ const EmailTextField = ({
     [setError, pushEmail, values],
   );
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [inputRef]);
+
   return (
     <>
       <Autocomplete
@@ -163,10 +169,6 @@ const EmailTextField = ({
               placeholder="Add members"
               inputRef={inputRef}
               data-testid="email-input"
-              onKeyPress={(e) => {
-                // prevent auto form submission
-                e.key === 'Enter' && e.preventDefault();
-              }}
             />
           </Paper>
         )}

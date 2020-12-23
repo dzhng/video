@@ -101,7 +101,7 @@ export default forwardRef(function AddMemberMenuItem(
             Cancel
           </Button>
           <Button color="primary" autoFocus onClick={handleSubmit}>
-            {isSubmitting ? <CircularProgress /> : 'Save'}
+            {isSubmitting ? <CircularProgress size={24} /> : 'Save'}
           </Button>
         </DialogActions>
       </Dialog>
