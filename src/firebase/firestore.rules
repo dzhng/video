@@ -201,7 +201,7 @@ service cloud.firestore {
           assertKeys(['memberId', 'role', 'createdAt']) &&
           // have explicit memberId for collectionGroup indexing
           requiredStringKey('memberId', 1, 30) &&
-          requiredEnumKey('role', ['owner', 'admin', 'member']) &&
+          requiredEnumKey('role', ['owner', 'member']) &&
           requiredCreatedAtKey() &&
 
           // make sure memberId is always equal to the docId
@@ -211,7 +211,7 @@ service cloud.firestore {
           // if adding others, make sure only admins can add another admin
           (request.auth.uid == memberId ? 
             !exists(/databases/$(database)/documents/workspaces/$(workspaceId)) : 
-          currentMember().role in ['owner', 'admin']);
+          currentMember().role in ['owner']);
       }
     } // match workspace 
 

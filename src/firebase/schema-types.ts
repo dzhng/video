@@ -35,7 +35,7 @@ export declare interface Workspace {
 
 export declare interface Member {
   memberId: string;
-  role: 'owner' | 'admin' | 'member';
+  role: 'owner' | 'member';
   createdAt: FbDate;
 }
 

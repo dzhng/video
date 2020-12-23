@@ -15,6 +15,10 @@ interface PropTypes {
   isLoadingMembers: boolean;
   templates: LocalModel<Template>[];
   isLoadingTemplates: boolean;
+  isAdmin: boolean;
+  leaveWorkspace(): void;
+  deleteWorkspace(): void;
+  addMember(email: string): void;
 }
 
 const avatarSize = 30;
@@ -59,6 +63,9 @@ const useStyles = makeStyles((theme) =>
         backgroundColor: theme.palette.grey[300],
       },
     },
+    deleteButtonMenu: {
+      color: theme.palette.error.main,
+    },
   }),
 );
 
@@ -68,14 +75,28 @@ export default function Home({
   isLoadingMembers,
   templates,
   isLoadingTemplates,
+  isAdmin,
+  leaveWorkspace,
+  deleteWorkspace,
+  addMember,
 }: PropTypes) {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
 
-  const handleLeave = useCallback(() => {}, []);
+  const handleLeave = useCallback(() => {
+    setSettingsMenuOpen(false);
+    leaveWorkspace();
+  }, [leaveWorkspace]);
 
-  const handleAddMember = useCallback(() => {}, []);
+  const handleDelete = useCallback(() => {
+    setSettingsMenuOpen(false);
+    deleteWorkspace();
+  }, [deleteWorkspace]);
+
+  const handleAddMember = useCallback(() => {
+    setSettingsMenuOpen(false);
+  }, []);
 
   const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
     <Grid item xs={3} key={key}>
@@ -111,6 +132,9 @@ export default function Home({
               >
                 <MenuItem onClick={handleAddMember}>Add Workspace Member</MenuItem>
                 <MenuItem onClick={handleLeave}>Leave Workspace</MenuItem>
+                <MenuItem onClick={handleDelete} className={classes.deleteButtonMenu}>
+                  Delete Workspace
+                </MenuItem>
               </Menu>
             </div>
           </span>
