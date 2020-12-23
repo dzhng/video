@@ -124,12 +124,7 @@ export default function useWorkspaces() {
     [user],
   );
 
-  // always make sure current workspace id exist in actual workspace list first (might take time since workspace list can be delayed due to querying
-  const currentWorkspaceId = workspaces
-    .map((doc) => doc.id)
-    .includes(userRecord?.defaultWorkspaceId ?? '')
-    ? userRecord?.defaultWorkspaceId
-    : workspaceIds[0];
+  const currentWorkspaceId = userRecord?.defaultWorkspaceId;
 
   return {
     userRecord,
