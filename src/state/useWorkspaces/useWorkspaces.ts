@@ -47,6 +47,7 @@ export default function useWorkspaces() {
     const queryWorkspaces = async () => {
       if (workspaceIds.length <= 0) {
         setWorkspaces([]);
+        setIsWorkspacesReady(true);
         return;
       }
 

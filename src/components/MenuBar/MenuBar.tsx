@@ -129,7 +129,11 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
       {isWorkspacesReady && workspaces ? (
         <FormControl variant="outlined" className={classes.select}>
           <InputLabel>Workspace</InputLabel>
-          <Select label="Workspace" value={currentWorkspaceId} onChange={handleWorkspaceChange}>
+          <Select
+            label="Workspace"
+            value={currentWorkspaceId ?? ''}
+            onChange={handleWorkspaceChange}
+          >
             {workspaces.map((workspace) => (
               <MenuItem key={workspace.id} value={workspace.id}>
                 {workspace.name}

@@ -122,7 +122,11 @@ export default withPrivateRoute(function IndexPage() {
     db.collection(Collections.WORKSPACES).doc(currentWorkspaceId).update({
       isDeleted: true,
     });
-  }, [currentWorkspaceId]);
+
+    // set a new current workspace
+    const newCurrentWorkspace = workspaces?.find((model) => model.id !== currentWorkspaceId);
+    setCurrentWorkspaceId(newCurrentWorkspace?.id ?? null);
+  }, [currentWorkspaceId, setCurrentWorkspaceId, workspaces]);
 
   const addMember = useCallback((email: string) => {
     if (!user) {

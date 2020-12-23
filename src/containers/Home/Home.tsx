@@ -111,40 +111,46 @@ export default function Home({
             {workspace ? workspace.name : <Skeleton width={150} height={38} />}
           </Typography>
           <span className={classes.membersList}>
-            {isLoadingMembers
+            {!workspace || isLoadingMembers
               ? loadingMemberSkeletons
               : members.map((member) => (
                   <Tooltip key={member.id} title={member.displayName} placement="bottom">
                     <UserAvatar className={classes.avatar} user={member} />
                   </Tooltip>
                 ))}
-            <div className={classes.settingsContainer} ref={anchorRef}>
-              <Tooltip title="Settings" placement="bottom">
-                <IconButton color="inherit" onClick={() => setSettingsMenuOpen((state) => !state)}>
-                  <MoreIcon />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                open={settingsMenuOpen}
-                onClose={() => setSettingsMenuOpen((state) => !state)}
-                anchorEl={anchorRef.current}
-              >
-                <AddMemberMenuItem
-                  onClick={handleMenuClick}
-                  addMember={addMember}
-                  removeMember={removeMember}
-                  members={members}
-                />
-                <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
-                {isAdmin && (
-                  <DeleteMenuItem
+
+            {workspace && (
+              <div className={classes.settingsContainer} ref={anchorRef}>
+                <Tooltip title="Settings" placement="bottom">
+                  <IconButton
+                    color="inherit"
+                    onClick={() => setSettingsMenuOpen((state) => !state)}
+                  >
+                    <MoreIcon />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  open={settingsMenuOpen}
+                  onClose={() => setSettingsMenuOpen((state) => !state)}
+                  anchorEl={anchorRef.current}
+                >
+                  <AddMemberMenuItem
                     onClick={handleMenuClick}
-                    deleteWorkspace={deleteWorkspace}
-                    className={classes.deleteButtonMenu}
+                    addMember={addMember}
+                    removeMember={removeMember}
+                    members={members}
                   />
-                )}
-              </Menu>
-            </div>
+                  <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
+                  {isAdmin && (
+                    <DeleteMenuItem
+                      onClick={handleMenuClick}
+                      deleteWorkspace={deleteWorkspace}
+                      className={classes.deleteButtonMenu}
+                    />
+                  )}
+                </Menu>
+              </div>
+            )}
           </span>
         </Grid>
 
