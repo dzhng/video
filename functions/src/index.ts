@@ -84,25 +84,25 @@ export const createDefaultUserRecords = functions
 
     const batch = store.batch();
 
-    const workspaceData = {
+    const workspaceData: Workspace = {
       name: firstName ? `${firstName}'s Workspace` : 'My Workspace',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    } as Workspace;
+    };
     const workspaceRef = store.collection(Collections.WORKSPACES).doc();
     batch.set(workspaceRef, workspaceData);
 
-    const userData = {
+    const userData: User = {
       defaultWorkspaceId: workspaceRef.id,
-    } as User;
+    };
     // share same uid as auth user record
     const userRef = store.collection(Collections.USERS).doc(user.uid);
     batch.set(userRef, userData);
 
-    const memberData = {
+    const memberData: Member = {
       memberId: user.uid,
       role: 'owner',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    } as Member;
+    };
     // share the same uid as auth user record
     const memberRef = workspaceRef.collection(Collections.MEMBERS).doc(user.uid);
     batch.set(memberRef, memberData);

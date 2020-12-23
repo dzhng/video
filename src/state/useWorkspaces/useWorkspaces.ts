@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import firebase, { db } from '~/utils/firebase';
-import { Collections, User, Workspace, LocalModel } from '~/firebase/schema-types';
+import { Collections, User, Workspace, Member, LocalModel } from '~/firebase/schema-types';
 import useFirebaseAuth from '../useFirebaseAuth/useFirebaseAuth';
 
 export default function useWorkspaces() {
@@ -91,22 +91,26 @@ export default function useWorkspaces() {
       const batch = db.batch();
 
       const newWorkspaceRef = db.collection(Collections.WORKSPACES).doc();
-      batch.set(newWorkspaceRef, {
+      const workspaceData: Workspace = {
         name,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      });
+      };
+      batch.set(newWorkspaceRef, workspaceData);
 
       // set the new workspace as the new default
       const userRef = db.collection(Collections.USERS).doc(user.uid);
-      batch.update(userRef, {
+      const userData: User = {
         defaultWorkspaceId: newWorkspaceRef.id,
-      });
+      };
+      batch.update(userRef, userData);
 
       const memberRef = newWorkspaceRef.collection(Collections.MEMBERS).doc(user.uid);
-      batch.set(memberRef, {
+      const memberData: Member = {
+        memberId: user.uid,
         role: 'owner',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      });
+      };
+      batch.set(memberRef, memberData);
 
       await batch.commit();
       setIsWorkspacesReady(true);
