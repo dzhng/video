@@ -9,6 +9,7 @@ export enum Collections {
   PRESENTATIONS = 'presentations',
   WORKSPACES = 'workspaces',
   MEMBERS = 'members', // this is a subcollection of workspaces
+  INVITES = 'invites', // this is a subcollection of workspaces
 }
 
 export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
@@ -37,6 +38,12 @@ export declare interface Workspace {
 export declare interface Member {
   memberId: string;
   role: 'owner' | 'member' | 'deleted';
+  createdAt: FbDate;
+}
+
+export declare interface Invite {
+  email: string;
+  isProcessed?: boolean;
   createdAt: FbDate;
 }
 

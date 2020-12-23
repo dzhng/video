@@ -7,21 +7,21 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Formik, Form } from 'formik';
 import { LocalModel, User } from '~/firebase/schema-types';
-import EmailsField from './EmailsField';
+import MembersField from './MembersField';
 
 interface PropTypes {
   members: LocalModel<User>[];
-  addMember(email: string): void;
-  removeMember(id: string): void;
+  addMembers(emails: string[]): Promise<void>;
+  removeMembers(ids: string[]): Promise<void>;
   onClick(): void;
   className?: string;
 }
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     dialogContent: {
       paddingTop: 0,
@@ -30,10 +30,13 @@ const useStyles = makeStyles((theme) =>
 );
 
 export default forwardRef(function AddMemberMenuItem(
-  { addMember, removeMember, members, onClick, className }: PropTypes,
+  { addMembers, removeMembers, members, onClick, className }: PropTypes,
   ref,
 ) {
   const [formOpen, setFormOpen] = useState(false);
+  const [removedUsers, setRemovedUsers] = useState<LocalModel<User>[]>([]);
+  const [addedEmails, setAddedEmails] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const classes = useStyles();
 
   const handleClick = useCallback(() => {
@@ -45,15 +48,29 @@ export default forwardRef(function AddMemberMenuItem(
     onClick();
   }, [onClick]);
 
-  const handleSubmit = useCallback(
-    (values) => {
-      const emails = values.emails;
-      console.log(emails);
-      setFormOpen(false);
-      onClick();
+  const handleMembersChange = useCallback(
+    (_addedEmails: string[], _removedUsers: LocalModel<User>[]) => {
+      setRemovedUsers(_removedUsers);
+      setAddedEmails(_addedEmails);
     },
-    [onClick],
+    [],
   );
+
+  const handleSubmit = useCallback(async () => {
+    setIsSubmitting(true);
+
+    if (removedUsers.length > 0) {
+      await removeMembers(removedUsers.map((u) => u.id));
+    }
+
+    if (addedEmails.length > 0) {
+      await addMembers(addedEmails);
+    }
+
+    setIsSubmitting(false);
+    setFormOpen(false);
+    onClick();
+  }, [onClick, removeMembers, addMembers, removedUsers, addedEmails]);
 
   return (
     <>
@@ -72,31 +89,21 @@ export default forwardRef(function AddMemberMenuItem(
       >
         <DialogTitle>Manage Workspace Members</DialogTitle>
 
-        <Formik
-          initialValues={{ emails: members.map((member) => member.email ?? '') }}
-          onSubmit={handleSubmit}
-          validate={() => {}}
-        >
-          {({ values }) => (
-            <Form>
-              <DialogContent className={classes.dialogContent}>
-                <DialogContentText>
-                  Workspace members will be able to access all content in this workspace. We will
-                  send them an invite email to new members to register for Aomni.
-                </DialogContentText>
-                <EmailsField name="emails" values={values.emails} />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCancel} color="primary">
-                  Cancel
-                </Button>
-                <Button color="primary" autoFocus type="submit">
-                  Add
-                </Button>
-              </DialogActions>
-            </Form>
-          )}
-        </Formik>
+        <DialogContent className={classes.dialogContent}>
+          <DialogContentText>
+            Workspace members will be able to access all content in this workspace. We will send
+            them an invite email to new members to register for Aomni.
+          </DialogContentText>
+          <MembersField users={members} onChange={handleMembersChange} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel} color="primary">
+            Cancel
+          </Button>
+          <Button color="primary" autoFocus onClick={handleSubmit}>
+            {isSubmitting ? <CircularProgress /> : 'Save'}
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   );

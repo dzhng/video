@@ -1,12 +1,12 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { includes, trim } from 'lodash';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { includes, trim, capitalize, words, without } from 'lodash';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Paper, InputBase, IconButton } from '@material-ui/core';
 import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import { Add as AddIcon, HighlightOff as RemoveIcon } from '@material-ui/icons';
 import { createStyles, makeStyles, styled, Theme } from '@material-ui/core/styles';
-import { Field, FieldArray } from 'formik';
+import { LocalModel, User } from '~/firebase/schema-types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
     },
-    fieldItem: {
+    memberItem: {
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
       backgroundColor: theme.palette.background.default,
@@ -36,32 +36,24 @@ const EmailError = styled('div')(({ theme }) => ({
   color: theme.palette.warning.main,
 }));
 
-const EmailFieldItem = ({
+const MemberItem = ({
+  title,
   value,
-  name,
-  index,
   remove,
 }: {
-  value: string;
-  name: string;
-  index: number;
-  remove(idx: number): void;
+  title: string;
+  value: any;
+  remove(value: any): void;
 }) => {
   const classes = useStyles();
 
   return (
-    <Paper elevation={0} className={clsx(classes.fieldItem, classes.itemPaper)}>
-      <Field
-        className={classes.input}
-        component={InputBase}
-        name={`${name}.${index}`}
-        value={value}
-        data-testid="email-item"
-      />
+    <Paper elevation={0} className={clsx(classes.memberItem, classes.itemPaper)}>
+      <InputBase className={classes.input} value={title} data-testid="email-item" />
       <IconButton
         data-testid="remove-button"
         className={classes.iconButton}
-        onClick={() => remove(index)}
+        onClick={() => remove(value)}
       >
         <RemoveIcon />
       </IconButton>
@@ -184,17 +176,57 @@ const EmailTextField = ({
   );
 };
 
-export default function EmailsField({ name, values }: { name: string; values: string[] }) {
+export default function MembersField({
+  users,
+  onChange,
+}: {
+  users: LocalModel<User>[];
+  onChange(addedEmails: string[], removedUsers: LocalModel<User>[]): void;
+}) {
+  const [removedUsers, setRemovedUsers] = useState<LocalModel<User>[]>([]);
+  const [addedEmails, setAddedEmails] = useState<string[]>([]);
+  const [currentUsers, setCurrentUsers] = useState<LocalModel<User>[]>(users);
+
+  // auto call onChange whenever anything changes
+  useEffect(() => {
+    onChange(addedEmails, removedUsers);
+  }, [onChange, addedEmails, removedUsers]);
+
+  const removeUser = useCallback(
+    (userId: string) => {
+      const user = currentUsers.find((u) => u.id === userId);
+      if (user) {
+        setRemovedUsers((state) => [...state, user]);
+        setCurrentUsers((state) => without(state, user));
+      }
+    },
+    [currentUsers],
+  );
+
+  const removeAddedEmail = useCallback((email: string) => {
+    setAddedEmails((state) => without(state, email));
+  }, []);
+
+  const addUser = useCallback((email: string) => {
+    setAddedEmails((state) => [...state, email]);
+  }, []);
+
+  const emails: string[] = currentUsers.map((user) => user.email ?? '').concat(addedEmails);
+
   return (
-    <FieldArray name={name}>
-      {({ remove, push }) => (
-        <>
-          {values.map((email, index) => (
-            <EmailFieldItem key={index} name={name} value={email} index={index} remove={remove} />
-          ))}
-          <Field component={EmailTextField} name="email" pushEmail={push} values={values} />
-        </>
-      )}
-    </FieldArray>
+    <>
+      {currentUsers.map((user) => (
+        <MemberItem
+          key={user.id}
+          title={`${capitalize(words(user.displayName)[0])} (${user.email})`}
+          value={user.id}
+          remove={removeUser}
+        />
+      ))}
+      {addedEmails.map((email) => (
+        <MemberItem key={email} title={email} value={email} remove={removeAddedEmail} />
+      ))}
+      <EmailTextField pushEmail={addUser} values={emails} />
+    </>
   );
 }

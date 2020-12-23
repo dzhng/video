@@ -96,7 +96,7 @@ export const createDefaultUserRecords = functions
     batch.set(workspaceRef, workspaceData);
 
     const userData: User = {
-      displayName: user.displayName ?? 'Aomni Customer',
+      displayName: user.displayName ?? user.email ?? 'Aomni Customer',
       email: user.email,
       photoURL: user.photoURL,
       defaultWorkspaceId: workspaceRef.id,

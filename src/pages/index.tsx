@@ -4,7 +4,7 @@ import firebase, { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import Home from '~/containers/Home/Home';
 import { useAppState } from '~/state';
-import { Collections, LocalModel, Template, Member, User } from '~/firebase/schema-types';
+import { Collections, LocalModel, Template, Member, User, Invite } from '~/firebase/schema-types';
 
 const snapshotToCall = (
   snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>,
@@ -128,17 +128,56 @@ export default withPrivateRoute(function IndexPage() {
     setCurrentWorkspaceId(newCurrentWorkspace?.id ?? null);
   }, [currentWorkspaceId, setCurrentWorkspaceId, workspaces]);
 
-  const addMember = useCallback((email: string) => {
-    if (!user) {
-      return;
-    }
-  }, []);
+  const addMembers = useCallback(
+    async (emails: string[]) => {
+      if (!currentWorkspaceId) {
+        return;
+      }
 
-  const removeMember = useCallback((id: string) => {
-    if (!user) {
-      return;
-    }
-  }, []);
+      // creating an invite model will trigger cloud functions to do the rest
+      const batch = db.batch();
+      emails.forEach((email) => {
+        const ref = db
+          .collection(Collections.WORKSPACES)
+          .doc(currentWorkspaceId)
+          .collection(Collections.INVITES)
+          .doc();
+
+        const inviteData: Invite = {
+          email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        };
+        batch.set(ref, inviteData);
+      });
+
+      await batch.commit();
+    },
+    [currentWorkspaceId],
+  );
+
+  const removeMembers = useCallback(
+    async (ids: string[]) => {
+      if (!currentWorkspaceId) {
+        return;
+      }
+
+      const batch = db.batch();
+      ids.forEach((id) => {
+        const ref = db
+          .collection(Collections.WORKSPACES)
+          .doc(currentWorkspaceId)
+          .collection(Collections.MEMBERS)
+          .doc(id);
+
+        batch.update(ref, {
+          role: 'deleted',
+        });
+      });
+
+      await batch.commit();
+    },
+    [currentWorkspaceId],
+  );
 
   const currentWorkspace = workspaces?.find((model) => model.id === currentWorkspaceId);
 
@@ -152,8 +191,8 @@ export default withPrivateRoute(function IndexPage() {
       isLoadingTemplates={isLoadingTemplates}
       leaveWorkspace={leaveWorkspace}
       deleteWorkspace={deleteWorkspace}
-      addMember={addMember}
-      removeMember={removeMember}
+      addMembers={addMembers}
+      removeMembers={removeMembers}
     />
   );
 });

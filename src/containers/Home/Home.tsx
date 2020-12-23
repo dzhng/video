@@ -21,8 +21,8 @@ interface PropTypes {
   isAdmin: boolean;
   leaveWorkspace(): void;
   deleteWorkspace(): void;
-  addMember(email: string): void;
-  removeMember(id: string): void;
+  addMembers(emails: string[]): Promise<void>;
+  removeMembers(ids: string[]): Promise<void>;
 }
 
 const avatarSize = 30;
@@ -82,8 +82,8 @@ export default function Home({
   isAdmin,
   leaveWorkspace,
   deleteWorkspace,
-  addMember,
-  removeMember,
+  addMembers,
+  removeMembers,
 }: PropTypes) {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -137,8 +137,8 @@ export default function Home({
                   {isAdmin && (
                     <AddMemberMenuItem
                       onClick={handleMenuClick}
-                      addMember={addMember}
-                      removeMember={removeMember}
+                      addMembers={addMembers}
+                      removeMembers={removeMembers}
                       members={members}
                     />
                   )}

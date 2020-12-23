@@ -220,6 +220,19 @@ service cloud.firestore {
             (currentMember().role in ['owner'])
           );
       }
+
+      // track new membership invites into workspaces
+      match /invites/{inviteId} {
+        allow read: if
+          request.auth != null;
+
+        allow create: if
+          request.auth != null &&
+          assertKeys(['email', 'isProcessed', 'createdAt']) &&
+          requiredStringKey('email', 1, 50) &&
+          optionalBoolKey('isProcessed') &&
+          requiredCreatedAtKey();
+      }
     } // match workspace 
 
   } // match database
