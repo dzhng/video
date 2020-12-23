@@ -18,8 +18,11 @@ export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.Fi
 export type LocalModel<T> = T & { id: string };
 
 export declare interface User {
+  displayName: string;
+  email?: string | null;
+  photoURL?: string | null;
+  bio?: string | null;
   defaultWorkspaceId?: string;
-  bio?: string;
 }
 
 export declare interface Workspace {

@@ -4,12 +4,15 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Skeleton } from '@material-ui/lab';
 import Link from 'next/link';
 
-import { LocalModel, Template } from '~/firebase/schema-types';
+import { LocalModel, Template, Workspace, User } from '~/firebase/schema-types';
 import TemplateCard from './TemplateCard';
 
 interface PropTypes {
+  workspace?: LocalModel<Workspace>;
+  members: User[];
+  isLoadingMembers: boolean;
   templates: LocalModel<Template>[];
-  isLoading: boolean;
+  isLoadingTemplates: boolean;
 }
 
 const useStyles = makeStyles((theme) =>
@@ -28,7 +31,13 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function Home({ templates, isLoading }: PropTypes) {
+export default function Home({
+  workspace,
+  members,
+  isLoadingMembers,
+  templates,
+  isLoadingTemplates,
+}: PropTypes) {
   const classes = useStyles();
 
   const loadingSkeletons = [0, 1, 2].map((key) => (
@@ -41,7 +50,7 @@ export default function Home({ templates, isLoading }: PropTypes) {
     <>
       <Grid container className={classes.grid} spacing={3}>
         <Grid item xs={9}>
-          <Typography variant="h4">Templates</Typography>
+          <Typography variant="h4">{workspace?.name}</Typography>
         </Grid>
 
         <Grid item xs={3} className={classes.createButtonItem}>
@@ -52,7 +61,7 @@ export default function Home({ templates, isLoading }: PropTypes) {
           </Link>
         </Grid>
 
-        {isLoading
+        {isLoadingTemplates
           ? loadingSkeletons
           : templates.map((template) => (
               <Grid item xs={3} key={template.id}>

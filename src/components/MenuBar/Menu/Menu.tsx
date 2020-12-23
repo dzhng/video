@@ -7,8 +7,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
 import { useAppState } from '~/state';
+import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import AboutDialog from '../AboutDialog/AboutDialog';
-import UserAvatar from './UserAvatar/UserAvatar';
 
 export default function Menu() {
   const router = useRouter();

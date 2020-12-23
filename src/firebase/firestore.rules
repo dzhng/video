@@ -89,9 +89,12 @@ service cloud.firestore {
       allow update: if 
         request.auth != null && 
         request.auth.uid == userId &&
-        assertKeys(['defaultWorkspaceId', 'bio']) &&
-        optionalStringKey('defaultWorkspaceId', 30) &&
-        optionalStringKey('bio', 280);
+        assertKeys(['displayName', 'email', 'photoURL', 'bio', 'defaultWorkspaceId']) &&
+        requiredStringKey('displayName', 1, 50) &&
+        optionalStringKey('email', 50) &&
+        optionalStringKey('photoURL', 280) &&
+        optionalStringKey('bio', 280) &&
+        optionalStringKey('defaultWorkspaceId', 30);
     }
 
     match /templates/{templateId} {

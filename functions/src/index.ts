@@ -23,6 +23,10 @@ interface Presentation {
 }
 
 export declare interface User {
+  displayName: string;
+  email?: string | null;
+  photoURL?: string | null;
+  bio?: string | null;
   defaultWorkspaceId?: string;
 }
 
@@ -92,6 +96,9 @@ export const createDefaultUserRecords = functions
     batch.set(workspaceRef, workspaceData);
 
     const userData: User = {
+      displayName: user.displayName ?? 'Aomni Customer',
+      email: user.email,
+      photoURL: user.photoURL,
       defaultWorkspaceId: workspaceRef.id,
     };
     // share same uid as auth user record

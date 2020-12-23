@@ -49,7 +49,7 @@ describe('firebase cloud firestore database rules', () => {
 
     // Create an owner user
     await admin.collection('users').doc('OwnerUser').set({
-      workspaceId: 'workspace',
+      displayName: 'owner',
     });
 
     const member = admin
@@ -65,9 +65,11 @@ describe('firebase cloud firestore database rules', () => {
 
     // create a few sample user accounts first so it can be updated later
     await admin.collection('users').doc('charlie').set({
+      displayName: 'charlie',
       bio: 'hello',
     });
     await admin.collection('users').doc('alice').set({
+      displayName: 'alice',
       bio: 'hello',
     });
   });
@@ -238,6 +240,7 @@ describe('firebase cloud firestore database rules', () => {
       const db = getAuthedFirestore({ uid: 'alice' });
       await firebase.assertFails(
         db.collection('users').doc('bob').set({
+          displayName: 'alice',
           bio: 'hello world',
         }),
       );
