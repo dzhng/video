@@ -18,6 +18,9 @@ export default createMuiTheme({
   palette: {
     type: 'light',
   },
+  shape: {
+    borderRadius: 6,
+  },
   typography: {
     // for main page title
     h1: {

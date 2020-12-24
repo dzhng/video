@@ -5,7 +5,7 @@ import firebase, { db } from '~/utils/firebase';
 import { Template } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
-import EditContainer from '~/containers/EditTemplate/EditTemplate';
+import CreateContainer from '~/containers/CreateTemplate/CreateTemplate';
 
 export default withPrivateRoute(function CreateCallPage() {
   const router = useRouter();
@@ -35,5 +35,5 @@ export default withPrivateRoute(function CreateCallPage() {
     [router, user, markIsWriting],
   );
 
-  return <EditContainer save={create} />;
+  return <CreateContainer save={create} />;
 });
