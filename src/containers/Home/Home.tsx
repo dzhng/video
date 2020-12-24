@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Typography, Grid, Menu, IconButton, Tooltip } from '@material-ui/core';
+import { Typography, Grid, Menu, MenuItem, IconButton, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) =>
       height: avatarSize,
       marginRight: theme.spacing(1),
       backgroundColor: theme.palette.grey[300],
+      boxShadow: theme.shadows[3],
     },
     divider: {
       marginTop: theme.spacing(3),
@@ -63,6 +64,7 @@ const useStyles = makeStyles((theme) =>
         width: avatarSize,
         height: avatarSize,
         backgroundColor: theme.palette.grey[200],
+        boxShadow: theme.shadows[3],
       },
     },
     deleteButtonMenu: {
@@ -135,6 +137,8 @@ export default function Home({
                 onClose={() => setSettingsMenuOpen((state) => !state)}
                 anchorEl={anchorRef.current}
               >
+                <MenuItem disabled>Settings</MenuItem>
+
                 {isAdmin && (
                   <AddMemberMenuItem
                     onClick={handleMenuClick}
