@@ -1,7 +1,6 @@
 import React from 'react';
 import { Typography, Card } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { LocalModel, Template } from '~/firebase/schema-types';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -12,18 +11,12 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function TemplateCard({
-  template,
-  height,
-}: {
-  template: LocalModel<Template>;
-  height: number;
-}) {
+export default function CreateCard({ height }: { height: number }) {
   const classes = useStyles();
 
   return (
     <Card className={classes.card} style={{ height }}>
-      <Typography variant="h3">{template.name}</Typography>
+      <Typography variant="h3">Create Template</Typography>
     </Card>
   );
 }

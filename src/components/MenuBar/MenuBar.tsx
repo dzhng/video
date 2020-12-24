@@ -68,15 +68,12 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: 'auto',
     },
     title: {
-      margin: '1.1em 0.6em',
       minWidth: '200px',
-      fontWeight: 600,
       cursor: 'pointer',
     },
     displayName: {
       textAlign: 'right',
       minWidth: '200px',
-      fontWeight: 600,
     },
     main: {
       flexGrow: 1,
@@ -136,10 +133,12 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
           >
             {workspaces.map((workspace) => (
               <MenuItem key={workspace.id} value={workspace.id}>
-                {workspace.name}
+                <Typography variant="h4">{workspace.name}</Typography>
               </MenuItem>
             ))}
-            <MenuItem value={NewWorkspaceValue}>New Workspace</MenuItem>
+            <MenuItem value={NewWorkspaceValue}>
+              <Typography variant="h4">New Workspace</Typography>
+            </MenuItem>
           </Select>
         </FormControl>
       ) : (
@@ -152,7 +151,9 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
             <ListItemIcon>
               <VideoCallIcon />
             </ListItemIcon>
-            <ListItemText primary="Templates" />
+            <ListItemText>
+              <Typography variant="h3">Templates</Typography>
+            </ListItemText>
           </ListItem>
         </Link>
 
@@ -161,7 +162,9 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
             <ListItemIcon>
               <PresentIcon />
             </ListItemIcon>
-            <ListItemText primary="Collaterals" />
+            <ListItemText>
+              <Typography variant="h3">Collatorals</Typography>
+            </ListItemText>
           </ListItem>
         </Link>
       </List>
@@ -204,13 +207,13 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Link href="/">
-            <Typography className={classes.title} variant="body1">
+            <Typography className={classes.title} variant="h2">
               Aomni
             </Typography>
           </Link>
           <div className={classes.rightButtonContainer}>
             <PendingWrite />
-            <Typography className={classes.displayName} variant="body1">
+            <Typography className={classes.displayName} variant="h4">
               {user?.displayName}
             </Typography>
             <Menu />

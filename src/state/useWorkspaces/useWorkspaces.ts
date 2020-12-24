@@ -126,7 +126,12 @@ export default function useWorkspaces() {
     [user],
   );
 
-  const currentWorkspaceId = userRecord?.defaultWorkspaceId;
+  // when exporting current workspace, make sure to always export one that is still in workspaces array
+  const currentWorkspaceId = workspaces.find(
+    (workspace) => workspace.id === userRecord?.defaultWorkspaceId,
+  )
+    ? userRecord?.defaultWorkspaceId
+    : workspaces[0];
 
   return {
     userRecord,

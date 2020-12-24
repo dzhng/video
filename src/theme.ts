@@ -18,8 +18,46 @@ export default createMuiTheme({
   palette: {
     type: 'light',
   },
-  sidebarWidth: 260,
-  sidebarMobileHeight: 90,
+  typography: {
+    // for main page title
+    h1: {
+      fontSize: '1.4rem',
+      fontWeight: 300,
+    },
+    // main navigation title
+    h2: {
+      fontSize: '1.1rem',
+      fontWeight: 400,
+    },
+    // navigation item text (large)
+    h3: {
+      fontSize: '1.0rem',
+      fontWeight: 400,
+    },
+    // navigation item text (small)
+    h4: {
+      fontSize: '0.95rem',
+      fontWeight: 400,
+    },
+    // section labels
+    h5: {
+      fontSize: '0.9rem',
+      fontWeight: 400,
+    },
+    // main body / selection text
+    body1: {
+      fontSize: '0.9rem',
+      fontWeight: 400,
+    },
+    // descriptions
+    body2: {
+      fontSize: '0.8rem',
+      fontWeight: 400,
+    },
+    button: {
+      fontSize: '0.8rem',
+    },
+  },
   overrides: {
     MuiTooltip: {
       arrow: {
@@ -30,4 +68,8 @@ export default createMuiTheme({
       },
     },
   },
+
+  // custom
+  sidebarWidth: 260,
+  sidebarMobileHeight: 90,
 });

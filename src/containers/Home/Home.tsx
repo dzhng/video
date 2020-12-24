@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Typography, Grid, Button, Menu, IconButton, Tooltip } from '@material-ui/core';
+import { Typography, Grid, Menu, IconButton, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { LocalModel, Template, Workspace, User } from '~/firebase/schema-types';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import TemplateCard from './TemplateCard';
+import CreateCard from './CreateCard';
 import AddMemberMenuItem from './AddMemberMenuItem';
 import LeaveMenuItem from './LeaveMenuItem';
 import DeleteMenuItem from './DeleteMenuItem';
@@ -26,6 +27,7 @@ interface PropTypes {
 }
 
 const avatarSize = 30;
+const cardHeight = 200;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -38,7 +40,7 @@ const useStyles = makeStyles((theme) =>
     },
     title: {
       display: 'inline',
-      verticalAlign: 'top',
+      lineHeight: `${avatarSize}px`,
     },
     avatar: {
       width: avatarSize,
@@ -50,12 +52,8 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(3),
     },
-    createButtonItem: {
-      textAlign: 'right',
-    },
     membersList: {
       display: 'flex',
-      marginTop: 5,
       marginLeft: theme.spacing(2),
     },
     settingsContainer: {
@@ -95,20 +93,20 @@ export default function Home({
 
   const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
     <Grid item xs={3} key={key}>
-      <Skeleton variant="rect" height={200} />
+      <Skeleton variant="rect" height={cardHeight} />
     </Grid>
   ));
 
   const loadingMemberSkeletons = (
-    <Skeleton variant="circle" height={avatarSize} width={avatarSize} />
+    <Skeleton variant="circle" height={avatarSize} width={avatarSize} className={classes.avatar} />
   );
 
   return (
     <>
       <Grid container className={classes.grid} spacing={3}>
-        <Grid item xs={9} className={classes.titleBar}>
-          <Typography variant="h4" className={classes.title}>
-            {workspace ? workspace.name : <Skeleton width={150} height={38} />}
+        <Grid item xs={12} className={classes.titleBar}>
+          <Typography variant="h1" className={classes.title}>
+            {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}
           </Typography>
           <span className={classes.membersList}>
             {!workspace || isLoadingMembers
@@ -121,13 +119,16 @@ export default function Home({
 
             <div className={classes.settingsContainer} ref={anchorRef}>
               <Tooltip title="Settings" placement="bottom">
-                <IconButton
-                  color="inherit"
-                  disabled={!workspace}
-                  onClick={() => setSettingsMenuOpen((state) => !state)}
-                >
-                  <MoreIcon />
-                </IconButton>
+                {/* wrap in span so tooltip still works even with the button disabled */}
+                <span>
+                  <IconButton
+                    color="inherit"
+                    disabled={!workspace}
+                    onClick={() => setSettingsMenuOpen((state) => !state)}
+                  >
+                    <MoreIcon />
+                  </IconButton>
+                </span>
               </Tooltip>
               <Menu
                 open={settingsMenuOpen}
@@ -157,11 +158,12 @@ export default function Home({
           </span>
         </Grid>
 
-        <Grid item xs={3} className={classes.createButtonItem}>
+        <Grid item xs={3}>
           <Link href="/template/create">
-            <Button color="primary" variant="contained" size="large">
-              Create Template
-            </Button>
+            {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
+            <div>
+              <CreateCard height={cardHeight} />
+            </div>
           </Link>
         </Grid>
 
@@ -172,7 +174,7 @@ export default function Home({
                 <Link href={`/template/${template.id}`}>
                   {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
                   <div>
-                    <TemplateCard template={template} />
+                    <TemplateCard template={template} height={cardHeight} />
                   </div>
                 </Link>
               </Grid>
