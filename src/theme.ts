@@ -22,14 +22,14 @@ export default createMuiTheme({
     // for main page title
     h1: {
       fontSize: '1.4rem',
-      fontWeight: 300,
+      fontWeight: 400,
     },
     // main navigation title
     h2: {
       fontSize: '1.1rem',
       fontWeight: 400,
     },
-    // navigation item text (large)
+    // navigation item text
     h3: {
       fontSize: '1.0rem',
       fontWeight: 400,
@@ -43,6 +43,11 @@ export default createMuiTheme({
     h5: {
       fontSize: '0.9rem',
       fontWeight: 400,
+    },
+    // section labels (small)
+    h6: {
+      fontSize: '0.9rem',
+      fontWeight: 300,
     },
     // main body / selection text
     body1: {
