@@ -1,7 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { VideoCall as VideoCallIcon, PresentToAll as PresentIcon } from '@material-ui/icons';
+import {
+  VideoCallOutlined as VideoCallIcon,
+  RecentActorsOutlined as PresentIcon,
+} from '@material-ui/icons';
 import {
   Typography,
   List,
@@ -50,6 +53,12 @@ const useStyles = makeStyles((theme: Theme) =>
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
       width: theme.sidebarWidth,
+    },
+    list: {
+      '& .MuiListItemIcon-root': {
+        minWidth: 40,
+        color: theme.palette.secondary.main,
+      },
     },
   }),
 );
@@ -115,7 +124,7 @@ export default function Nav({
         <Skeleton variant="rect" height={45} className={classes.select} />
       )}
 
-      <List>
+      <List className={classes.list}>
         <Link href="/">
           <ListItem button>
             <ListItemIcon>

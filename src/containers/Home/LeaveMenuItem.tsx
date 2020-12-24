@@ -62,7 +62,7 @@ export default forwardRef(function LeaveMenuItem(
           <Button onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleConfirm} color="primary" autoFocus>
+          <Button onClick={handleConfirm} color="primary" variant="contained" autoFocus>
             Leave
           </Button>
         </DialogActions>

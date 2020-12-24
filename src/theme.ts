@@ -17,11 +17,11 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 }
 
 export default createMuiTheme({
-  palette: {
-    type: 'light',
-  },
   shape: {
     borderRadius: 6,
+  },
+  palette: {
+    type: 'light',
   },
   typography: {
     // for main page title
