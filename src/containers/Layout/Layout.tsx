@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import MenuBar from '~/components/MenuBar/MenuBar';
 
-export default function Layout({ children }: { children: React.ReactChild }) {
+export default function Layout({ children }: { children: JSX.Element }): JSX.Element {
   const router = useRouter();
 
   // make special exception for room page to not wrap anything

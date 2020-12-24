@@ -5,7 +5,7 @@ import 'nprogress/nprogress.css';
 // configure global loading spinner
 // ONLY show if page has been loading for more than a set period
 // no need to load if already cached on client
-const showLoadingThresholdMS = 200;
+const showLoadingThresholdMS = 100;
 let isLoading = false;
 
 NProgress.configure({
@@ -31,3 +31,12 @@ Router.events.on('routeChangeError', () => {
   isLoading = false;
   NProgress.done();
 });
+
+// for triggering manually
+export function setLoading(show: boolean) {
+  if (show) {
+    NProgress.start();
+  } else {
+    NProgress.done();
+  }
+}

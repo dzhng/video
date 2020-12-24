@@ -2,7 +2,8 @@ import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Typography, AppBar, Toolbar } from '@material-ui/core';
+import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core';
+import { ArrowBackIosOutlined as BackIcon } from '@material-ui/icons';
 
 import { useAppState } from '~/state';
 import PendingWrite from '~/components/PendingWrite/PendingWrite';
@@ -59,15 +60,21 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
 
   return (
     <div className={classes.root}>
+      <PendingWrite />
       <AppBar position="fixed" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Link href="/">
-            <Typography className={classes.title} variant="h2">
-              Aomni
-            </Typography>
+            {showNav ? (
+              <Typography className={classes.title} variant="h2">
+                AOMNI
+              </Typography>
+            ) : (
+              <IconButton>
+                <BackIcon />
+              </IconButton>
+            )}
           </Link>
           <div className={classes.rightButtonContainer}>
-            <PendingWrite />
             <Typography className={classes.displayName} variant="h4">
               {user?.displayName}
             </Typography>

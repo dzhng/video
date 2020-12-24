@@ -2,37 +2,39 @@ import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
 
 import firebase, { db } from '~/utils/firebase';
-import { Template } from '~/firebase/schema-types';
+import { Collections, Template } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import CreateContainer from '~/containers/CreateTemplate/CreateTemplate';
 
 export default withPrivateRoute(function CreateCallPage() {
   const router = useRouter();
-  const { user, markIsWriting } = useAppState();
+  const { user, markIsWriting, currentWorkspaceId } = useAppState();
 
   const create = useCallback(
-    (template: Template) => {
-      if (!user) {
+    async (values) => {
+      if (!user || !currentWorkspaceId) {
         // do nothing if user doesn't exist
         console.warn('Trying to create template without signed in user');
         return;
       }
 
       // before adding, replace timestamp with server helper
-      const data = {
-        ...template,
-        creatorId: [user.uid],
+      const data: Template = {
+        name: values.name,
+        workspaceId: currentWorkspaceId,
+        creatorId: user.uid,
+        activities: [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
 
-      console.log('Creating:', data);
-
-      db.collection('templates').add(data);
       markIsWriting();
-      router.push('/');
+      const record = await db.collection(Collections.TEMPLATES).add(data);
+
+      // navigate to new tempalate page to set it up
+      router.push(`/template/${record.id}`);
     },
-    [router, user, markIsWriting],
+    [router, user, currentWorkspaceId, markIsWriting],
   );
 
   return <CreateContainer save={create} />;

@@ -1,10 +1,14 @@
-import React from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { useEffect } from 'react';
+import { setLoading } from '~/utils/progress-indicator';
 
 import { useAppState } from '~/state';
 
 export default function PendingWrite() {
   const { isWriting } = useAppState();
 
-  return isWriting ? <CircularProgress color="primary" variant="indeterminate" /> : null;
+  useEffect(() => {
+    setLoading(isWriting);
+  }, [isWriting]);
+
+  return null;
 }
