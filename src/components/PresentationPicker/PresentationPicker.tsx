@@ -62,7 +62,7 @@ export default function PresentationPicker({ name }: { name: string }) {
 
   return (
     <Paper className={classes.paper}>
-      <Typography variant="h6">Presentation</Typography>
+      <Typography variant="h5">Presentation</Typography>
       {isQueryingOrCreating && <Skeleton variant="rect" height={150} animation="wave" />}
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
       {presentationData && (

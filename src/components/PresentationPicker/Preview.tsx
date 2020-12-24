@@ -40,16 +40,16 @@ export default function Preview({ presentation, removePresentation }: PropTypes)
       </Grid>
 
       <Grid item xs={4}>
-        <Typography variant="body2" className={classes.name}>
+        <Typography variant="h5" className={classes.name}>
           <b>{presentation.name}</b>
         </Typography>
         <br />
         <Divider />
         <br />
-        <Typography variant="body2" className={classes.info}>
+        <Typography variant="body1" className={classes.info}>
           <b>Total slides:</b> {presentation.slides.length}
         </Typography>
-        <Typography variant="body2" className={classes.info}>
+        <Typography variant="body1" className={classes.info}>
           <b>Uploaded:</b>{' '}
           {formatPastDate((presentation.createdAt as firebase.firestore.Timestamp).toDate())}
         </Typography>

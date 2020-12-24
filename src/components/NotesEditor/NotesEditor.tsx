@@ -24,8 +24,8 @@ export default function NotesEditor({ name }: { name: string }) {
 
   return (
     <Paper className={classes.paper}>
-      <Typography variant="h6">Notes</Typography>
-      <Typography variant="body2">
+      <Typography variant="h5">Notes</Typography>
+      <Typography variant="body1">
         Notes will be shared with all attendees in the call, during the call itself, after the call,
         as well as in the calendar invite. All attendees can edit the notes.
       </Typography>

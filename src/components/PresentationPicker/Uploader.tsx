@@ -142,7 +142,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
           ) : (
             <>
               <Add />
-              <Typography variant="body2">Upload</Typography>
+              <Typography variant="h5">Upload</Typography>
             </>
           )}
         </Paper>
