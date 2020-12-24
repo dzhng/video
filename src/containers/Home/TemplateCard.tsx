@@ -1,5 +1,5 @@
-import React from 'react';
-import { Typography, Card, Button, Tooltip, Divider } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import { Typography, Card, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { VideoCall } from '@material-ui/icons';
 import { LocalModel, Template } from '~/firebase/schema-types';
@@ -64,6 +64,14 @@ export default function TemplateCard({
 }) {
   const classes = useStyles();
 
+  const startCall = useCallback(
+    (e: React.MouseEvent<unknown>) => {
+      e.preventDefault();
+      console.log('Starting call with', template.id);
+    },
+    [template],
+  );
+
   return (
     <Card className={classes.card} style={{ height }}>
       <div className={classes.title}>
@@ -79,7 +87,7 @@ export default function TemplateCard({
           </Typography>
         </div>
         <Tooltip title="Start call" placement="left">
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" onClick={startCall}>
             <VideoCall />
           </Button>
         </Tooltip>
