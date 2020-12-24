@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
+      boxShadow: 'none',
+      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+      backgroundColor: 'white',
     },
     // necessary for content to be below app bar
     toolbar: theme.mixins.toolbar,
@@ -204,7 +207,7 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position="fixed" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Link href="/">
             <Typography className={classes.title} variant="h2">

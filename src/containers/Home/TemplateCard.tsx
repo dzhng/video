@@ -8,6 +8,13 @@ const useStyles = makeStyles((theme) =>
     card: {
       cursor: 'pointer',
       padding: theme.spacing(2),
+      boxShadow: theme.shadows[5],
+      transition: '0.3s',
+
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark,
+        boxShadow: theme.shadows[12],
+      },
     },
   }),
 );

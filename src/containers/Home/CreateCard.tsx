@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) =>
         marginBottom: theme.spacing(1),
         fontWeight: 600,
         color: 'white',
+        letterSpacing: 0,
       },
     },
     icon: {
@@ -39,7 +40,7 @@ export default function CreateCard({ height }: { height: number }) {
 
   return (
     <Card className={classes.card} style={{ height }}>
-      <Typography variant="h2">New Template</Typography>
+      <Typography variant="h2">New template</Typography>
       <AddIcon className={classes.icon} />
     </Card>
   );
