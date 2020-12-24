@@ -40,7 +40,7 @@ export default withPrivateRoute(function IndexPage() {
     }
 
     previousUnsubscribeTemplates.current = db
-      .collection(Collections.CALLS)
+      .collection(Collections.TEMPLATES)
       .where('workspaceId', '==', currentWorkspaceId)
       .onSnapshot(function (querySnapshot) {
         const docs = snapshotToCall(querySnapshot);
