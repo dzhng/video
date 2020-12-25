@@ -54,10 +54,12 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MenuBar({
   showNav,
   previousPage,
+  toolbarContent,
   children,
 }: {
   showNav?: boolean;
   previousPage?: string;
+  toolbarContent?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const classes = useStyles();
@@ -84,7 +86,7 @@ export default function MenuBar({
               </IconButton>
             )}
           </Link>
-          <div className={classes.toolbarContent}></div>
+          <div className={classes.toolbarContent}>{toolbarContent}</div>
           <div className={classes.rightButtonContainer}>
             <Typography className={classes.displayName} variant="h4">
               {user?.displayName}
