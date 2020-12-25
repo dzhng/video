@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     toolbarContent: {
       flexGrow: 1,
+      display: 'flex',
       marginLeft: theme.spacing(2),
       marginRight: theme.spacing(2),
       ...theme.mixins.toolbar,
