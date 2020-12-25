@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 import { LocalModel, Template, Workspace, User } from '~/firebase/schema-types';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
+import MenuBar from '~/components/MenuBar/MenuBar';
 import TemplateCard from './TemplateCard';
 import CreateCard from './CreateCard';
 import AddMemberMenuItem from './AddMemberMenuItem';
@@ -104,7 +105,7 @@ export default function Home({
   );
 
   return (
-    <>
+    <MenuBar showNav>
       <Grid container className={classes.grid} spacing={3}>
         <Grid item xs={12} className={classes.titleBar}>
           <Typography variant="h1" className={classes.title}>
@@ -184,6 +185,6 @@ export default function Home({
               </Grid>
             ))}
       </Grid>
-    </>
+    </MenuBar>
   );
 }

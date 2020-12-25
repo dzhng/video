@@ -6,7 +6,6 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import '~/utils/progress-indicator';
 import theme from '~/theme';
 import Head from '~/components/App/Head';
-import Layout from '~/containers/Layout/Layout';
 import AppStateProvider from '~/state';
 
 let previousPage = '';
@@ -23,9 +22,7 @@ class MyApp extends App {
         <AppStateProvider>
           <Head />
           <CssBaseline />
-          <Layout>
-            <Component previousPage={previousPage} {...pageProps} />
-          </Layout>
+          <Component previousPage={previousPage} {...pageProps} />
         </AppStateProvider>
       </MuiThemeProvider>
     );

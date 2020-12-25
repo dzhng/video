@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) =>
       '& h2': {
         fontWeight: 500,
         fontSize: '1.4rem',
-        lineHeight: 2,
+        textAlign: 'center',
         color: theme.palette.grey[900],
       },
     },

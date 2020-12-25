@@ -15,16 +15,8 @@ interface PropTypes {
   save(template: Template): void;
 }
 
-const FormSchema = Yup.object().shape({
-  name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
-  guestEmails: Yup.array().of(Yup.string().email('You must provide a valid email')),
-  startTime: Yup.object().nullable(),
-  durationMin: Yup.number().nullable(),
-  note: Yup.object().shape({
-    text: Yup.string().max(50000),
-  }),
-  presentationId: Yup.string().nullable(),
-});
+const NameSchema = Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required();
+const NoteSchema = Yup.string().max(50000);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

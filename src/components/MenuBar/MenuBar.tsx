@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core';
 import { ArrowBackIosOutlined as BackIcon } from '@material-ui/icons';
@@ -22,7 +21,16 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'white',
     },
     // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
+    toolbarSpacer: theme.mixins.toolbar,
+    toolbar: {
+      display: 'flex',
+    },
+    toolbarContent: {
+      flexGrow: 1,
+      marginLeft: theme.spacing(2),
+      marginRight: theme.spacing(2),
+      ...theme.mixins.toolbar,
+    },
     rightButtonContainer: {
       display: 'flex',
       alignItems: 'center',
@@ -30,10 +38,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     displayName: {
       textAlign: 'right',
-      minWidth: '200px',
     },
     title: {
-      minWidth: '200px',
       cursor: 'pointer',
     },
     main: {
@@ -45,9 +51,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function MenuBar({ children }: { children: React.ReactChild }) {
+export default function MenuBar({
+  showNav,
+  previousPage,
+  children,
+}: {
+  showNav?: boolean;
+  previousPage?: string;
+  children: React.ReactNode;
+}) {
   const classes = useStyles();
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useAppState();
 
@@ -55,15 +68,12 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
     setMobileOpen(!mobileOpen);
   }, [mobileOpen]);
 
-  // only show nav on root page
-  const showNav = router.pathname === '/';
-
   return (
     <div className={classes.root}>
       <PendingWrite />
       <AppBar position="fixed" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <Link href="/">
+          <Link href={previousPage ?? '/'}>
             {showNav ? (
               <Typography className={classes.title} variant="h2">
                 AOMNI
@@ -74,6 +84,7 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
               </IconButton>
             )}
           </Link>
+          <div className={classes.toolbarContent}></div>
           <div className={classes.rightButtonContainer}>
             <Typography className={classes.displayName} variant="h4">
               {user?.displayName}
@@ -86,7 +97,7 @@ export default function MenuBar({ children }: { children: React.ReactChild }) {
       {showNav && <Nav mobileOpen={mobileOpen} toggleOpen={handleDrawerToggle} />}
 
       <main className={classes.main}>
-        <div className={classes.toolbar} />
+        <div className={classes.toolbarSpacer} />
         <div className={classes.content}>{children}</div>
       </main>
     </div>
