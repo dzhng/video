@@ -31,7 +31,7 @@ const TemplateForm = ({ template }: { template: Template }) => (
 
 export default function EditContainer({ template }: PropTypes) {
   return (
-    <MenuBar toolbarContent={<ToolbarContent template={template} />}>
+    <MenuBar padding={false} toolbarContent={<ToolbarContent template={template} />}>
       {template && <TemplateForm template={template} />}
     </MenuBar>
   );

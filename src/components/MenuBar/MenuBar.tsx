@@ -46,19 +46,21 @@ const useStyles = makeStyles((theme: Theme) =>
     main: {
       flexGrow: 1,
     },
-    content: {
+    contentPadding: {
       padding: theme.spacing(3),
     },
   }),
 );
 
 export default function MenuBar({
-  showNav,
+  showNav = false,
+  padding = true,
   previousPage,
   toolbarContent,
   children,
 }: {
   showNav?: boolean;
+  padding?: boolean;
   previousPage?: string;
   toolbarContent?: React.ReactNode;
   children: React.ReactNode;
@@ -101,7 +103,7 @@ export default function MenuBar({
 
       <main className={classes.main}>
         <div className={classes.toolbarSpacer} />
-        <div className={classes.content}>{children}</div>
+        <div className={padding ? classes.contentPadding : undefined}>{children}</div>
       </main>
     </div>
   );
