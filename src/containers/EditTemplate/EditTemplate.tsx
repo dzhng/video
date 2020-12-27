@@ -16,18 +16,26 @@ interface PropTypes {
 
 const NoteSchema = Yup.string().max(50000);
 
-const useStyles = makeStyles((theme: Theme) => createStyles({}));
-
-const TemplateForm = ({ template }: { template: Template }) => (
-  <Grid container spacing={3}>
-    <Grid item xs={4}>
-      <ActivitiesBar />
-    </Grid>
-    <Grid item xs={8}>
-      <SessionMenu />
-    </Grid>
-  </Grid>
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    column: {},
+  }),
 );
+
+const TemplateForm = ({ template }: { template: Template }) => {
+  const classes = useStyles();
+
+  return (
+    <Grid container>
+      <Grid item xs={4} className={classes.column}>
+        <ActivitiesBar />
+      </Grid>
+      <Grid item xs={8} className={classes.column}>
+        <SessionMenu />
+      </Grid>
+    </Grid>
+  );
+};
 
 export default function EditContainer({ template }: PropTypes) {
   return (

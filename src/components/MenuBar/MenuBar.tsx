@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core';
@@ -45,6 +46,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     main: {
       flexGrow: 1,
+    },
+    content: {
+      display: 'flex',
     },
     contentPadding: {
       padding: theme.spacing(3),
@@ -103,7 +107,9 @@ export default function MenuBar({
 
       <main className={classes.main}>
         <div className={classes.toolbarSpacer} />
-        <div className={padding ? classes.contentPadding : undefined}>{children}</div>
+        <div className={clsx(classes.content, { [classes.contentPadding]: padding })}>
+          {children}
+        </div>
       </main>
     </div>
   );
