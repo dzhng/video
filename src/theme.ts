@@ -1,20 +1,31 @@
 import { createMuiTheme } from '@material-ui/core';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import type {} from '@material-ui/lab/themeAugmentation';
 
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
+    modalWidth: number;
     sidebarWidth: number;
     sidebarMobileHeight: number;
-    modalWidth: number;
-    callButton: object;
+    dividerBorder: string;
+
+    customMixins: {
+      activitiesBar: CSSProperties;
+      callButton: CSSProperties;
+    };
   }
 
   // allow configuration using `createMuiTheme`
   interface ThemeOptions {
+    modalWidth?: number;
     sidebarWidth?: number;
     sidebarMobileHeight?: number;
-    modalWidth?: number;
-    callButton?: object;
+    dividerBorder?: string;
+
+    customMixins: {
+      activitiesBar?: CSSProperties;
+      callButton?: CSSProperties;
+    };
   }
 }
 
@@ -82,10 +93,19 @@ export default createMuiTheme({
   },
 
   // custom
+  modalWidth: 600,
   sidebarWidth: 260,
   sidebarMobileHeight: 90,
-  modalWidth: 600,
-  callButton: {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
+
+  customMixins: {
+    activitiesBar: {
+      maxWidth: 500,
+      minWidth: 325,
+      width: '33%',
+    },
+    callButton: {
+      background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    },
   },
 });

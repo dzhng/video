@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) =>
       height: 70,
 
       '& button': {
-        ...theme.callButton,
+        ...theme.customMixins.callButton,
         marginRight: theme.spacing(2),
         height: 38,
       },

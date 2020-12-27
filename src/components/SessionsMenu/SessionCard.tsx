@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     callButton: {
-      ...theme.callButton,
+      ...theme.customMixins.callButton,
       marginLeft: theme.spacing(1),
     },
     actionButton: {

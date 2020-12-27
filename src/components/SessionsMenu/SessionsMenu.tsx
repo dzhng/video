@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: 60,
     },
     callButton: {
-      ...theme.callButton,
+      ...theme.customMixins.callButton,
       height: 60,
 
       '& svg': {

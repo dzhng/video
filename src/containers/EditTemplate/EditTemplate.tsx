@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
-import { Typography, Grid, Button, CircularProgress, Paper, InputBase } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import firebase from '~/utils/firebase';
@@ -18,7 +18,16 @@ const NoteSchema = Yup.string().max(50000);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    column: {},
+    container: {
+      display: 'flex',
+      width: '100%',
+    },
+    drawerPaper: theme.customMixins.activitiesBar,
+    toolbarSpacer: theme.mixins.toolbar,
+    activitiesSpacer: theme.customMixins.activitiesBar,
+    content: {
+      flexGrow: 1,
+    },
   }),
 );
 
@@ -26,14 +35,22 @@ const TemplateForm = ({ template }: { template: Template }) => {
   const classes = useStyles();
 
   return (
-    <Grid container>
-      <Grid item xs={4} className={classes.column}>
+    <div className={classes.container}>
+      <Drawer
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        variant="permanent"
+        open
+      >
+        <div className={classes.toolbarSpacer} />
         <ActivitiesBar />
-      </Grid>
-      <Grid item xs={8} className={classes.column}>
+      </Drawer>
+      <div className={classes.activitiesSpacer} />
+      <div className={classes.content}>
         <SessionMenu />
-      </Grid>
-    </Grid>
+      </div>
+    </div>
   );
 };
 

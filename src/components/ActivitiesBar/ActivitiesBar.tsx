@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       padding: theme.spacing(1),
-      borderRight: '1px solid rgba(0, 0, 0, 0.12)',
 
       '& .MuiTimelineOppositeContent-root': {
         flex: 0,
