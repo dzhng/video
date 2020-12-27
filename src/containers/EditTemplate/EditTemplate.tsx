@@ -6,21 +6,19 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import firebase from '~/utils/firebase';
 import { LocalModel, Template } from '~/firebase/schema-types';
 import MenuBar from '~/components/MenuBar/MenuBar';
-import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
-import NotesEditor from '~/components/NotesEditor/NotesEditor';
+import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
 import ToolbarContent from './ToolbarContent';
 
 interface PropTypes {
   template?: LocalModel<Template>;
 }
 
-const NameSchema = Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required();
 const NoteSchema = Yup.string().max(50000);
 
 const useStyles = makeStyles((theme: Theme) => createStyles({}));
 
 const LeftColumn = () => {
-  return <Grid container spacing={3}></Grid>;
+  return <ActivitiesBar />;
 };
 
 const RightColumn = () => {
