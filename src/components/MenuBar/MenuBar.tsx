@@ -48,7 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
     },
     content: {
-      display: 'flex',
+      // placeholder class for anything in the future
+      // but try not to set any properties here if possible
+      // since it applies to EVERY page
     },
     contentPadding: {
       padding: theme.spacing(3),

@@ -18,8 +18,6 @@ import ActivityCard from './ActivityCard';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      padding: theme.spacing(1),
-
       '& .MuiTimelineOppositeContent-root': {
         flex: 0,
         paddingLeft: 0,

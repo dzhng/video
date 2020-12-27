@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import * as Yup from 'yup';
 import { Drawer } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-import firebase from '~/utils/firebase';
 import { LocalModel, Template } from '~/firebase/schema-types';
 import MenuBar from '~/components/MenuBar/MenuBar';
 import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';

@@ -4,6 +4,7 @@ import { Typography, Button, CircularProgress, Paper } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
+import MenuBar from '~/components/MenuBar/MenuBar';
 
 interface PropTypes {
   save(values: { name: string }): Promise<void>;
@@ -79,12 +80,14 @@ export default function EditContainer({ save }: PropTypes) {
   );
 
   return (
-    <Formik initialValues={initialValues} validationSchema={FormSchema} onSubmit={submit}>
-      {({ isSubmitting }) => (
-        <Form>
-          <TemplateForm isSubmitting={isSubmitting} />
-        </Form>
-      )}
-    </Formik>
+    <MenuBar>
+      <Formik initialValues={initialValues} validationSchema={FormSchema} onSubmit={submit}>
+        {({ isSubmitting }) => (
+          <Form>
+            <TemplateForm isSubmitting={isSubmitting} />
+          </Form>
+        )}
+      </Formik>
+    </MenuBar>
   );
 }
