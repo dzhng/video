@@ -53,7 +53,6 @@ export default function ActivitiesBar() {
 
   return (
     <div className={classes.container}>
-      <Typography variant="h3">Activities</Typography>
       <Timeline>
         <ActivityTimelineItem />
         <ActivityTimelineItem />

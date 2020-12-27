@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
     card: {
       display: 'flex',
       flexDirection: 'row',
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
       cursor: 'pointer',
 
       '&:hover': {
@@ -52,9 +52,15 @@ const useStyles = makeStyles((theme: Theme) =>
     activityType: {
       color: theme.palette.grey[600],
       paddingLeft: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
     },
     content: {
       flexGrow: 1,
+      paddingTop: 2,
+    },
+    buttonContainer: {
+      marginTop: 'auto',
+      marginBottom: 'auto',
     },
   }),
 );
@@ -102,7 +108,7 @@ export default function ActivitiesCard() {
           presentation
         </Typography>
       </div>
-      <div ref={anchorRef}>
+      <div ref={anchorRef} className={classes.buttonContainer}>
         <IconButton onClick={handleSettingsClick}>
           <Tooltip title="Settings" placement="bottom">
             <MoreIcon />
