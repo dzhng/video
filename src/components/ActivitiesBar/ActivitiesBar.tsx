@@ -6,6 +6,7 @@ import {
   TimelineContent,
   TimelineDot,
   TimelineItem,
+  TimelineOppositeContent,
   TimelineSeparator,
 } from '@material-ui/lab';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -19,6 +20,12 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       padding: theme.spacing(1),
       borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+
+      '& .MuiTimelineOppositeContent-root': {
+        flex: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+      },
     },
     addButton: {
       '& svg': {
@@ -28,6 +35,19 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+const ActivityTimelineItem = () => (
+  <TimelineItem>
+    <TimelineOppositeContent></TimelineOppositeContent>
+    <TimelineSeparator>
+      <TimelineDot />
+      <TimelineConnector />
+    </TimelineSeparator>
+    <TimelineContent>
+      <ActivityCard />
+    </TimelineContent>
+  </TimelineItem>
+);
+
 export default function ActivitiesBar() {
   const classes = useStyles();
 
@@ -35,23 +55,23 @@ export default function ActivitiesBar() {
     <div className={classes.container}>
       <Typography variant="h3">Activities</Typography>
       <Timeline>
+        <ActivityTimelineItem />
+        <ActivityTimelineItem />
+        <ActivityTimelineItem />
+        <ActivityTimelineItem />
+
         <TimelineItem>
+          <TimelineOppositeContent></TimelineOppositeContent>
           <TimelineSeparator>
             <TimelineDot />
-            <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Eat</TimelineContent>
+          <TimelineContent>
+            <Button variant="contained" color="secondary" fullWidth className={classes.addButton}>
+              <AddIcon /> New Activity
+            </Button>
+          </TimelineContent>
         </TimelineItem>
       </Timeline>
-
-      <ActivityCard />
-      <ActivityCard />
-      <ActivityCard />
-      <ActivityCard />
-
-      <Button variant="contained" color="secondary" fullWidth className={classes.addButton}>
-        <AddIcon /> New Activity
-      </Button>
     </div>
   );
 }
