@@ -7,6 +7,7 @@ import firebase from '~/utils/firebase';
 import { LocalModel, Template } from '~/firebase/schema-types';
 import MenuBar from '~/components/MenuBar/MenuBar';
 import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
+import SessionMenu from '~/components/SessionsMenu/SessionsMenu';
 import ToolbarContent from './ToolbarContent';
 
 interface PropTypes {
@@ -17,23 +18,13 @@ const NoteSchema = Yup.string().max(50000);
 
 const useStyles = makeStyles((theme: Theme) => createStyles({}));
 
-const LeftColumn = () => {
-  return <ActivitiesBar />;
-};
-
-const RightColumn = () => {
-  const classes = useStyles();
-
-  return <Grid container></Grid>;
-};
-
 const TemplateForm = ({ template }: { template: Template }) => (
   <Grid container spacing={3}>
     <Grid item xs={4}>
-      <LeftColumn />
+      <ActivitiesBar />
     </Grid>
     <Grid item xs={8}>
-      <RightColumn />
+      <SessionMenu />
     </Grid>
   </Grid>
 );

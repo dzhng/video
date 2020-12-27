@@ -6,6 +6,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     sidebarWidth: number;
     sidebarMobileHeight: number;
     modalWidth: number;
+    callButton: object;
   }
 
   // allow configuration using `createMuiTheme`
@@ -13,6 +14,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     sidebarWidth?: number;
     sidebarMobileHeight?: number;
     modalWidth?: number;
+    callButton?: object;
   }
 }
 
@@ -83,4 +85,7 @@ export default createMuiTheme({
   sidebarWidth: 260,
   sidebarMobileHeight: 90,
   modalWidth: 600,
+  callButton: {
+    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  },
 });
