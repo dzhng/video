@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
       '&.Mui-focused': {
         border: '1px solid ' + theme.palette.grey[500],
+        backgroundColor: 'white',
       },
     },
     activityType: {
