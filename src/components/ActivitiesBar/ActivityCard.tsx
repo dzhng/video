@@ -110,7 +110,7 @@ export default function ActivitiesCard() {
       </div>
       <div ref={anchorRef} className={classes.buttonContainer}>
         <IconButton onClick={handleSettingsClick}>
-          <Tooltip title="Settings" placement="bottom">
+          <Tooltip title="Activity settings" placement="bottom">
             <MoreIcon />
           </Tooltip>
         </IconButton>
