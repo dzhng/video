@@ -7,6 +7,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     modalWidth: number;
     sidebarWidth: number;
     sidebarMobileHeight: number;
+    transitionTime: string;
     dividerBorder: string;
 
     customMixins: {
@@ -20,6 +21,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     modalWidth?: number;
     sidebarWidth?: number;
     sidebarMobileHeight?: number;
+    transitionTime?: string;
     dividerBorder?: string;
 
     customMixins: {
@@ -96,6 +98,7 @@ export default createMuiTheme({
   modalWidth: 600,
   sidebarWidth: 260,
   sidebarMobileHeight: 90,
+  transitionTime: '0.3s',
   dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
 
   customMixins: {

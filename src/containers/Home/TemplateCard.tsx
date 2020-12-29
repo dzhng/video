@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       cursor: 'pointer',
-      transition: '0.3s',
+      transition: theme.transitionTime,
       boxShadow: theme.shadows[2],
 
       '&:hover': {

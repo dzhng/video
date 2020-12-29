@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       backgroundColor: theme.palette.primary.main,
       boxShadow: theme.shadows[5],
-      transition: '0.3s',
+      transition: theme.transitionTime,
 
       '&:hover': {
         backgroundColor: theme.palette.primary.dark,

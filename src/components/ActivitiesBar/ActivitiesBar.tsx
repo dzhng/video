@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { Typography, Grid, Button, CircularProgress, Paper, InputBase } from '@material-ui/core';
+import clsx from 'clsx';
+import { Button } from '@material-ui/core';
 import {
   Timeline,
   TimelineConnector,
@@ -30,6 +31,12 @@ const useStyles = makeStyles((theme: Theme) =>
         marginRight: 2,
       },
     },
+    isDragging: {
+      '& .MuiTimelineSeparator-root': {
+        opacity: 0,
+        transition: theme.transitionTime,
+      },
+    },
   }),
 );
 
@@ -58,8 +65,12 @@ export default function ActivitiesBar() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="list">
-        {({ innerRef, droppableProps, placeholder }) => (
-          <div className={classes.container} ref={innerRef} {...droppableProps}>
+        {({ innerRef, droppableProps, placeholder }, { isDraggingOver }) => (
+          <div
+            className={clsx({ [classes.isDragging]: isDraggingOver }, classes.container)}
+            ref={innerRef}
+            {...droppableProps}
+          >
             <Timeline>
               <ActivityTimelineItem id="1" index={1} />
               <ActivityTimelineItem id="2" index={2} />

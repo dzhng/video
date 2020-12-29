@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
       // have transparent border here so its correctly sized
       border: '1px solid transparent',
       borderRadius: theme.shape.borderRadius,
-      transition: '0.3s',
+      transition: theme.transitionTime,
 
       '&:hover': {
         border: '1px solid ' + theme.palette.grey[300],

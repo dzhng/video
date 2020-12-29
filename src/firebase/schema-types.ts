@@ -48,8 +48,9 @@ export declare interface Invite {
 }
 
 export declare interface Activity {
-  type: 'video' | 'presentaion';
-  presentaionId?: string | null;
+  id: string;
+  type: 'video' | 'presentaion' | 'poll' | 'qa' | 'screenshare' | 'breakout';
+  metadata?: object | null;
 }
 
 export declare interface Template {
