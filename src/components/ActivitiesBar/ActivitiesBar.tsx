@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
 import { Typography, Button, CardContent } from '@material-ui/core';
@@ -90,11 +90,17 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
 
 export default function ActivitiesBar({ template }: { template: LocalModel<Template> }) {
   const classes = useStyles();
+  // have a local copy of activities here so that we can debounce saving to firebase (we can edit and see results without depending on template.activities to update in real-time)
   const [activities, setActivities] = useState<Activity[]>(template.activities);
   const [newActivityOpen, setNewActivityOpen] = useState(false);
   const [editActivityIndex, setEditActivityIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const { markIsWriting } = useAppState();
+
+  // whenever the template changes, update activities array
+  useEffect(() => {
+    setActivities(template.activities);
+  }, [template]);
 
   const debouncedSaveActivities = useMemo(() => {
     const saveActivities = (newActivities: Activity[]) => {
@@ -141,6 +147,16 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
     (activity: Activity, index: number) => {
       const newList = [...activities];
       newList[index] = activity;
+      setActivities(newList);
+      debouncedSaveActivities && debouncedSaveActivities(newList);
+    },
+    [activities, debouncedSaveActivities],
+  );
+
+  const handleDeleteActivity = useCallback(
+    (index: number) => {
+      const newList = [...activities];
+      newList.splice(index, 1);
       setActivities(newList);
       debouncedSaveActivities && debouncedSaveActivities(newList);
     },
@@ -224,6 +240,7 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
           save={(values) => handleSaveActivity(values, editActivityIndex)}
           open={true}
           onClose={() => setEditActivityIndex(null)}
+          onDelete={() => handleDeleteActivity(editActivityIndex)}
         />
       )}
     </DragDropContext>

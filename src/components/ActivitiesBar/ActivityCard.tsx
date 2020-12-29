@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import * as Yup from 'yup';
 import { Card, Typography, InputBase, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -78,10 +78,18 @@ export default function ActivitiesCard({
   const [name, setName] = useState(activity.name);
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  const handleSettingsClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    onEdit();
-  };
+  // everytime activity changes, update name with latest
+  useEffect(() => {
+    setName(activity.name);
+  }, [activity]);
+
+  const handleSettingsClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      onEdit();
+    },
+    [onEdit],
+  );
 
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +117,7 @@ export default function ActivitiesCard({
         </Typography>
       </div>
       <div ref={anchorRef} className={classes.buttonContainer}>
-        <Tooltip title="Edit activity" placement="bottom">
+        <Tooltip title="Edit activity" placement="left">
           <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
             <EditIcon />
           </Button>

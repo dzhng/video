@@ -6,8 +6,11 @@ import {
   DialogContent,
   DialogActions,
   InputBase,
+  Tooltip,
   Button,
+  IconButton,
 } from '@material-ui/core';
+import { DeleteOutlined as DeleteIcon } from '@material-ui/icons';
 import { Formik, Form } from 'formik';
 
 import { Activity } from '~/firebase/schema-types';
@@ -91,6 +94,9 @@ const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.error.main,
       },
     },
+    actions: {
+      justifyContent: 'space-between',
+    },
   }),
 );
 
@@ -99,11 +105,13 @@ export default function EditActivityModal({
   save,
   open,
   onClose,
+  onDelete,
 }: {
   activity: Activity;
   save(values: Activity): void;
   open: boolean;
   onClose(): void;
+  onDelete(): void;
 }) {
   const classes = useStyles();
   const [name, setName] = useState(activity.name);
@@ -145,7 +153,13 @@ export default function EditActivityModal({
         <Form className={classes.form}>
           <DialogContent dividers>{selectedActivity?.form}</DialogContent>
 
-          <DialogActions>
+          <DialogActions className={classes.actions}>
+            <Tooltip title="Delete activity" placement="right">
+              <IconButton size="small" onClick={onDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+
             <Button type="submit" color="primary" variant="contained">
               Save
             </Button>
