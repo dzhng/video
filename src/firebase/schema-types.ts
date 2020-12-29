@@ -49,19 +49,13 @@ export declare interface Invite {
   createdAt: FbDate;
 }
 
-export type ActivityTypes = 'video' | 'presentation' | 'poll' | 'qa' | 'screenshare' | 'breakout';
+export type ActivityTypes = keyof ActivityMetadata;
 
 export declare interface Activity {
   id: string;
   type: ActivityTypes;
   // metadata changes depending on activity types
-  metadata:
-    | PresentationActivityMetadata
-    | VideoActivityMetadata
-    | PollActivityMetadata
-    | QuestionsActivityMetadata
-    | ScreenShareActivityMetadata
-    | BreakoutActivityMetadata;
+  metadata: ActivityMetadata[ActivityTypes];
 }
 
 export declare interface Template {
@@ -93,6 +87,15 @@ export declare interface Presentation {
 }
 
 // Activity type metadata schemas
+type ActivityMetadata = {
+  presentation: PresentationActivityMetadata;
+  video: VideoActivityMetadata;
+  poll: PollActivityMetadata;
+  questions: QuestionsActivityMetadata;
+  screenshare: ScreenShareActivityMetadata;
+  breakout: BreakoutActivityMetadata;
+};
+
 export declare interface PresentationActivityMetadata {
   presentationId: string;
 }

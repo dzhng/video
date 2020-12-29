@@ -138,7 +138,7 @@ export default function NewActivityModal({
       form: <CreatePollActivity />,
     },
     {
-      type: 'qa',
+      type: 'questions',
       name: 'Questions',
       icon: <QuestionsIcon className={classes.icon} />,
       form: <CreateQuestionsActivity />,
