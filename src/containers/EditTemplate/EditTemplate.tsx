@@ -1,5 +1,4 @@
 import React from 'react';
-import * as Yup from 'yup';
 import { Drawer } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
@@ -12,8 +11,6 @@ import ToolbarContent from './ToolbarContent';
 interface PropTypes {
   template?: LocalModel<Template>;
 }
-
-const NoteSchema = Yup.string().max(50000);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -1,16 +1,8 @@
 import React, { useState, useRef, useCallback } from 'react';
 import * as Yup from 'yup';
-import {
-  Card,
-  Typography,
-  InputBase,
-  IconButton,
-  Menu,
-  MenuItem,
-  Tooltip,
-} from '@material-ui/core';
+import { Card, Typography, InputBase, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { MoreVert as MoreIcon } from '@material-ui/icons';
+import { EditOutlined as EditIcon } from '@material-ui/icons';
 import { Activity } from '~/firebase/schema-types';
 
 const NameSchema = Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required();
@@ -21,7 +13,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'row',
       padding: theme.spacing(1),
-      cursor: 'pointer',
 
       '&:hover': {
         backgroundColor: theme.palette.grey[100],
@@ -60,6 +51,16 @@ const useStyles = makeStyles((theme: Theme) =>
     buttonContainer: {
       marginTop: 'auto',
       marginBottom: 'auto',
+
+      '& button': {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width: 36,
+        height: 36,
+        minWidth: 0,
+        padding: 0,
+        borderRadius: 18,
+      },
     },
   }),
 );
@@ -67,18 +68,19 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ActivitiesCard({
   activity,
   save,
+  onEdit,
 }: {
   activity: Activity;
   save(activity: Activity): void;
+  onEdit(): void;
 }) {
   const classes = useStyles();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [name, setName] = useState(activity.name);
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const handleSettingsClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setMenuOpen((state) => !state);
+    onEdit();
   };
 
   const handleNameChange = useCallback(
@@ -107,18 +109,11 @@ export default function ActivitiesCard({
         </Typography>
       </div>
       <div ref={anchorRef} className={classes.buttonContainer}>
-        <IconButton onClick={handleSettingsClick}>
-          <Tooltip title="Activity settings" placement="bottom">
-            <MoreIcon />
-          </Tooltip>
-        </IconButton>
-        <Menu
-          open={menuOpen}
-          onClose={() => setMenuOpen((state) => !state)}
-          anchorEl={anchorRef.current}
-        >
-          <MenuItem>Delete Activity</MenuItem>
-        </Menu>
+        <Tooltip title="Edit activity" placement="bottom">
+          <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
+            <EditIcon />
+          </Button>
+        </Tooltip>
       </div>
     </Card>
   );

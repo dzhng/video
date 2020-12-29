@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
-import { Typography, Button, Card, CardContent } from '@material-ui/core';
+import { Typography, Button, CardContent } from '@material-ui/core';
 import {
   Timeline,
   TimelineConnector,
@@ -18,6 +18,7 @@ import { Collections, LocalModel, Template, Activity } from '~/firebase/schema-t
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import NewActivityModal from './NewActivityModal';
+import EditActivityModal from './EditActivityModal';
 import ActivityCard from './ActivityCard';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -56,10 +57,12 @@ const ActivityTimelineItem = ({
   activity,
   index,
   save,
+  onEdit,
 }: {
   activity: Activity;
   index: number;
   save(activity: Activity): void;
+  onEdit(): void;
 }) => (
   <Draggable draggableId={activity.id} index={index}>
     {({ innerRef, draggableProps, dragHandleProps }) => (
@@ -70,7 +73,7 @@ const ActivityTimelineItem = ({
           <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent>
-          <ActivityCard activity={activity} save={save} />
+          <ActivityCard activity={activity} save={save} onEdit={onEdit} />
         </TimelineContent>
       </TimelineItem>
     )}
@@ -89,6 +92,7 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
   const classes = useStyles();
   const [activities, setActivities] = useState<Activity[]>(template.activities);
   const [newActivityOpen, setNewActivityOpen] = useState(false);
+  const [editActivityIndex, setEditActivityIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const { markIsWriting } = useAppState();
 
@@ -174,6 +178,7 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
                   activity={activity}
                   index={index}
                   save={(values) => handleSaveActivity(values, index)}
+                  onEdit={() => setEditActivityIndex(index)}
                 />
               ))}
 
@@ -212,6 +217,15 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
         open={newActivityOpen}
         onClose={() => setNewActivityOpen((state) => !state)}
       />
+
+      {editActivityIndex !== null && (
+        <EditActivityModal
+          activity={template.activities[editActivityIndex]}
+          save={(values) => handleSaveActivity(values, editActivityIndex)}
+          open={true}
+          onClose={() => setEditActivityIndex(null)}
+        />
+      )}
     </DragDropContext>
   );
 }

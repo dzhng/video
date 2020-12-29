@@ -17,7 +17,7 @@ export default function PresentationPicker({ name }: { name: string }) {
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
   const { value } = field;
-  const { setValue, setTouched } = helpers;
+  const { setValue } = helpers;
 
   useEffect(() => {
     const query = async (presentationId: string) => {
@@ -40,15 +40,13 @@ export default function PresentationPicker({ name }: { name: string }) {
     (id: string | null, data: Presentation | null) => {
       if (id) {
         setPresentationData(data);
-        setTouched(true, true);
         setValue(id);
       } else {
         setPresentationData(null);
-        setTouched(false, false);
-        setValue(undefined);
+        setValue(undefined, false);
       }
     },
-    [setValue, setTouched],
+    [setValue],
   );
 
   return (
@@ -58,7 +56,7 @@ export default function PresentationPicker({ name }: { name: string }) {
       {presentationData && (
         <Preview presentation={presentationData} removePresentation={() => setData(null, null)} />
       )}
-      {meta.touched && meta.error ? <div className="error">{meta.error}</div> : null}
+      {meta.error ? <div className="error">{meta.error}</div> : null}
     </>
   );
 }

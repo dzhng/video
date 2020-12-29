@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { v1 as uuid } from 'uuid';
 import {
@@ -17,6 +17,7 @@ import { Formik, Form } from 'formik';
 
 import { BackIcon } from '~/components/Icons';
 import { Activity, ActivityTypes } from '~/firebase/schema-types';
+import { ActivityTypeForms } from './Types/Types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -141,21 +142,18 @@ export default function NewActivityModal({
     [onNewActivity, onClose, name, selectedType],
   );
 
-  const handleSelectType = useCallback(
-    (type) => {
-      const selectedActivity = activityTypes.find((activity) => activity.type === type);
+  const handleSelectType = useCallback((type) => {
+    const selectedActivity = ActivityTypeForms.find((activity) => activity.type === type);
 
-      if (selectedActivity) {
-        setSelectedType(type);
+    if (selectedActivity) {
+      setSelectedType(type);
 
-        // set default name
-        setName(selectedActivity.name + ' Activity');
-      }
-    },
-    [activityTypes],
-  );
+      // set default name
+      setName(selectedActivity.name + ' Activity');
+    }
+  }, []);
 
-  const selectedActivity = activityTypes.find((activity) => activity.type === selectedType);
+  const selectedActivity = ActivityTypeForms.find((activity) => activity.type === selectedType);
 
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
@@ -205,7 +203,7 @@ export default function NewActivityModal({
       ) : (
         <DialogContent dividers>
           <Grid container spacing={3}>
-            {activityTypes.map((activity) => (
+            {ActivityTypeForms.map((activity) => (
               <Grid item xs={12} md={6} lg={4} key={activity.type}>
                 <Card className={classes.card} onClick={() => handleSelectType(activity.type)}>
                   <Typography variant="h3">{activity.name}</Typography>

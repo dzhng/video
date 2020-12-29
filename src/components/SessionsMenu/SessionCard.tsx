@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography, Button, IconButton, Tooltip } from '@material-ui/core';
+import { Card, Typography, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { DeleteOutlined as DeleteIcon, RssFeed as ShareIcon } from '@material-ui/icons';
 import { VideoCallFilledIcon } from '~/components/Icons';
