@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
         boxShadow: theme.shadows[12],
       },
 
-      '& h2': {
+      '& h3': {
         marginBottom: theme.spacing(1),
         fontWeight: 600,
         color: 'white',
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     icon: {
-      fontSize: '3rem',
+      fontSize: '2.5rem',
       color: 'white',
     },
   }),
@@ -59,6 +59,11 @@ export default function NewActivityModal({
 
   const activityTypes: { type: string; name: string; icon: JSX.Element }[] = [
     { type: 'presentation', name: 'Presentation', icon: <PresentIcon className={classes.icon} /> },
+    { type: 'video', name: 'Video', icon: <PresentIcon className={classes.icon} /> },
+    { type: 'poll', name: 'Poll', icon: <PresentIcon className={classes.icon} /> },
+    { type: 'qa', name: 'Questions', icon: <PresentIcon className={classes.icon} /> },
+    { type: 'screenshare', name: 'Screenshare', icon: <PresentIcon className={classes.icon} /> },
+    { type: 'breakout', name: 'Breakout', icon: <PresentIcon className={classes.icon} /> },
   ];
 
   return (
@@ -68,11 +73,11 @@ export default function NewActivityModal({
       </DialogTitle>
 
       <DialogContent>
-        <Grid container>
+        <Grid container spacing={3}>
           {activityTypes.map((type) => (
-            <Grid item xs={3}>
+            <Grid item xs={12} md={6} lg={4}>
               <Card className={classes.card}>
-                <Typography variant="h2">{type.name}</Typography>
+                <Typography variant="h3">{type.name}</Typography>
                 {type.icon}
               </Card>
             </Grid>
