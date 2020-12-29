@@ -12,7 +12,7 @@ export enum Collections {
   INVITES = 'invites', // this is a subcollection of workspaces
 }
 
-export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
+export type FbDate = Date & firebase.firestore.Timestamp & firebase.firestore.FieldValue;
 
 // extends the type with properties that is needed for client operations (such as id)
 // becareful with this in components that deal with saving because it is very easy to get into a situation where you end up saving data that's extended for local, which would be rejected on server.

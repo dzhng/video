@@ -104,6 +104,11 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: 'white',
       },
     },
+    form: {
+      '& .error': {
+        color: theme.palette.error.main,
+      },
+    },
   }),
 );
 
@@ -129,6 +134,7 @@ export default function NewActivityModal({
 
   const handleSubmit = useCallback(
     (metadata) => {
+      console.log('SUBMIT', metadata);
       if (!selectedType) {
         return;
       }
@@ -154,6 +160,7 @@ export default function NewActivityModal({
     name: string;
     icon: JSX.Element;
     form: JSX.Element;
+    initialValue: object;
     schema: Yup.ObjectSchema;
   }[] = useMemo(
     () => [
@@ -162,8 +169,9 @@ export default function NewActivityModal({
         name: 'Presentation',
         icon: <PresentIcon className={classes.icon} />,
         form: <CreatePresentationActivity />,
+        initialValue: { presentationId: null },
         schema: Yup.object().shape({
-          presentationId: Yup.string().max(30).required(),
+          presentationId: Yup.string().nullable().max(30).required('Presentation not uploaded'),
         }),
       },
       {
@@ -171,8 +179,9 @@ export default function NewActivityModal({
         name: 'Video',
         icon: <VideoIcon className={classes.icon} />,
         form: <CreateVideoActivity />,
+        initialValue: { videoId: null },
         schema: Yup.object().shape({
-          videoId: Yup.string().max(30).required(),
+          videoId: Yup.string().nullable().max(30).required('Video not uploaded'),
         }),
       },
       {
@@ -180,6 +189,7 @@ export default function NewActivityModal({
         name: 'Poll',
         icon: <PollIcon className={classes.icon} />,
         form: <CreatePollActivity />,
+        initialValue: {},
         schema: Yup.object().shape({}),
       },
       {
@@ -187,6 +197,7 @@ export default function NewActivityModal({
         name: 'Questions',
         icon: <QuestionsIcon className={classes.icon} />,
         form: <CreateQuestionsActivity />,
+        initialValue: {},
         schema: Yup.object().shape({}),
       },
       {
@@ -194,6 +205,7 @@ export default function NewActivityModal({
         name: 'Screenshare',
         icon: <ScreenShareIcon className={classes.icon} />,
         form: <CreateScreenShareActivity />,
+        initialValue: { hostOnly: false },
         schema: Yup.object().shape({
           hostOnly: Yup.boolean().required(),
         }),
@@ -203,6 +215,7 @@ export default function NewActivityModal({
         name: 'Breakout',
         icon: <BreakoutIcon className={classes.icon} />,
         form: <CreateBreakoutActivity />,
+        initialValue: {},
         schema: Yup.object().shape({}),
       },
     ],
@@ -253,15 +266,15 @@ export default function NewActivityModal({
 
       {selectedActivity ? (
         <Formik
-          initialValues={{}}
+          initialValues={selectedActivity.initialValue}
           validationSchema={selectedActivity.schema}
           onSubmit={handleSubmit}
         >
-          <Form>
+          <Form className={classes.form}>
             <DialogContent dividers>{selectedActivity.form}</DialogContent>
 
             <DialogActions>
-              <Button type="submit" color="primary" variant="contained" autoFocus>
+              <Button type="submit" color="primary" variant="contained">
                 Create
               </Button>
             </DialogActions>

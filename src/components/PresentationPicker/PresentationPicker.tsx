@@ -8,7 +8,7 @@ import Uploader from './Uploader';
 import Preview from './Preview';
 
 export default function PresentationPicker({ name }: { name: string }) {
-  const [field, , helpers] = useField({
+  const [field, meta, helpers] = useField({
     name,
     type: 'text',
     multiple: false,
@@ -17,7 +17,7 @@ export default function PresentationPicker({ name }: { name: string }) {
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
   const { value } = field;
-  const { setValue } = helpers;
+  const { setValue, setTouched } = helpers;
 
   useEffect(() => {
     const query = async (presentationId: string) => {
@@ -40,13 +40,15 @@ export default function PresentationPicker({ name }: { name: string }) {
     (id: string | null, data: Presentation | null) => {
       if (id) {
         setPresentationData(data);
+        setTouched(true, true);
         setValue(id);
       } else {
         setPresentationData(null);
+        setTouched(false, false);
         setValue(undefined);
       }
     },
-    [setValue],
+    [setValue, setTouched],
   );
 
   return (
@@ -56,6 +58,7 @@ export default function PresentationPicker({ name }: { name: string }) {
       {presentationData && (
         <Preview presentation={presentationData} removePresentation={() => setData(null, null)} />
       )}
+      {meta.touched && meta.error ? <div className="error">{meta.error}</div> : null}
     </>
   );
 }

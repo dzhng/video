@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid, Typography, Divider, Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Presentation } from '~/firebase/schema-types';
-import firebase from '~/utils/firebase';
 import { formatPastDate } from '~/utils';
 import PresentationDisplay from '~/components/Presentation/Presentation';
 
@@ -51,7 +50,9 @@ export default function Preview({ presentation, removePresentation }: PropTypes)
         </Typography>
         <Typography variant="body1" className={classes.info}>
           <b>Uploaded:</b>{' '}
-          {formatPastDate((presentation.createdAt as firebase.firestore.Timestamp).toDate())}
+          {formatPastDate(
+            presentation.createdAt.toDate ? presentation.createdAt.toDate() : new Date(),
+          )}
         </Typography>
         <br />
         <Divider />
