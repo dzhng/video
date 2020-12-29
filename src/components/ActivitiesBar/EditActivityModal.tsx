@@ -133,6 +133,11 @@ export default function EditActivityModal({
     [activity, name, onClose, save],
   );
 
+  const handleDelete = useCallback(() => {
+    onDelete();
+    onClose();
+  }, [onDelete, onClose]);
+
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
       <DialogTitle disableTypography>
@@ -155,7 +160,7 @@ export default function EditActivityModal({
 
           <DialogActions className={classes.actions}>
             <Tooltip title="Delete activity" placement="right">
-              <IconButton size="small" onClick={onDelete}>
+              <IconButton size="small" onClick={handleDelete}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
