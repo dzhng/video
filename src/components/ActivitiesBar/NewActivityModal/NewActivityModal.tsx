@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import * as Yup from 'yup';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { v1 as uuid } from 'uuid';
 import {
@@ -12,6 +13,8 @@ import {
   IconButton,
   Button,
 } from '@material-ui/core';
+import { Formik, Form } from 'formik';
+
 import {
   BackIcon,
   PresentIcon,
@@ -93,7 +96,7 @@ export default function NewActivityModal({
     }
   }, [open]);
 
-  const handleConfirm = useCallback(
+  const handleSubmit = useCallback(
     (metadata) => {
       if (!selectedType) {
         return;
@@ -118,42 +121,55 @@ export default function NewActivityModal({
     name: string;
     icon: JSX.Element;
     form: JSX.Element;
+    schema: Yup.ObjectSchema;
   }[] = [
     {
       type: 'presentation',
       name: 'Presentation',
       icon: <PresentIcon className={classes.icon} />,
       form: <CreatePresentationActivity />,
+      schema: Yup.object().shape({
+        presentationId: Yup.string().max(30).required(),
+      }),
     },
     {
       type: 'video',
       name: 'Video',
       icon: <VideoIcon className={classes.icon} />,
       form: <CreateVideoActivity />,
+      schema: Yup.object().shape({
+        videoId: Yup.string().max(30).required(),
+      }),
     },
     {
       type: 'poll',
       name: 'Poll',
       icon: <PollIcon className={classes.icon} />,
       form: <CreatePollActivity />,
+      schema: Yup.object().shape({}),
     },
     {
       type: 'questions',
       name: 'Questions',
       icon: <QuestionsIcon className={classes.icon} />,
       form: <CreateQuestionsActivity />,
+      schema: Yup.object().shape({}),
     },
     {
       type: 'screenshare',
       name: 'Screenshare',
       icon: <ScreenShareIcon className={classes.icon} />,
       form: <CreateScreenShareActivity />,
+      schema: Yup.object().shape({
+        hostOnly: Yup.boolean().required(),
+      }),
     },
     {
       type: 'breakout',
       name: 'Breakout',
       icon: <BreakoutIcon className={classes.icon} />,
       form: <CreateBreakoutActivity />,
+      schema: Yup.object().shape({}),
     },
   ];
 
@@ -177,8 +193,26 @@ export default function NewActivityModal({
         </Typography>
       </DialogTitle>
 
-      <DialogContent dividers>
-        {selectedType === null ? (
+      {selectedActivity ? (
+        <Formik
+          initialValues={{}}
+          validationSchema={selectedActivity.schema}
+          onSubmit={handleSubmit}
+        >
+          {() => (
+            <Form>
+              <DialogContent dividers>{selectedActivity.form}</DialogContent>
+
+              <DialogActions>
+                <Button type="submit" color="primary" variant="contained" autoFocus>
+                  Create
+                </Button>
+              </DialogActions>
+            </Form>
+          )}
+        </Formik>
+      ) : (
+        <DialogContent dividers>
           <Grid container spacing={3}>
             {activityTypes.map((activity) => (
               <Grid item xs={12} md={6} lg={4}>
@@ -189,17 +223,7 @@ export default function NewActivityModal({
               </Grid>
             ))}
           </Grid>
-        ) : (
-          selectedActivity?.form
-        )}
-      </DialogContent>
-
-      {selectedType && (
-        <DialogActions>
-          <Button onClick={handleConfirm} color="primary" variant="contained" autoFocus>
-            Create
-          </Button>
-        </DialogActions>
+        </DialogContent>
       )}
     </Dialog>
   );

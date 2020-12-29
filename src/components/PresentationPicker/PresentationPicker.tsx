@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Typography, Paper } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useField } from 'formik';
 
 import { Presentation } from '~/firebase/schema-types';
@@ -9,16 +7,7 @@ import { db } from '~/utils/firebase';
 import Uploader from './Uploader';
 import Preview from './Preview';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    paper: {
-      padding: theme.spacing(3),
-    },
-  }),
-);
-
 export default function PresentationPicker({ name }: { name: string }) {
-  const classes = useStyles();
   const [field, , helpers] = useField({
     name,
     type: 'text',
@@ -61,13 +50,12 @@ export default function PresentationPicker({ name }: { name: string }) {
   );
 
   return (
-    <Paper className={classes.paper}>
-      <Typography variant="h5">Presentation</Typography>
+    <>
       {isQueryingOrCreating && <Skeleton variant="rect" height={150} animation="wave" />}
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
       {presentationData && (
         <Preview presentation={presentationData} removePresentation={() => setData(null, null)} />
       )}
-    </Paper>
+    </>
   );
 }

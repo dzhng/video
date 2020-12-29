@@ -87,7 +87,7 @@ export declare interface Presentation {
 }
 
 // Activity type metadata schemas
-type ActivityMetadata = {
+export type ActivityMetadata = {
   presentation: PresentationActivityMetadata;
   video: VideoActivityMetadata;
   poll: PollActivityMetadata;
