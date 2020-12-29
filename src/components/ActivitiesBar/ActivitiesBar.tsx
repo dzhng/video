@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
+import { debounce } from 'lodash';
 import clsx from 'clsx';
 import { Button } from '@material-ui/core';
 import {
@@ -12,11 +13,14 @@ import {
 } from '@material-ui/lab';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AddOutlined as AddIcon } from '@material-ui/icons';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { LocalModel, Template, Activity } from '~/firebase/schema-types';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { Collections, LocalModel, Template, Activity } from '~/firebase/schema-types';
+import { db } from '~/utils/firebase';
+import { useAppState } from '~/state';
 import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
 import NotesEditor from '~/components/NotesEditor/NotesEditor';
 import ActivityCard from './ActivityCard';
+import NewActivityModal from './NewActivityModal';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,10 +62,58 @@ const ActivityTimelineItem = ({ activity, index }: { activity: Activity; index: 
   </Draggable>
 );
 
+function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+}
+
 export default function ActivitiesBar({ template }: { template: LocalModel<Template> }) {
   const classes = useStyles();
+  const [activities, setActivities] = useState<Activity[]>(template.activities);
+  const [newActivityOpen, setNewActivityOpen] = useState(false);
+  const { markIsWriting } = useAppState();
 
-  const onDragEnd = useCallback(() => {}, []);
+  const debouncedSaveActivities = useMemo(() => {
+    const saveActivities = (newActivities: Activity[]) => {
+      db.collection(Collections.TEMPLATES).doc(template.id).update({ activities: newActivities });
+      markIsWriting();
+    };
+
+    return debounce(saveActivities, 200, { maxWait: 2000, trailing: true });
+  }, [template, markIsWriting]);
+
+  const onDragEnd = useCallback(
+    (result: DropResult) => {
+      if (!result.destination) {
+        return;
+      }
+
+      if (result.destination.index === result.source.index) {
+        return;
+      }
+
+      const reorderedActivities = reorder(
+        activities,
+        result.source.index,
+        result.destination.index,
+      );
+      setActivities(reorderedActivities);
+      debouncedSaveActivities && debouncedSaveActivities(reorderedActivities);
+    },
+    [activities, debouncedSaveActivities],
+  );
+
+  const handleNewActivity = useCallback(
+    (activity: Activity) => {
+      const newList = [...activities, activity];
+      setActivities(newList);
+      debouncedSaveActivities && debouncedSaveActivities(newList);
+    },
+    [activities, debouncedSaveActivities],
+  );
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -73,7 +125,7 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
             {...droppableProps}
           >
             <Timeline>
-              {template.activities.map((activity, index) => (
+              {activities.map((activity, index) => (
                 <ActivityTimelineItem key={activity.id} activity={activity} index={index} />
               ))}
               {placeholder}
@@ -86,6 +138,7 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
                     color="secondary"
                     fullWidth
                     className={classes.addButton}
+                    onClick={() => setNewActivityOpen((state) => !state)}
                   >
                     <AddIcon /> New Activity
                   </Button>
@@ -95,6 +148,12 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
           </div>
         )}
       </Droppable>
+
+      <NewActivityModal
+        onNewActivity={handleNewActivity}
+        open={newActivityOpen}
+        onClose={() => setNewActivityOpen((state) => !state)}
+      />
     </DragDropContext>
   );
 }
