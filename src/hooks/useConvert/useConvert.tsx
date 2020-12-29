@@ -6,10 +6,7 @@ export type fromType = 'pdf' | 'ppt' | 'pptx';
 export type toType = 'png' | 'jpg';
 
 const buildEndpoint = (from: fromType, to: toType, token: string) => {
-  // there is a big in convert api pdf conversion where in some PDFs it will skip slide, so getting around this by using the thumbnail API which doesn't have the problem.
-  return from === 'pdf'
-    ? `https://v2.convertapi.com/convert/${from}/to/thumbnail?StoreFile=true&ImageResolution=150&ImageOutputFormat=${to}&Token=${token}`
-    : `https://v2.convertapi.com/convert/${from}/to/${to}?StoreFile=true&ImageResolutionH=150&ImageResolutionV=150&Token=${token}`;
+  return `https://v2.convertapi.com/convert/${from}/to/${to}?StoreFile=true&ImageResolutionH=150&ImageResolutionV=150&Token=${token}`;
 };
 
 export interface ConvertResultFile {

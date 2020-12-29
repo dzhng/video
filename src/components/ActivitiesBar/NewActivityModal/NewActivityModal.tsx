@@ -227,7 +227,7 @@ export default function NewActivityModal({
 
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
-      <DialogTitle>
+      <DialogTitle disableTypography>
         {selectedType ? (
           <div className={classes.nameInputContainer}>
             <IconButton
@@ -271,7 +271,7 @@ export default function NewActivityModal({
         <DialogContent dividers>
           <Grid container spacing={3}>
             {activityTypes.map((activity) => (
-              <Grid item xs={12} md={6} lg={4}>
+              <Grid item xs={12} md={6} lg={4} key={activity.type}>
                 <Card className={classes.card} onClick={() => handleSelectType(activity.type)}>
                   <Typography variant="h3">{activity.name}</Typography>
                   {activity.icon}
