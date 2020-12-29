@@ -1,6 +1,5 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import * as Yup from 'yup';
-import { debounce } from 'lodash';
 import {
   Card,
   Typography,
@@ -12,7 +11,7 @@ import {
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
-import { useAppState } from '~/state';
+import { Activity } from '~/firebase/schema-types';
 
 const NameSchema = Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required();
 
@@ -65,26 +64,22 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ActivitiesCard() {
+export default function ActivitiesCard({
+  activity,
+  save,
+}: {
+  activity: Activity;
+  save(activity: Activity): void;
+}) {
   const classes = useStyles();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [name, setName] = useState('Activity name');
+  const [name, setName] = useState(activity.name);
   const anchorRef = useRef<HTMLDivElement>(null);
-  const { markIsWriting } = useAppState();
 
   const handleSettingsClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setMenuOpen((state) => !state);
   };
-
-  const debouncedSaveName = useMemo(() => {
-    const saveName = (newName: string) => {
-      //db.collection(Collections.TEMPLATES).doc(template.id).update({ name: newName });
-      markIsWriting();
-    };
-
-    return debounce(saveName, 200, { maxWait: 2000, trailing: true });
-  }, [markIsWriting]);
 
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,9 +90,12 @@ export default function ActivitiesCard() {
       }
 
       setName(newName);
-      debouncedSaveName && debouncedSaveName(newName);
+      save({
+        ...activity,
+        name: newName,
+      });
     },
-    [debouncedSaveName],
+    [save, activity],
   );
 
   return (
@@ -105,7 +103,7 @@ export default function ActivitiesCard() {
       <div className={classes.content}>
         <InputBase className={classes.nameInput} value={name} onChange={handleNameChange} />
         <Typography variant="body1" className={classes.activityType}>
-          presentation
+          {activity.type}
         </Typography>
       </div>
       <div ref={anchorRef} className={classes.buttonContainer}>

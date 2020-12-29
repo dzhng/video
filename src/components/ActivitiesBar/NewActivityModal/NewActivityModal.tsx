@@ -106,6 +106,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     form: {
       '& .error': {
+        marginTop: theme.spacing(1),
         color: theme.palette.error.main,
       },
     },
@@ -134,7 +135,6 @@ export default function NewActivityModal({
 
   const handleSubmit = useCallback(
     (metadata) => {
-      console.log('SUBMIT', metadata);
       if (!selectedType) {
         return;
       }
@@ -241,7 +241,7 @@ export default function NewActivityModal({
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
       <DialogTitle disableTypography>
-        {selectedType ? (
+        {selectedActivity ? (
           <div className={classes.nameInputContainer}>
             <IconButton
               className={classes.backButton}

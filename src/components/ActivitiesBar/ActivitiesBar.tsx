@@ -34,7 +34,9 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     hintCard: {
-      backgroundColor: theme.palette.grey[50],
+      // add some transparency
+      backgroundColor: theme.palette.info.light + '40',
+      borderBottom: theme.dividerBorder,
     },
     addButton: {
       '& svg': {
@@ -50,7 +52,15 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ActivityTimelineItem = ({ activity, index }: { activity: Activity; index: number }) => (
+const ActivityTimelineItem = ({
+  activity,
+  index,
+  save,
+}: {
+  activity: Activity;
+  index: number;
+  save(activity: Activity): void;
+}) => (
   <Draggable draggableId={activity.id} index={index}>
     {({ innerRef, draggableProps, dragHandleProps }) => (
       <TimelineItem ref={innerRef} {...draggableProps} {...dragHandleProps}>
@@ -60,7 +70,7 @@ const ActivityTimelineItem = ({ activity, index }: { activity: Activity; index: 
           <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent>
-          <ActivityCard />
+          <ActivityCard activity={activity} save={save} />
         </TimelineContent>
       </TimelineItem>
     )}
@@ -79,6 +89,7 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
   const classes = useStyles();
   const [activities, setActivities] = useState<Activity[]>(template.activities);
   const [newActivityOpen, setNewActivityOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const { markIsWriting } = useAppState();
 
   const debouncedSaveActivities = useMemo(() => {
@@ -92,6 +103,8 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
+      setIsDragging(false);
+
       if (!result.destination) {
         return;
       }
@@ -120,44 +133,63 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
     [activities, debouncedSaveActivities],
   );
 
+  const handleSaveActivity = useCallback(
+    (activity: Activity, index: number) => {
+      const newList = [...activities];
+      newList[index] = activity;
+      setActivities(newList);
+      debouncedSaveActivities && debouncedSaveActivities(newList);
+    },
+    [activities, debouncedSaveActivities],
+  );
+
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd} onDragStart={() => setIsDragging(true)}>
       <Droppable droppableId="list">
-        {({ innerRef, droppableProps, placeholder }, { isDraggingOver }) => (
+        {({ innerRef, droppableProps, placeholder }) => (
           <div
-            className={clsx({ [classes.isDragging]: isDraggingOver }, classes.container)}
+            className={clsx({ [classes.isDragging]: isDragging }, classes.container)}
             ref={innerRef}
             {...droppableProps}
           >
-            <Timeline>
-              {/* Timeline items has a weird idiosyncracy here where if TimelineOppositeContent is not defined, it will add a 50% pad (because the timeline wants to be centered by default. Since we want our timeline to be on the left, we define an empty OppositeContent and get rid of the 50% pad via css */}
-              <TimelineItem>
-                <TimelineOppositeContent></TimelineOppositeContent>
-                <TimelineContent>
-                  {/* Hide hint card after more than 2 activities since the user probably know what it is at that point. It also takes up a lot of space. */}
-                  {activities.length <= 2 && (
-                    <Card className={classes.hintCard}>
-                      <CardContent>
-                        <Typography variant="h2">Structure your call with activities</Typography>
-                        <Typography variant="body1">
-                          Activities are different interactions that engage the audience. Some
-                          activities are driven purely by the host, some engage everyone in the
-                          call.
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </TimelineContent>
-              </TimelineItem>
+            {/* Hide hint card after more than 2 activities since the user probably know what it is at that point. It also takes up a lot of space. */}
+            {activities.length <= 2 && (
+              <div className={classes.hintCard}>
+                <CardContent>
+                  <Typography variant="h2">
+                    <b>Structure your call with activities</b>
+                  </Typography>
+                  <Typography variant="body1">
+                    Activities are different interactions that engage the audience. Some activities
+                    are driven purely by the host, some engage everyone in the call.
+                  </Typography>
+                </CardContent>
+              </div>
+            )}
 
+            <Timeline>
               {activities.map((activity, index) => (
-                <ActivityTimelineItem key={activity.id} activity={activity} index={index} />
+                <ActivityTimelineItem
+                  key={activity.id}
+                  activity={activity}
+                  index={index}
+                  save={(values) => handleSaveActivity(values, index)}
+                />
               ))}
 
               {placeholder}
 
               <TimelineItem>
+                {/* Timeline items has a weird idiosyncracy here where if TimelineOppositeContent is not defined, it will add a 50% pad (because the timeline wants to be centered by default. Since we want our timeline to be on the left, we define an empty OppositeContent and get rid of the 50% pad via css */}
                 <TimelineOppositeContent></TimelineOppositeContent>
+
+                {/* It only makes sense to show timeline on create button when there's at least one activity, or else it'll just be a weird icon there by itself */}
+                {activities.length > 0 && (
+                  <TimelineSeparator>
+                    <TimelineDot />
+                  </TimelineSeparator>
+                )}
+
                 <TimelineContent>
                   <Button
                     variant="contained"
