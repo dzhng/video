@@ -152,6 +152,8 @@ export default function NewActivityModal({
     },
   ];
 
+  const selectedActivity = activityTypes.find((activity) => activity.type === selectedType);
+
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
       <DialogTitle>
@@ -166,7 +168,7 @@ export default function NewActivityModal({
             </IconButton>
           )}
 
-          <b>New Activity</b>
+          <b>New {selectedActivity ? selectedActivity.name + ' ' : ''}Activity</b>
         </Typography>
       </DialogTitle>
 
@@ -183,7 +185,7 @@ export default function NewActivityModal({
             ))}
           </Grid>
         ) : (
-          activityTypes.find((activity) => activity.type === selectedType)?.form
+          selectedActivity?.form
         )}
       </DialogContent>
 
