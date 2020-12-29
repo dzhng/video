@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const TemplateForm = ({ template }: { template: Template }) => {
+const TemplateForm = ({ template }: { template: LocalModel<Template> }) => {
   const classes = useStyles();
 
   return (
@@ -43,7 +43,7 @@ const TemplateForm = ({ template }: { template: Template }) => {
         open
       >
         <div className={classes.toolbarSpacer} />
-        <ActivitiesBar />
+        <ActivitiesBar template={template} />
       </Drawer>
       <div className={classes.activitiesSpacer} />
       <div className={classes.content}>

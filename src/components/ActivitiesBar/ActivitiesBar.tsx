@@ -13,6 +13,7 @@ import {
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AddOutlined as AddIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { LocalModel, Template, Activity } from '~/firebase/schema-types';
 import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
 import NotesEditor from '~/components/NotesEditor/NotesEditor';
 import ActivityCard from './ActivityCard';
@@ -40,8 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ActivityTimelineItem = ({ id, index }: { id: string; index: number }) => (
-  <Draggable draggableId={id} index={index}>
+const ActivityTimelineItem = ({ activity, index }: { activity: Activity; index: number }) => (
+  <Draggable draggableId={activity.id} index={index}>
     {({ innerRef, draggableProps, dragHandleProps }) => (
       <TimelineItem ref={innerRef} {...draggableProps} {...dragHandleProps}>
         <TimelineOppositeContent></TimelineOppositeContent>
@@ -57,7 +58,7 @@ const ActivityTimelineItem = ({ id, index }: { id: string; index: number }) => (
   </Draggable>
 );
 
-export default function ActivitiesBar() {
+export default function ActivitiesBar({ template }: { template: LocalModel<Template> }) {
   const classes = useStyles();
 
   const onDragEnd = useCallback(() => {}, []);
@@ -72,17 +73,13 @@ export default function ActivitiesBar() {
             {...droppableProps}
           >
             <Timeline>
-              <ActivityTimelineItem id="1" index={1} />
-              <ActivityTimelineItem id="2" index={2} />
-              <ActivityTimelineItem id="3" index={3} />
-              <ActivityTimelineItem id="4" index={4} />
+              {template.activities.map((activity, index) => (
+                <ActivityTimelineItem key={activity.id} activity={activity} index={index} />
+              ))}
               {placeholder}
 
               <TimelineItem>
                 <TimelineOppositeContent></TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineDot />
-                </TimelineSeparator>
                 <TimelineContent>
                   <Button
                     variant="contained"
