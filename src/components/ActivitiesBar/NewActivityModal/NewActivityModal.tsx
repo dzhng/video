@@ -255,6 +255,9 @@ export default function NewActivityModal({
               className={classes.nameInput}
               value={name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+              onFocus={(e: React.FocusEvent<HTMLInputElement>) =>
+                e.target.setSelectionRange(0, 100)
+              }
             />
           </div>
         ) : (
