@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import * as Yup from 'yup';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { v1 as uuid } from 'uuid';
@@ -9,6 +9,7 @@ import {
   DialogActions,
   Grid,
   Card,
+  InputBase,
   Typography,
   IconButton,
   Button,
@@ -74,6 +75,35 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '2.5rem',
       color: 'white',
     },
+    nameInputContainer: {
+      display: 'flex',
+
+      '& .MuiIconButton-root': {
+        width: 35,
+        height: 35,
+      },
+    },
+    nameInput: {
+      ...theme.typography.h2,
+      flexGrow: 1,
+      fontWeight: 600,
+      paddingLeft: theme.spacing(1),
+      paddingRight: theme.spacing(1),
+
+      // have transparent border here so its correctly sized
+      border: '1px solid transparent',
+      borderRadius: theme.shape.borderRadius,
+      transition: theme.transitionTime,
+
+      '&:hover': {
+        border: '1px solid ' + theme.palette.grey[300],
+      },
+
+      '&.Mui-focused': {
+        border: '1px solid ' + theme.palette.grey[500],
+        backgroundColor: 'white',
+      },
+    },
   }),
 );
 
@@ -88,6 +118,7 @@ export default function NewActivityModal({
 }) {
   const classes = useStyles();
   const [selectedType, setSelectedType] = useState<ActivityTypes | null>(null);
+  const [name, setName] = useState('');
 
   // reset selected type every time the modal is opened so it shows picker first
   useEffect(() => {
@@ -107,13 +138,15 @@ export default function NewActivityModal({
 
       const activity: Activity = {
         id,
-        type: selectedType!,
+        name: name ?? 'New Activity',
+        type: selectedType,
         metadata,
       };
 
       onNewActivity(activity);
+      onClose();
     },
-    [onNewActivity, selectedType],
+    [onNewActivity, onClose, name, selectedType],
   );
 
   const activityTypes: {
@@ -122,64 +155,81 @@ export default function NewActivityModal({
     icon: JSX.Element;
     form: JSX.Element;
     schema: Yup.ObjectSchema;
-  }[] = [
-    {
-      type: 'presentation',
-      name: 'Presentation',
-      icon: <PresentIcon className={classes.icon} />,
-      form: <CreatePresentationActivity />,
-      schema: Yup.object().shape({
-        presentationId: Yup.string().max(30).required(),
-      }),
+  }[] = useMemo(
+    () => [
+      {
+        type: 'presentation',
+        name: 'Presentation',
+        icon: <PresentIcon className={classes.icon} />,
+        form: <CreatePresentationActivity />,
+        schema: Yup.object().shape({
+          presentationId: Yup.string().max(30).required(),
+        }),
+      },
+      {
+        type: 'video',
+        name: 'Video',
+        icon: <VideoIcon className={classes.icon} />,
+        form: <CreateVideoActivity />,
+        schema: Yup.object().shape({
+          videoId: Yup.string().max(30).required(),
+        }),
+      },
+      {
+        type: 'poll',
+        name: 'Poll',
+        icon: <PollIcon className={classes.icon} />,
+        form: <CreatePollActivity />,
+        schema: Yup.object().shape({}),
+      },
+      {
+        type: 'questions',
+        name: 'Questions',
+        icon: <QuestionsIcon className={classes.icon} />,
+        form: <CreateQuestionsActivity />,
+        schema: Yup.object().shape({}),
+      },
+      {
+        type: 'screenshare',
+        name: 'Screenshare',
+        icon: <ScreenShareIcon className={classes.icon} />,
+        form: <CreateScreenShareActivity />,
+        schema: Yup.object().shape({
+          hostOnly: Yup.boolean().required(),
+        }),
+      },
+      {
+        type: 'breakout',
+        name: 'Breakout',
+        icon: <BreakoutIcon className={classes.icon} />,
+        form: <CreateBreakoutActivity />,
+        schema: Yup.object().shape({}),
+      },
+    ],
+    [classes],
+  );
+
+  const handleSelectType = useCallback(
+    (type) => {
+      const selectedActivity = activityTypes.find((activity) => activity.type === type);
+
+      if (selectedActivity) {
+        setSelectedType(type);
+
+        // set default name
+        setName(selectedActivity.name + ' Activity');
+      }
     },
-    {
-      type: 'video',
-      name: 'Video',
-      icon: <VideoIcon className={classes.icon} />,
-      form: <CreateVideoActivity />,
-      schema: Yup.object().shape({
-        videoId: Yup.string().max(30).required(),
-      }),
-    },
-    {
-      type: 'poll',
-      name: 'Poll',
-      icon: <PollIcon className={classes.icon} />,
-      form: <CreatePollActivity />,
-      schema: Yup.object().shape({}),
-    },
-    {
-      type: 'questions',
-      name: 'Questions',
-      icon: <QuestionsIcon className={classes.icon} />,
-      form: <CreateQuestionsActivity />,
-      schema: Yup.object().shape({}),
-    },
-    {
-      type: 'screenshare',
-      name: 'Screenshare',
-      icon: <ScreenShareIcon className={classes.icon} />,
-      form: <CreateScreenShareActivity />,
-      schema: Yup.object().shape({
-        hostOnly: Yup.boolean().required(),
-      }),
-    },
-    {
-      type: 'breakout',
-      name: 'Breakout',
-      icon: <BreakoutIcon className={classes.icon} />,
-      form: <CreateBreakoutActivity />,
-      schema: Yup.object().shape({}),
-    },
-  ];
+    [activityTypes],
+  );
 
   const selectedActivity = activityTypes.find((activity) => activity.type === selectedType);
 
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
       <DialogTitle>
-        <Typography variant="h2">
-          {selectedType && (
+        {selectedType ? (
+          <div className={classes.nameInputContainer}>
             <IconButton
               className={classes.backButton}
               size="small"
@@ -187,10 +237,18 @@ export default function NewActivityModal({
             >
               <BackIcon />
             </IconButton>
-          )}
 
-          <b>New {selectedActivity ? selectedActivity.name + ' ' : ''}Activity</b>
-        </Typography>
+            <InputBase
+              className={classes.nameInput}
+              value={name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+            />
+          </div>
+        ) : (
+          <Typography variant="h2">
+            <b>New Activity</b>
+          </Typography>
+        )}
       </DialogTitle>
 
       {selectedActivity ? (
@@ -199,24 +257,22 @@ export default function NewActivityModal({
           validationSchema={selectedActivity.schema}
           onSubmit={handleSubmit}
         >
-          {() => (
-            <Form>
-              <DialogContent dividers>{selectedActivity.form}</DialogContent>
+          <Form>
+            <DialogContent dividers>{selectedActivity.form}</DialogContent>
 
-              <DialogActions>
-                <Button type="submit" color="primary" variant="contained" autoFocus>
-                  Create
-                </Button>
-              </DialogActions>
-            </Form>
-          )}
+            <DialogActions>
+              <Button type="submit" color="primary" variant="contained" autoFocus>
+                Create
+              </Button>
+            </DialogActions>
+          </Form>
         </Formik>
       ) : (
         <DialogContent dividers>
           <Grid container spacing={3}>
             {activityTypes.map((activity) => (
               <Grid item xs={12} md={6} lg={4}>
-                <Card className={classes.card} onClick={() => setSelectedType(activity.type)}>
+                <Card className={classes.card} onClick={() => handleSelectType(activity.type)}>
                   <Typography variant="h3">{activity.name}</Typography>
                   {activity.icon}
                 </Card>

@@ -53,6 +53,7 @@ export type ActivityTypes = keyof ActivityMetadata;
 
 export declare interface Activity {
   id: string;
+  name: string;
   type: ActivityTypes;
   // metadata changes depending on activity types
   metadata: ActivityMetadata[ActivityTypes];
