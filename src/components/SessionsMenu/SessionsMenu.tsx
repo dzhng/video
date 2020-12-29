@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 import { Grid, IconButton, Tooltip, Divider, Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  VideoCall,
   AddOutlined as AddIcon,
   MoreVert as SettingsIcon,
   HistoryOutlined as HistoryIcon,
 } from '@material-ui/icons';
+import { VideoCallFilledIcon } from '~/components/Icons';
 import SessionCard from './SessionCard';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -68,7 +68,7 @@ export default function SessionsMenu() {
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <Button fullWidth color="secondary" variant="contained" className={classes.callButton}>
-              <VideoCall /> Quick Call
+              <VideoCallFilledIcon /> Quick Call
             </Button>
           </Grid>
 

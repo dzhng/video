@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core';
-import { ArrowBackIosOutlined as BackIcon } from '@material-ui/icons';
 
+import { BackIcon } from '~/components/Icons';
 import { useAppState } from '~/state';
 import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import Menu from './Menu/Menu';

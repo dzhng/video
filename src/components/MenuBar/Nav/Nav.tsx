@@ -2,10 +2,6 @@ import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  VideoCallOutlined as VideoCallIcon,
-  RecentActorsOutlined as PresentIcon,
-} from '@material-ui/icons';
-import {
   Typography,
   List,
   ListItem,
@@ -26,6 +22,7 @@ import {
   Button,
 } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
+import { VideoCallIcon, PresentIcon } from '~/components/Icons';
 import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 

@@ -35,9 +35,11 @@ export declare interface Workspace {
   createdAt: FbDate;
 }
 
+export type MemberRoles = 'owner' | 'member' | 'deleted';
+
 export declare interface Member {
   memberId: string;
-  role: 'owner' | 'member' | 'deleted';
+  role: MemberRoles;
   createdAt: FbDate;
 }
 
@@ -47,9 +49,11 @@ export declare interface Invite {
   createdAt: FbDate;
 }
 
+export type ActivityTypes = 'video' | 'presentation' | 'poll' | 'qa' | 'screenshare' | 'breakout';
+
 export declare interface Activity {
   id: string;
-  type: 'video' | 'presentaion' | 'poll' | 'qa' | 'screenshare' | 'breakout';
+  type: ActivityTypes;
   metadata?: object | null;
 }
 

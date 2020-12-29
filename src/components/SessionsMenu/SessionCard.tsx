@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, Typography, Button, IconButton, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { VideoCall, DeleteOutlined as DeleteIcon, RssFeed as ShareIcon } from '@material-ui/icons';
+import { DeleteOutlined as DeleteIcon, RssFeed as ShareIcon } from '@material-ui/icons';
+import { VideoCallFilledIcon } from '~/components/Icons';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -54,7 +55,7 @@ export default function SessionCard() {
 
       <Tooltip title="Start call" placement="bottom">
         <Button variant="contained" color="secondary" className={classes.callButton}>
-          <VideoCall />
+          <VideoCallFilledIcon />
         </Button>
       </Tooltip>
     </Card>

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
-import { Button } from '@material-ui/core';
+import { Typography, Button, Card, CardContent } from '@material-ui/core';
 import {
   Timeline,
   TimelineConnector,
@@ -17,8 +17,6 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { Collections, LocalModel, Template, Activity } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
-import PresentationPicker from '~/components/PresentationPicker/PresentationPicker';
-import NotesEditor from '~/components/NotesEditor/NotesEditor';
 import ActivityCard from './ActivityCard';
 import NewActivityModal from './NewActivityModal';
 
@@ -30,6 +28,13 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingLeft: 0,
         paddingRight: 0,
       },
+
+      '& h2': {
+        marginBottom: theme.spacing(1),
+      },
+    },
+    hintCard: {
+      backgroundColor: theme.palette.grey[50],
     },
     addButton: {
       '& svg': {
@@ -125,9 +130,30 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
             {...droppableProps}
           >
             <Timeline>
+              {/* Timeline items has a weird idiosyncracy here where if TimelineOppositeContent is not defined, it will add a 50% pad (because the timeline wants to be centered by default. Since we want our timeline to be on the left, we define an empty OppositeContent and get rid of the 50% pad via css */}
+              <TimelineItem>
+                <TimelineOppositeContent></TimelineOppositeContent>
+                <TimelineContent>
+                  {/* Hide hint card after more than 2 activities since the user probably know what it is at that point. It also takes up a lot of space. */}
+                  {activities.length <= 2 && (
+                    <Card className={classes.hintCard}>
+                      <CardContent>
+                        <Typography variant="h2">Structure your call with activities</Typography>
+                        <Typography variant="body1">
+                          Activities are different interactions that engage the audience. Some
+                          activities are driven purely by the host, some engage everyone in the
+                          call.
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </TimelineContent>
+              </TimelineItem>
+
               {activities.map((activity, index) => (
                 <ActivityTimelineItem key={activity.id} activity={activity} index={index} />
               ))}
+
               {placeholder}
 
               <TimelineItem>
