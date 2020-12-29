@@ -17,7 +17,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { Collections, LocalModel, Template, Activity } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
-import NewActivityModal from './NewActivityModal/NewActivityModal';
+import NewActivityModal from './NewActivityModal';
 import ActivityCard from './ActivityCard';
 
 const useStyles = makeStyles((theme: Theme) =>

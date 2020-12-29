@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import * as Yup from 'yup';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { v1 as uuid } from 'uuid';
 import {
@@ -16,22 +15,8 @@ import {
 } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 
-import {
-  BackIcon,
-  PresentIcon,
-  VideoIcon,
-  PollIcon,
-  QuestionsIcon,
-  ScreenShareIcon,
-  BreakoutIcon,
-} from '~/components/Icons';
+import { BackIcon } from '~/components/Icons';
 import { Activity, ActivityTypes } from '~/firebase/schema-types';
-import CreatePresentationActivity from './CreatePresentationActivity';
-import CreateVideoActivity from './CreateVideoActivity';
-import CreatePollActivity from './CreatePollActivity';
-import CreateQuestionsActivity from './CreateQuestionsActivity';
-import CreateScreenShareActivity from './CreateScreenShareActivity';
-import CreateBreakoutActivity from './CreateBreakoutActivity';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -70,10 +55,11 @@ const useStyles = makeStyles((theme: Theme) =>
         color: 'white',
         letterSpacing: 0,
       },
-    },
-    icon: {
-      fontSize: '2.5rem',
-      color: 'white',
+
+      '& .TypeIcon': {
+        fontSize: '2.5rem',
+        color: 'white',
+      },
     },
     nameInputContainer: {
       display: 'flex',
@@ -153,73 +139,6 @@ export default function NewActivityModal({
       onClose();
     },
     [onNewActivity, onClose, name, selectedType],
-  );
-
-  const activityTypes: {
-    type: ActivityTypes;
-    name: string;
-    icon: JSX.Element;
-    form: JSX.Element;
-    initialValue: object;
-    schema: Yup.ObjectSchema;
-  }[] = useMemo(
-    () => [
-      {
-        type: 'presentation',
-        name: 'Presentation',
-        icon: <PresentIcon className={classes.icon} />,
-        form: <CreatePresentationActivity />,
-        initialValue: { presentationId: null },
-        schema: Yup.object().shape({
-          presentationId: Yup.string().nullable().max(30).required('Presentation not uploaded'),
-        }),
-      },
-      {
-        type: 'video',
-        name: 'Video',
-        icon: <VideoIcon className={classes.icon} />,
-        form: <CreateVideoActivity />,
-        initialValue: { videoId: null },
-        schema: Yup.object().shape({
-          videoId: Yup.string().nullable().max(30).required('Video not uploaded'),
-        }),
-      },
-      {
-        type: 'poll',
-        name: 'Poll',
-        icon: <PollIcon className={classes.icon} />,
-        form: <CreatePollActivity />,
-        initialValue: {},
-        schema: Yup.object().shape({}),
-      },
-      {
-        type: 'questions',
-        name: 'Questions',
-        icon: <QuestionsIcon className={classes.icon} />,
-        form: <CreateQuestionsActivity />,
-        initialValue: {},
-        schema: Yup.object().shape({}),
-      },
-      {
-        type: 'screenshare',
-        name: 'Screenshare',
-        icon: <ScreenShareIcon className={classes.icon} />,
-        form: <CreateScreenShareActivity />,
-        initialValue: { hostOnly: false },
-        schema: Yup.object().shape({
-          hostOnly: Yup.boolean().required(),
-        }),
-      },
-      {
-        type: 'breakout',
-        name: 'Breakout',
-        icon: <BreakoutIcon className={classes.icon} />,
-        form: <CreateBreakoutActivity />,
-        initialValue: {},
-        schema: Yup.object().shape({}),
-      },
-    ],
-    [classes],
   );
 
   const handleSelectType = useCallback(
