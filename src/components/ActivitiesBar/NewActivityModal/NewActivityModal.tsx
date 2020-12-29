@@ -23,6 +23,11 @@ import {
 } from '~/components/Icons';
 import { Activity, ActivityTypes } from '~/firebase/schema-types';
 import CreatePresentationActivity from './CreatePresentationActivity';
+import CreateVideoActivity from './CreateVideoActivity';
+import CreatePollActivity from './CreatePollActivity';
+import CreateQuestionsActivity from './CreateQuestionsActivity';
+import CreateScreenShareActivity from './CreateScreenShareActivity';
+import CreateBreakoutActivity from './CreateBreakoutActivity';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -124,31 +129,31 @@ export default function NewActivityModal({
       type: 'video',
       name: 'Video',
       icon: <VideoIcon className={classes.icon} />,
-      form: <CreatePresentationActivity />,
+      form: <CreateVideoActivity />,
     },
     {
       type: 'poll',
       name: 'Poll',
       icon: <PollIcon className={classes.icon} />,
-      form: <CreatePresentationActivity />,
+      form: <CreatePollActivity />,
     },
     {
       type: 'qa',
       name: 'Questions',
       icon: <QuestionsIcon className={classes.icon} />,
-      form: <CreatePresentationActivity />,
+      form: <CreateQuestionsActivity />,
     },
     {
       type: 'screenshare',
       name: 'Screenshare',
       icon: <ScreenShareIcon className={classes.icon} />,
-      form: <CreatePresentationActivity />,
+      form: <CreateScreenShareActivity />,
     },
     {
       type: 'breakout',
       name: 'Breakout',
       icon: <BreakoutIcon className={classes.icon} />,
-      form: <CreatePresentationActivity />,
+      form: <CreateBreakoutActivity />,
     },
   ];
 
