@@ -54,7 +54,14 @@ export type ActivityTypes = 'video' | 'presentation' | 'poll' | 'qa' | 'screensh
 export declare interface Activity {
   id: string;
   type: ActivityTypes;
-  metadata?: object | null;
+  // metadata changes depending on activity types
+  metadata:
+    | PresentationActivityMetadata
+    | VideoActivityMetadata
+    | PollActivityMetadata
+    | QuestionsActivityMetadata
+    | ScreenShareActivityMetadata
+    | BreakoutActivityMetadata;
 }
 
 export declare interface Template {
@@ -84,3 +91,22 @@ export declare interface Presentation {
   isProcessed?: boolean;
   createdAt: FbDate;
 }
+
+// Activity type metadata schemas
+export declare interface PresentationActivityMetadata {
+  presentationId: string;
+}
+
+export declare interface VideoActivityMetadata {
+  videoId: string;
+}
+
+export declare interface PollActivityMetadata {}
+
+export declare interface QuestionsActivityMetadata {}
+
+export declare interface ScreenShareActivityMetadata {
+  hostOnly: boolean;
+}
+
+export declare interface BreakoutActivityMetadata {}
