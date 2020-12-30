@@ -49,8 +49,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     divider: {
       width: '96%',
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
       marginLeft: 'auto',
       marginRight: 'auto',
     },
