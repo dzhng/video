@@ -1,7 +1,6 @@
 import React from 'react';
-import { Switch } from 'formik-material-ui';
+import { Switch, TextField } from 'formik-material-ui';
 import { Field, FieldArray, ErrorMessage, useFormikContext } from 'formik';
-import { TextField } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { PollActivityMetadata } from '~/firebase/schema-types';
 
@@ -29,10 +28,11 @@ export default function CreatePollActivity() {
             {values.options.map((_, index) => (
               <div key={index}>
                 <Field component={TextField} name={`options.${index}`} />
-                <MyErrorMessage name={`options.${index}`} />
-                <button type="button" onClick={() => remove(index)}>
-                  X
-                </button>
+                {values.options.length > 1 && (
+                  <button type="button" onClick={() => remove(index)}>
+                    X
+                  </button>
+                )}
               </div>
             ))}
 

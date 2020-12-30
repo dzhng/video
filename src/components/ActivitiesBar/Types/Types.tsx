@@ -55,7 +55,7 @@ export const ActivityTypeForms: {
       showResultsRightAway: false,
       isMultipleChoice: false,
       numberOfVotes: 2,
-      options: [],
+      options: [''], // start with 1 (invalid) option already defined
     },
     schema: Yup.object().shape({
       showResultsRightAway: Yup.boolean().required(),
@@ -67,7 +67,7 @@ export const ActivityTypeForms: {
           .max(280)
           .required('Please input a option with at least 1 character'),
       )
-        .min(2)
+        .min(1)
         .max(100)
         .required(),
     }),
