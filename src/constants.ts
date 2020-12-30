@@ -12,3 +12,5 @@ export const SELECTED_VIDEO_INPUT_KEY = 'SelectedVideoInput';
 // endpoints
 export const TWILIO_TOKEN_ENDPOINT = '/api/twilio-token';
 export const CONVERT_TOKEN_ENDPOINT = '/api/convert-token';
+
+export const ROOT_URL = 'https://aomni.co';

@@ -2,6 +2,7 @@ import App from 'next/app';
 import Router from 'next/router';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import { SnackbarProvider } from 'notistack';
 
 import '~/utils/progress-indicator';
 import theme from '~/theme';
@@ -20,9 +21,16 @@ class MyApp extends App {
     return (
       <MuiThemeProvider theme={theme}>
         <AppStateProvider>
-          <Head />
-          <CssBaseline />
-          <Component previousPage={previousPage} {...pageProps} />
+          <SnackbarProvider
+            maxSnack={3}
+            autoHideDuration={3000}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            variant="info"
+          >
+            <Head />
+            <CssBaseline />
+            <Component previousPage={previousPage} {...pageProps} />
+          </SnackbarProvider>
         </AppStateProvider>
       </MuiThemeProvider>
     );

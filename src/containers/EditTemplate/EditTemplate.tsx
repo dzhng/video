@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
     activitiesSpacer: theme.customMixins.activitiesBar,
     content: {
       flexGrow: 1,
+      // don't do 100% height since that will create scrollbar b/c toolbar on top
+      // just do enough that we can make things looks reasonably vertically centered in child elements
+      minHeight: 'calc(80vh)',
     },
   }),
 );
