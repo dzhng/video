@@ -128,9 +128,10 @@ export default function SessionsMenu() {
               value={callLink}
               variant="outlined"
               size="small"
-              onFocus={(e: React.FocusEvent<HTMLInputElement>) =>
-                e.target.setSelectionRange(0, 100)
-              }
+              onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+                e.target.setSelectionRange(0, 100);
+                handleShare();
+              }}
             />
             <Tooltip title="Copy link to clipboard" placement="bottom">
               <Button
