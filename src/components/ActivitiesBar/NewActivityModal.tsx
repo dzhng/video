@@ -190,7 +190,7 @@ export default function NewActivityModal({
           validationSchema={selectedActivity.schema}
           onSubmit={handleSubmit}
         >
-          <Form className={classes.form}>
+          <Form className={classes.form} autoComplete="off">
             <DialogContent dividers>{selectedActivity.form}</DialogContent>
 
             <DialogActions>

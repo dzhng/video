@@ -155,7 +155,7 @@ export default function EditActivityModal({
         validationSchema={selectedActivity?.schema}
         onSubmit={handleSubmit}
       >
-        <Form className={classes.form}>
+        <Form className={classes.form} autoComplete="off">
           <DialogContent dividers>{selectedActivity?.form}</DialogContent>
 
           <DialogActions className={classes.actions}>
