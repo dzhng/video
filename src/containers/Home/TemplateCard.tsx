@@ -79,11 +79,8 @@ export default function TemplateCard({
       </div>
       <div className={classes.footer}>
         <div>
-          <Typography variant="body2">
+          <Typography variant="body1">
             <b>{template.activities.length}</b> activities
-          </Typography>
-          <Typography variant="body2">
-            <b>0</b> calls
           </Typography>
         </div>
         <Tooltip title="Start call" placement="left">

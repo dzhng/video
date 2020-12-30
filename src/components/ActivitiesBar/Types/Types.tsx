@@ -1,4 +1,4 @@
-import { ActivityTypes } from '~/firebase/schema-types';
+import { ActivityMetadata, ActivityTypes } from '~/firebase/schema-types';
 import * as Yup from 'yup';
 import {
   PresentIcon,
@@ -8,6 +8,7 @@ import {
   ScreenShareIcon,
   BreakoutIcon,
 } from '~/components/Icons';
+
 import PresentationActivity from './PresentationActivity';
 import VideoActivity from './VideoActivity';
 import PollActivity from './PollActivity';
@@ -22,7 +23,7 @@ export const ActivityTypeForms: {
   name: string;
   icon: JSX.Element;
   form: JSX.Element;
-  initialValue: object;
+  initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.ObjectSchema;
 }[] = [
   {
@@ -30,9 +31,9 @@ export const ActivityTypeForms: {
     name: 'Presentation',
     icon: <PresentIcon className={iconClassName} />,
     form: <PresentationActivity />,
-    initialValue: { presentationId: null },
+    initialValue: { presentationId: '' },
     schema: Yup.object().shape({
-      presentationId: Yup.string().nullable().max(30).required('Presentation not uploaded'),
+      presentationId: Yup.string().max(30).required('Presentation not uploaded'),
     }),
   },
   {
@@ -40,9 +41,9 @@ export const ActivityTypeForms: {
     name: 'Video',
     icon: <VideoIcon className={iconClassName} />,
     form: <VideoActivity />,
-    initialValue: { videoId: null },
+    initialValue: { videoId: '' },
     schema: Yup.object().shape({
-      videoId: Yup.string().nullable().max(30).required('Video not uploaded'),
+      videoId: Yup.string().max(30).required('Video not uploaded'),
     }),
   },
   {
@@ -50,16 +51,32 @@ export const ActivityTypeForms: {
     name: 'Poll',
     icon: <PollIcon className={iconClassName} />,
     form: <PollActivity />,
-    initialValue: {},
-    schema: Yup.object().shape({}),
+    initialValue: {
+      showResultsRightAway: false,
+      isMultipleChoice: false,
+      numberOfVotes: 2,
+      options: [],
+    },
+    schema: Yup.object().shape({
+      showResultsRightAway: Yup.boolean().required(),
+      isMultipleChoice: Yup.boolean().required(),
+      numberOfVotes: Yup.number().min(2).max(100).required(),
+      options: Yup.array(Yup.string().min(1).max(280).required()).min(1).max(100).required(),
+    }),
   },
   {
     type: 'questions',
     name: 'Questions',
     icon: <QuestionsIcon className={iconClassName} />,
     form: <QuestionsActivity />,
-    initialValue: {},
-    schema: Yup.object().shape({}),
+    initialValue: {
+      questions: [],
+      allowTextSubmission: true,
+      allowAnonymousSubmission: true,
+    },
+    schema: Yup.object().shape({
+      questions: Yup.array(Yup.string().min(1).max(280).required()).min(1).max(100).required(),
+    }),
   },
   {
     type: 'screenshare',
@@ -76,7 +93,11 @@ export const ActivityTypeForms: {
     name: 'Breakout',
     icon: <BreakoutIcon className={iconClassName} />,
     form: <BreakoutActivity />,
-    initialValue: {},
-    schema: Yup.object().shape({}),
+    initialValue: {
+      numberOfRooms: 2,
+    },
+    schema: Yup.object().shape({
+      numberOfRooms: Yup.number().min(2).max(50).required(),
+    }),
   },
 ];

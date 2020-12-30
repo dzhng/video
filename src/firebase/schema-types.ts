@@ -105,12 +105,31 @@ export declare interface VideoActivityMetadata {
   videoId: string;
 }
 
-export declare interface PollActivityMetadata {}
+export declare interface PollActivityMetadata {
+  // if the voter can see current results right away,
+  // or wait til poll closed
+  showResultsRightAway: boolean;
+  // if a user is allowed to vote once or multiple times
+  isMultipleChoice: boolean;
+  // how many times a user can vote if multiple choice is selected
+  numberOfVotes: number;
+  // list of options
+  options: string[];
+}
 
-export declare interface QuestionsActivityMetadata {}
+export declare interface QuestionsActivityMetadata {
+  questions: string[];
+  // allow anyone to submit answers via text
+  allowTextSubmission: boolean;
+  // allow text submissions to be anonymous
+  allowAnonymousSubmission: boolean;
+}
 
 export declare interface ScreenShareActivityMetadata {
+  // if only the host can share share, or everyone can
   hostOnly: boolean;
 }
 
-export declare interface BreakoutActivityMetadata {}
+export declare interface BreakoutActivityMetadata {
+  numberOfRooms: number;
+}
