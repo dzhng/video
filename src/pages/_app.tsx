@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack';
 import '~/utils/progress-indicator';
 import theme from '~/theme';
 import Head from '~/components/App/Head';
+import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import AppStateProvider from '~/state';
 
 let previousPage = '';
@@ -29,6 +30,7 @@ class MyApp extends App {
           >
             <Head />
             <CssBaseline />
+            <PendingWrite />
             <Component previousPage={previousPage} {...pageProps} />
           </SnackbarProvider>
         </AppStateProvider>

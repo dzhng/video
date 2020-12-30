@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 import { LocalModel, Template, Workspace, User } from '~/firebase/schema-types';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
-import MenuBar from '~/components/MenuBar/MenuBar';
+import Nav from '~/components/Nav/Nav';
 import TemplateCard from './TemplateCard';
 import CreateCard from './CreateCard';
 import AddMemberMenuItem from './AddMemberMenuItem';
@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) =>
     grid: {
       // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
       transform: 'translateZ(0)',
+      padding: theme.spacing(3),
     },
     titleBar: {
       display: 'flex',
@@ -87,8 +88,9 @@ export default function Home({
   removeMembers,
 }: PropTypes) {
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
-  const anchorRef = useRef<HTMLDivElement>(null);
   const classes = useStyles();
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleMenuClick = useCallback(() => {
     setSettingsMenuOpen(false);
@@ -105,7 +107,8 @@ export default function Home({
   );
 
   return (
-    <MenuBar showNav>
+    <>
+      <Nav mobileOpen={mobileOpen} toggleOpen={() => setMobileOpen((state) => !state)} />
       <Grid container className={classes.grid} spacing={3}>
         <Grid item xs={12} className={classes.titleBar}>
           <Typography variant="h1" className={classes.title}>
@@ -185,6 +188,6 @@ export default function Home({
               </Grid>
             ))}
       </Grid>
-    </MenuBar>
+    </>
   );
 }
