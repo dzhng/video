@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     error: {
       color: theme.palette.error.main,
+      marginLeft: theme.spacing(1),
     },
     switchControl: {
       display: 'flex',
@@ -27,14 +28,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ({ name, title }: { name: string; title: string }) {
+export default function SwitchControl({ name, title }: { name: string; title: string }) {
   const classes = useStyles();
 
   return (
     <div className={classes.switchControl}>
-      <Typography variant="body1">{title}</Typography>
+      <Typography variant="body1">
+        {title}
+        <ErrorMessage className={classes.error} name={name} component="span" />
+      </Typography>
       <Field component={Switch} type="checkbox" name={name} />
-      <ErrorMessage className={classes.error} name={name} component="span" />
     </div>
   );
 }

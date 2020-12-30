@@ -18,13 +18,15 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+const optionsFieldName = 'options';
+
 export default function CreatePollActivity() {
   const classes = useStyles();
   const { values } = useFormikContext<PollActivityMetadata>();
 
   return (
     <div>
-      <FieldArray name="options">
+      <FieldArray name={optionsFieldName}>
         {({ remove, push }) => (
           <>
             {values.options.map((_, index) => (
@@ -32,7 +34,7 @@ export default function CreatePollActivity() {
                 <Field
                   fullWidth
                   component={TextField}
-                  name={`options.${index}`}
+                  name={`${optionsFieldName}.${index}`}
                   variant="outlined"
                   margin="dense"
                   placeholder="Poll option"

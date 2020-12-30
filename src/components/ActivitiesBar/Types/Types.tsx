@@ -78,12 +78,20 @@ export const ActivityTypeForms: {
     icon: <QuestionsIcon className={iconClassName} />,
     form: <QuestionsActivity />,
     initialValue: {
-      questions: [],
-      allowTextSubmission: true,
-      allowAnonymousSubmission: true,
+      questions: [''], // start with 1 (invalid) option already defined
+      allowTextSubmission: false,
+      allowAnonymousSubmission: false,
     },
     schema: Yup.object().shape({
-      questions: Yup.array(Yup.string().min(1).max(280).required()).min(1).max(100).required(),
+      questions: Yup.array(
+        Yup.string()
+          .min(1, 'Please enter question text')
+          .max(1000)
+          .required('Please enter question text'),
+      )
+        .min(1)
+        .max(100)
+        .required(),
     }),
   },
   {
