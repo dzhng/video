@@ -25,6 +25,7 @@ import { Skeleton } from '@material-ui/lab';
 import { VideoCallIcon, PresentIcon } from '~/components/Icons';
 import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
+import Menu from './Menu/Menu';
 
 const NewWorkspaceValue = '__New_Workspace__';
 
@@ -55,6 +56,12 @@ const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.secondary.main,
       },
     },
+    displayName: {
+      textAlign: 'right',
+    },
+    title: {
+      cursor: 'pointer',
+    },
   }),
 );
 
@@ -68,7 +75,9 @@ export default function Nav({
   const classes = useStyles();
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
+
   const {
+    user,
     workspaces,
     isWorkspacesReady,
     currentWorkspaceId,
@@ -95,6 +104,10 @@ export default function Nav({
 
   const drawer = (
     <div>
+      <Typography className={classes.title} variant="h2">
+        AOMNI
+      </Typography>
+
       <List className={classes.list}>
         <Link href="/">
           <ListItem button>
@@ -140,6 +153,11 @@ export default function Nav({
       ) : (
         <Skeleton variant="rect" height={45} className={classes.select} />
       )}
+
+      <Typography className={classes.displayName} variant="h4">
+        {user?.displayName}
+      </Typography>
+      <Menu />
     </div>
   );
 

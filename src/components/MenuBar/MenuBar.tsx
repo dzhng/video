@@ -6,7 +6,6 @@ import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core';
 
 import { BackIcon } from '~/components/Icons';
 import { useAppState } from '~/state';
-import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import Menu from './Menu/Menu';
 import Nav from './Nav/Nav';
 
@@ -81,7 +80,6 @@ export default function MenuBar({
 
   return (
     <div className={classes.root}>
-      <PendingWrite />
       <AppBar position="fixed" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Link href={previousPage ?? '/'}>
