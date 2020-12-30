@@ -68,6 +68,7 @@ export default function CreateQuestionsActivity() {
       <SwitchControl
         name="allowTextSubmission"
         title="Allow participants to submit answers with text"
+        description="During this activity, you can prompt the audience to respond to questions via voice, or allow the audience to type up their answers and submit it via text. Everyone will be able to see the submitted answers."
       />
       {values.allowTextSubmission && (
         <SwitchControl

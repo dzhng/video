@@ -16,28 +16,47 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.grey[800],
       borderRadius: theme.shape.borderRadius,
 
-      '& .MuiTypography-root': {
-        flexGrow: 1,
-        marginLeft: theme.spacing(1),
-      },
-
       '&:hover': {
         backgroundColor: theme.palette.grey[100],
+      },
+    },
+    textContent: {
+      flexGrow: 1,
+      marginLeft: theme.spacing(1),
+
+      '& .MuiTypography-body1': {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(0.5),
+      },
+
+      '& .MuiTypography-body2': {
+        marginBottom: theme.spacing(1),
       },
     },
   }),
 );
 
-export default function SwitchControl({ name, title }: { name: string; title: string }) {
+export default function SwitchControl({
+  name,
+  title,
+  description,
+}: {
+  name: string;
+  title: string;
+  description?: string;
+}) {
   const classes = useStyles();
 
   return (
-    <div className={classes.switchControl}>
-      <Typography variant="body1">
-        {title}
-        <ErrorMessage className={classes.error} name={name} component="span" />
-      </Typography>
-      <Field component={Switch} type="checkbox" name={name} />
-    </div>
+    <>
+      <div className={classes.switchControl}>
+        <div className={classes.textContent}>
+          <Typography variant="body1">{description ? <b>{title}</b> : title}</Typography>
+          <Typography variant="body2">{description}</Typography>
+          <ErrorMessage className={classes.error} name={name} component="span" />
+        </div>
+        <Field component={Switch} type="checkbox" name={name} />
+      </div>
+    </>
   );
 }
