@@ -39,7 +39,10 @@ const useStyles = makeStyles((theme) =>
     grid: {
       // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
       transform: 'translateZ(0)',
-      padding: theme.spacing(3),
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
       flexGrow: 1,
 
       // override spacing-3 negative margins which causes a scroll bar
