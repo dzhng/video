@@ -3,9 +3,9 @@ import { Drawer } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import { LocalModel, Template } from '~/firebase/schema-types';
-import MenuBar from '~/components/MenuBar/MenuBar';
 import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
 import SessionMenu from '~/components/SessionsMenu/SessionsMenu';
+import BackButton from '~/components/BackButton/BackButton';
 import ToolbarContent from './ToolbarContent';
 
 interface PropTypes {
@@ -19,13 +19,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
     },
     drawerPaper: theme.customMixins.activitiesBar,
-    toolbarSpacer: theme.mixins.toolbar,
     activitiesSpacer: theme.customMixins.activitiesBar,
     content: {
       flexGrow: 1,
-      // don't do 100% height since that will create scrollbar b/c toolbar on top
-      // just do enough that we can make things looks reasonably vertically centered in child elements
-      minHeight: 'calc(80vh)',
+      height: '100vh',
     },
   }),
 );
@@ -42,7 +39,8 @@ const TemplateForm = ({ template }: { template: LocalModel<Template> }) => {
         variant="permanent"
         open
       >
-        <div className={classes.toolbarSpacer} />
+        <BackButton />
+        <ToolbarContent template={template} />
         <ActivitiesBar template={template} />
       </Drawer>
       <div className={classes.activitiesSpacer} />
@@ -54,9 +52,5 @@ const TemplateForm = ({ template }: { template: LocalModel<Template> }) => {
 };
 
 export default function EditContainer({ template }: PropTypes) {
-  return (
-    <MenuBar padding={false} toolbarContent={<ToolbarContent template={template} />}>
-      {template && <TemplateForm template={template} />}
-    </MenuBar>
-  );
+  return template && <TemplateForm template={template} />;
 }

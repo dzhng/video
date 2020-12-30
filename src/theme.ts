@@ -93,11 +93,19 @@ export default createMuiTheme({
       },
     },
   },
+  // reduce z-index for everything so libs like nprogress will still work (nprogress is 1031)
+  zIndex: {
+    mobileStepper: 100,
+    speedDial: 105,
+    appBar: 110,
+    drawer: 120,
+    modal: 130,
+    snackbar: 140,
+    tooltip: 150,
+  },
 
   // custom
   modalWidth: 600,
-  sidebarWidth: 260,
-  sidebarMobileHeight: 90,
   transitionTime: '0.3s',
   dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
 

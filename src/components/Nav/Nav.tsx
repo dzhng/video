@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
+  Divider,
   Drawer,
   FormControl,
   InputLabel,
@@ -28,17 +29,19 @@ import { useAppState } from '~/state';
 import Menu from './Menu/Menu';
 
 const NewWorkspaceValue = '__New_Workspace__';
+const sidebarWidth = 300;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     drawer: {
       [theme.breakpoints.up('sm')]: {
-        width: theme.sidebarWidth,
+        width: sidebarWidth,
         flexShrink: 0,
       },
     },
     select: {
-      width: theme.sidebarWidth - theme.spacing(2) * 2,
+      // subtract an extra 2 for the border
+      width: sidebarWidth - theme.spacing(2) * 2 - 2,
       margin: theme.spacing(2),
     },
     menuButton: {
@@ -48,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     drawerPaper: {
-      width: theme.sidebarWidth,
+      width: sidebarWidth,
     },
     list: {
       '& .MuiListItemIcon-root': {
@@ -56,11 +59,36 @@ const useStyles = makeStyles((theme: Theme) =>
         color: theme.palette.secondary.main,
       },
     },
+    drawerContent: {
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    drawerContentFooter: {
+      flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
+    },
+    profileMenu: {
+      display: 'flex',
+      alignItems: 'stretch',
+      padding: theme.spacing(1),
+
+      '& .MuiTypography-root': {
+        marginTop: 'auto',
+        marginBottom: 'auto',
+      },
+    },
     displayName: {
       textAlign: 'right',
     },
     title: {
-      cursor: 'pointer',
+      padding: theme.spacing(3),
+    },
+    divider: {
+      marginLeft: theme.spacing(2),
+      marginRight: theme.spacing(2),
     },
   }),
 );
@@ -103,10 +131,12 @@ export default function Nav({
   }, [newWorkspaceName, createWorkspace]);
 
   const drawer = (
-    <div>
+    <div className={classes.drawerContent}>
       <Typography className={classes.title} variant="h2">
         AOMNI
       </Typography>
+
+      <Divider className={classes.divider} />
 
       <List className={classes.list}>
         <Link href="/">
@@ -132,32 +162,38 @@ export default function Nav({
         </Link>
       </List>
 
-      {isWorkspacesReady && workspaces ? (
-        <FormControl variant="outlined" className={classes.select}>
-          <InputLabel>Workspace</InputLabel>
-          <Select
-            label="Workspace"
-            value={currentWorkspaceId ?? ''}
-            onChange={handleWorkspaceChange}
-          >
-            {workspaces.map((workspace) => (
-              <MenuItem key={workspace.id} value={workspace.id}>
-                <Typography variant="h4">{workspace.name}</Typography>
+      <div className={classes.drawerContentFooter}>
+        {isWorkspacesReady && workspaces ? (
+          <FormControl variant="outlined" className={classes.select}>
+            <InputLabel>Workspace</InputLabel>
+            <Select
+              label="Workspace"
+              value={currentWorkspaceId ?? ''}
+              onChange={handleWorkspaceChange}
+            >
+              {workspaces.map((workspace) => (
+                <MenuItem key={workspace.id} value={workspace.id}>
+                  <Typography variant="h4">{workspace.name}</Typography>
+                </MenuItem>
+              ))}
+              <MenuItem value={NewWorkspaceValue}>
+                <Typography variant="h4">New Workspace</Typography>
               </MenuItem>
-            ))}
-            <MenuItem value={NewWorkspaceValue}>
-              <Typography variant="h4">New Workspace</Typography>
-            </MenuItem>
-          </Select>
-        </FormControl>
-      ) : (
-        <Skeleton variant="rect" height={45} className={classes.select} />
-      )}
+            </Select>
+          </FormControl>
+        ) : (
+          <Skeleton variant="rect" height={45} className={classes.select} />
+        )}
 
-      <Typography className={classes.displayName} variant="h4">
-        {user?.displayName}
-      </Typography>
-      <Menu />
+        <Divider className={classes.divider} />
+
+        <div className={classes.profileMenu}>
+          <Menu />
+          <Typography className={classes.displayName} variant="h2">
+            {user?.displayName}
+          </Typography>
+        </div>
+      </div>
     </div>
   );
 
@@ -196,7 +232,6 @@ export default function Nav({
     <nav className={classes.drawer} aria-label="mailbox folders">
       {createWorkspaceModal}
 
-      {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
       <Hidden smUp implementation="css">
         <Drawer
           container={container}

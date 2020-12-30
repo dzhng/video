@@ -32,13 +32,23 @@ const cardHeight = 200;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    container: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
     grid: {
       // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
       transform: 'translateZ(0)',
       padding: theme.spacing(3),
+      flexGrow: 1,
+
+      // override spacing-3 negative margins which causes a scroll bar
+      width: '100%',
+      margin: 0,
     },
     titleBar: {
       display: 'flex',
+      justifyContent: 'space-between',
     },
     title: {
       display: 'inline',
@@ -107,8 +117,9 @@ export default function Home({
   );
 
   return (
-    <>
+    <div className={classes.container}>
       <Nav mobileOpen={mobileOpen} toggleOpen={() => setMobileOpen((state) => !state)} />
+
       <Grid container className={classes.grid} spacing={3}>
         <Grid item xs={12} className={classes.titleBar}>
           <Typography variant="h1" className={classes.title}>
@@ -188,6 +199,6 @@ export default function Home({
               </Grid>
             ))}
       </Grid>
-    </>
+    </div>
   );
 }
