@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import * as Yup from 'yup';
 import { debounce } from 'lodash';
 import { Skeleton } from '@material-ui/lab';
@@ -45,9 +45,17 @@ export default function ToolbarContent({ template }: { template?: LocalModel<Tem
   const classes = useStyles();
   const [name, setName] = useState('');
   const { markIsWriting } = useAppState();
+  const inputRef = useRef<HTMLInputElement>();
 
+  // everytime template changes, update the name
+  // but make sure to not change if still editing (or else we'll get stuttering)
+  //
+  // NOTE: there is a bug here where if the template changes to a completely different
+  // one (e.g. changing pages), and the component doesn't mount, the old name will
+  // still remain if the user is in the middle of editing. However in the current
+  // flow this will never happen so not worth the effort to fix.
   useEffect(() => {
-    if (template) {
+    if (template && document.activeElement !== inputRef.current) {
       setName(template.name);
     }
   }, [template, setName]);
@@ -82,7 +90,12 @@ export default function ToolbarContent({ template }: { template?: LocalModel<Tem
   return (
     <div className={classes.toolbarContent}>
       {template ? (
-        <InputBase className={classes.titleInput} value={name} onChange={handleNameChange} />
+        <InputBase
+          inputRef={inputRef}
+          className={classes.titleInput}
+          value={name}
+          onChange={handleNameChange}
+        />
       ) : (
         <Skeleton component="h2" width={200} />
       )}

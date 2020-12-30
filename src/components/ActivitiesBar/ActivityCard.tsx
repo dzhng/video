@@ -76,11 +76,14 @@ export default function ActivitiesCard({
 }) {
   const classes = useStyles();
   const [name, setName] = useState(activity.name);
-  const anchorRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>();
 
   // everytime activity changes, update name with latest
+  // but make sure to not change if still editing (or else we'll get stuttering)
   useEffect(() => {
-    setName(activity.name);
+    if (document.activeElement !== inputRef.current) {
+      setName(activity.name);
+    }
   }, [activity]);
 
   const handleSettingsClick = useCallback(
@@ -111,12 +114,17 @@ export default function ActivitiesCard({
   return (
     <Card className={classes.card}>
       <div className={classes.content}>
-        <InputBase className={classes.nameInput} value={name} onChange={handleNameChange} />
+        <InputBase
+          inputRef={inputRef}
+          className={classes.nameInput}
+          value={name}
+          onChange={handleNameChange}
+        />
         <Typography variant="body1" className={classes.activityType}>
           {activity.type}
         </Typography>
       </div>
-      <div ref={anchorRef} className={classes.buttonContainer}>
+      <div className={classes.buttonContainer}>
         <Tooltip title="Edit activity" placement="left">
           <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
             <EditIcon />
