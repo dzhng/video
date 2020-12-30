@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { Grid, IconButton, Tooltip, Divider, Button, TextField } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -91,12 +92,13 @@ export default function SessionsMenu() {
   const { enqueueSnackbar } = useSnackbar();
 
   const templateId = String(router.query.slug);
-  const callLink = `${ROOT_URL}/start/${templateId}`;
+  const relativeCallLink = `/start/${templateId}`;
+  const sharableCallLink = `${ROOT_URL}${relativeCallLink}`;
 
   const handleShare = useCallback(() => {
-    updateClipboard(callLink);
+    updateClipboard(sharableCallLink);
     enqueueSnackbar('URL copied to clipboard!');
-  }, [callLink, enqueueSnackbar]);
+  }, [sharableCallLink, enqueueSnackbar]);
 
   return (
     <div className={classes.container}>
@@ -116,16 +118,23 @@ export default function SessionsMenu() {
       <div className={classes.content}>
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <Button fullWidth color="secondary" variant="contained" className={classes.callButton}>
-              <VideoCallFilledIcon /> Start Call
-            </Button>
+            <Link href={relativeCallLink}>
+              <Button
+                fullWidth
+                color="secondary"
+                variant="contained"
+                className={classes.callButton}
+              >
+                <VideoCallFilledIcon /> Start Call
+              </Button>
+            </Link>
           </Grid>
 
           <Divider className={classes.divider} />
 
           <Grid item xs={12} className={classes.sharePanel}>
             <TextField
-              value={callLink}
+              value={sharableCallLink}
               variant="outlined"
               size="small"
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {

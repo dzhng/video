@@ -40,6 +40,11 @@ const useStyles = makeStyles((theme: Theme) =>
       borderBottom: theme.dividerBorder,
     },
     addButton: {
+      borderStyle: 'dashed',
+      // add some transparency
+      backgroundColor: theme.palette.primary.main + '10',
+      height: 60,
+
       '& svg': {
         marginRight: 2,
       },
@@ -213,8 +218,8 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
 
                 <TimelineContent>
                   <Button
-                    variant="contained"
-                    color="secondary"
+                    variant="outlined"
+                    color="primary"
                     fullWidth
                     className={classes.addButton}
                     onClick={() => setNewActivityOpen((state) => !state)}
