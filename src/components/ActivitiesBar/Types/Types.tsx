@@ -61,7 +61,15 @@ export const ActivityTypeForms: {
       showResultsRightAway: Yup.boolean().required(),
       isMultipleChoice: Yup.boolean().required(),
       numberOfVotes: Yup.number().min(2).max(100).required(),
-      options: Yup.array(Yup.string().min(1).max(280).required()).min(1).max(100).required(),
+      options: Yup.array(
+        Yup.string()
+          .min(1, 'Options should be at least 1 character long')
+          .max(280)
+          .required('Please input a option with at least 1 character'),
+      )
+        .min(2)
+        .max(100)
+        .required(),
     }),
   },
   {
