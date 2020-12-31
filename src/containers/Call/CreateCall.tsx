@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Typography, Button, Card } from '@material-ui/core';
-import LocalVideoPreview from '~/components/Video/LocalVideoPreview/LocalVideoPreview';
+import { Button, Card } from '@material-ui/core';
+import LocalPreviewCard from './LocalPreviewCard';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,13 +26,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CreateCall({ create }: { create(): Promise<boolean> }) {
   const classes = useStyles();
 
+  const actionBar = <Button>Create</Button>;
+
   return (
     <div className={classes.container}>
-      <Card className={classes.card}>
-        <LocalVideoPreview />
-        <Typography variant="h1">Create Call</Typography>
-        <Button>Create Call</Button>
-      </Card>
+      <LocalPreviewCard className={classes.card} actionBar={actionBar} />
     </div>
   );
 }
