@@ -12,7 +12,7 @@ export enum Collections {
   INVITES = 'invites', // this is a subcollection of workspaces
 }
 
-export type FbDate = Date & firebase.firestore.Timestamp & firebase.firestore.FieldValue;
+export type FbDate = Date | firebase.firestore.Timestamp | firebase.firestore.FieldValue;
 
 // extends the type with properties that is needed for client operations (such as id)
 // becareful with this in components that deal with saving because it is very easy to get into a situation where you end up saving data that's extended for local, which would be rejected on server.
@@ -62,7 +62,8 @@ export declare interface Activity {
 export declare interface Template {
   name: string;
   creatorId: string;
-  workspaceId: string | null;
+  workspaceId: string;
+  ongoingCallId?: string | null;
   activities: Activity[];
   notes?: string;
   createdAt: FbDate;
@@ -71,7 +72,6 @@ export declare interface Template {
 export declare interface Call {
   templateId: string;
   creatorId: string;
-  state: 'started' | 'finished';
   currentStep: number;
   stepData: object;
   notes?: string;
@@ -81,7 +81,7 @@ export declare interface Call {
 export declare interface Presentation {
   name: string;
   creatorId: string;
-  workspaceId: string | null;
+  workspaceId: string;
   slides: string[];
   isProcessed?: boolean;
   createdAt: FbDate;

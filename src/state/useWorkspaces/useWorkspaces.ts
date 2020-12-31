@@ -131,7 +131,9 @@ export default function useWorkspaces() {
     (workspace) => workspace.id === userRecord?.defaultWorkspaceId,
   )
     ? userRecord?.defaultWorkspaceId
-    : workspaces[0];
+    : workspaces.length > 0
+    ? workspaces[0].id
+    : undefined;
 
   return {
     userRecord,

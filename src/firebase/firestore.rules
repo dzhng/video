@@ -106,10 +106,11 @@ service cloud.firestore {
 
       allow create, update: if 
         request.auth != null &&
-        assertKeys(['name', 'creatorId', 'workspaceId', 'activities', 'notes', 'createdAt']) &&
+        assertKeys(['name', 'creatorId', 'workspaceId', 'ongoingCallId', 'activities', 'notes', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
         requiredStringKey('workspaceId', 1, 30) &&
+        optionalStringKey('ongoingCallId', 30) &&
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call
@@ -130,10 +131,9 @@ service cloud.firestore {
 
       allow create, update: if
         request.auth != null &&
-        assertKeys(['templateId', 'creatorId', 'state', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
+        assertKeys(['templateId', 'creatorId', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
         requiredStringKey('templateId', 1, 30) &&
         requiredStringKey('creatorId', 1, 30) &&
-        requiredEnumKey('state', ['started', 'finished']) &&
         requiredCreatedAtKey() &&
         requiredIntKey('currentStep', 0, 100) &&
 

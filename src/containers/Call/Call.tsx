@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 
-import { Call } from '~/firebase/schema-types';
+import { Call, Template } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import ErrorDialog from '~/components/Video/ErrorDialog/ErrorDialog';
 import { VideoProvider } from '~/components/Video/VideoProvider';
@@ -61,7 +61,17 @@ function Lobby() {
   );
 }
 
-export default function CallContainer({ call }: { call: Call }) {
+export default function CallContainer({
+  template,
+  call,
+  createCall,
+  endCall,
+}: {
+  template: Template;
+  call?: Call;
+  createCall(): Promise<boolean>;
+  endCall(): void;
+}) {
   const { error, setError } = useAppState();
   const connectionOptions = useConnectionOptions();
 

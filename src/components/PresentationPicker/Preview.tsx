@@ -51,7 +51,9 @@ export default function Preview({ presentation, removePresentation }: PropTypes)
         <Typography variant="body1" className={classes.info}>
           <b>Uploaded:</b>{' '}
           {formatPastDate(
-            presentation.createdAt.toDate ? presentation.createdAt.toDate() : new Date(),
+            (presentation.createdAt as any).toDate
+              ? (presentation.createdAt as any).toDate()
+              : new Date(),
           )}
         </Typography>
         <br />
