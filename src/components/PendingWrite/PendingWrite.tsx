@@ -7,7 +7,8 @@ export default function PendingWrite() {
   const { isWriting } = useAppState();
 
   useEffect(() => {
-    setLoading(isWriting);
+    // TODO: this doesn't look good, everytime it writes it looks like page load. find a better interaction here
+    //setLoading(isWriting);
   }, [isWriting]);
 
   return null;

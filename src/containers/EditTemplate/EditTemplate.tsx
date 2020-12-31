@@ -5,7 +5,6 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { LocalModel, Template } from '~/firebase/schema-types';
 import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
 import SessionMenu from '~/components/SessionsMenu/SessionsMenu';
-import BackButton from '~/components/BackButton/BackButton';
 import ToolbarContent from './ToolbarContent';
 
 interface PropTypes {
@@ -39,7 +38,6 @@ const TemplateForm = ({ template }: { template: LocalModel<Template> }) => {
         variant="permanent"
         open
       >
-        <BackButton />
         <ToolbarContent template={template} />
         <ActivitiesBar template={template} />
       </Drawer>
