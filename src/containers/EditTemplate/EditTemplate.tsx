@@ -5,11 +5,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { LocalModel, Template } from '~/firebase/schema-types';
 import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
 import SessionMenu from '~/components/SessionsMenu/SessionsMenu';
-import ToolbarContent from './ToolbarContent';
-
-interface PropTypes {
-  template?: LocalModel<Template>;
-}
+import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const TemplateForm = ({ template }: { template: LocalModel<Template> }) => {
+export default function EditContainer({ template }: { template: LocalModel<Template> }) {
   const classes = useStyles();
 
   return (
@@ -38,7 +34,7 @@ const TemplateForm = ({ template }: { template: LocalModel<Template> }) => {
         variant="permanent"
         open
       >
-        <ToolbarContent template={template} />
+        <TemplateTitle template={template} />
         <ActivitiesBar template={template} />
       </Drawer>
       <div className={classes.activitiesSpacer} />
@@ -47,8 +43,4 @@ const TemplateForm = ({ template }: { template: LocalModel<Template> }) => {
       </div>
     </div>
   );
-};
-
-export default function EditContainer({ template }: PropTypes) {
-  return template && <TemplateForm template={template} />;
 }

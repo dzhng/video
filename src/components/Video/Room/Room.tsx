@@ -19,7 +19,7 @@ const Main = styled('main')({
   overflow: 'hidden',
 });
 
-export default function Layout() {
+export default function Room() {
   const roomState = useRoomState();
 
   // Here we would like the height of the main container to be the height of the viewport.

@@ -16,8 +16,8 @@ import useWorkspaces from './useWorkspaces/useWorkspaces';
 import usePendingWrite from './usePendingWrite/usePendingWrite';
 
 export interface StateContextType {
-  error: TwilioError | null;
-  setError(error: TwilioError | null): void;
+  error: TwilioError | Error | string | null;
+  setError(error: TwilioError | Error | string | null): void;
 
   // auth
   getToken(room: string): Promise<string>;
@@ -48,7 +48,7 @@ export interface StateContextType {
 export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
-  const [error, setError] = useState<TwilioError | null>(null);
+  const [error, setError] = useState<TwilioError | Error | string | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
 

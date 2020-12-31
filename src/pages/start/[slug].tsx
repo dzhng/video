@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
-import { Collections, Template, Call } from '~/firebase/schema-types';
+import { Collections, LocalModel, Template, Call } from '~/firebase/schema-types';
 import firebase, { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import LoadingContainer from '~/containers/Loading/Loading';
@@ -12,8 +12,8 @@ import { useAppState } from '~/state';
 export default withPrivateRoute(function StartPage() {
   const router = useRouter();
   const { user } = useAppState();
-  const [ongoingCall, setOngoingCall] = useState<Call | undefined>(undefined);
-  const [template, setTemplate] = useState<Template | undefined>(undefined);
+  const [ongoingCall, setOngoingCall] = useState<LocalModel<Call> | undefined>(undefined);
+  const [template, setTemplate] = useState<LocalModel<Template> | undefined>(undefined);
 
   const templateId = String(router.query.slug);
 
@@ -26,7 +26,10 @@ export default withPrivateRoute(function StartPage() {
       .collection(Collections.TEMPLATES)
       .doc(templateId)
       .onSnapshot((result) => {
-        setTemplate(result.data() as Template);
+        setTemplate({
+          id: result.id,
+          ...(result.data() as Template),
+        });
       });
 
     return unsubscribe;
@@ -42,7 +45,10 @@ export default withPrivateRoute(function StartPage() {
       .collection(Collections.CALLS)
       .doc(template.ongoingCallId)
       .onSnapshot((result) => {
-        setOngoingCall(result.data() as Call);
+        setOngoingCall({
+          id: result.id,
+          ...(result.data() as Call),
+        });
       });
 
     return unsubscribe;

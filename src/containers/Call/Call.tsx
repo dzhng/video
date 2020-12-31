@@ -1,65 +1,26 @@
-import React, { FormEvent } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Button, CircularProgress } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 
-import { Call, Template } from '~/firebase/schema-types';
+import { LocalModel, Call, Template } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
-import ErrorDialog from '~/components/Video/ErrorDialog/ErrorDialog';
 import { VideoProvider } from '~/components/Video/VideoProvider';
-import Room from '~/components/Video/Room/Room';
-import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
-import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
+import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
+import Lobby from './Lobby';
+import CreateCall from './CreateCall';
 
 const useStyles = makeStyles(() =>
   createStyles({
-    loadingSpinner: {
-      marginLeft: '1em',
+    container: {
+      display: 'flex',
+      width: '100%',
     },
-    joinButton: {
-      margin: '1em',
-    },
+    drawerPaper: theme.customMixins.activitiesBar,
+    activitiesSpacer: theme.customMixins.activitiesBar,
   }),
 );
-
-function Lobby() {
-  const classes = useStyles();
-  const router = useRouter();
-  const { getToken, isFetching } = useAppState();
-  const { isConnecting, connect, isAcquiringLocalTracks } = useVideoContext();
-  const roomState = useRoomState();
-
-  const { slug } = router.query;
-  const roomName: string = String(slug);
-
-  const handleSubmit = (event: FormEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    getToken(roomName).then((token) => connect(token));
-  };
-
-  return (
-    <>
-      <Room />
-      {roomState !== 'connected' && (
-        <Button
-          className={classes.joinButton}
-          onClick={handleSubmit}
-          color="primary"
-          variant="contained"
-          disabled={isAcquiringLocalTracks || isConnecting || isFetching}
-          data-testid="join-button"
-        >
-          Join Call
-        </Button>
-      )}
-      {(isConnecting || isFetching) && (
-        <CircularProgress className={classes.loadingSpinner} data-testid="progress-spinner" />
-      )}
-    </>
-  );
-}
 
 export default function CallContainer({
   template,
@@ -67,21 +28,41 @@ export default function CallContainer({
   createCall,
   endCall,
 }: {
-  template: Template;
-  call?: Call;
+  template: LocalModel<Template>;
+  call?: LocalModel<Call>;
   createCall(): Promise<boolean>;
   endCall(): void;
 }) {
-  const { error, setError } = useAppState();
+  const classes = useStyles();
+  const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
+
+  // a call is defined to be started if the call model exist and template has ongoing call id
+  const isCallStarted = call && template.ongoingCallId;
 
   return (
     <UnsupportedBrowserWarning>
-      <VideoProvider options={connectionOptions} onError={setError}>
-        <ErrorDialog dismissError={() => setError(null)} error={error} />
-        <Lobby />
-        {JSON.stringify(call)}
-      </VideoProvider>
+      <div className={classes.container}>
+        <Drawer
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          variant="permanent"
+          open
+        >
+          <ToolbarContent template={template} />
+          <ActivitiesBar template={template} />
+        </Drawer>
+        <div className={classes.activitiesSpacer} />
+
+        <VideoProvider options={connectionOptions} onError={setError}>
+          {isCallStarted ? (
+            <Lobby call={call!} endCall={endCall} />
+          ) : (
+            <CreateCall create={createCall} />
+          )}
+        </VideoProvider>
+      </div>
     </UnsupportedBrowserWarning>
   );
 }
