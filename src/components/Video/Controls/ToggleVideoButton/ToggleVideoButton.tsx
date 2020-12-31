@@ -34,13 +34,16 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
-      <Fab className={classes.fab} onClick={toggleVideo} disabled={props.disabled}>
-        {isVideoEnabled ? (
-          <Videocam data-testid="video-icon" />
-        ) : (
-          <VideocamOff data-testid="videooff-icon" />
-        )}
-      </Fab>
+      {/* Wrapping <Fab/> in <div/> so that tooltip can wrap a disabled element */}
+      <div>
+        <Fab className={classes.fab} onClick={toggleVideo} disabled={props.disabled}>
+          {isVideoEnabled ? (
+            <Videocam data-testid="video-icon" />
+          ) : (
+            <VideocamOff data-testid="videooff-icon" />
+          )}
+        </Fab>
+      </div>
     </Tooltip>
   );
 }

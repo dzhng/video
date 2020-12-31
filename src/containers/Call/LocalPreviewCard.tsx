@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Card } from '@material-ui/core';
+import { useAppState } from '~/state';
 import LocalVideoPreview from '~/components/Video/LocalVideoPreview/LocalVideoPreview';
-import ToggleAudioButton from '~/components/Video/Controls/ToggleAudioButton/ToggleAudioButton';
-import ToggleVideoButton from '~/components/Video/Controls/ToggleVideoButton/ToggleVideoButton';
+import Controls from '~/components/Video/Controls/Controls';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import MediaErrorSnackbar from './MediaErrorSnackbar/MediaErrorSnackbar';
 
@@ -41,6 +41,7 @@ export default function LocalPreviewCard({
     <>
       <Card className={clsx(classes.card, className)}>
         <LocalVideoPreview />
+        <Controls />
         {actionBar}
       </Card>
 

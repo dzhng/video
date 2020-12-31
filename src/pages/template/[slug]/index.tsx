@@ -9,7 +9,7 @@ import EditContainer from '~/containers/EditTemplate/EditTemplate';
 
 export default withPrivateRoute(function CallEditPage() {
   const router = useRouter();
-  const [template, setTemplate] = useState<LocalModel<Template> | undefined>(undefined);
+  const [template, setTemplate] = useState<LocalModel<Template>>();
 
   const templateId = String(router.query.slug);
 

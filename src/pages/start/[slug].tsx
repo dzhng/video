@@ -11,8 +11,8 @@ import { useAppState } from '~/state';
 export default function StartPage() {
   const router = useRouter();
   const { user } = useAppState();
-  const [ongoingCall, setOngoingCall] = useState<LocalModel<Call> | undefined>(undefined);
-  const [template, setTemplate] = useState<LocalModel<Template> | undefined>(undefined);
+  const [ongoingCall, setOngoingCall] = useState<LocalModel<Call>>();
+  const [template, setTemplate] = useState<LocalModel<Template>>();
   const [isHost, setIsHost] = useState<boolean | null>(null);
 
   const templateId = String(router.query.slug);
