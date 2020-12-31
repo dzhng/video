@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useReducer, useState } from 'react';
 import firebase from 'firebase';
-import { TwilioError } from 'twilio-video';
 
 import { RoomType } from '~/utils/twilio-types';
 import { User, Workspace, LocalModel } from '~/firebase/schema-types';
@@ -16,8 +15,8 @@ import useWorkspaces from './useWorkspaces/useWorkspaces';
 import usePendingWrite from './usePendingWrite/usePendingWrite';
 
 export interface StateContextType {
-  error: TwilioError | Error | string | null;
-  setError(error: TwilioError | Error | string | null): void;
+  error: Error | string | null;
+  setError(error: Error | string | null): void;
 
   // auth
   getToken(room: string): Promise<string>;
@@ -48,7 +47,7 @@ export interface StateContextType {
 export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
-  const [error, setError] = useState<TwilioError | Error | string | null>(null);
+  const [error, setError] = useState<Error | string | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
 

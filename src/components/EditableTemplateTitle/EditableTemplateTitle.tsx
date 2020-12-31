@@ -24,7 +24,15 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ToolbarContent({ template }: { template?: LocalModel<Template> }) {
+export default function ToolbarContent({
+  template,
+  showBackButton,
+  backHref,
+}: {
+  template?: LocalModel<Template>;
+  showBackButton?: boolean;
+  backHref?: string;
+}) {
   const classes = useStyles();
   const { markIsWriting } = useAppState();
 
@@ -42,7 +50,7 @@ export default function ToolbarContent({ template }: { template?: LocalModel<Tem
 
   return (
     <div className={classes.toolbarContent}>
-      <BackButton />
+      {showBackButton && <BackButton href={backHref} />}
       <EditableTitle
         className={classes.title}
         title={template?.name}

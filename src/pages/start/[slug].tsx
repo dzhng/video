@@ -3,20 +3,21 @@ import { useRouter } from 'next/router';
 
 import { Collections, LocalModel, Template, Call } from '~/firebase/schema-types';
 import firebase, { db } from '~/utils/firebase';
-import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
 import LoadingContainer from '~/containers/Loading/Loading';
 import CallContainer from '~/containers/Call/Call';
 import { useAppState } from '~/state';
 
 // start a call with given template id
-export default withPrivateRoute(function StartPage() {
+export default function StartPage() {
   const router = useRouter();
   const { user } = useAppState();
   const [ongoingCall, setOngoingCall] = useState<LocalModel<Call> | undefined>(undefined);
   const [template, setTemplate] = useState<LocalModel<Template> | undefined>(undefined);
+  const [isHost, setIsHost] = useState<boolean | null>(null);
 
   const templateId = String(router.query.slug);
 
+  // fetching template model
   useEffect(() => {
     if (!templateId) {
       return;
@@ -35,6 +36,7 @@ export default withPrivateRoute(function StartPage() {
     return unsubscribe;
   }, [templateId]);
 
+  // fetching call model
   useEffect(() => {
     if (!template || !template.ongoingCallId) {
       setOngoingCall(undefined);
@@ -53,6 +55,27 @@ export default withPrivateRoute(function StartPage() {
 
     return unsubscribe;
   }, [template]);
+
+  // setting isHost
+  useEffect(() => {
+    if (!template) {
+      return;
+    }
+
+    if (!user) {
+      setIsHost(false);
+      return;
+    }
+
+    // if the user belongs to the workspace that the template is in, the user is a host
+    const { workspaceId } = template;
+    db.collection(Collections.WORKSPACES)
+      .doc(workspaceId)
+      .collection(Collections.MEMBERS)
+      .doc(user.uid)
+      .get()
+      .then((result) => setIsHost(result.exists));
+  }, [template, user]);
 
   // create a new call if one does not exist
   const handleCreateCall = useCallback(async (): Promise<boolean> => {
@@ -101,9 +124,11 @@ export default withPrivateRoute(function StartPage() {
     setOngoingCall(undefined);
   }, [templateId]);
 
-  return template ? (
+  // when both template and host status is ready, show call conatiner
+  return template && isHost !== null ? (
     <CallContainer
       template={template}
+      isHost={isHost}
       call={ongoingCall}
       createCall={handleCreateCall}
       endCall={handleEndCall}
@@ -111,4 +136,4 @@ export default withPrivateRoute(function StartPage() {
   ) : (
     <LoadingContainer />
   );
-});
+}

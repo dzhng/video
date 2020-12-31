@@ -197,6 +197,7 @@ service cloud.firestore {
           getAfter(/databases/$(database)/documents/workspaces/$(request.resource.id)/members/$(request.auth.uid)).data.role == 'owner' : 
           currentMember().role == 'owner');
 
+      // id of doc is actually id of user, which is also memberId field (duplicate this in memberId field for collection group query indexing)
       match /members/{memberId} {
         allow read: if
           request.auth != null;

@@ -18,7 +18,15 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-export default function CallLobby({ call, endCall }: { call: LocalModel<Call>; endCall(): void }) {
+export default function CallLobby({
+  isHost,
+  call,
+  endCall,
+}: {
+  isHost: boolean;
+  call?: LocalModel<Call>;
+  endCall(): void;
+}) {
   const classes = useStyles();
   const { getToken, isFetching } = useAppState();
   const { isConnecting, connect, isAcquiringLocalTracks } = useVideoContext();
@@ -35,7 +43,7 @@ export default function CallLobby({ call, endCall }: { call: LocalModel<Call>; e
   return (
     <>
       <Room />
-      {roomState !== 'connected' && (
+      {roomState !== 'connected' && call && (
         <Button
           className={classes.joinButton}
           onClick={handleSubmit}

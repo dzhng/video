@@ -34,7 +34,7 @@ export default function EditContainer({ template }: { template: LocalModel<Templ
         variant="permanent"
         open
       >
-        <TemplateTitle template={template} />
+        <TemplateTitle showBackButton template={template} />
         <ActivitiesBar template={template} />
       </Drawer>
       <div className={classes.activitiesSpacer} />
