@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import Link from 'next/link';
 import { Typography, Card, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { VideoCall } from '@material-ui/icons';
@@ -63,14 +64,7 @@ export default function TemplateCard({
   height: number;
 }) {
   const classes = useStyles();
-
-  const startCall = useCallback(
-    (e: React.MouseEvent<unknown>) => {
-      e.preventDefault();
-      console.log('Starting call with', template.id);
-    },
-    [template],
-  );
+  const callLink = `/start/${template.id}`;
 
   return (
     <Card className={classes.card} style={{ height }}>
@@ -83,11 +77,13 @@ export default function TemplateCard({
             <b>{template.activities.length}</b> activities
           </Typography>
         </div>
-        <Tooltip title="Start call" placement="left">
-          <Button color="secondary" variant="contained" onClick={startCall}>
-            <VideoCall />
-          </Button>
-        </Tooltip>
+        <Link href={callLink}>
+          <Tooltip title="Start call" placement="left">
+            <Button color="secondary" variant="contained">
+              <VideoCall />
+            </Button>
+          </Tooltip>
+        </Link>
       </div>
     </Card>
   );
