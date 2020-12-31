@@ -1,9 +1,10 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import * as Yup from 'yup';
-import { Card, Typography, InputBase, Button, Tooltip } from '@material-ui/core';
+import { Card, Typography, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { EditOutlined as EditIcon } from '@material-ui/icons';
 import { Activity } from '~/firebase/schema-types';
+import EditableTitle from '~/components/EditableTitle/EditableTitle';
 
 const NameSchema = Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required();
 
@@ -17,26 +18,6 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         backgroundColor: theme.palette.grey[100],
         boxShadow: theme.shadows[4],
-      },
-    },
-    nameInput: {
-      ...theme.typography.h2,
-      width: '100%',
-      paddingLeft: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-
-      // have transparent border here so its correctly sized
-      border: '1px solid transparent',
-      borderRadius: theme.shape.borderRadius,
-      transition: theme.transitionTime,
-
-      '&:hover': {
-        border: '1px solid ' + theme.palette.grey[300],
-      },
-
-      '&.Mui-focused': {
-        border: '1px solid ' + theme.palette.grey[500],
-        backgroundColor: 'white',
       },
     },
     activityType: {
@@ -75,16 +56,6 @@ export default function ActivitiesCard({
   onEdit(): void;
 }) {
   const classes = useStyles();
-  const [name, setName] = useState(activity.name);
-  const inputRef = useRef<HTMLInputElement>();
-
-  // everytime activity changes, update name with latest
-  // but make sure to not change if still editing (or else we'll get stuttering)
-  useEffect(() => {
-    if (document.activeElement !== inputRef.current) {
-      setName(activity.name);
-    }
-  }, [activity]);
 
   const handleSettingsClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -95,14 +66,7 @@ export default function ActivitiesCard({
   );
 
   const handleNameChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newName = e.target.value;
-      // if not valid, just don't set
-      if (!NameSchema.isValidSync(newName)) {
-        return;
-      }
-
-      setName(newName);
+    (newName: string) => {
       save({
         ...activity,
         name: newName,
@@ -114,11 +78,11 @@ export default function ActivitiesCard({
   return (
     <Card className={classes.card}>
       <div className={classes.content}>
-        <InputBase
-          inputRef={inputRef}
-          className={classes.nameInput}
-          value={name}
+        <EditableTitle
+          title={activity.name}
           onChange={handleNameChange}
+          variant="h2"
+          validationSchema={NameSchema}
         />
         <Typography variant="body1" className={classes.activityType}>
           {activity.type}

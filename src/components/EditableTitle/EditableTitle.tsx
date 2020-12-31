@@ -43,6 +43,7 @@ export default function EditableTitle({
   validationSchema,
   onChange,
   className,
+  debounceChange = true,
 }: {
   title?: string;
   isLoading?: boolean;
@@ -50,6 +51,7 @@ export default function EditableTitle({
   validationSchema: StringSchema;
   onChange(newTitle: string): void;
   className?: string;
+  debounceChange?: boolean;
 }) {
   const classes = useStyles({ variant });
   const [value, setValue] = useState<string>(title ?? '');
@@ -69,8 +71,12 @@ export default function EditableTitle({
   }, [title, setValue]);
 
   const debouncedSaveValue = useMemo(() => {
-    return debounce(onChange, 200, { maxWait: 2000, trailing: true });
-  }, [onChange]);
+    if (debounceChange) {
+      return debounce(onChange, 200, { maxWait: 2000, trailing: true });
+    } else {
+      return onChange;
+    }
+  }, [onChange, debounceChange]);
 
   const handleValueChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
