@@ -80,10 +80,15 @@ export default function EditableTitle({
         return;
       }
 
+      // if still loading, ignore all change events
+      if (isLoading) {
+        return;
+      }
+
       setValue(newValue);
       debouncedSaveValue && debouncedSaveValue(newValue);
     },
-    [debouncedSaveValue, validationSchema],
+    [debouncedSaveValue, validationSchema, isLoading],
   );
 
   return (
