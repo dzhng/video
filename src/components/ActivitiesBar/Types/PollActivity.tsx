@@ -38,6 +38,10 @@ export default function CreatePollActivity() {
                   variant="outlined"
                   margin="dense"
                   placeholder="Poll option"
+                  inputProps={{
+                    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) =>
+                      e.key === 'Enter' && e.preventDefault(),
+                  }}
                   InputProps={{
                     endAdornment: values.options.length > 1 && (
                       <InputAdornment position="end">
