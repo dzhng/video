@@ -11,8 +11,10 @@ export default function useLocalVideoToggle() {
     onError,
   } = useVideoContext();
   const videoTrack = localTracks.find((track) => track.name.includes('camera')) as LocalVideoTrack;
-  const [isPublishing, setIspublishing] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const previousDeviceIdRef = useRef<string>();
+
+  // TODO: useEffect, if localParticipant exist, publish existing videoTrack. If this isn't here, there'll be a bug where if you join a room, local participant won't publish anything unless if toggle is called
 
   const toggleVideoEnabled = useCallback(() => {
     if (!isPublishing) {
@@ -23,13 +25,13 @@ export default function useLocalVideoToggle() {
         localParticipant?.emit('trackUnpublished', localTrackPublication);
         removeLocalVideoTrack();
       } else {
-        setIspublishing(true);
+        setIsPublishing(true);
         getLocalVideoTrack({ deviceId: { exact: previousDeviceIdRef.current } })
           .then((track: LocalVideoTrack) =>
             localParticipant?.publishTrack(track, { priority: 'low' }),
           )
           .catch(onError)
-          .finally(() => setIspublishing(false));
+          .finally(() => setIsPublishing(false));
       }
     }
   }, [

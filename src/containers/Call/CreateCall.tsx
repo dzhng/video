@@ -14,8 +14,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     card: {
       width: '50%',
-      marginTop: theme.spacing(3),
-      marginBottom: theme.spacing(3),
       marginLeft: 'auto',
       marginRight: 'auto',
       maxWidth: theme.modalWidth,
@@ -26,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CreateCall({ create }: { create(): Promise<boolean> }) {
   const classes = useStyles();
 
-  const actionBar = <Button>Create</Button>;
+  const actionBar = <Button color="primary">Create</Button>;
 
   return (
     <div className={classes.container}>

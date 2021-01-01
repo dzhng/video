@@ -10,7 +10,17 @@ import MediaErrorSnackbar from './MediaErrorSnackbar/MediaErrorSnackbar';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    card: {},
+    card: {
+      display: 'flex',
+      flexDirection: 'column',
+      maxHeight: '600px',
+      height: '80vh',
+    },
+    videoContainer: {
+      flexGrow: 1,
+      overflow: 'hidden',
+      backgroundColor: 'black',
+    },
   }),
 );
 
@@ -43,7 +53,9 @@ export default function LocalPreviewCard({
   return (
     <>
       <Card className={clsx(classes.card, className)}>
-        <LocalVideoPreview />
+        <div className={classes.videoContainer}>
+          <LocalVideoPreview />
+        </div>
         <Controls />
         {actionBar}
       </Card>
