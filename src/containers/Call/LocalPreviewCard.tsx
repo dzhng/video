@@ -24,18 +24,21 @@ export default function LocalPreviewCard({
   const classes = useStyles();
   const [mediaError, setMediaError] = useState<Error>();
   const { isFetching } = useAppState();
-  const { isAcquiringLocalTracks, isConnecting, getAudioAndVideoTracks } = useVideoContext();
+  const {
+    localTracks,
+    isAcquiringLocalTracks,
+    isConnecting,
+    getAudioAndVideoTracks,
+  } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
   useEffect(() => {
-    if (!mediaError) {
-      getAudioAndVideoTracks().catch((error) => {
-        console.log('Error acquiring local media:');
-        console.dir(error);
-        setMediaError(error);
-      });
-    }
-  }, [getAudioAndVideoTracks, mediaError]);
+    getAudioAndVideoTracks().catch((error) => {
+      console.log('Error acquiring local media:');
+      console.dir(error);
+      setMediaError(error);
+    });
+  }, [getAudioAndVideoTracks]);
 
   return (
     <>

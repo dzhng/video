@@ -6,15 +6,14 @@ import {
   SELECTED_AUDIO_INPUT_KEY,
   SELECTED_VIDEO_INPUT_KEY,
 } from '~/constants';
-import { useAudioInputDevices, useVideoInputDevices } from '~/hooks/Video/deviceHooks/deviceHooks';
 
-export default function useLocalTracks() {
+export default function useLocalTracks(
+  localAudioDevices: MediaDeviceInfo[],
+  localVideoDevices: MediaDeviceInfo[],
+) {
   const [audioTrack, setAudioTrack] = useState<LocalAudioTrack>();
   const [videoTrack, setVideoTrack] = useState<LocalVideoTrack>();
   const [isAcquiringLocalTracks, setIsAcquiringLocalTracks] = useState(false);
-
-  const localAudioDevices = useAudioInputDevices();
-  const localVideoDevices = useVideoInputDevices();
 
   const hasAudio = localAudioDevices.length > 0;
   const hasVideo = localVideoDevices.length > 0;
@@ -82,8 +81,8 @@ export default function useLocalTracks() {
 
     return Video.createLocalTracks(localTrackConstraints)
       .then((tracks) => {
-        const videoTrack = tracks.find((track) => track.kind === 'video'); // eslint-disable-line no-shadow
-        const audioTrack = tracks.find((track) => track.kind === 'audio'); // eslint-disable-line no-shadow
+        const videoTrack = tracks.find((track) => track.kind === 'video'); // eslint-disable-line @typescript-eslint/no-shadow
+        const audioTrack = tracks.find((track) => track.kind === 'audio'); // eslint-disable-line @typescript-eslint/no-shadow
         if (videoTrack) {
           setVideoTrack(videoTrack as LocalVideoTrack);
         }

@@ -15,7 +15,20 @@ import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
+import useDevices from './useDevices/useDevices';
 import useRoom from './useRoom/useRoom';
+
+export function getAudioInputDevices(devices: MediaDeviceInfo[]) {
+  return devices.filter((device) => device.kind === 'audioinput');
+}
+
+export function getVideoInputDevices(devices: MediaDeviceInfo[]) {
+  return devices.filter((device) => device.kind === 'videoinput');
+}
+
+export function getAudioOutputDevices(devices: MediaDeviceInfo[]) {
+  return devices.filter((device) => device.kind === 'audiooutput');
+}
 
 /*
  *  The hooks used by the VideoProvider component are different than the hooks found in the 'hooks/' directory. The hooks
@@ -26,6 +39,11 @@ import useRoom from './useRoom/useRoom';
 
 export interface IVideoContext {
   room: Room;
+  devices: {
+    audioInput: MediaDeviceInfo[];
+    videoInput: MediaDeviceInfo[];
+    audioOutput: MediaDeviceInfo[];
+  };
   localTracks: (LocalAudioTrack | LocalVideoTrack)[];
   isConnecting: boolean;
   connect: (token: string) => Promise<void>;
@@ -58,6 +76,13 @@ export function VideoProvider({
     onError(error);
   };
 
+  const deviceList = useDevices();
+  const devices = {
+    audioInput: getAudioInputDevices(deviceList),
+    audioOutput: getAudioOutputDevices(deviceList),
+    videoInput: getVideoInputDevices(deviceList),
+  };
+
   const {
     localTracks,
     getLocalVideoTrack,
@@ -65,7 +90,8 @@ export function VideoProvider({
     isAcquiringLocalTracks,
     removeLocalVideoTrack,
     getAudioAndVideoTracks,
-  } = useLocalTracks();
+  } = useLocalTracks(devices.audioInput, devices.videoInput);
+
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
   // Register onError and onDisconnect callback functions.
@@ -77,6 +103,7 @@ export function VideoProvider({
     <VideoContext.Provider
       value={{
         room,
+        devices,
         localTracks,
         isConnecting,
         onError: onErrorCallback,
