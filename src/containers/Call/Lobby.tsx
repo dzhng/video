@@ -55,7 +55,7 @@ export default function CallLobby({
       disabled={isConnecting || isLoading}
       data-testid="join-button"
     >
-      {isConnecting ? <CircularProgress data-testid="progress-spinner" /> : 'Join'}
+      {isConnecting ? <CircularProgress data-testid="progress-spinner" color="inherit" /> : 'Join'}
     </Button>
   );
 
