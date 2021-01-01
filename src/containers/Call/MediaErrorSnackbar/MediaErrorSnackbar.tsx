@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Snackbar } from '@material-ui/core';
-import { useAudioInputDevices, useVideoInputDevices } from '~/hooks/Video/deviceHooks/deviceHooks';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 
 export function getSnackbarContent(hasAudio: boolean, hasVideo: boolean, error?: Error) {
@@ -59,12 +58,12 @@ export function getSnackbarContent(hasAudio: boolean, hasVideo: boolean, error?:
 }
 
 export default function MediaErrorSnackbar({ error }: { error?: Error }) {
-  const hasAudio = useAudioInputDevices().length > 0;
-  const hasVideo = useVideoInputDevices().length > 0;
-
-  const { isAcquiringLocalTracks } = useVideoContext();
+  const { isAcquiringLocalTracks, devices } = useVideoContext();
 
   const [isSnackbarDismissed, setIsSnackbarDismissed] = useState(false);
+
+  const hasAudio = devices.audioInput.length > 0;
+  const hasVideo = devices.videoInput.length > 0;
 
   const isSnackbarOpen =
     !isSnackbarDismissed && !isAcquiringLocalTracks && (Boolean(error) || !hasAudio || !hasVideo);
