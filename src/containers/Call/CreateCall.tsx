@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: theme.modalWidth,
     },
     createButton: {
+      height: 50,
+      borderRadius: 0,
+
       '& div[role=progressbar]': {
         marginRight: theme.spacing(1),
       },
@@ -28,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function CreateCall({ create }: { create(): Promise<boolean> }) {
   const classes = useStyles();
-  const [isCreating, setIsCreating] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleCreate = useCallback(() => {
     if (isCreating) {
@@ -44,9 +47,10 @@ export default function CreateCall({ create }: { create(): Promise<boolean> }) {
       color="primary"
       onClick={handleCreate}
       className={classes.createButton}
+      variant="contained"
       disabled={isCreating}
     >
-      {isCreating && <CircularProgress color="inherit" size={'1rem'} />} Create
+      {isCreating ? <CircularProgress color="inherit" size={'1rem'} /> : 'Create'}
     </Button>
   );
 

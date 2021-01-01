@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Card } from '@material-ui/core';
-import { useAppState } from '~/state';
 import LocalVideoPreview from '~/components/Video/LocalVideoPreview/LocalVideoPreview';
 import Controls from '~/components/Video/Controls/Controls';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
@@ -21,6 +20,11 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       backgroundColor: 'black',
     },
+    controlsContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      padding: theme.spacing(1),
+    },
   }),
 );
 
@@ -33,14 +37,7 @@ export default function LocalPreviewCard({
 }) {
   const classes = useStyles();
   const [mediaError, setMediaError] = useState<Error>();
-  const { isFetching } = useAppState();
-  const {
-    localTracks,
-    isAcquiringLocalTracks,
-    isConnecting,
-    getAudioAndVideoTracks,
-  } = useVideoContext();
-  const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
+  const { getAudioAndVideoTracks } = useVideoContext();
 
   useEffect(() => {
     getAudioAndVideoTracks().catch((error) => {
@@ -56,7 +53,9 @@ export default function LocalPreviewCard({
         <div className={classes.videoContainer}>
           <LocalVideoPreview />
         </div>
-        <Controls />
+        <div className={classes.controlsContainer}>
+          <Controls />
+        </div>
         {actionBar}
       </Card>
 
