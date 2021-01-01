@@ -44,9 +44,14 @@ export default forwardRef(function AddMemberMenuItem(
   }, []);
 
   const handleCancel = useCallback(() => {
+    // don't allow cancel while you are submitting
+    if (isSubmitting) {
+      return;
+    }
+
     setFormOpen(false);
     onClick();
-  }, [onClick]);
+  }, [isSubmitting, onClick]);
 
   const handleMembersChange = useCallback(
     (_addedEmails: string[], _removedUsers: LocalModel<User>[]) => {
@@ -57,6 +62,10 @@ export default forwardRef(function AddMemberMenuItem(
   );
 
   const handleSubmit = useCallback(async () => {
+    if (isSubmitting) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     if (removedUsers.length > 0) {
@@ -70,7 +79,7 @@ export default forwardRef(function AddMemberMenuItem(
     setIsSubmitting(false);
     setFormOpen(false);
     onClick();
-  }, [onClick, removeMembers, addMembers, removedUsers, addedEmails]);
+  }, [isSubmitting, onClick, removeMembers, addMembers, removedUsers, addedEmails]);
 
   return (
     <>
@@ -97,11 +106,17 @@ export default forwardRef(function AddMemberMenuItem(
           <MembersField users={members} onChange={handleMembersChange} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancel} color="primary">
+          <Button disabled={isSubmitting} onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button color="primary" variant="contained" autoFocus onClick={handleSubmit}>
-            {isSubmitting ? <CircularProgress size={24} /> : 'Save'}
+          <Button
+            color="primary"
+            variant="contained"
+            disabled={isSubmitting}
+            autoFocus
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? <CircularProgress color="inherit" size={'1.5rem'} /> : 'Save'}
           </Button>
         </DialogActions>
       </Dialog>
