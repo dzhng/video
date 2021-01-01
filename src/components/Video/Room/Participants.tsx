@@ -20,7 +20,7 @@ const Container = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function Room() {
+export default function Participants() {
   return (
     <Container>
       <ParticipantStrip />

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 import { useAppState } from '~/state';
@@ -22,10 +22,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function CallLobby({
+  waitForJoin,
   isHost,
   call,
   endCall,
 }: {
+  waitForJoin: boolean;
   isHost: boolean;
   call?: LocalModel<Call>;
   endCall(): void;
@@ -46,16 +48,28 @@ export default function CallLobby({
     getToken(call.id).then((token) => connect(token));
   }, [call, getToken, connect, isConnecting]);
 
+  // we only want this to run once when call is ready
+  useEffect(() => {
+    if (call && !waitForJoin) {
+      handleSubmit();
+    }
+  }, [call]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // TODO: just put this inside of LocalPreview, since it's the same between this and CreateCall component. Can expose isLoading / disabled / onClick as props.
   const actionBar = (
     <Button
       className={classes.joinButton}
       onClick={handleSubmit}
       color="primary"
       variant="contained"
-      disabled={isConnecting || isLoading}
+      disabled={isConnecting || isLoading || !waitForJoin}
       data-testid="join-button"
     >
-      {isConnecting ? <CircularProgress data-testid="progress-spinner" color="inherit" /> : 'Join'}
+      {isConnecting || !waitForJoin ? (
+        <CircularProgress data-testid="progress-spinner" color="inherit" size={'1rem'} />
+      ) : (
+        'Join'
+      )}
     </Button>
   );
 
