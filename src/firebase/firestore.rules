@@ -131,7 +131,7 @@ service cloud.firestore {
 
       allow create, update: if
         request.auth != null &&
-        assertKeys(['templateId', 'creatorId', 'currentStep', 'stepData', 'notes', 'createdAt']) &&
+        assertKeys(['templateId', 'creatorId', 'currentStep', 'stepData', 'isFinished', 'duration', 'createdAt']) &&
         requiredStringKey('templateId', 1, 30) &&
         requiredStringKey('creatorId', 1, 30) &&
         requiredCreatedAtKey() &&
@@ -140,8 +140,9 @@ service cloud.firestore {
         // map of step IDs and the metadata for each step
         requiredObjectKey('stepData') &&
 
-        // meeting notes, in markdown format
-        optionalStringKey('notes', 50000);
+        // marks if this call has finished, and stores duration in seconds
+        optionalBoolKey('isFinished') &&
+        optionalIntKey('duration');
     } // match call
 
     match /presentations/{presentationId} {

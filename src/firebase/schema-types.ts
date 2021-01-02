@@ -74,7 +74,8 @@ export declare interface Call {
   creatorId: string;
   currentStep: number;
   stepData: object;
-  notes?: string;
+  isFinished?: boolean;
+  duration?: number;
   createdAt: FbDate;
 }
 
