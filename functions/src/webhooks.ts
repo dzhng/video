@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import 'firebase-functions';
-import admin from 'firebase-admin';
+//import admin from 'firebase-admin';
 import { region } from './constants';
 
 // The URL of this is set in the Twilio room settings admin panel

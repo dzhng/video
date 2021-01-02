@@ -46,7 +46,15 @@ If you need to pass more arguments into jest, add a `--` before adding additiona
 
 ## Deployment notes
 
+### Cloud Functions
+
 A large part of this app relies on background functions in Cloud Functions, triggered via Firestore events. As of now, there is no way to set retry policies programmatically. Make sure to enable retry on failure in function settings in every new functions deployed in production.
+
+In functions triggered via HTTP, make sure to set permissions to be public in cloud console (it should default to public but make sure as documentation is unclear here).
+
+When writing functions, make sure they are idempotent as they can be run multiple times during retries or deployment switchovers.
+
+Take extra care when renaming a background function, make sure to deploy the new one first before deleting the old one, so that they'll both run in parellel during the process. This is to prevent any time period where no background functions are deployed (this is also why idempotentcy is importent).
 
 ## Testing Approach
 
