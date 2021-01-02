@@ -44,6 +44,10 @@ If you need to pass more arguments into jest, add a `--` before adding additiona
 
     $ npm test <SEARCH_TERM> -- --watch
 
+## Deployment notes
+
+A large part of this app relies on background functions in Cloud Functions, triggered via Firestore events. As of now, there is no way to set retry policies programmatically. Make sure to enable retry on failure in function settings in every new functions deployed in production.
+
 ## Testing Approach
 
 ### Rendering in Virtual DOM: testing-library vs enzyme
@@ -169,3 +173,7 @@ The `connect` function from the SDK accepts a [configuration object](https://med
 ### Track Priority Settings
 
 This application dynamically changes the priority of remote video tracks to provide an optimal collaboration experience. Any video track that will be displayed in the main video area will have `track.setPriority('high')` called on it (see the [VideoTrack](https://github.com/twilio/twilio-video-app-react/blob/master/src/components/VideoTrack/VideoTrack.tsx#L25) component) when the component is mounted. This higher priority enables the track to be rendered at a high resolution. `track.setPriority(null)` is called when the component is unmounted so that the track's priority is set to its publish priority (low).
+
+## TODO:
+
+- Look into moving all /pages/api functions to Cloud Functions, so can get rid of service account credentials and keep pages structure clean (frontend only)
