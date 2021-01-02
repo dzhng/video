@@ -185,3 +185,4 @@ This application dynamically changes the priority of remote video tracks to prov
 ## TODO:
 
 - Look into moving all /pages/api functions to Cloud Functions, so can get rid of service account credentials and keep pages structure clean (frontend only)
+- Add logic to auto mark a call as finished if it's 4hr+. Fallback in case Twilio's webhooks fail

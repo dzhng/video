@@ -142,7 +142,7 @@ service cloud.firestore {
 
         // marks if this call has finished, and stores duration in seconds
         optionalBoolKey('isFinished') &&
-        optionalIntKey('duration');
+        optionalIntKey('duration', 0, 50000);
     } // match call
 
     match /presentations/{presentationId} {

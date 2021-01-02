@@ -355,6 +355,26 @@ describe('firebase cloud firestore database rules', () => {
     });
   });
 
+  describe('call', () => {
+    let requiredFields = {
+      templateId: '123',
+      creatorId: 'alice',
+      currentStep: 0,
+      stepData: {},
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    it('should let logged in users create a call', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const call = db.collection('calls').doc('doc');
+      await firebase.assertSucceeds(
+        call.set({
+          ...requiredFields,
+        }),
+      );
+    });
+  });
+
   describe('presentation', () => {
     const requiredFields = {
       name: 'hello',
