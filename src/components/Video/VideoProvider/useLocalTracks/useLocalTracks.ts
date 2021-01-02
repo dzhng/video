@@ -54,6 +54,13 @@ export default function useLocalTracks(
     }
   }, [videoTrack]);
 
+  const removeLocalAudioTrack = useCallback(() => {
+    if (audioTrack) {
+      audioTrack.disable();
+      setAudioTrack(undefined);
+    }
+  }, [audioTrack]);
+
   const getAudioAndVideoTracks = useCallback(() => {
     if (!hasAudio && !hasVideo) return Promise.resolve();
     if (isAcquiringLocalTracks || audioTrack || videoTrack) return Promise.resolve();
@@ -112,6 +119,7 @@ export default function useLocalTracks(
     getLocalAudioTrack,
     isAcquiringLocalTracks,
     removeLocalVideoTrack,
+    removeLocalAudioTrack,
     getAudioAndVideoTracks,
   };
 }

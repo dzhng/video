@@ -32,7 +32,7 @@ export default function Room() {
   return (
     <Container style={{ height }}>
       <Main>
-        {roomState === 'disconnected' ? <LocalVideoPreview /> : <Participants />}
+        <Participants />
         <Controls />
       </Main>
       <ReconnectingNotification />

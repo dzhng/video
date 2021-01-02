@@ -25,12 +25,10 @@ export default function CallLobby({
   waitForJoin,
   isHost,
   call,
-  endCall,
 }: {
   waitForJoin: boolean;
   isHost: boolean;
   call?: LocalModel<Call>;
-  endCall(): void;
 }) {
   const classes = useStyles();
   const { getToken, isFetching } = useAppState();

@@ -9,9 +9,7 @@ import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOpti
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
 import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
-import Lobby from './Lobby';
-import CreateCall from './CreateCall';
-import WaitForHost from './WaitForHost';
+import CallFlow from './CallFlow';
 import FinishCall from './FinishCall';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,25 +45,24 @@ export default function CallContainer({
   const connectionOptions = useConnectionOptions();
 
   // tracks if user has started the call, so we can show finish screen when call ends instead of lobby again
-  const [callHasStarted, setCallHasStarted] = useState(false);
+  const [currentCall, setCurrentCall] = useState<string | null>(template.ongoingCallId ?? null);
 
-  // tracks if the call was created by user or if just joining existing call
-  const [callCreated, setCallCreated] = useState(false);
-
-  // a call is defined to be started if the template has ongoing call id
-  const isCallOngoing = template.ongoingCallId;
-  const isCallFinished = callHasStarted && !isCallOngoing;
+  // tracks if the user has explicitly left the call
+  const [didLeave, setDidLeave] = useState(false);
 
   useEffect(() => {
-    if (isCallOngoing) {
-      setCallHasStarted(true);
+    if (template.ongoingCallId && currentCall === null) {
+      setCurrentCall(template.ongoingCallId);
     }
-  }, [isCallOngoing]);
+  }, [template.ongoingCallId, currentCall]);
 
-  const handleCreate = useCallback(() => {
-    setCallCreated(true);
-    return createCall();
-  }, [createCall]);
+  const handleDisconnect = useCallback(() => {
+    setDidLeave(true);
+  }, []);
+
+  // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
+  const isCallEnded = currentCall && currentCall !== template.ongoingCallId;
+  const isCallFinished = isCallEnded || didLeave;
 
   return (
     <>
@@ -85,21 +82,24 @@ export default function CallContainer({
             <div className={classes.activitiesSpacer} />
 
             <div className={classes.content}>
-              <VideoProvider options={connectionOptions} onError={setError}>
-                {isCallOngoing ? (
-                  <Lobby waitForJoin={!callCreated} isHost={isHost} call={call} endCall={endCall} />
-                ) : isHost ? (
-                  <CreateCall create={handleCreate} />
-                ) : (
-                  <WaitForHost />
-                )}
+              <VideoProvider
+                options={connectionOptions}
+                onError={setError}
+                onDisconnect={handleDisconnect}
+              >
+                <CallFlow
+                  isCallStarted={!!currentCall}
+                  isHost={isHost}
+                  call={call?.id === currentCall ? call : undefined}
+                  createCall={createCall}
+                />
               </VideoProvider>
             </div>
           </div>
         </UnsupportedBrowserWarning>
       )}
 
-      {isCallFinished && <FinishCall />}
+      {isCallFinished && <FinishCall didLeave={didLeave} />}
     </>
   );
 }

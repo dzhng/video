@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode } from 'react';
+import React, { createContext, ReactNode, useCallback } from 'react';
 import {
   CreateLocalTrackOptions,
   ConnectOptions,
@@ -53,6 +53,7 @@ export interface IVideoContext {
   getLocalAudioTrack: (deviceId?: string) => Promise<LocalAudioTrack>;
   isAcquiringLocalTracks: boolean;
   removeLocalVideoTrack: () => void;
+  removeLocalAudioTrack: () => void;
   getAudioAndVideoTracks: () => Promise<void>;
 }
 
@@ -89,6 +90,7 @@ export function VideoProvider({
     getLocalAudioTrack,
     isAcquiringLocalTracks,
     removeLocalVideoTrack,
+    removeLocalAudioTrack,
     getAudioAndVideoTracks,
   } = useLocalTracks(devices.audioInput, devices.videoInput);
 
@@ -98,6 +100,15 @@ export function VideoProvider({
   useHandleRoomDisconnectionErrors(room, onError);
   useHandleTrackPublicationFailed(room, onError);
   useHandleOnDisconnect(room, onDisconnect);
+
+  // custom logic to clean up after disconnect
+  useHandleOnDisconnect(
+    room,
+    useCallback(() => {
+      removeLocalVideoTrack();
+      removeLocalAudioTrack();
+    }, [removeLocalAudioTrack, removeLocalVideoTrack]),
+  );
 
   return (
     <VideoContext.Provider
@@ -113,6 +124,7 @@ export function VideoProvider({
         connect,
         isAcquiringLocalTracks,
         removeLocalVideoTrack,
+        removeLocalAudioTrack,
         getAudioAndVideoTracks,
       }}
     >

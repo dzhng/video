@@ -116,13 +116,19 @@ export default function StartPage() {
   }, [templateId, user]);
 
   const handleEndCall = useCallback(async () => {
-    if (!templateId) {
+    if (!template) {
       return;
     }
 
-    db.collection(Collections.TEMPLATES).doc(templateId).update({ ongoingCallId: null });
-    setOngoingCall(undefined);
-  }, [templateId]);
+    const batch = db.batch();
+    const templateRef = db.collection(Collections.TEMPLATES).doc(template.id);
+    const callRef = db.collection(Collections.CALLS).doc(template.ongoingCallId ?? undefined);
+
+    batch.update(templateRef, { ongoingCallId: null });
+    batch.update(callRef, { isFinished: true });
+
+    await batch.commit();
+  }, [template]);
 
   // when both template and host status is ready, show call conatiner
   return template && isHost !== null ? (
