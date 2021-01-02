@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import firebase, { db } from '~/utils/firebase';
 import withPrivateRoute from '~/components/PrivateRoute/withPrivateRoute';
@@ -26,20 +26,13 @@ export default withPrivateRoute(function IndexPage() {
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(true);
   const [isLoadingMembers, setIsLoadingMembers] = useState(true);
 
-  // track of prevous firebase subscriptions to unsubscribe when currentWorkspaceId change
-  let previousUnsubscribeTemplates = useRef<(() => void) | null>(null);
-
   useEffect(() => {
     setIsLoadingTemplates(true);
     if (!currentWorkspaceId) {
       return;
     }
 
-    if (previousUnsubscribeTemplates.current) {
-      previousUnsubscribeTemplates.current();
-    }
-
-    previousUnsubscribeTemplates.current = db
+    const unsubscribe = db
       .collection(Collections.TEMPLATES)
       .where('workspaceId', '==', currentWorkspaceId)
       .onSnapshot(function (querySnapshot) {
@@ -48,7 +41,7 @@ export default withPrivateRoute(function IndexPage() {
         setIsLoadingTemplates(false);
       });
 
-    return previousUnsubscribeTemplates.current;
+    return unsubscribe;
   }, [currentWorkspaceId]);
 
   useEffect(() => {
