@@ -36,3 +36,13 @@ export declare interface Member {
   role: 'owner' | 'member' | 'deleted';
   createdAt: admin.firestore.FieldValue;
 }
+
+export declare interface Call {
+  templateId: string;
+  creatorId: string;
+  currentStep: number;
+  stepData: object;
+  isFinished?: boolean;
+  duration?: number;
+  createdAt: admin.firestore.FieldValue;
+}
