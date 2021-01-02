@@ -6,6 +6,8 @@ import { isMobile, removeUndefineds } from '..';
 export default function useConnectionOptions() {
   const { roomType, settings } = useAppState();
 
+  // TODO: rework render dimensions to be all square instead of wide dimensions (to match app design)
+
   // See: https://media.twiliocdn.com/sdk/js/video/releases/2.0.0/docs/global.html#ConnectOptions
   // for available connection options.
   const connectionOptions: ConnectOptions = {

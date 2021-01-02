@@ -40,12 +40,18 @@ export default function CallLobby({
   const isLoading = !call || isAcquiringLocalTracks;
   const isConnecting = isFetching || _isConnecting;
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (!call || isConnecting) {
+      console.error('Call is not defined or already connecting');
       return;
     }
 
-    getToken(call.id).then((token) => connect(token));
+    const token = await getToken(call.id);
+    if (token) {
+      connect(token);
+    } else {
+      console.error('Token not defined');
+    }
   }, [call, getToken, connect, isConnecting]);
 
   // we only want this to run once when call is ready

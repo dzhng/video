@@ -17,9 +17,14 @@ export default function useFirebaseAuth() {
   }, []);
 
   // fetch twilio token for call from internal endpoint (which talks to twilio admin API)
+  // TODO: move this to another file that's not firebase related
   const getToken = useCallback(
     async (roomName: string) => {
-      const idToken = await user!.getIdToken();
+      if (!user) {
+        return;
+      }
+
+      const idToken = await user.getIdToken();
       const params = JSON.stringify({ idToken, roomName });
 
       return fetch(`${TWILIO_TOKEN_ENDPOINT}`, {

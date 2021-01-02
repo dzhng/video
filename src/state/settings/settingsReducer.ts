@@ -27,7 +27,7 @@ export const initialSettings: Settings = {
   maxTracks: isMobile ? '5' : '10',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
-  renderDimensionStandard: 'vga',
+  renderDimensionStandard: 'wvga',
   renderDimensionHigh: '960p',
 };
 
