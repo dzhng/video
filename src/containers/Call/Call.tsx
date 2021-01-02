@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
 
@@ -10,7 +11,6 @@ import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/Un
 import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
 import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
 import CallFlow from './CallFlow';
-import FinishCall from './FinishCall';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,14 +41,12 @@ export default function CallContainer({
   endCall(): void;
 }) {
   const classes = useStyles();
+  const router = useRouter();
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
 
   // tracks if user has started the call, so we can show finish screen when call ends instead of lobby again
   const [currentCall, setCurrentCall] = useState<string | null>(template.ongoingCallId ?? null);
-
-  // tracks if the user has explicitly left the call
-  const [didLeave, setDidLeave] = useState(false);
 
   useEffect(() => {
     if (template.ongoingCallId && currentCall === null) {
@@ -57,49 +55,53 @@ export default function CallContainer({
   }, [template.ongoingCallId, currentCall]);
 
   const handleDisconnect = useCallback(() => {
-    setDidLeave(true);
-  }, []);
+    router.push('/finish');
+  }, [router]);
+
+  const handleEndCall = useCallback(() => {
+    endCall();
+    router.push('/finish?hostEnded=true');
+  }, [endCall, router]);
 
   // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
-  const isCallEnded = currentCall && currentCall !== template.ongoingCallId;
-  const isCallFinished = isCallEnded || didLeave;
+  const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
+
+  useEffect(() => {
+    if (isCallEnded) {
+      router.push('/finish?hostEnded=true');
+    }
+  }, [isCallEnded, router]);
 
   return (
-    <>
-      {!isCallFinished && (
-        <UnsupportedBrowserWarning>
-          <div className={classes.container}>
-            <Drawer
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              variant="permanent"
-              open
-            >
-              <TemplateTitle template={template} />
-              <ActivitiesBar template={template} />
-            </Drawer>
-            <div className={classes.activitiesSpacer} />
+    <UnsupportedBrowserWarning>
+      <div className={classes.container}>
+        <Drawer
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          variant="permanent"
+          open
+        >
+          <TemplateTitle template={template} />
+          <ActivitiesBar template={template} />
+        </Drawer>
+        <div className={classes.activitiesSpacer} />
 
-            <div className={classes.content}>
-              <VideoProvider
-                options={connectionOptions}
-                onError={setError}
-                onDisconnect={handleDisconnect}
-              >
-                <CallFlow
-                  isCallStarted={!!currentCall}
-                  isHost={isHost}
-                  call={call?.id === currentCall ? call : undefined}
-                  createCall={createCall}
-                />
-              </VideoProvider>
-            </div>
-          </div>
-        </UnsupportedBrowserWarning>
-      )}
-
-      {isCallFinished && <FinishCall didLeave={didLeave} />}
-    </>
+        <div className={classes.content}>
+          <VideoProvider
+            options={connectionOptions}
+            onError={setError}
+            onDisconnect={handleDisconnect}
+          >
+            <CallFlow
+              isCallStarted={!!currentCall}
+              isHost={isHost}
+              call={call?.id === currentCall ? call : undefined}
+              createCall={createCall}
+            />
+          </VideoProvider>
+        </div>
+      </div>
+    </UnsupportedBrowserWarning>
   );
 }
