@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { LocalModel, Call } from '~/firebase/schema-types';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useCallContext from '~/hooks/useCallContext/useCallContext';
 import MediaErrorSnackbar from './MediaErrorSnackbar/MediaErrorSnackbar';
 import Lobby from './Lobby';
 import CreateCall from './CreateCall';
@@ -8,21 +8,25 @@ import WaitForHost from './WaitForHost';
 
 export default function CallFlow({
   isCallStarted,
-  isHost,
-  call,
   createCall,
 }: {
   isCallStarted: boolean;
-  isHost: boolean;
-  call?: LocalModel<Call>;
   createCall(): Promise<boolean>;
 }) {
   const [mediaError, setMediaError] = useState<Error>();
-  const { getAudioAndVideoTracks } = useVideoContext();
+  const {
+    room,
+    getAudioAndVideoTracks,
+    removeLocalAudioTrack,
+    removeLocalVideoTrack,
+  } = useVideoContext();
+  const { isHost, call } = useCallContext();
+  const cleanUpTracks = useRef<() => void>();
 
   // tracks if the call was created by user or if just joining existing call
   const [callCreated, setCallCreated] = useState(false);
 
+  // get local tracks on component mount, remove when dismounted
   useEffect(() => {
     getAudioAndVideoTracks().catch((error) => {
       console.log('Error acquiring local media:');
@@ -30,6 +34,22 @@ export default function CallFlow({
       setMediaError(error);
     });
   }, [getAudioAndVideoTracks]);
+
+  // keep a latest up to date version of cleanup methods at all times, to call during unmount
+  useEffect(() => {
+    cleanUpTracks.current = () => {
+      console.log('Cleaning up local tracks...');
+
+      // disconnect could not exist since it may be stubed by EventEmitter in VideoContext
+      room.disconnect?.();
+
+      removeLocalVideoTrack();
+      removeLocalAudioTrack();
+    };
+  }, [removeLocalVideoTrack, removeLocalAudioTrack, room]);
+
+  // during unmount, cleanup tracks
+  useEffect(() => () => cleanUpTracks.current?.(), []);
 
   const handleCreate = useCallback(() => {
     setCallCreated(true);

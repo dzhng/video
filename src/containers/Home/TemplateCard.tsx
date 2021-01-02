@@ -64,7 +64,7 @@ export default function TemplateCard({
   height: number;
 }) {
   const classes = useStyles();
-  const callLink = `/start/${template.id}`;
+  const callLink = `/start/${template.id}?from=${encodeURIComponent('/')}`;
 
   return (
     <Card className={classes.card} style={{ height }}>

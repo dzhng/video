@@ -6,6 +6,7 @@ import { Drawer } from '@material-ui/core';
 import { LocalModel, Call, Template } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
+import { CallProvider } from '~/components/CallProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
@@ -45,6 +46,10 @@ export default function CallContainer({
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
 
+  // URL that the back buttom goes to - set by the `from` query param. If not exist don't show back button
+  const fromHref: string | undefined =
+    router.query.from && decodeURIComponent(router.query.from as string);
+
   // tracks if user has started the call, so we can show finish screen when call ends instead of lobby again
   const [currentCall, setCurrentCall] = useState<string | null>(template.ongoingCallId ?? null);
 
@@ -82,7 +87,7 @@ export default function CallContainer({
           variant="permanent"
           open
         >
-          <TemplateTitle template={template} />
+          <TemplateTitle template={template} showBackButton={!!fromHref} backHref={fromHref} />
           <ActivitiesBar template={template} />
         </Drawer>
         <div className={classes.activitiesSpacer} />
@@ -93,12 +98,13 @@ export default function CallContainer({
             onError={setError}
             onDisconnect={handleDisconnect}
           >
-            <CallFlow
-              isCallStarted={!!currentCall}
-              isHost={isHost}
+            <CallProvider
               call={call?.id === currentCall ? call : undefined}
-              createCall={createCall}
-            />
+              isHost={isHost}
+              endCall={handleEndCall}
+            >
+              <CallFlow isCallStarted={!!currentCall} createCall={createCall} />
+            </CallProvider>
           </VideoProvider>
         </div>
       </div>

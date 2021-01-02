@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useCallback } from 'react';
+import React, { createContext, useCallback } from 'react';
 import {
   CreateLocalTrackOptions,
   ConnectOptions,
@@ -63,7 +63,7 @@ interface VideoProviderProps {
   options?: ConnectOptions;
   onError?: ErrorCallback;
   onDisconnect?: Callback;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export function VideoProvider({
@@ -100,15 +100,6 @@ export function VideoProvider({
   useHandleRoomDisconnectionErrors(room, onError);
   useHandleTrackPublicationFailed(room, onError);
   useHandleOnDisconnect(room, onDisconnect);
-
-  // custom logic to clean up after disconnect
-  useHandleOnDisconnect(
-    room,
-    useCallback(() => {
-      removeLocalVideoTrack();
-      removeLocalAudioTrack();
-    }, [removeLocalAudioTrack, removeLocalVideoTrack]),
-  );
 
   return (
     <VideoContext.Provider

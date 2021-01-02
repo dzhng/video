@@ -94,6 +94,8 @@ export default function SessionsMenu() {
   const templateId = String(router.query.slug);
   const relativeCallLink = `/start/${templateId}`;
   const sharableCallLink = `${ROOT_URL}${relativeCallLink}`;
+  // for the start call button, include from param to go back to this page
+  const callHref = `${relativeCallLink}?from=${encodeURIComponent(`/template/${templateId}`)}`;
 
   const handleShare = useCallback(() => {
     updateClipboard(sharableCallLink);
@@ -118,7 +120,7 @@ export default function SessionsMenu() {
       <div className={classes.content}>
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <Link href={relativeCallLink}>
+            <Link href={callHref}>
               <Button
                 fullWidth
                 color="secondary"
