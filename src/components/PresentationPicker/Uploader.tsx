@@ -87,7 +87,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
         return;
       }
 
-      const convertResult = await convert(fileType, 'jpg', file);
+      const convertResult = await convert(fileType, 'png', file);
       if (!convertResult || convertResult.length <= 0) {
         console.warn('Convert result undefined');
         setError('Error processing file, please try another file');
