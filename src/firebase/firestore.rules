@@ -81,6 +81,12 @@ service cloud.firestore {
       return request.resource.data[key] is map;
     }
 
+    function optionalObjectKey(key) {
+      return (key in request.resource.data &&
+          request.resource.data[key] != null) ? 
+        requiredObjectKey(key) : true;
+    }
+
     function requiredCreatedAtKey() {
       // if it exists already in existing doc, we should not change the value
       let isServerTimestamp = request.resource.data.createdAt == request.time;
@@ -106,7 +112,7 @@ service cloud.firestore {
 
       allow create, update: if 
         request.auth != null &&
-        assertKeys(['name', 'creatorId', 'workspaceId', 'ongoingCallId', 'activities', 'notes', 'createdAt']) &&
+        assertKeys(['name', 'creatorId', 'workspaceId', 'ongoingCallId', 'activities', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
         requiredStringKey('workspaceId', 1, 30) &&
@@ -115,9 +121,6 @@ service cloud.firestore {
 
         // array of step objects that define the call
         requiredArrayKey('activities', 0, 100) &&
-
-        // presenter notes, in markdown format
-        optionalStringKey('notes', 50000) &&
 
         // when creating, make sure creatorId is set
         // when editing, make sure only creator can edit
@@ -131,14 +134,14 @@ service cloud.firestore {
 
       allow create, update: if
         request.auth != null &&
-        assertKeys(['templateId', 'creatorId', 'currentStep', 'stepData', 'isFinished', 'duration', 'createdAt']) &&
+        assertKeys(['templateId', 'creatorId', 'currentActivityId', 'activityData', 'isFinished', 'duration', 'createdAt']) &&
         requiredStringKey('templateId', 1, 30) &&
         requiredStringKey('creatorId', 1, 30) &&
         requiredCreatedAtKey() &&
-        requiredIntKey('currentStep', 0, 100) &&
+        optionalStringKey('currentActivityId', 30) &&
 
-        // map of step IDs and the metadata for each step
-        requiredObjectKey('stepData') &&
+        // map of activityIds and the metadata for each step
+        optionalObjectKey('activityData') &&
 
         // marks if this call has finished, and stores duration in seconds
         optionalBoolKey('isFinished') &&

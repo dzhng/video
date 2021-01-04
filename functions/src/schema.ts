@@ -40,8 +40,8 @@ export declare interface Member {
 export declare interface Call {
   templateId: string;
   creatorId: string;
-  currentStep: number;
-  stepData: object;
+  currentActivityId?: string;
+  activityData: object;
   isFinished?: boolean;
   duration?: number;
   createdAt: admin.firestore.FieldValue;

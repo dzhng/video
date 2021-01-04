@@ -65,15 +65,14 @@ export declare interface Template {
   workspaceId: string;
   ongoingCallId?: string | null;
   activities: Activity[];
-  notes?: string;
   createdAt: FbDate;
 }
 
 export declare interface Call {
   templateId: string;
   creatorId: string;
-  currentStep: number;
-  stepData: object;
+  currentActivityId?: string | null;
+  activityData?: object;
   isFinished?: boolean;
   duration?: number;
   createdAt: FbDate;
