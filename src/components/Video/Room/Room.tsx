@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { styled } from '@material-ui/core/styles';
 import useDimensions from 'react-cool-dimensions';
 
@@ -8,20 +8,19 @@ import useHeight from '~/hooks/Video/useHeight/useHeight';
 import Layout from '~/components/Video/Layout/Layout';
 import Participants from './Participants';
 
-const Container = styled('div')({
+const Container = styled('div')(({ theme }) => ({
   position: 'relative',
   display: 'flex',
-});
+  flexDirection: 'column',
+  backgroundColor: theme.palette.grey[900],
+}));
 
 const LayoutContainer = styled('div')({
   flexGrow: 1,
 });
 
 const ControlsBar = styled('div')(({ theme }) => ({
-  position: 'absolute',
   width: '100%',
-  bottom: 0,
-  left: 0,
   padding: theme.spacing(1),
   display: 'flex',
   justifyContent: 'center',
@@ -38,10 +37,16 @@ export default function Room() {
   // measure the width and height of LayoutContainer to feed into layout component
   const { ref, width, height } = useDimensions<HTMLDivElement>();
 
+  // generate random data for now
+  const items = [1, 2, 3, 4, 5, 6, 7, 8].map((key) => ({
+    key: String(key),
+    node: <div style={{ width: '100%', height: '100%' }} />,
+  }));
+
   return (
     <Container style={{ height: pageHeight }}>
       <LayoutContainer ref={ref}>
-        <Layout variant="grid" width={width} height={height} gridItems={[]} />
+        <Layout variant="grid" width={width} height={height} gridItems={items} />
       </LayoutContainer>
       <ControlsBar>
         <Controls />

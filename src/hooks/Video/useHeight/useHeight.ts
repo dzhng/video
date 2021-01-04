@@ -12,7 +12,7 @@ export default function useHeight() {
     return () => {
       window.removeEventListener('resize', onResize);
     };
-  });
+  }, []);
 
   return height + 'px';
 }

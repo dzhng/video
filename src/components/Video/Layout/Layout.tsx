@@ -14,7 +14,11 @@ const useStyles = makeStyles((theme: Theme) =>
       flexWrap: 'wrap',
     },
     mainItem: {},
-    gridItem: {},
+    gridItem: {
+      overflow: 'hidden',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: theme.palette.grey[600],
+    },
   }),
 );
 
@@ -36,7 +40,7 @@ export default function VideoLayout({ variant, gridItems, mainItem }: PropTypes)
 
   return (
     <div className={classes.container}>
-      <div className={classes.mainItem}>{mainItem}</div>
+      {variant === 'focus' && mainItem && <div className={classes.mainItem}>{mainItem}</div>}
       {displayableItems.map((item) => (
         <div key={item.key} className={classes.gridItem}>
           {item.node}
