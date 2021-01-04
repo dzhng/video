@@ -92,7 +92,7 @@ export default function VideoLayout({ width, height, variant, gridItems, mainIte
 
   return (
     <div className={classes.container}>
-      {variant === 'focus' && mainItem && <div className={classes.mainItem}>{mainItem}</div>}
+      {variant === 'focus' && <div className={classes.mainItem}>{mainItem}</div>}
       {displayableItems.map((item) => (
         <div
           key={item.key}

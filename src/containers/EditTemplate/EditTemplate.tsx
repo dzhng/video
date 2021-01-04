@@ -3,7 +3,7 @@ import { Drawer } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import { LocalModel, Template } from '~/firebase/schema-types';
-import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
+import ActivitiesBar from '~/components/Activities/ActivitiesBar/ActivitiesBar';
 import SessionMenu from '~/components/SessionsMenu/SessionsMenu';
 import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
 

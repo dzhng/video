@@ -10,7 +10,7 @@ import { CallProvider } from '~/components/CallProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
-import ActivitiesBar from '~/components/ActivitiesBar/ActivitiesBar';
+import ActivitiesBar from '~/components/Activities/ActivitiesBar/ActivitiesBar';
 import CallFlow from './CallFlow';
 
 const useStyles = makeStyles((theme: Theme) =>
