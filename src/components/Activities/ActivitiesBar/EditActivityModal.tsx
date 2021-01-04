@@ -14,7 +14,7 @@ import { DeleteOutlined as DeleteIcon } from '@material-ui/icons';
 import { Formik, Form } from 'formik';
 
 import { Activity } from '~/firebase/schema-types';
-import { ActivityTypeForms } from './Types/Types';
+import { ActivityTypeForms } from '../Types/Types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -17,7 +17,7 @@ import { Formik, Form } from 'formik';
 
 import { BackIcon } from '~/components/Icons';
 import { Activity, ActivityTypes } from '~/firebase/schema-types';
-import { ActivityTypeForms } from './Types/Types';
+import { ActivityTypeForms } from '../Types/Types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
