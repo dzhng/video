@@ -100,6 +100,7 @@ export default function CallContainer({
           >
             <CallProvider
               call={call?.id === currentCall ? call : undefined}
+              template={template}
               isHost={isHost}
               endCall={handleEndCall}
             >

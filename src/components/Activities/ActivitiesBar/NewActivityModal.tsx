@@ -17,7 +17,7 @@ import { Formik, Form } from 'formik';
 
 import { BackIcon } from '~/components/Icons';
 import { Activity, ActivityTypes } from '~/firebase/schema-types';
-import { ActivityTypeForms } from '../Types/Types';
+import { ActivityTypeConfig } from '../Types/Types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -143,7 +143,7 @@ export default function NewActivityModal({
   );
 
   const handleSelectType = useCallback((type) => {
-    const selectedActivity = ActivityTypeForms.find((activity) => activity.type === type);
+    const selectedActivity = ActivityTypeConfig.find((activity) => activity.type === type);
 
     if (selectedActivity) {
       setSelectedType(type);
@@ -153,7 +153,7 @@ export default function NewActivityModal({
     }
   }, []);
 
-  const selectedActivity = ActivityTypeForms.find((activity) => activity.type === selectedType);
+  const selectedActivity = ActivityTypeConfig.find((activity) => activity.type === selectedType);
 
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
@@ -203,7 +203,7 @@ export default function NewActivityModal({
       ) : (
         <DialogContent dividers>
           <Grid container spacing={3}>
-            {ActivityTypeForms.map((activity) => (
+            {ActivityTypeConfig.map((activity) => (
               <Grid item xs={12} md={6} lg={4} key={activity.type}>
                 <Card className={classes.card} onClick={() => handleSelectType(activity.type)}>
                   <Typography variant="h3">{activity.name}</Typography>

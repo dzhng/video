@@ -9,6 +9,8 @@ import ReconnectingNotification from '~/components/Video/ReconnectingNotificatio
 import useHeight from '~/hooks/Video/useHeight/useHeight';
 import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useCallContext from '~/hooks/useCallContext/useCallContext';
+import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
 
@@ -44,6 +46,7 @@ export default function Room() {
   // measure the width and height of LayoutContainer to feed into layout component
   const { ref, width, height } = useDimensions<HTMLDivElement>();
 
+  const { call } = useCallContext();
   const {
     room: { localParticipant },
   } = useVideoContext();
@@ -69,10 +72,18 @@ export default function Room() {
     [localParticipant, participants, participantToItem],
   );
 
+  const variant = call?.currentActivityId ? 'focus' : 'grid';
+
   return (
     <Container style={{ height: pageHeight }}>
       <LayoutContainer ref={ref}>
-        <Layout variant="grid" width={width} height={height} gridItems={items} />
+        <Layout
+          variant={variant}
+          width={width}
+          height={height}
+          gridItems={items}
+          mainItem={ActivityDisplay}
+        />
       </LayoutContainer>
       <ControlsBar>
         <Controls />

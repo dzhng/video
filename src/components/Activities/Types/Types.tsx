@@ -9,23 +9,28 @@ import {
   BreakoutIcon,
 } from '~/components/Icons';
 
-import PresentationActivity from './PresentationActivity';
-import VideoActivity from './VideoActivity';
-import PollActivity from './PollActivity';
-import QuestionsActivity from './QuestionsActivity';
-import ScreenShareActivity from './ScreenShareActivity';
-import BreakoutActivity from './BreakoutActivity';
+import PresentationForm from '../CreateForm/Presentation';
+import VideoForm from '../CreateForm/Video';
+import PollForm from '../CreateForm/Poll';
+import QuestionsForm from '../CreateForm/Questions';
+import ScreenShareForm from '../CreateForm/ScreenShare';
+import BreakoutForm from '../CreateForm/Breakout';
 
 import PresentationDisplay from '../CallDisplay/Presentation';
+import VideoDisplay from '../CallDisplay/Video';
+import PollDisplay from '../CallDisplay/Poll';
+import QuestionsDisplay from '../CallDisplay/Questions';
+import ScreenShareDisplay from '../CallDisplay/Screenshare';
+import BreakoutDisplay from '../CallDisplay/Breakout';
 
 const iconClassName = 'TypeIcon';
 
-export const ActivityTypeForms: {
+export const ActivityTypeConfig: {
   type: ActivityTypes;
   name: string;
-  icon: React.ReactNode;
-  form: React.ReactNode;
-  display: React.ReactNode;
+  icon: React.ReactElement;
+  form: React.ReactElement;
+  display: React.ReactElement;
   initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.AnySchema;
 }[] = [
@@ -33,7 +38,7 @@ export const ActivityTypeForms: {
     type: 'presentation',
     name: 'Presentation',
     icon: <PresentIcon className={iconClassName} />,
-    form: <PresentationActivity />,
+    form: <PresentationForm />,
     display: <PresentationDisplay />,
     initialValue: { presentationId: '' },
     schema: Yup.object().shape({
@@ -44,7 +49,8 @@ export const ActivityTypeForms: {
     type: 'video',
     name: 'Video',
     icon: <VideoIcon className={iconClassName} />,
-    form: <VideoActivity />,
+    form: <VideoForm />,
+    display: <VideoDisplay />,
     initialValue: { videoId: '' },
     schema: Yup.object().shape({
       videoId: Yup.string().max(30).required('Video not uploaded'),
@@ -54,7 +60,8 @@ export const ActivityTypeForms: {
     type: 'poll',
     name: 'Poll',
     icon: <PollIcon className={iconClassName} />,
-    form: <PollActivity />,
+    form: <PollForm />,
+    display: <PollDisplay />,
     initialValue: {
       showResultsRightAway: false,
       isMultipleChoice: false,
@@ -80,7 +87,8 @@ export const ActivityTypeForms: {
     type: 'questions',
     name: 'Questions',
     icon: <QuestionsIcon className={iconClassName} />,
-    form: <QuestionsActivity />,
+    form: <QuestionsForm />,
+    display: <QuestionsDisplay />,
     initialValue: {
       questions: [''], // start with 1 (invalid) option already defined
       allowTextSubmission: false,
@@ -102,7 +110,8 @@ export const ActivityTypeForms: {
     type: 'screenshare',
     name: 'Screenshare',
     icon: <ScreenShareIcon className={iconClassName} />,
-    form: <ScreenShareActivity />,
+    form: <ScreenShareForm />,
+    display: <ScreenShareDisplay />,
     initialValue: { hostOnly: false },
     schema: Yup.object().shape({
       hostOnly: Yup.boolean().required(),
@@ -112,7 +121,8 @@ export const ActivityTypeForms: {
     type: 'breakout',
     name: 'Breakout',
     icon: <BreakoutIcon className={iconClassName} />,
-    form: <BreakoutActivity />,
+    form: <BreakoutForm />,
+    display: <BreakoutDisplay />,
     initialValue: {
       numberOfRooms: 2,
     },

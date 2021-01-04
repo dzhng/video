@@ -14,7 +14,7 @@ import { DeleteOutlined as DeleteIcon } from '@material-ui/icons';
 import { Formik, Form } from 'formik';
 
 import { Activity } from '~/firebase/schema-types';
-import { ActivityTypeForms } from '../Types/Types';
+import { ActivityTypeConfig } from '../Types/Types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -115,7 +115,7 @@ export default function EditActivityModal({
 }) {
   const classes = useStyles();
   const [name, setName] = useState(activity.name);
-  const selectedActivity = useMemo(() => ActivityTypeForms.find((a) => a.type === activity.type), [
+  const selectedActivity = useMemo(() => ActivityTypeConfig.find((a) => a.type === activity.type), [
     activity,
   ]);
 
