@@ -1,6 +1,9 @@
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import LocalPreviewCard from './LocalPreviewCard';
+
+// use dynamic import here since local preview card requires measuring dom so can't SSR
+const LocalPreviewCard = dynamic(() => import('./LocalPreviewCard'), { ssr: false });
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

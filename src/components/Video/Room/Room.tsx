@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { LocalParticipant, RemoteParticipant } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
 import useDimensions from 'react-cool-dimensions';
@@ -6,11 +7,13 @@ import useDimensions from 'react-cool-dimensions';
 import Controls from '~/components/Video/Controls/Controls';
 import ReconnectingNotification from '~/components/Video/ReconnectingNotification/ReconnectingNotification';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
-import Layout from '~/components/Video/Layout/Layout';
 import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
+
+// use dynamic import here since layout requires measuring dom so can't SSR
+const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',
