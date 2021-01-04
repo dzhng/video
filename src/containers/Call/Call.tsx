@@ -88,7 +88,7 @@ export default function CallContainer({
           open
         >
           <TemplateTitle template={template} showBackButton={!!fromHref} backHref={fromHref} />
-          <ActivitiesBar template={template} />
+          <ActivitiesBar template={template} mode="call" />
         </Drawer>
         <div className={classes.activitiesSpacer} />
 

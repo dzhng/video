@@ -14,7 +14,7 @@ import {
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AddOutlined as AddIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Collections, LocalModel, Template, Activity } from '~/firebase/schema-types';
+import { Collections, LocalModel, Template, Call, Activity } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import NewActivityModal from './NewActivityModal';
@@ -61,10 +61,11 @@ const useStyles = makeStyles((theme: Theme) =>
 const ActivityTimelineItem = ({
   activity,
   index,
-  save,
-  onEdit,
+  ...otherProps
 }: {
   activity: Activity;
+  mode: 'edit' | 'call';
+  isHost: boolean;
   index: number;
   save(activity: Activity): void;
   onEdit(): void;
@@ -78,7 +79,7 @@ const ActivityTimelineItem = ({
           <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent>
-          <ActivityCard activity={activity} save={save} onEdit={onEdit} />
+          <ActivityCard activity={activity} {...otherProps} />
         </TimelineContent>
       </TimelineItem>
     )}
@@ -93,7 +94,18 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
   return result;
 }
 
-export default function ActivitiesBar({ template }: { template: LocalModel<Template> }) {
+interface PropTypes {
+  template: LocalModel<Template>;
+
+  // edit mode shows editing controls, call mode shows playback controls
+  mode: 'edit' | 'call';
+
+  // only valid in call mode
+  call?: LocalModel<Call>;
+  isHost?: boolean;
+}
+
+export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
   const classes = useStyles();
   // have a local copy of activities here so that we can debounce saving to firebase (we can edit and see results without depending on template.activities to update in real-time)
   const [activities, setActivities] = useState<Activity[]>(template.activities);
@@ -197,6 +209,8 @@ export default function ActivitiesBar({ template }: { template: LocalModel<Templ
                 <ActivityTimelineItem
                   key={activity.id}
                   activity={activity}
+                  isHost={isHost ?? false}
+                  mode={mode}
                   index={index}
                   save={(values) => handleSaveActivity(values, index)}
                   onEdit={() => setEditActivityIndex(index)}

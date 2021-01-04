@@ -48,10 +48,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ActivitiesCard({
   activity,
+  mode,
+  isHost,
   save,
   onEdit,
 }: {
   activity: Activity;
+  mode: 'edit' | 'call';
+  isHost: boolean;
   save(activity: Activity): void;
   onEdit(): void;
 }) {

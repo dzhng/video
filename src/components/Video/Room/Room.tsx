@@ -82,7 +82,7 @@ export default function Room() {
           width={width}
           height={height}
           gridItems={items}
-          mainItem={ActivityDisplay}
+          mainItem={<ActivityDisplay />}
         />
       </LayoutContainer>
       <ControlsBar>
