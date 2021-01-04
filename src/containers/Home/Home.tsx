@@ -88,6 +88,14 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
+const cardItemSizeProps: { [key: string]: 12 | 6 | 4 | 3 | 2 } = {
+  xs: 12,
+  sm: 12, // abrupt transition because of drawer hiding
+  md: 6,
+  lg: 3,
+  xl: 2,
+};
+
 export default function Home({
   workspace,
   members,
@@ -110,7 +118,7 @@ export default function Home({
   }, []);
 
   const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
-    <Grid item xs={3} key={key}>
+    <Grid item {...cardItemSizeProps} key={key}>
       <Skeleton variant="rect" height={cardHeight} />
     </Grid>
   ));
@@ -180,7 +188,7 @@ export default function Home({
           </span>
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item {...cardItemSizeProps}>
           <Link href="/template/create">
             {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
             <div>
@@ -192,7 +200,7 @@ export default function Home({
         {isLoadingTemplates
           ? loadingTemplateSkeletons
           : templates.map((template) => (
-              <Grid item xs={3} key={template.id}>
+              <Grid item {...cardItemSizeProps} key={template.id}>
                 <Link href={`/template/${template.id}`}>
                   {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
                   <div>

@@ -29,9 +29,13 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
       display: 'flex',
       alignItems: 'center',
-      height: `${(theme.sidebarWidth * 9) / 16}px`,
+      width: '100%',
+      height: '100%',
+      backgroundColor: theme.palette.grey[600],
+      borderRadius: theme.shape.borderRadius,
       overflow: 'hidden',
       cursor: 'pointer',
+
       '& video': {
         filter: 'none',
       },

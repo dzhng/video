@@ -25,7 +25,7 @@ export default function EndCallButton(props: object) {
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
-      <Fab className={classes.fab} color="primary" {...props}>
+      <Fab className={classes.fab} color="secondary" {...props}>
         <CallEnd />
       </Fab>
     </Tooltip>
