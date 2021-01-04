@@ -4,6 +4,11 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 const MaxDisplayableGridItems = 50;
 
+interface StyleProps {
+  flexDirection: 'row' | 'column';
+  itemPadding: number;
+}
+
 const useStyles = makeStyles(() =>
   createStyles({
     container: {
@@ -11,7 +16,7 @@ const useStyles = makeStyles(() =>
       width: '100%',
       height: '100%',
       overflow: 'hidden',
-      flexDirection: 'column',
+      flexDirection: (props: StyleProps) => props.flexDirection,
       flexWrap: 'wrap',
       justifyContent: 'center',
       alignContent: 'center',
@@ -19,32 +24,44 @@ const useStyles = makeStyles(() =>
     mainItem: {},
     gridItem: {
       overflow: 'hidden',
-      padding: (props: { itemPadding: number }) => props.itemPadding + 'px',
+      padding: (props: StyleProps) => props.itemPadding + 'px',
     },
   }),
 );
 
 // find the right gridItem size to fit in all item given container area
-// Took algorithm from: https://stackoverflow.com/a/47337678
-// For explaination: https://math.stackexchange.com/a/466248
+// Took algorithm from: https://math.stackexchange.com/a/2570649
 function sizeForSquareThatFitInRect(width: number, height: number, n: number): number {
-  const area = width * height;
-  let sw, sh;
-  let pw = Math.ceil(Math.sqrt(area * n));
-  if (Math.floor((pw * height) / width) * pw < n) {
-    sw = height / Math.ceil((pw * height) / width);
-  } else {
-    sw = width / pw;
-  }
+  const x = width;
+  const y = height;
+  const ratio = x / y;
+  const ncols_float = Math.sqrt(n * ratio);
+  const nrows_float = n / ncols_float;
 
-  let ph = Math.ceil(Math.sqrt((n * height) / width));
-  if (Math.floor((ph * width) / height) * ph < n) {
-    sh = width / Math.ceil((width * ph) / height);
-  } else {
-    sh = height / ph;
+  // Find best option filling the whole height
+  let nrows1 = Math.ceil(nrows_float);
+  let ncols1 = Math.ceil(n / nrows1);
+  while (nrows1 * ratio < ncols1) {
+    nrows1++;
+    ncols1 = Math.ceil(n / nrows1);
   }
+  const cell_size1 = y / nrows1;
 
-  return Math.max(sw, sh);
+  // Find best option filling the whole width
+  let ncols2 = Math.ceil(ncols_float);
+  let nrows2 = Math.ceil(n / ncols2);
+  while (ncols2 < nrows2 * ratio) {
+    ncols2++;
+    nrows2 = Math.ceil(n / ncols2);
+  }
+  const cell_size2 = x / ncols2;
+
+  // Find the best values
+  if (cell_size1 < cell_size2) {
+    return cell_size2;
+  } else {
+    return cell_size1;
+  }
 }
 
 interface PropTypes {
@@ -67,9 +84,11 @@ export default function VideoLayout({ width, height, variant, gridItems, mainIte
     [width, height, displayableItems],
   );
 
+  const flexDirection = variant === 'grid' ? 'row' : 'column';
+
   // use 6% of item size as padding
   const itemPadding = itemSize * 0.06;
-  const classes = useStyles({ itemPadding });
+  const classes = useStyles({ itemPadding, flexDirection });
 
   return (
     <div className={classes.container}>

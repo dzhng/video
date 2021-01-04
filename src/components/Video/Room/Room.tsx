@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { LocalParticipant, RemoteParticipant } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
 import useDimensions from 'react-cool-dimensions';
 
@@ -6,7 +7,10 @@ import Controls from '~/components/Video/Controls/Controls';
 import ReconnectingNotification from '~/components/Video/ReconnectingNotification/ReconnectingNotification';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
 import Layout from '~/components/Video/Layout/Layout';
-import Participants from './Participants';
+import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import Participant from '~/components/Video/Participant/Participant';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -37,11 +41,30 @@ export default function Room() {
   // measure the width and height of LayoutContainer to feed into layout component
   const { ref, width, height } = useDimensions<HTMLDivElement>();
 
-  // generate random data for now
-  const items = [1, 2, 3, 4, 5, 6, 7, 8].map((key) => ({
-    key: String(key),
-    node: <div style={{ width: '100%', height: '100%' }} />,
-  }));
+  const {
+    room: { localParticipant },
+  } = useVideoContext();
+  const participants = useParticipants();
+  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+
+  const participantToItem = useCallback(
+    (participant: LocalParticipant | RemoteParticipant) => ({
+      key: participant.sid ? participant.sid : 'local',
+      node: (
+        <Participant
+          participant={participant}
+          isSelected={selectedParticipant === participant}
+          onClick={() => setSelectedParticipant(participant)}
+        />
+      ),
+    }),
+    [selectedParticipant, setSelectedParticipant],
+  );
+
+  const items = useMemo<{ key: string; node: React.ReactNode }[]>(
+    () => [participantToItem(localParticipant)].concat(participants.map(participantToItem)),
+    [localParticipant, participants, participantToItem],
+  );
 
   return (
     <Container style={{ height: pageHeight }}>

@@ -31,6 +31,7 @@ export function SelectedParticipantProvider({ room, children }: SelectedParticip
 
     room.on('disconnected', onDisconnect);
     room.on('participantDisconnected', handleParticipantDisconnected);
+
     return () => {
       room.off('disconnected', onDisconnect);
       room.off('participantDisconnected', handleParticipantDisconnected);
