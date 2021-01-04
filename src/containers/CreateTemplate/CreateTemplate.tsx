@@ -4,7 +4,7 @@ import { Typography, Button, CircularProgress, Paper } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
-import MenuBar from '~/components/MenuBar/MenuBar';
+import BackButton from '~/components/BackButton/BackButton';
 
 const FormSchema = Yup.object().shape({
   name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
@@ -12,10 +12,18 @@ const FormSchema = Yup.object().shape({
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    container: {
+      '& >button': {
+        position: 'fixed',
+        top: theme.spacing(1),
+        left: theme.spacing(1),
+      },
+    },
     paper: {
       padding: theme.spacing(3),
       maxWidth: theme.modalWidth,
-      marginTop: theme.spacing(6),
+      // assume height maxes out at ~300px (change if needed)
+      marginTop: 'calc(50vh - 150px)',
       marginLeft: 'auto',
       marginRight: 'auto',
     },
@@ -65,6 +73,8 @@ interface PropTypes {
 }
 
 export default function CreateContainer({ save }: PropTypes) {
+  const classes = useStyles();
+
   // A lot of these values are not editable in the UI, but we initialize them anyways with existing or default values so that we get nice typescript checking via the Presentation model. Maybe there's a better way to do this in the future that's cleaner and still get same type checking.
   const initialValues = {
     name: '',
@@ -80,7 +90,8 @@ export default function CreateContainer({ save }: PropTypes) {
   );
 
   return (
-    <MenuBar>
+    <div className={classes.container}>
+      <BackButton />
       <Formik initialValues={initialValues} validationSchema={FormSchema} onSubmit={submit}>
         {({ isSubmitting }) => (
           <Form>
@@ -88,6 +99,6 @@ export default function CreateContainer({ save }: PropTypes) {
           </Form>
         )}
       </Formik>
-    </MenuBar>
+    </div>
   );
 }

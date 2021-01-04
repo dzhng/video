@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     toolbarContent: {
       display: 'flex',
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
       borderBottom: theme.dividerBorder,
     },
     title: {
