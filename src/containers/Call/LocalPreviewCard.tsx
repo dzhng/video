@@ -31,7 +31,7 @@ export default function LocalPreviewCard({
   actionBar,
 }: {
   className?: string;
-  actionBar?: JSX.Element;
+  actionBar?: React.ReactNode;
 }) {
   const classes = useStyles();
 

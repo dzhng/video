@@ -41,6 +41,7 @@
     "nprogress": "^0.2.0",
     "react": "^17.0.1",
     "react-beautiful-dnd": "^13.0.0",
+    "react-cool-dimensions": "^1.1.11",
     "react-dom": "^17.0.1",
     "styled-components": "^5.2.1",
     "twilio": "^3.54.1",

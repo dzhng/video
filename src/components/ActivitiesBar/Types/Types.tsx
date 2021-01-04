@@ -21,10 +21,10 @@ const iconClassName = 'TypeIcon';
 export const ActivityTypeForms: {
   type: ActivityTypes;
   name: string;
-  icon: JSX.Element;
-  form: JSX.Element;
+  icon: React.ReactNode;
+  form: React.ReactNode;
   initialValue: ActivityMetadata[ActivityTypes];
-  schema: Yup.ObjectSchema;
+  schema: Yup.AnySchema;
 }[] = [
   {
     type: 'presentation',

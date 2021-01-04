@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function LocalPreview({ actionBar }: { actionBar?: JSX.Element }) {
+export default function LocalPreview({ actionBar }: { actionBar?: React.ReactNode }) {
   const classes = useStyles();
 
   return (
