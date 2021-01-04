@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
@@ -12,7 +12,7 @@ import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     container: {
       display: 'flex',

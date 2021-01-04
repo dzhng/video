@@ -2,26 +2,29 @@ import React from 'react';
 import { styled } from '@material-ui/core/styles';
 
 import Controls from '~/components/Video/Controls/Controls';
-import LocalVideoPreview from '~/components/Video/LocalVideoPreview/LocalVideoPreview';
 import ReconnectingNotification from '~/components/Video/ReconnectingNotification/ReconnectingNotification';
 
 import useHeight from '~/hooks/Video/useHeight/useHeight';
-import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 
 import Participants from './Participants';
 
 const Container = styled('div')({
-  display: 'grid',
-  gridTemplateRows: 'auto 1fr',
+  position: 'relative',
+  display: 'flex',
 });
 
-const Main = styled('main')({
-  overflow: 'hidden',
-});
+const ControlsContainer = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  width: '100%',
+  bottom: 0,
+  left: 0,
+  paddingTop: theme.spacing(1),
+  paddingBottom: theme.spacing(1),
+  display: 'flex',
+  justifyContent: 'center',
+}));
 
 export default function Room() {
-  const roomState = useRoomState();
-
   // Here we would like the height of the main container to be the height of the viewport.
   // On some mobile browsers, 'height: 100vh' sets the height equal to that of the screen,
   // not the viewport. This looks bad when the mobile browsers location bar is open.
@@ -31,10 +34,10 @@ export default function Room() {
 
   return (
     <Container style={{ height }}>
-      <Main>
-        <Participants />
+      <Participants />
+      <ControlsContainer>
         <Controls />
-      </Main>
+      </ControlsContainer>
       <ReconnectingNotification />
     </Container>
   );

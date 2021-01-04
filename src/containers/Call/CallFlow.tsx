@@ -40,7 +40,7 @@ export default function CallFlow({
     cleanUpTracks.current = () => {
       console.log('Cleaning up local tracks...');
 
-      // disconnect could not exist since it may be stubed by EventEmitter in VideoContext
+      // disconnect method may not exist since it may be stubed by EventEmitter in VideoContext
       room.disconnect?.();
 
       removeLocalVideoTrack();
