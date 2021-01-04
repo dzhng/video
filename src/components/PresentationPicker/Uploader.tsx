@@ -58,7 +58,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
         return;
       }
 
-      if (!convert) {
+      if (!convert || isPreparing) {
         console.warn('Convert API is not ready');
         return;
       }
@@ -111,7 +111,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
       setData(doc.id, data);
       setIsUploading(false);
     },
-    [user, currentWorkspaceId, isUploading, setData, convert],
+    [user, currentWorkspaceId, isUploading, setData, convert, isPreparing],
   );
 
   // TODO: add a drag/drop uploader here

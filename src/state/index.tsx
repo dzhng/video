@@ -32,7 +32,7 @@ export interface StateContextType {
   userRecord?: User | null;
   workspaces?: LocalModel<Workspace>[];
   isWorkspacesReady: boolean;
-  createWorkspace(name: string): Promise<LocalModel<Workspace> | null>;
+  createWorkspace(name: string): Promise<LocalModel<Workspace>>;
 
   // ux state
   isWriting: boolean;

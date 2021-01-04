@@ -84,9 +84,9 @@ export default function useWorkspaces() {
   );
 
   const createWorkspace = useCallback(
-    async (name: string): Promise<LocalModel<Workspace> | null> => {
+    async (name: string): Promise<LocalModel<Workspace>> => {
       if (!user) {
-        return null;
+        return Promise.reject('User is not authenticated');
       }
 
       setIsWorkspacesReady(false);

@@ -19,21 +19,23 @@ export default function useFirebaseAuth() {
   // fetch twilio token for call from internal endpoint (which talks to twilio admin API)
   // TODO: move this to another file that's not firebase related
   const getToken = useCallback(
-    async (roomName: string) => {
+    async (roomName: string): Promise<string> => {
       if (!user) {
-        return;
+        return Promise.reject('User is not authenticated');
       }
 
       const idToken = await user.getIdToken();
       const params = JSON.stringify({ idToken, roomName });
 
-      return fetch(`${TWILIO_TOKEN_ENDPOINT}`, {
+      const res = await fetch(`${TWILIO_TOKEN_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: params,
-      }).then((res) => res.text());
+      });
+
+      return res.text();
     },
     [user],
   );
