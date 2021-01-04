@@ -43,7 +43,7 @@ export default function LocalPreviewCard({
           <LocalVideoPreview />
         </div>
         <div className={classes.controlsContainer}>
-          <Controls />
+          <Controls fade={false} />
         </div>
         {actionBar}
       </Card>
