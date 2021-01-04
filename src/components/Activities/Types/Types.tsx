@@ -16,6 +16,8 @@ import QuestionsActivity from './QuestionsActivity';
 import ScreenShareActivity from './ScreenShareActivity';
 import BreakoutActivity from './BreakoutActivity';
 
+import PresentationDisplay from '../CallDisplay/Presentation';
+
 const iconClassName = 'TypeIcon';
 
 export const ActivityTypeForms: {
@@ -23,6 +25,7 @@ export const ActivityTypeForms: {
   name: string;
   icon: React.ReactNode;
   form: React.ReactNode;
+  display: React.ReactNode;
   initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.AnySchema;
 }[] = [
@@ -31,6 +34,7 @@ export const ActivityTypeForms: {
     name: 'Presentation',
     icon: <PresentIcon className={iconClassName} />,
     form: <PresentationActivity />,
+    display: <PresentationDisplay />,
     initialValue: { presentationId: '' },
     schema: Yup.object().shape({
       presentationId: Yup.string().max(30).required('Presentation not uploaded'),
