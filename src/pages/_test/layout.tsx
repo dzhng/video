@@ -18,7 +18,7 @@ function LayoutTest() {
   // generate random data for now
   const items = fill(Array(numItems), 0).map((_, idx) => ({
     key: String(idx),
-    node: <div style={{ width: '100%', height: '100%' }} />,
+    node: <div style={{ width: '100%', height: '100%', backgroundColor: '#999' }} />,
   }));
 
   const variant = (router.query.variant as string | undefined) ?? 'grid';
