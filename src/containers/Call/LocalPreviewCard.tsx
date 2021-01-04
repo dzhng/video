@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import useDimensions from 'react-cool-dimensions';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Card } from '@material-ui/core';
 import LocalVideoPreview from '~/components/Video/LocalVideoPreview/LocalVideoPreview';
@@ -10,11 +11,8 @@ const useStyles = makeStyles((theme: Theme) =>
     card: {
       display: 'flex',
       flexDirection: 'column',
-      maxHeight: '600px',
-      height: '80vh',
     },
     videoContainer: {
-      flexGrow: 1,
       overflow: 'hidden',
       backgroundColor: 'black',
     },
@@ -35,10 +33,13 @@ export default function LocalPreviewCard({
 }) {
   const classes = useStyles();
 
+  // measure the width of Card to ensure video is square
+  const { ref, width } = useDimensions<HTMLDivElement>();
+
   return (
     <>
-      <Card className={clsx(classes.card, className)}>
-        <div className={classes.videoContainer}>
+      <Card ref={ref} className={clsx(classes.card, className)}>
+        <div className={classes.videoContainer} style={{ height: width }}>
           <LocalVideoPreview />
         </div>
         <div className={classes.controlsContainer}>
