@@ -19,6 +19,7 @@ import usePublications from '~/hooks/Video/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/Video/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useParticipantIsReconnecting from '~/hooks/Video/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import useTrack from '~/hooks/Video/useTrack/useTrack';
+import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 import PinIcon from './PinIcon/PinIcon';
@@ -42,12 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
       '& svg': {
         stroke: 'black',
         strokeWidth: '0.8px',
-      },
-      [theme.breakpoints.down('xs')]: {
-        height: theme.sidebarMobileHeight,
-        width: `${(theme.sidebarMobileHeight * 16) / 9}px`,
-        marginRight: '3px',
-        fontSize: '10px',
       },
     },
     isVideoSwitchedOff: {
@@ -125,6 +120,7 @@ export default function ParticipantInfo({
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const classes = useStyles();
+  const userInfo = useUserInfo(participant.identity);
 
   return (
     <div
@@ -142,7 +138,7 @@ export default function ParticipantInfo({
         <div className={classes.infoRow}>
           <h4 className={classes.identity}>
             <ParticipantConnectionIndicator participant={participant} />
-            {participant.identity}
+            {userInfo?.displayName}
           </h4>
           <NetworkQualityLevel participant={participant} />
         </div>

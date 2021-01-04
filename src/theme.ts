@@ -5,8 +5,6 @@ import type {} from '@material-ui/lab/themeAugmentation';
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
     modalWidth: number;
-    sidebarWidth: number;
-    sidebarMobileHeight: number;
     transitionTime: string;
     dividerBorder: string;
 
