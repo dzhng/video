@@ -34,6 +34,10 @@ const useStyles = makeStyles(() =>
 function sizeForSquareThatFitInRect(width: number, height: number, n: number): number {
   const x = width;
   const y = height;
+  if (n <= 0) {
+    return 0;
+  }
+
   const ratio = x / y;
   const ncols_float = Math.sqrt(n * ratio);
   const nrows_float = n / ncols_float;

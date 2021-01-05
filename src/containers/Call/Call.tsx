@@ -77,6 +77,8 @@ export default function CallContainer({
     }
   }, [isCallEnded, router]);
 
+  const isCallStarted: boolean = !!currentCall;
+
   return (
     <UnsupportedBrowserWarning>
       <div className={classes.container}>
@@ -88,7 +90,11 @@ export default function CallContainer({
           open
         >
           <TemplateTitle template={template} showBackButton={!!fromHref} backHref={fromHref} />
-          <ActivitiesBar template={template} mode="call" />
+          <ActivitiesBar
+            template={template}
+            mode={isCallStarted ? 'call' : 'edit'}
+            isHost={isHost}
+          />
         </Drawer>
         <div className={classes.activitiesSpacer} />
 
@@ -104,7 +110,7 @@ export default function CallContainer({
               isHost={isHost}
               endCall={handleEndCall}
             >
-              <CallFlow isCallStarted={!!currentCall} createCall={createCall} />
+              <CallFlow isCallStarted={isCallStarted} createCall={createCall} />
             </CallProvider>
           </VideoProvider>
         </div>

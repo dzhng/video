@@ -63,12 +63,14 @@ const ActivityTimelineItem = ({
   index,
   mode,
   isHost,
+  isLastItem,
   ...otherProps
 }: {
   activity: Activity;
   mode: 'edit' | 'call';
   isHost: boolean;
   index: number;
+  isLastItem: boolean;
   save(activity: Activity): void;
   onEdit(): void;
 }) => (
@@ -78,7 +80,8 @@ const ActivityTimelineItem = ({
         <TimelineOppositeContent></TimelineOppositeContent>
         <TimelineSeparator>
           <TimelineDot />
-          <TimelineConnector />
+          {/* always show in edit mode; if in call mode, always show uness if it's last item and not host (because the new activity button will not be shown */}
+          {(mode === 'edit' || !(isLastItem && !isHost)) && <TimelineConnector />}
         </TimelineSeparator>
         <TimelineContent>
           <ActivityCard activity={activity} mode={mode} isHost={isHost} {...otherProps} />
@@ -214,6 +217,7 @@ export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
                   isHost={isHost ?? false}
                   mode={mode}
                   index={index}
+                  isLastItem={index === activities.length - 1}
                   save={(values: Activity) => handleSaveActivity(values, index)}
                   onEdit={() => setEditActivityIndex(index)}
                 />
@@ -221,29 +225,31 @@ export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
 
               {placeholder}
 
-              <TimelineItem>
-                {/* Timeline items has a weird idiosyncracy here where if TimelineOppositeContent is not defined, it will add a 50% pad (because the timeline wants to be centered by default. Since we want our timeline to be on the left, we define an empty OppositeContent and get rid of the 50% pad via css */}
-                <TimelineOppositeContent></TimelineOppositeContent>
+              {(mode === 'edit' || isHost) && (
+                <TimelineItem>
+                  {/* Timeline items has a weird idiosyncracy here where if TimelineOppositeContent is not defined, it will add a 50% pad (because the timeline wants to be centered by default. Since we want our timeline to be on the left, we define an empty OppositeContent and get rid of the 50% pad via css */}
+                  <TimelineOppositeContent></TimelineOppositeContent>
 
-                {/* It only makes sense to show timeline on create button when there's at least one activity, or else it'll just be a weird icon there by itself */}
-                {activities.length > 0 && (
-                  <TimelineSeparator>
-                    <TimelineDot />
-                  </TimelineSeparator>
-                )}
+                  {/* It only makes sense to show timeline on create button when there's at least one activity, or else it'll just be a weird icon there by itself */}
+                  {activities.length > 0 && (
+                    <TimelineSeparator>
+                      <TimelineDot />
+                    </TimelineSeparator>
+                  )}
 
-                <TimelineContent>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    fullWidth
-                    className={classes.addButton}
-                    onClick={() => setNewActivityOpen((state) => !state)}
-                  >
-                    <AddIcon /> New Activity
-                  </Button>
-                </TimelineContent>
-              </TimelineItem>
+                  <TimelineContent>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      fullWidth
+                      className={classes.addButton}
+                      onClick={() => setNewActivityOpen((state) => !state)}
+                    >
+                      <AddIcon /> New Activity
+                    </Button>
+                  </TimelineContent>
+                </TimelineItem>
+              )}
             </Timeline>
           </div>
         )}

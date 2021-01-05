@@ -32,15 +32,16 @@ const useStyles = makeStyles((theme: Theme) =>
     buttonContainer: {
       marginTop: 'auto',
       marginBottom: 'auto',
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
 
       '& button': {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
         width: 36,
         height: 36,
         minWidth: 0,
         padding: 0,
         borderRadius: 18,
+        marginLeft: theme.spacing(1),
       },
     },
   }),
@@ -106,14 +107,14 @@ export default function ActivitiesCard({
 
         {mode === 'call' && isHost && (
           <>
-            <Tooltip title="Edit activity" placement="left">
+            <Tooltip title="Edit activity" placement="bottom">
               <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
                 <EditIcon />
               </Button>
             </Tooltip>
 
-            <Tooltip title="Start activity" placement="left">
-              <Button variant="outlined" color="secondary" onClick={handleStartClick}>
+            <Tooltip title="Start activity" placement="bottom">
+              <Button variant="contained" color="secondary" onClick={handleStartClick}>
                 <StartIcon />
               </Button>
             </Tooltip>
