@@ -197,9 +197,17 @@ export default function ActivitiesBar({
     [activities, debouncedSaveActivities],
   );
 
-  const handleStartActivity = useCallback((activity: Activity) => {
-    setConfirmStartActivity(activity);
-  }, []);
+  // start activity right away if none is started, if not, ask for confirmation first
+  const handleStartActivity = useCallback(
+    (activity: Activity) => {
+      if (currentActivity) {
+        setConfirmStartActivity(activity);
+      } else {
+        startActivity?.(activity);
+      }
+    },
+    [currentActivity, startActivity],
+  );
 
   const handleCancelStartActivity = useCallback(() => {
     setConfirmStartActivity(null);

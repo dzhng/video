@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
-import { Collections, LocalModel, Template, Call } from '~/firebase/schema-types';
+import {
+  Collections,
+  LocalModel,
+  Template,
+  Call,
+  Activity,
+  ActivityDataTypes,
+} from '~/firebase/schema-types';
 import firebase, { db } from '~/utils/firebase';
 import LoadingContainer from '~/containers/Loading/Loading';
 import CallContainer from '~/containers/Call/Call';
@@ -128,6 +135,38 @@ export default function StartPage() {
     await batch.commit();
   }, [template]);
 
+  const handleStartActivity = useCallback(
+    (activity: Activity) => {
+      if (!template || !template.ongoingCallId) {
+        console.error('Cannot start activity if call is not loaded');
+        return;
+      }
+
+      db.collection(Collections.CALLS).doc(template.ongoingCallId).update({
+        currentActivityId: activity.id,
+      });
+    },
+    [template],
+  );
+
+  const handleUpdateActivity = useCallback(
+    (activity: Activity, path: string, value: ActivityDataTypes) => {
+      if (!template || !template.ongoingCallId) {
+        console.error('Cannot update activity if call is not loaded');
+        return;
+      }
+
+      const fullPath = `activityData.${activity.id}.${path}`;
+
+      db.collection(Collections.CALLS)
+        .doc(template.ongoingCallId)
+        .update({
+          [fullPath]: value,
+        });
+    },
+    [template],
+  );
+
   // when both template and host status is ready, show call conatiner
   return template && isHost !== null ? (
     <CallContainer
@@ -136,6 +175,8 @@ export default function StartPage() {
       call={ongoingCall}
       createCall={handleCreateCall}
       endCall={handleEndCall}
+      startActivity={handleStartActivity}
+      updateActivity={handleUpdateActivity}
     />
   ) : (
     <LoadingContainer />

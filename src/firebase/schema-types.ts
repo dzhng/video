@@ -68,11 +68,13 @@ export declare interface Template {
   createdAt: FbDate;
 }
 
+export type ActivityDataTypes = string | object | number | null;
+
 export declare interface Call {
   templateId: string;
   creatorId: string;
   currentActivityId?: string | null;
-  activityData?: object;
+  activityData?: { [key: string]: ActivityDataTypes };
   isFinished?: boolean;
   duration?: number;
   createdAt: FbDate;

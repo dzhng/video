@@ -1,11 +1,12 @@
 import React, { createContext } from 'react';
-import { LocalModel, Call, Template } from '~/firebase/schema-types';
+import { LocalModel, Call, Template, Activity, ActivityDataTypes } from '~/firebase/schema-types';
 
 interface CallContextTypes {
   call?: LocalModel<Call>;
   template: LocalModel<Template>;
   isHost: boolean;
   endCall(): void;
+  updateActivity(activity: Activity, path: string, value: ActivityDataTypes): void;
 }
 
 export const CallContext = createContext<CallContextTypes>(null!);

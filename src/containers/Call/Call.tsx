@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
 
-import { LocalModel, Call, Template, Activity } from '~/firebase/schema-types';
+import { LocalModel, Call, Template, Activity, ActivityDataTypes } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
 import { CallProvider } from '~/components/CallProvider';
@@ -34,12 +34,16 @@ export default function CallContainer({
   call,
   createCall,
   endCall,
+  startActivity,
+  updateActivity,
 }: {
   template: LocalModel<Template>;
   isHost: boolean;
   call?: LocalModel<Call>;
   createCall(): Promise<boolean>;
   endCall(): void;
+  startActivity(activity: Activity): void;
+  updateActivity(activity: Activity, path: string, value: ActivityDataTypes): void;
 }) {
   const classes = useStyles();
   const router = useRouter();
@@ -79,8 +83,6 @@ export default function CallContainer({
 
   const isCallStarted: boolean = !!currentCall;
 
-  const handleStartActivity = useCallback((activity: Activity) => {}, []);
-
   return (
     <UnsupportedBrowserWarning>
       <div className={classes.container}>
@@ -96,7 +98,7 @@ export default function CallContainer({
             template={template}
             mode={isCallStarted ? 'call' : 'edit'}
             isHost={isHost}
-            startActivity={handleStartActivity}
+            startActivity={startActivity}
           />
         </Drawer>
         <div className={classes.activitiesSpacer} />
@@ -112,6 +114,7 @@ export default function CallContainer({
               template={template}
               isHost={isHost}
               endCall={handleEndCall}
+              updateActivity={updateActivity}
             >
               <CallFlow isCallStarted={isCallStarted} createCall={createCall} />
             </CallProvider>
