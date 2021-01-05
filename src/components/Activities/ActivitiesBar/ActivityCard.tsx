@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import * as Yup from 'yup';
 import { Card, Typography, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { EditOutlined as EditIcon } from '@material-ui/icons';
+import { EditOutlined as EditIcon, PlayArrow as StartIcon } from '@material-ui/icons';
 import { Activity } from '~/firebase/schema-types';
 import EditableTitle from '~/components/EditableTitle/EditableTitle';
 
@@ -61,6 +61,8 @@ export default function ActivitiesCard({
 }) {
   const classes = useStyles();
 
+  const handleStartClick = useCallback(() => {}, []);
+
   const handleSettingsClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -83,6 +85,7 @@ export default function ActivitiesCard({
     <Card className={classes.card}>
       <div className={classes.content}>
         <EditableTitle
+          disabled={mode === 'call' && !isHost}
           title={activity.name}
           onChange={handleNameChange}
           variant="h2"
@@ -93,11 +96,29 @@ export default function ActivitiesCard({
         </Typography>
       </div>
       <div className={classes.buttonContainer}>
-        <Tooltip title="Edit activity" placement="left">
-          <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
-            <EditIcon />
-          </Button>
-        </Tooltip>
+        {mode === 'edit' && (
+          <Tooltip title="Edit activity" placement="left">
+            <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
+              <EditIcon />
+            </Button>
+          </Tooltip>
+        )}
+
+        {mode === 'call' && isHost && (
+          <>
+            <Tooltip title="Edit activity" placement="left">
+              <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
+                <EditIcon />
+              </Button>
+            </Tooltip>
+
+            <Tooltip title="Start activity" placement="left">
+              <Button variant="outlined" color="secondary" onClick={handleStartClick}>
+                <StartIcon />
+              </Button>
+            </Tooltip>
+          </>
+        )}
       </div>
     </Card>
   );

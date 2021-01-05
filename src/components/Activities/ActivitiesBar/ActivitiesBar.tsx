@@ -61,6 +61,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const ActivityTimelineItem = ({
   activity,
   index,
+  mode,
+  isHost,
   ...otherProps
 }: {
   activity: Activity;
@@ -70,7 +72,7 @@ const ActivityTimelineItem = ({
   save(activity: Activity): void;
   onEdit(): void;
 }) => (
-  <Draggable draggableId={activity.id} index={index}>
+  <Draggable draggableId={activity.id} isDragDisabled={mode === 'call' && !isHost} index={index}>
     {({ innerRef, draggableProps, dragHandleProps }) => (
       <TimelineItem ref={innerRef} {...draggableProps} {...dragHandleProps}>
         <TimelineOppositeContent></TimelineOppositeContent>
@@ -79,7 +81,7 @@ const ActivityTimelineItem = ({
           <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent>
-          <ActivityCard activity={activity} {...otherProps} />
+          <ActivityCard activity={activity} mode={mode} isHost={isHost} {...otherProps} />
         </TimelineContent>
       </TimelineItem>
     )}
@@ -212,7 +214,7 @@ export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
                   isHost={isHost ?? false}
                   mode={mode}
                   index={index}
-                  save={(values) => handleSaveActivity(values, index)}
+                  save={(values: Activity) => handleSaveActivity(values, index)}
                   onEdit={() => setEditActivityIndex(index)}
                 />
               ))}

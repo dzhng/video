@@ -32,6 +32,16 @@ const useStyles = makeStyles((theme: Theme) =>
         border: '1px solid ' + theme.palette.grey[500],
         backgroundColor: 'white',
       },
+
+      '&.Mui-disabled': {
+        // keep same colors when disabled (because it'll just be a normal title)
+        color: 'inherit',
+
+        // turn off border hover effect
+        '&:hover': {
+          border: '1px solid transparent',
+        },
+      },
     }),
   }),
 );
@@ -39,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function EditableTitle({
   title,
   isLoading,
+  disabled,
   variant = 'h2',
   validationSchema,
   onChange,
@@ -47,6 +58,7 @@ export default function EditableTitle({
 }: {
   title?: string;
   isLoading?: boolean;
+  disabled?: boolean;
   variant?: TypographyTypes;
   validationSchema: StringSchema;
   onChange(newTitle: string): void;
@@ -104,6 +116,7 @@ export default function EditableTitle({
       ) : (
         <InputBase
           fullWidth
+          disabled={disabled}
           inputRef={inputRef}
           className={classes.titleInput}
           value={value}
