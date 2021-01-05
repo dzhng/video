@@ -34,7 +34,9 @@ const useStyles = makeStyles(() =>
 function sizeForSquareThatFitInRect(width: number, height: number, n: number): number {
   const x = width;
   const y = height;
-  if (n <= 0) {
+
+  // catch invalid values to avoid NaN output
+  if (n <= 0 || x <= 0 || y <= 0) {
     return 0;
   }
 
