@@ -373,6 +373,39 @@ describe('firebase cloud firestore database rules', () => {
         }),
       );
     });
+
+    it('should let logged in users update call activity data', async () => {
+      const db = getAuthedFirestore({ uid: 'alice' });
+      const call = db.collection('calls').doc('doc');
+      call.set(requiredFields);
+
+      // test UUID
+      const activityId = 'f3d90870-4a78-11eb-a2de-c586f0a19609';
+
+      await firebase.assertSucceeds(
+        call.update({
+          currentActivityId: activityId,
+        }),
+      );
+
+      await firebase.assertSucceeds(
+        call.update({
+          [`activityData.${activityId}.test`]: 'hello world',
+        }),
+      );
+
+      const record = await call.get();
+      expect(record.data()).toEqual(
+        expect.objectContaining({
+          currentActivityId: activityId,
+          activityData: {
+            [activityId]: {
+              test: 'hello world',
+            },
+          },
+        }),
+      );
+    });
   });
 
   describe('presentation', () => {

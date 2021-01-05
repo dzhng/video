@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
     card: {
       display: 'flex',
       flexDirection: 'column',
+      maxHeight: '80vh',
     },
     videoContainer: {
       overflow: 'hidden',
@@ -43,7 +44,7 @@ export default function LocalPreviewCard({
           <LocalVideoPreview />
         </div>
         <div className={classes.controlsContainer}>
-          <Controls fade={false} />
+          <Controls />
         </div>
         {actionBar}
       </Card>

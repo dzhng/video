@@ -31,14 +31,11 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-export default function Controls({ fade = true }: { fade?: boolean }) {
+export default function Controls({ showControls = true }: { showControls?: boolean }) {
   const classes = useStyles();
   const roomState = useRoomState();
   const { isFetching } = useAppState();
   const { isAcquiringLocalTracks, isConnecting } = useVideoContext();
-  const isUserActive = useIsUserActive();
-
-  const showControls = !fade || isUserActive || roomState === 'disconnected';
   const isReconnecting = roomState === 'reconnecting';
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || isReconnecting;
 

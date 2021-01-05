@@ -7,7 +7,7 @@ describe('the useHeight hook', () => {
     // @ts-ignore
     window.innerHeight = 100;
     const { result } = renderHook(useHeight);
-    expect(result.current).toBe('100px');
+    expect(result.current).toBe(100);
 
     act(() => {
       // @ts-ignore
@@ -15,7 +15,7 @@ describe('the useHeight hook', () => {
       window.dispatchEvent(new Event('resize'));
     });
 
-    expect(result.current).toBe('150px');
+    expect(result.current).toBe(150);
   });
 
   it('should take window.visualViewport.scale into account', () => {
@@ -28,7 +28,7 @@ describe('the useHeight hook', () => {
     };
 
     const { result } = renderHook(useHeight);
-    expect(result.current).toBe('200px');
+    expect(result.current).toBe(200);
 
     act(() => {
       // @ts-ignore
@@ -36,6 +36,6 @@ describe('the useHeight hook', () => {
       window.dispatchEvent(new Event('resize'));
     });
 
-    expect(result.current).toBe('300px');
+    expect(result.current).toBe(300);
   });
 });

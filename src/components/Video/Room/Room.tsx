@@ -18,7 +18,6 @@ import Participant from '~/components/Video/Participant/Participant';
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
 const Container = styled('div')(({ theme }) => ({
-  position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: theme.palette.grey[900],
@@ -43,8 +42,10 @@ export default function Room() {
   // will look good on mobile browsers even after the location bar opens or closes.
   const pageHeight = useHeight();
 
-  // measure the width and height of LayoutContainer to feed into layout component
-  const { ref, width, height } = useDimensions<HTMLDivElement>();
+  // measure the width and height of ControlsBar to feed into layout component to calculate grid sizes
+  // We measure ControlsBar because its size is static, it is not affected by future width/height setting
+  // of LayoutContainer
+  const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
   const { call } = useCallContext();
   const {
@@ -74,18 +75,21 @@ export default function Room() {
 
   const variant = call?.currentActivityId ? 'focus' : 'grid';
 
+  // if no margins between items and controls, the correct height for items should be page - controls (which is static)
+  const itemContainerHeight = pageHeight - height;
+
   return (
     <Container style={{ height: pageHeight }}>
-      <LayoutContainer ref={ref}>
+      <LayoutContainer>
         <Layout
           variant={variant}
           width={width}
-          height={height}
+          height={itemContainerHeight}
           gridItems={items}
           mainItem={<ActivityDisplay />}
         />
       </LayoutContainer>
-      <ControlsBar>
+      <ControlsBar ref={ref}>
         <Controls />
       </ControlsBar>
       <ReconnectingNotification />

@@ -4,6 +4,7 @@ service cloud.firestore {
 
     // FOR DATA LENGTH:
     // id should be 30
+    // UUIDs (like activityIds) are 36 characters, make it 50 to future proof
     // short text like names should be 50
     // URLs should be 280
     // short descriptions should be 280
@@ -138,7 +139,7 @@ service cloud.firestore {
         requiredStringKey('templateId', 1, 30) &&
         requiredStringKey('creatorId', 1, 30) &&
         requiredCreatedAtKey() &&
-        optionalStringKey('currentActivityId', 30) &&
+        optionalStringKey('currentActivityId', 50) &&
 
         // map of activityIds and the metadata for each step
         optionalObjectKey('activityData') &&
