@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: 2,
     },
     buttonContainer: {
+      display: 'flex',
       marginTop: 'auto',
       marginBottom: 'auto',
       marginLeft: theme.spacing(1),

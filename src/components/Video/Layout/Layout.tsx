@@ -13,6 +13,15 @@ const useStyles = makeStyles(() =>
   createStyles({
     container: {
       display: 'flex',
+      flexDirection: 'row',
+    },
+    mainItem: {
+      width: '70%',
+      maxWidth: 1100,
+    },
+    itemContainer: {
+      flexGrow: 1,
+      display: 'flex',
       width: '100%',
       height: '100%',
       overflow: 'hidden',
@@ -21,7 +30,6 @@ const useStyles = makeStyles(() =>
       justifyContent: 'center',
       alignContent: 'center',
     },
-    mainItem: {},
     gridItem: {
       overflow: 'hidden',
       padding: (props: StyleProps) => props.itemPadding + 'px',
@@ -99,15 +107,17 @@ export default function VideoLayout({ width, height, variant, gridItems, mainIte
   return (
     <div className={classes.container}>
       {variant === 'focus' && <div className={classes.mainItem}>{mainItem}</div>}
-      {displayableItems.map((item) => (
-        <div
-          key={item.key}
-          className={classes.gridItem}
-          style={{ width: itemSize, height: itemSize }}
-        >
-          {item.node}
-        </div>
-      ))}
+      <div className={classes.itemContainer}>
+        {displayableItems.map((item) => (
+          <div
+            key={item.key}
+            className={classes.gridItem}
+            style={{ width: itemSize, height: itemSize }}
+          >
+            {item.node}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

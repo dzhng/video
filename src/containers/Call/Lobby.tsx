@@ -39,8 +39,7 @@ export default function CallLobby({
   const isConnecting = isFetching || _isConnecting;
 
   const handleSubmit = useCallback(async () => {
-    if (!call || isConnecting) {
-      console.error('Call is not defined or already connecting');
+    if (!call || isConnecting || roomState !== 'disconnected') {
       return;
     }
 
@@ -50,7 +49,7 @@ export default function CallLobby({
     } else {
       console.error('Token not defined');
     }
-  }, [call, getToken, connect, isConnecting]);
+  }, [call, getToken, connect, isConnecting, roomState]);
 
   // we only want this to run once when call is ready
   useEffect(() => {
