@@ -14,7 +14,7 @@ import {
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AddOutlined as AddIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Collections, LocalModel, Template, Call, Activity } from '~/firebase/schema-types';
+import { Collections, LocalModel, Template, Activity } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import NewActivityModal from './NewActivityModal';

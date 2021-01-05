@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -47,6 +47,15 @@ export default function Slide({ slideUrl, className, priority }: PropTypes) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // tracks mount state so that we don't set variables in useEffect
+  const isMounted = useRef(true);
+  useEffect(
+    () => () => {
+      isMounted.current = false;
+    },
+    [],
+  );
+
   const isHostedImage = slideUrl.startsWith('http');
 
   useEffect(() => {
@@ -59,7 +68,11 @@ export default function Slide({ slideUrl, className, priority }: PropTypes) {
     storage
       .ref(slideUrl)
       .getDownloadURL()
-      .then((url) => setImageUrl(url));
+      .then((url) => {
+        if (isMounted.current) {
+          setImageUrl(url);
+        }
+      });
   }, [slideUrl, isHostedImage]);
 
   const onLoad = useCallback(() => {

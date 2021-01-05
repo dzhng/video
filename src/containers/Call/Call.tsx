@@ -65,6 +65,11 @@ export default function CallContainer({
     }
   }, [template.ongoingCallId, currentCall]);
 
+  // make sure finish page is prefetched for fast loading
+  useEffect(() => {
+    router.prefetch('/finish');
+  }, [router]);
+
   const handleDisconnect = useCallback(() => {
     router.push('/finish');
   }, [router]);

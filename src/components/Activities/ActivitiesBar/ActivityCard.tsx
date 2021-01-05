@@ -103,7 +103,7 @@ export default function ActivitiesCard({
     <Card className={classes.card}>
       <div className={classes.content}>
         <EditableTitle
-          disabled={mode === 'call' && !isHost}
+          disabled={(mode === 'call' && !isHost) || isStarted}
           title={activity.name}
           onChange={handleNameChange}
           variant="h2"
