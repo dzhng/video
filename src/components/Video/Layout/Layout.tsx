@@ -9,21 +9,24 @@ interface StyleProps {
   itemPadding: number;
 }
 
+const mainItemWidthPercent = 70;
+const mainItemMaxWidth = 1100;
+
 const useStyles = makeStyles(() =>
   createStyles({
     container: {
+      height: '100%',
       display: 'flex',
       flexDirection: 'row',
+      alignItems: 'stretch',
     },
     mainItem: {
-      width: '70%',
-      maxWidth: 1100,
+      width: `${mainItemWidthPercent}%`,
+      maxWidth: mainItemMaxWidth,
     },
     itemContainer: {
       flexGrow: 1,
       display: 'flex',
-      width: '100%',
-      height: '100%',
       overflow: 'hidden',
       flexDirection: (props: StyleProps) => props.flexDirection,
       flexWrap: 'wrap',
@@ -93,9 +96,15 @@ interface PropTypes {
 export default function VideoLayout({ width, height, variant, gridItems, mainItem }: PropTypes) {
   const displayableItems = take(gridItems, MaxDisplayableGridItems);
 
+  // calculate item container width based on given parent width
+  const itemContainerWidth =
+    variant === 'focus'
+      ? Math.min((width * (100 - mainItemWidthPercent)) / 100, mainItemMaxWidth)
+      : width;
+
   const itemSize = useMemo<number>(
-    () => sizeForSquareThatFitInRect(width, height, displayableItems.length),
-    [width, height, displayableItems],
+    () => sizeForSquareThatFitInRect(itemContainerWidth, height, displayableItems.length),
+    [itemContainerWidth, height, displayableItems],
   );
 
   const flexDirection = variant === 'grid' ? 'row' : 'column';

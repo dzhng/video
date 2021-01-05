@@ -34,6 +34,7 @@ export default function CallContainer({
   call,
   createCall,
   endCall,
+  currentActivity,
   startActivity,
   updateActivity,
 }: {
@@ -42,6 +43,7 @@ export default function CallContainer({
   call?: LocalModel<Call>;
   createCall(): Promise<boolean>;
   endCall(): void;
+  currentActivity?: Activity;
   startActivity(activity: Activity): void;
   updateActivity(activity: Activity, path: string, value: ActivityDataTypes): void;
 }) {
@@ -98,6 +100,7 @@ export default function CallContainer({
             template={template}
             mode={isCallStarted ? 'call' : 'edit'}
             isHost={isHost}
+            currentActivity={currentActivity}
             startActivity={startActivity}
           />
         </Drawer>

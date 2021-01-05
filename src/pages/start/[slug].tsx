@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 import {
@@ -167,6 +167,13 @@ export default function StartPage() {
     [template],
   );
 
+  const currentActivity = useMemo(() => {
+    if (template && ongoingCall && ongoingCall.currentActivityId) {
+      const activityId = ongoingCall.currentActivityId;
+      return template.activities.find((activity) => activity.id === activityId);
+    }
+  }, [ongoingCall, template]);
+
   // when both template and host status is ready, show call conatiner
   return template && isHost !== null ? (
     <CallContainer
@@ -175,6 +182,7 @@ export default function StartPage() {
       call={ongoingCall}
       createCall={handleCreateCall}
       endCall={handleEndCall}
+      currentActivity={currentActivity}
       startActivity={handleStartActivity}
       updateActivity={handleUpdateActivity}
     />

@@ -25,6 +25,7 @@ const Container = styled('div')(({ theme }) => ({
 
 const LayoutContainer = styled('div')({
   flexGrow: 1,
+  overflow: 'hidden',
 });
 
 const ControlsBar = styled('div')(({ theme }) => ({
@@ -42,9 +43,10 @@ export default function Room() {
   // will look good on mobile browsers even after the location bar opens or closes.
   const pageHeight = useHeight();
 
-  // measure the width and height of ControlsBar to feed into layout component to calculate grid sizes
-  // We measure ControlsBar because its size is static, it is not affected by future width/height setting
-  // of LayoutContainer
+  // measure the width and height of LayoutContainer feed into layout component to
+  // calculate grid sizes. Make sure LayoutContainer has overflow set to hidden so
+  // that sizes can be calculate correctly.
+  // (if not set, size will overflow and will be wrong)
   const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
   const { call } = useCallContext();
@@ -75,21 +77,18 @@ export default function Room() {
 
   const variant = call?.currentActivityId ? 'focus' : 'grid';
 
-  // if no margins between items and controls, the correct height for items should be page - controls (which is static)
-  const itemContainerHeight = pageHeight - height;
-
   return (
     <Container style={{ height: pageHeight }}>
-      <LayoutContainer>
+      <LayoutContainer ref={ref}>
         <Layout
           variant={variant}
           width={width}
-          height={itemContainerHeight}
+          height={height}
           gridItems={items}
           mainItem={<ActivityDisplay />}
         />
       </LayoutContainer>
-      <ControlsBar ref={ref}>
+      <ControlsBar>
         <Controls />
       </ControlsBar>
       <ReconnectingNotification />

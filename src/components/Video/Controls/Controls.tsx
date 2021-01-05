@@ -9,8 +9,6 @@ import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
-import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
-import useIsUserActive from './useIsUserActive/useIsUserActive';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -45,7 +43,6 @@ export default function Controls({ showControls = true }: { showControls?: boole
       <ToggleVideoButton disabled={disableButtons} />
       {roomState !== 'disconnected' && (
         <>
-          <ToggleScreenShareButton disabled={disableButtons} />
           <EndCallButton />
         </>
       )}
