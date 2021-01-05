@@ -19,6 +19,7 @@ import { BackIcon } from '~/components/Icons';
 import { Activity, ActivityTypes } from '~/firebase/schema-types';
 import { ActivityTypeConfig } from '../Types/Types';
 
+// TODO: use EditableTitle for name input
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     modal: {

@@ -47,29 +47,45 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+interface PropTypes {
+  activity: Activity;
+  mode: 'edit' | 'call';
+  save(activity: Activity): void;
+  onEdit(): void;
+
+  // call mode props
+  isHost?: boolean;
+  isStarted?: boolean;
+  onStart?(): void;
+}
+
 export default function ActivitiesCard({
   activity,
   mode,
   isHost,
+  isStarted,
   save,
   onEdit,
-}: {
-  activity: Activity;
-  mode: 'edit' | 'call';
-  isHost: boolean;
-  save(activity: Activity): void;
-  onEdit(): void;
-}) {
+  onStart,
+}: PropTypes) {
   const classes = useStyles();
 
-  const handleStartClick = useCallback(() => {}, []);
+  const handleStartClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      onStart?.();
+    },
+    [onStart],
+  );
 
   const handleSettingsClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
-      onEdit();
+      if (!isStarted) {
+        onEdit();
+      }
     },
-    [onEdit],
+    [onEdit, isStarted],
   );
 
   const handleNameChange = useCallback(
@@ -107,16 +123,25 @@ export default function ActivitiesCard({
 
         {mode === 'call' && isHost && (
           <>
-            <Tooltip title="Edit activity" placement="bottom">
-              <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
-                <EditIcon />
-              </Button>
-            </Tooltip>
+            {!isStarted && (
+              <Tooltip title="Edit activity" placement="bottom">
+                <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
+                  <EditIcon />
+                </Button>
+              </Tooltip>
+            )}
 
-            <Tooltip title="Start activity" placement="bottom">
-              <Button variant="contained" color="secondary" onClick={handleStartClick}>
-                <StartIcon />
-              </Button>
+            <Tooltip title={isStarted ? 'Activity started' : 'Start activity'} placement="bottom">
+              <div>
+                <Button
+                  variant="contained"
+                  disabled={isStarted}
+                  color="secondary"
+                  onClick={handleStartClick}
+                >
+                  <StartIcon />
+                </Button>
+              </div>
             </Tooltip>
           </>
         )}

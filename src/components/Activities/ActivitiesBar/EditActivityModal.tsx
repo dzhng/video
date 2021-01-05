@@ -16,6 +16,7 @@ import { Formik, Form } from 'formik';
 import { Activity } from '~/firebase/schema-types';
 import { ActivityTypeConfig } from '../Types/Types';
 
+// TODO: use EditableTitle for input
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     modal: {

@@ -19,6 +19,7 @@ import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import NewActivityModal from './NewActivityModal';
 import EditActivityModal from './EditActivityModal';
+import ConfirmStartModal from './ConfirmStartModal';
 import ActivityCard from './ActivityCard';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -68,11 +69,14 @@ const ActivityTimelineItem = ({
 }: {
   activity: Activity;
   mode: 'edit' | 'call';
-  isHost: boolean;
   index: number;
   isLastItem: boolean;
   save(activity: Activity): void;
   onEdit(): void;
+
+  isHost?: boolean;
+  isStarted?: boolean;
+  onStart?(): void;
 }) => (
   <Draggable draggableId={activity.id} isDragDisabled={mode === 'call' && !isHost} index={index}>
     {({ innerRef, draggableProps, dragHandleProps }) => (
@@ -106,16 +110,24 @@ interface PropTypes {
   mode: 'edit' | 'call';
 
   // only valid in call mode
-  call?: LocalModel<Call>;
   isHost?: boolean;
+  currentActivity?: Activity;
+  startActivity?(activity: Activity): void;
 }
 
-export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
+export default function ActivitiesBar({
+  template,
+  mode,
+  isHost,
+  startActivity,
+  currentActivity,
+}: PropTypes) {
   const classes = useStyles();
   // have a local copy of activities here so that we can debounce saving to firebase (we can edit and see results without depending on template.activities to update in real-time)
   const [activities, setActivities] = useState<Activity[]>(template.activities);
   const [newActivityOpen, setNewActivityOpen] = useState(false);
   const [editActivityIndex, setEditActivityIndex] = useState<number | null>(null);
+  const [confirmStartActivity, setConfirmStartActivity] = useState<Activity | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const { markIsWriting } = useAppState();
 
@@ -185,6 +197,20 @@ export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
     [activities, debouncedSaveActivities],
   );
 
+  const handleStartActivity = useCallback((activity: Activity) => {
+    setConfirmStartActivity(activity);
+  }, []);
+
+  const handleCancelStartActivity = useCallback(() => {
+    setConfirmStartActivity(null);
+  }, []);
+
+  const handleStartActivityConfirm = useCallback(() => {
+    if (confirmStartActivity) {
+      startActivity?.(confirmStartActivity);
+    }
+  }, [startActivity, confirmStartActivity]);
+
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragStart={() => setIsDragging(true)}>
       <Droppable droppableId="list">
@@ -214,12 +240,14 @@ export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
                 <ActivityTimelineItem
                   key={activity.id}
                   activity={activity}
-                  isHost={isHost ?? false}
                   mode={mode}
                   index={index}
                   isLastItem={index === activities.length - 1}
                   save={(values: Activity) => handleSaveActivity(values, index)}
                   onEdit={() => setEditActivityIndex(index)}
+                  isHost={isHost}
+                  isStarted={currentActivity === activity}
+                  onStart={() => handleStartActivity(activity)}
                 />
               ))}
 
@@ -268,6 +296,14 @@ export default function ActivitiesBar({ template, mode, isHost }: PropTypes) {
           open={true}
           onClose={() => setEditActivityIndex(null)}
           onDelete={() => handleDeleteActivity(editActivityIndex)}
+        />
+      )}
+
+      {confirmStartActivity !== null && (
+        <ConfirmStartModal
+          open={!!confirmStartActivity}
+          onClose={handleCancelStartActivity}
+          onConfirm={handleStartActivityConfirm}
         />
       )}
     </DragDropContext>

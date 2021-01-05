@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
 
-import { LocalModel, Call, Template } from '~/firebase/schema-types';
+import { LocalModel, Call, Template, Activity } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
 import { CallProvider } from '~/components/CallProvider';
@@ -79,6 +79,8 @@ export default function CallContainer({
 
   const isCallStarted: boolean = !!currentCall;
 
+  const handleStartActivity = useCallback((activity: Activity) => {}, []);
+
   return (
     <UnsupportedBrowserWarning>
       <div className={classes.container}>
@@ -94,6 +96,7 @@ export default function CallContainer({
             template={template}
             mode={isCallStarted ? 'call' : 'edit'}
             isHost={isHost}
+            startActivity={handleStartActivity}
           />
         </Drawer>
         <div className={classes.activitiesSpacer} />
