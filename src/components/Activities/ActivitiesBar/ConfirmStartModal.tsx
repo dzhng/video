@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Dialog,
@@ -34,6 +34,11 @@ export default function ConfirmStartModal({
 }) {
   const classes = useStyles();
 
+  const handleSubmit = useCallback(() => {
+    onConfirm();
+    onClose();
+  }, [onConfirm, onClose]);
+
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
       <DialogTitle disableTypography>
@@ -48,11 +53,11 @@ export default function ConfirmStartModal({
       </DialogContent>
 
       <DialogActions>
-        <Button type="submit" color="primary">
+        <Button type="submit" color="primary" onClick={onClose}>
           Cancel
         </Button>
 
-        <Button type="submit" color="primary" variant="contained" autoFocus onClick={onConfirm}>
+        <Button type="submit" color="primary" variant="contained" autoFocus onClick={handleSubmit}>
           Start
         </Button>
       </DialogActions>
