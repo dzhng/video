@@ -55,7 +55,7 @@ export default function PresentationPicker({ name }: { name: string }) {
     <>
       {isQueryingOrCreating && <Skeleton variant="rect" height={150} animation="wave" />}
       {!presentationData && !isQueryingOrCreating && <Uploader setData={setData} />}
-      {presentationData && (
+      {presentationData && !isQueryingOrCreating && (
         <Preview presentation={presentationData} removePresentation={() => setData(null, null)} />
       )}
       {meta.error ? <div className="error">{meta.error}</div> : null}

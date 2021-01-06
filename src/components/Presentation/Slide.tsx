@@ -84,7 +84,18 @@ export default function Slide({ slideUrl, className, priority }: PropTypes) {
         />
       )}
 
-      {(!imageUrl || isLoading) && <CircularProgress />}
+      {isLoading && (
+        <div
+          style={{
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <CircularProgress />
+        </div>
+      )}
     </div>
   );
 }
