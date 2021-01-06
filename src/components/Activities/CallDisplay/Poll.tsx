@@ -212,7 +212,7 @@ export default function PollDisplay() {
       ? (currentCallData[FinishKey] as boolean) || metadata.showResultsRightAway
       : false;
 
-  const shouldDisable = currentCallData ? (currentCallData[FinishKey] as boolean) : true;
+  const shouldDisable = currentCallData ? (currentCallData[FinishKey] as boolean) : false;
 
   return (
     <div className={classes.container}>
