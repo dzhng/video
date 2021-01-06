@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme: Theme) =>
         cursor: 'default',
       },
     },
+    errorMessage: {
+      color: theme.palette.error.main,
+      marginTop: theme.spacing(1),
+    },
   }),
 );
 
@@ -72,18 +76,19 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
       let fileType: fromType | null = null;
       if (file.type === 'application/pdf' || ext === 'pdf') {
         fileType = 'pdf';
-      } else if (file.type === 'application/vnd.ms-powerpoint' || ext === '.ppt') {
+      } else if (file.type === 'application/vnd.ms-powerpoint' || ext === 'ppt') {
         fileType = 'ppt';
       } else if (
         file.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
-        ext === '.pptx'
+        ext === 'pptx'
       ) {
         fileType = 'pptx';
       }
 
       if (fileType === null) {
-        console.warn('Invalid file type uploaded');
+        console.warn('Invalid file type uploaded', file);
         setError('An invalid file type was selected');
+        setIsUploading(false);
         return;
       }
 
@@ -91,6 +96,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
       if (!convertResult || convertResult.length <= 0) {
         console.warn('Convert result undefined');
         setError('Error processing file, please try another file');
+        setIsUploading(false);
         return;
       }
 
@@ -120,7 +126,6 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
       <Typography variant="body2">
         Upload a presentation for this call. We support either PDF or Powerpoint format.
       </Typography>
-      {error && <Typography variant="body2">Error uploading presentation: {error}</Typography>}
       <input
         style={{ display: 'none' }}
         id="contained-button"
@@ -147,6 +152,11 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
           )}
         </Paper>
       </label>
+      {error && (
+        <Typography variant="body2" className={classes.errorMessage}>
+          Error uploading presentation: {error}
+        </Typography>
+      )}
     </>
   );
 }
