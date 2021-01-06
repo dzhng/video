@@ -7,6 +7,15 @@ import Slide from './Slide';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      height: '100%',
+      border: theme.dividerBorder,
+      borderRadius: theme.shape.borderRadius,
+      overflow: 'hidden',
+    },
     controls: {
       backgroundColor: theme.palette.background.default,
       textAlign: 'center',
@@ -56,7 +65,7 @@ export default function PresentationDisplay({ presentation, startAt, index, setI
 
   // we want to load all slides at once, so that the ones to be displayed will load in the background. We toggle which slide to display via CSS
   return (
-    <>
+    <div className={classes.container}>
       {presentation.slides.map((slide, idx) => (
         <Slide
           key={slide}
@@ -76,6 +85,6 @@ export default function PresentationDisplay({ presentation, startAt, index, setI
           <NavigateNext />
         </IconButton>
       </div>
-    </>
+    </div>
   );
 }

@@ -14,13 +14,11 @@ interface PropTypes {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     imageContainer: {
-      position: 'relative',
       backgroundColor: theme.palette.grey[900],
-
-      // trick to lock this component in 4/3 aspect ratio
       width: '100%',
-      height: 0,
-      paddingBottom: '75%',
+      height: '100%',
+      // need relative position here since Image is absolute positioned
+      position: 'relative',
     },
     show: {
       opacity: 1,
@@ -28,16 +26,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     hide: {
       opacity: 0,
-    },
-    innerContainer: {
-      // this 'fixes' the 0 height div of aspect ratio trick
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
     },
   }),
 );
@@ -82,23 +70,21 @@ export default function Slide({ slideUrl, className, priority }: PropTypes) {
   // make sure to always keep Image in the DOM whenever possible so that slides can be loaded in the background.
   return (
     <div className={clsx(classes.imageContainer, className)}>
-      <div className={classes.innerContainer}>
-        {imageUrl && (
-          <Image
-            src={imageUrl}
-            className={isLoading ? classes.hide : classes.show}
-            alt="Presentation preview"
-            layout="fill"
-            objectFit="contain"
-            quality={100}
-            loading="eager"
-            priority={priority}
-            onLoad={onLoad}
-          />
-        )}
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          className={isLoading ? classes.hide : classes.show}
+          alt="Presentation preview"
+          layout="fill"
+          objectFit="contain"
+          quality={100}
+          loading="eager"
+          priority={priority}
+          onLoad={onLoad}
+        />
+      )}
 
-        {(!imageUrl || isLoading) && <CircularProgress />}
-      </div>
+      {(!imageUrl || isLoading) && <CircularProgress />}
     </div>
   );
 }

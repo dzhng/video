@@ -16,7 +16,16 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: theme.spacing(1),
     },
     imageGridItem: {
-      paddingRight: theme.spacing(2),
+      // 4/3 aspect ratio (50% and not 75% because its relative to parent el)
+      width: '100%',
+      paddingTop: '50% !important',
+      position: 'relative',
+
+      '& > div': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+      },
     },
     imageContainer: {
       position: 'relative',
@@ -24,8 +33,12 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       backgroundColor: theme.palette.grey[900],
     },
-    name: {},
-    info: {},
+    name: {
+      overflowWrap: 'break-word',
+    },
+    info: {
+      overflowWrap: 'break-word',
+    },
   }),
 );
 
@@ -33,7 +46,7 @@ export default function Preview({ presentation, removePresentation }: PropTypes)
   const classes = useStyles();
 
   return (
-    <Grid container className={classes.container}>
+    <Grid container className={classes.container} spacing={3}>
       <Grid item xs={8} className={classes.imageGridItem}>
         <PresentationDisplay presentation={presentation} startAt={0} />
       </Grid>
