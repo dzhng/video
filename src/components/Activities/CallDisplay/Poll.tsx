@@ -63,7 +63,9 @@ function PollOption({ option, vote, voted }: { option: string; vote(): void; vot
   return (
     <div className={classes.option} onClick={vote}>
       <Typography variant="h3">{option}</Typography>
-      <IconButton size="small">{voted ? <CheckedIcon /> : <UncheckedIcon />}</IconButton>
+      <IconButton size="small" color="secondary">
+        {voted ? <CheckedIcon /> : <UncheckedIcon />}
+      </IconButton>
     </div>
   );
 }

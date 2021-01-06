@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       flexGrow: 1,
       backgroundColor: 'black',
+
+      // make sure content can overflow vertically, should adopt horizontally
+      overflowX: 'hidden',
+      overflowY: 'auto',
     },
   }),
 );
