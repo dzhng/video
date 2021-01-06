@@ -12,7 +12,7 @@ interface StyleProps {
 const mainItemWidthPercent = 70;
 const mainItemMaxWidth = 1100;
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       height: '100%',
@@ -23,6 +23,7 @@ const useStyles = makeStyles(() =>
     mainItem: {
       width: `${mainItemWidthPercent}%`,
       maxWidth: mainItemMaxWidth,
+      padding: theme.spacing(2),
     },
     itemContainer: {
       flexGrow: 1,
@@ -81,6 +82,7 @@ function sizeForSquareThatFitInRect(width: number, height: number, n: number): n
   }
 }
 
+// TODO: detect when there's white space on focus mode, and adjust width accordingly
 interface PropTypes {
   width: number;
   height: number;

@@ -6,6 +6,7 @@ interface CallContextTypes {
   template: LocalModel<Template>;
   isHost: boolean;
   endCall(): void;
+  currentActivity?: Activity;
   updateActivity(activity: Activity, path: string, value: ActivityDataTypes): void;
 }
 

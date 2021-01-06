@@ -19,8 +19,8 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       width: '100%',
     },
-    drawerPaper: theme.customMixins.activitiesBar,
-    activitiesSpacer: theme.customMixins.activitiesBar,
+    drawerPaper: theme.customMixins.activitiesBarMini,
+    activitiesSpacer: theme.customMixins.activitiesBarMini,
     content: {
       flexGrow: 1,
       height: '100vh',
@@ -71,22 +71,22 @@ export default function CallContainer({
   }, [router]);
 
   const handleDisconnect = useCallback(() => {
-    router.push('/finish');
-  }, [router]);
+    router.push(`/finish?fromHref=${encodeURIComponent(fromHref ?? false)}`);
+  }, [router, fromHref]);
 
   const handleEndCall = useCallback(() => {
     endCall();
-    router.push('/finish?hostEnded=true');
-  }, [endCall, router]);
+    router.push(`/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? false)}`);
+  }, [endCall, router, fromHref]);
 
   // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
   const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
 
   useEffect(() => {
     if (isCallEnded) {
-      router.push('/finish?hostEnded=true');
+      router.push(`/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? false)}`);
     }
-  }, [isCallEnded, router]);
+  }, [isCallEnded, router, fromHref]);
 
   const isCallStarted: boolean = !!currentCall;
 
@@ -100,7 +100,11 @@ export default function CallContainer({
           variant="permanent"
           open
         >
-          <TemplateTitle template={template} showBackButton={!!fromHref} backHref={fromHref} />
+          <TemplateTitle
+            template={template}
+            showBackButton={!!fromHref && !isCallStarted}
+            backHref={fromHref}
+          />
           <ActivitiesBar
             template={template}
             mode={isCallStarted ? 'call' : 'edit'}
@@ -122,6 +126,7 @@ export default function CallContainer({
               template={template}
               isHost={isHost}
               endCall={handleEndCall}
+              currentActivity={currentActivity}
               updateActivity={updateActivity}
             >
               <CallFlow isCallStarted={isCallStarted} createCall={createCall} />

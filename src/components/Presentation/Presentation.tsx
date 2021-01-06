@@ -5,11 +5,6 @@ import { NavigateBefore, NavigateNext } from '@material-ui/icons';
 import { Presentation } from '~/firebase/schema-types';
 import Slide from './Slide';
 
-interface PropTypes {
-  presentation: Presentation;
-  startAt: number;
-}
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     controls: {
@@ -31,21 +26,33 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function PresentationDisplay({ presentation, startAt }: PropTypes) {
-  const [index, setIndex] = useState<number>(startAt);
+interface PropTypes {
+  presentation: Presentation;
+  startAt: number;
+
+  // optional overrides for internal index function
+  index?: number;
+  setIndex?(index: number): void;
+}
+
+export default function PresentationDisplay({ presentation, startAt, index, setIndex }: PropTypes) {
+  const [_index, _setIndex] = useState<number>(startAt);
   const classes = useStyles();
 
+  const finalSetIndex = setIndex ? setIndex : _setIndex;
+  const finalIndex = typeof index === 'number' ? index : _index;
+
   const previousSlide = useCallback(() => {
-    if (index > 0) {
-      setIndex(index - 1);
+    if (finalIndex > 0) {
+      finalSetIndex(finalIndex - 1);
     }
-  }, [index]);
+  }, [finalIndex, finalSetIndex]);
 
   const nextSlide = useCallback(() => {
-    if (index < presentation.slides.length - 1) {
-      setIndex(index + 1);
+    if (finalIndex < presentation.slides.length - 1) {
+      finalSetIndex(finalIndex + 1);
     }
-  }, [index, presentation]);
+  }, [finalIndex, finalSetIndex, presentation]);
 
   // we want to load all slides at once, so that the ones to be displayed will load in the background. We toggle which slide to display via CSS
   return (
@@ -54,8 +61,8 @@ export default function PresentationDisplay({ presentation, startAt }: PropTypes
         <Slide
           key={slide}
           slideUrl={slide}
-          className={idx === index ? classes.showSlide : classes.hideSlide}
-          priority={idx === index}
+          className={idx === finalIndex ? classes.showSlide : classes.hideSlide}
+          priority={idx === finalIndex}
         />
       ))}
       <div className={classes.controls}>
@@ -63,7 +70,7 @@ export default function PresentationDisplay({ presentation, startAt }: PropTypes
           <NavigateBefore />
         </IconButton>
 
-        <span className={classes.pageNumber}>{index + 1}</span>
+        <span className={classes.pageNumber}>{finalIndex + 1}</span>
 
         <IconButton size="small" onClick={nextSlide}>
           <NavigateNext />

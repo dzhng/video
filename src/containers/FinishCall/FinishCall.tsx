@@ -24,9 +24,12 @@ const useStyles = makeStyles((theme: Theme) =>
 interface PropTypes {
   // did the user explicitly leave? Or was call ended by host?
   hostEnded: boolean;
+
+  // explicitly state where the home button should link
+  fromHref?: string;
 }
 
-export default function FinishCall({ hostEnded }: PropTypes) {
+export default function FinishCall({ hostEnded, fromHref }: PropTypes) {
   const classes = useStyles();
   const message = hostEnded ? 'The call has been ended by the host' : 'You have left the call';
 
@@ -35,9 +38,9 @@ export default function FinishCall({ hostEnded }: PropTypes) {
       <Typography variant="h1">Thank you!</Typography>
       <Typography variant="body1">{message}</Typography>
 
-      <Link href="/">
+      <Link href={fromHref ? fromHref : '/'}>
         <Button variant="contained" color="primary">
-          Home
+          Finish
         </Button>
       </Link>
     </div>

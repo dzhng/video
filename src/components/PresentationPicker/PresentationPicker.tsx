@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Skeleton } from '@material-ui/lab';
 import { useField } from 'formik';
 
-import { Presentation } from '~/firebase/schema-types';
+import { Collections, Presentation } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import Uploader from './Uploader';
 import Preview from './Preview';
@@ -21,11 +21,13 @@ export default function PresentationPicker({ name }: { name: string }) {
 
   useEffect(() => {
     const query = async (presentationId: string) => {
-      const doc = await db.collection('presentations').doc(presentationId).get();
+      const doc = await db.collection(Collections.PRESENTATIONS).doc(presentationId).get();
       if (doc.exists) {
         setPresentationData(doc.data() as Presentation);
-        setIsQueryingOrCreating(false);
+      } else {
+        setPresentationData(null);
       }
+      setIsQueryingOrCreating(false);
     };
 
     if (value) {

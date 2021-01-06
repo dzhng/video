@@ -4,7 +4,12 @@ import FinishContainer from '~/containers/FinishCall/FinishCall';
 
 export default function FinishCallPage() {
   const router = useRouter();
-  const { hostEnded } = router.query;
+  const { hostEnded, fromHref } = router.query;
 
-  return <FinishContainer hostEnded={!!hostEnded} />;
+  return (
+    <FinishContainer
+      hostEnded={!!hostEnded}
+      fromHref={fromHref && decodeURIComponent(fromHref as string)}
+    />
+  );
 }
