@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { get, without, uniq, values, flatten } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Button } from '@material-ui/core';
@@ -12,6 +12,8 @@ import { useAppState } from '~/state';
 
 // key of votes, keyed by userIds, value is array of option votes
 const VoteMapKey = 'voteMap';
+// boolean key indicating if results should be shown (stops voting)
+const ShowResultsKey = 'showResults';
 
 interface VoteMapType {
   // key is uid, values is array of options
@@ -74,7 +76,6 @@ export default function PollDisplay() {
   const classes = useStyles();
   const { user } = useAppState();
   const { currentActivity, updateActivity, currentCallData, isHost } = useCallContext();
-  const [isShowingResults, setIsShowingResults] = useState(false);
 
   const metadata = currentActivity?.metadata as PollActivityMetadata | undefined;
 
@@ -97,7 +98,7 @@ export default function PollDisplay() {
 
   const toggleOption = useCallback(
     (option: string) => {
-      if (!currentActivity || !user || !currentCallData) {
+      if (!currentActivity || !user || !currentCallData || !metadata) {
         return;
       }
 
@@ -105,11 +106,21 @@ export default function PollDisplay() {
       if (votes.includes(option)) {
         updateActivity(currentActivity, `${VoteMapKey}.${user.uid}`, without(votes, option));
       } else {
-        updateActivity(currentActivity, `${VoteMapKey}.${user.uid}`, uniq([...votes, option]));
+        // if single choice is selectd, make sure to deselect this user from all other options first
+        const newVotes = metadata.isMultipleChoice ? uniq([...votes, option]) : [option];
+        updateActivity(currentActivity, `${VoteMapKey}.${user.uid}`, newVotes);
       }
     },
-    [currentActivity, currentCallData, updateActivity, user],
+    [currentActivity, currentCallData, updateActivity, user, metadata],
   );
+
+  const handleShowResults = useCallback(() => {
+    if (!currentActivity) {
+      return;
+    }
+
+    updateActivity(currentActivity, ShowResultsKey, true);
+  }, [currentActivity, updateActivity]);
 
   return (
     <div className={classes.container}>
@@ -130,7 +141,12 @@ export default function PollDisplay() {
           <Typography variant="h4">
             <b>Total votes:</b> {totalVotes}
           </Typography>
-          <Button variant="contained" color="primary" onClick={() => setIsShowingResults(true)}>
+          <Button
+            variant="contained"
+            disabled={currentCallData && (currentCallData[ShowResultsKey] as boolean)}
+            color="primary"
+            onClick={handleShowResults}
+          >
             Show Results
           </Button>
         </div>
