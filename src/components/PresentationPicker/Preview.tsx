@@ -27,12 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
         left: 0,
       },
     },
-    imageContainer: {
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-      backgroundColor: theme.palette.grey[900],
-    },
     name: {
       overflowWrap: 'break-word',
     },

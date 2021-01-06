@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       // need relative position here since Image is absolute positioned
       position: 'relative',
+      backgroundColor: 'black',
     },
     show: {
       opacity: 1,
