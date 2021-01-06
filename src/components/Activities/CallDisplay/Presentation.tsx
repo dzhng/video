@@ -1,12 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import {
-  Collections,
-  Presentation,
-  PresentationActivityMetadata,
-  ActivityCallData,
-} from '~/firebase/schema-types';
+import { Collections, Presentation, PresentationActivityMetadata } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import PresentationContainer from '~/components/Presentation/Presentation';
@@ -26,14 +21,8 @@ const useStyles = makeStyles(() =>
 
 export default function PresentationDisplay() {
   const classes = useStyles();
-  const { call, currentActivity, updateActivity, isHost } = useCallContext();
+  const { currentActivity, updateActivity, isHost, currentCallData } = useCallContext();
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
-
-  const currentCallData = useMemo<ActivityCallData | undefined>(() => {
-    if (call && currentActivity) {
-      return (call.activityData ? call.activityData[currentActivity.id] : {}) as ActivityCallData;
-    }
-  }, [call, currentActivity]);
 
   useEffect(() => {
     const getPresentation = async (id: string) => {

@@ -22,10 +22,10 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1),
       backgroundColor: theme.palette.grey[300],
       justifyContent: 'flex-end',
+      alignItems: 'center',
 
       '& h2': {
         flexGrow: 1,
-        lineHeight: '30px',
       },
 
       '& button': {

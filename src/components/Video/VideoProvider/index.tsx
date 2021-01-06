@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React, { createContext, useMemo } from 'react';
 import {
   CreateLocalTrackOptions,
   ConnectOptions,
@@ -78,11 +78,14 @@ export function VideoProvider({
   };
 
   const deviceList = useDevices();
-  const devices = {
-    audioInput: getAudioInputDevices(deviceList),
-    audioOutput: getAudioOutputDevices(deviceList),
-    videoInput: getVideoInputDevices(deviceList),
-  };
+  const devices = useMemo(
+    () => ({
+      audioInput: getAudioInputDevices(deviceList),
+      audioOutput: getAudioOutputDevices(deviceList),
+      videoInput: getVideoInputDevices(deviceList),
+    }),
+    [deviceList],
+  );
 
   const {
     localTracks,
