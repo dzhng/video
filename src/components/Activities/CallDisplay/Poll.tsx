@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) =>
     options: {
       flexGrow: 1,
       padding: theme.spacing(2),
+      overflowY: 'auto',
     },
     option: {
       position: 'relative',

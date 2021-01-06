@@ -36,16 +36,16 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       backgroundColor: 'black',
 
-      // make sure content can overflow vertically, should adopt horizontally
-      overflowX: 'hidden',
-      overflowY: 'auto',
+      // not really needed but just in case
+      // NOTE: children should handle overflow scroll
+      overflow: 'hidden',
     },
   }),
 );
 
 export default function ActivityDisplay() {
   const classes = useStyles();
-  const { call, template, currentActivity, endActivity, updateActivity } = useCallContext();
+  const { call, template, currentActivity, endActivity, updateActivity, isHost } = useCallContext();
 
   const handleRestartActivity = useCallback(() => {
     if (!currentActivity) {
@@ -77,17 +77,21 @@ export default function ActivityDisplay() {
           <b>{activity.name}</b>
         </Typography>
 
-        <Tooltip title="Restart activity" placement="bottom">
-          <IconButton size="small" onClick={handleRestartActivity}>
-            <RestartIcon />
-          </IconButton>
-        </Tooltip>
+        {isHost && (
+          <Tooltip title="Restart activity" placement="bottom">
+            <IconButton size="small" onClick={handleRestartActivity}>
+              <RestartIcon />
+            </IconButton>
+          </Tooltip>
+        )}
 
-        <Tooltip title="Close activity" placement="bottom">
-          <IconButton size="small" onClick={endActivity}>
-            <CloseIcon />
-          </IconButton>
-        </Tooltip>
+        {isHost && (
+          <Tooltip title="Close activity" placement="bottom">
+            <IconButton size="small" onClick={endActivity}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
       <div className={classes.content}>{config.display}</div>
     </Card>

@@ -65,7 +65,7 @@ export const ActivityTypeConfig: {
     initialValue: {
       showResultsRightAway: false,
       isMultipleChoice: false,
-      numberOfVotes: 2,
+      numberOfVotes: 2, // TODO: this is not implemented yet
       options: [''], // start with 1 (invalid) option already defined
     },
     schema: Yup.object().shape({
@@ -91,7 +91,7 @@ export const ActivityTypeConfig: {
     display: <QuestionsDisplay />,
     initialValue: {
       questions: [''], // start with 1 (invalid) option already defined
-      allowTextSubmission: false,
+      allowTextSubmission: true,
       allowAnonymousSubmission: false,
     },
     schema: Yup.object().shape({
