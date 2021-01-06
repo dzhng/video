@@ -36,6 +36,7 @@ export default function CallContainer({
   endCall,
   currentActivity,
   startActivity,
+  endActivity,
   updateActivity,
 }: {
   template: LocalModel<Template>;
@@ -45,7 +46,8 @@ export default function CallContainer({
   endCall(): void;
   currentActivity?: Activity;
   startActivity(activity: Activity): void;
-  updateActivity(activity: Activity, path: string, value: ActivityDataTypes): void;
+  endActivity(): void;
+  updateActivity(activity: Activity, path: string | null, value: ActivityDataTypes | object): void;
 }) {
   const classes = useStyles();
   const router = useRouter();
@@ -128,6 +130,7 @@ export default function CallContainer({
               endCall={handleEndCall}
               currentActivity={currentActivity}
               updateActivity={updateActivity}
+              endActivity={endActivity}
             >
               <CallFlow isCallStarted={isCallStarted} createCall={createCall} />
             </CallProvider>

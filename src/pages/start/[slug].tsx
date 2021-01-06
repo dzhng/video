@@ -15,6 +15,7 @@ import CallContainer from '~/containers/Call/Call';
 import { useAppState } from '~/state';
 
 // start a call with given template id
+// TODO: all these here can probably be put into hooks and exposed in CallProvider
 export default function StartPage() {
   const router = useRouter();
   const { user } = useAppState();
@@ -150,13 +151,13 @@ export default function StartPage() {
   );
 
   const handleUpdateActivity = useCallback(
-    (activity: Activity, path: string, value: ActivityDataTypes) => {
+    (activity: Activity, path: string | null, value: ActivityDataTypes | object) => {
       if (!template || !template.ongoingCallId) {
         console.error('Cannot update activity if call is not loaded');
         return;
       }
 
-      const fullPath = `activityData.${activity.id}.${path}`;
+      const fullPath = `activityData.${activity.id}${path ? '.' + path : ''}`;
 
       db.collection(Collections.CALLS)
         .doc(template.ongoingCallId)
@@ -166,6 +167,17 @@ export default function StartPage() {
     },
     [template],
   );
+
+  const handleEndActivity = useCallback(() => {
+    if (!template || !template.ongoingCallId) {
+      console.error('Cannot update activity if call is not loaded');
+      return;
+    }
+
+    db.collection(Collections.CALLS).doc(template.ongoingCallId).update({
+      currentActivityId: null,
+    });
+  }, [template]);
 
   const currentActivity = useMemo(() => {
     if (template && ongoingCall && ongoingCall.currentActivityId) {
@@ -184,6 +196,7 @@ export default function StartPage() {
       endCall={handleEndCall}
       currentActivity={currentActivity}
       startActivity={handleStartActivity}
+      endActivity={handleEndActivity}
       updateActivity={handleUpdateActivity}
     />
   ) : (

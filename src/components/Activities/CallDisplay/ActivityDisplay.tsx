@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Typography, Card } from '@material-ui/core';
+import { Typography, Card, IconButton, Tooltip } from '@material-ui/core';
+import {
+  CloseOutlined as CloseIcon,
+  SettingsBackupRestoreOutlined as RestartIcon,
+} from '@material-ui/icons';
 import { ActivityTypeConfig } from '../Types/Types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ErrorDisplay from './Error';
@@ -14,8 +18,19 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     header: {
+      display: 'flex',
       padding: theme.spacing(1),
       backgroundColor: theme.palette.grey[300],
+      justifyContent: 'flex-end',
+
+      '& h2': {
+        flexGrow: 1,
+        lineHeight: '30px',
+      },
+
+      '& button': {
+        marginLeft: theme.spacing(1),
+      },
     },
     content: {
       flexGrow: 1,
@@ -26,7 +41,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ActivityDisplay() {
   const classes = useStyles();
-  const { call, template } = useCallContext();
+  const { call, template, currentActivity, endActivity, updateActivity } = useCallContext();
+
+  const handleRestartActivity = useCallback(() => {
+    if (!currentActivity) {
+      return;
+    }
+
+    // to restart, just clear the activity data for that activity
+    updateActivity(currentActivity, null, {});
+  }, [updateActivity, currentActivity]);
 
   if (!call || !call.currentActivityId) {
     return <ErrorDisplay />;
@@ -45,7 +69,21 @@ export default function ActivityDisplay() {
   return (
     <Card className={classes.container}>
       <div className={classes.header}>
-        <Typography variant="h2">{activity.name}</Typography>
+        <Typography variant="h2">
+          <b>{activity.name}</b>
+        </Typography>
+
+        <Tooltip title="Restart activity" placement="bottom">
+          <IconButton size="small" onClick={handleRestartActivity}>
+            <RestartIcon />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Close activity" placement="bottom">
+          <IconButton size="small" onClick={endActivity}>
+            <CloseIcon />
+          </IconButton>
+        </Tooltip>
       </div>
       <div className={classes.content}>{config.display}</div>
     </Card>

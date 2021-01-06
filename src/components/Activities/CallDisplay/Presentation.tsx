@@ -26,7 +26,7 @@ const useStyles = makeStyles(() =>
 
 export default function PresentationDisplay() {
   const classes = useStyles();
-  const { call, currentActivity, updateActivity } = useCallContext();
+  const { call, currentActivity, updateActivity, isHost } = useCallContext();
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
   const currentCallData = useMemo<ActivityCallData | undefined>(() => {
@@ -70,6 +70,7 @@ export default function PresentationDisplay() {
     <div className={classes.container}>
       {presentationData && (
         <PresentationContainer
+          showControls={isHost}
           presentation={presentationData}
           startAt={0}
           index={currentIndex}

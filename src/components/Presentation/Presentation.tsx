@@ -38,13 +38,20 @@ const useStyles = makeStyles((theme: Theme) =>
 interface PropTypes {
   presentation: Presentation;
   startAt: number;
+  showControls: boolean;
 
   // optional overrides for internal index function
   index?: number;
   setIndex?(index: number): void;
 }
 
-export default function PresentationDisplay({ presentation, startAt, index, setIndex }: PropTypes) {
+export default function PresentationDisplay({
+  presentation,
+  startAt,
+  index,
+  setIndex,
+  showControls,
+}: PropTypes) {
   const [_index, _setIndex] = useState<number>(startAt);
   const classes = useStyles();
 
@@ -74,17 +81,20 @@ export default function PresentationDisplay({ presentation, startAt, index, setI
           priority={idx === finalIndex}
         />
       ))}
-      <div className={classes.controls}>
-        <IconButton size="small" onClick={previousSlide}>
-          <NavigateBefore />
-        </IconButton>
 
-        <span className={classes.pageNumber}>{finalIndex + 1}</span>
+      {showControls && (
+        <div className={classes.controls}>
+          <IconButton size="small" onClick={previousSlide}>
+            <NavigateBefore />
+          </IconButton>
 
-        <IconButton size="small" onClick={nextSlide}>
-          <NavigateNext />
-        </IconButton>
-      </div>
+          <span className={classes.pageNumber}>{finalIndex + 1}</span>
+
+          <IconButton size="small" onClick={nextSlide}>
+            <NavigateNext />
+          </IconButton>
+        </div>
+      )}
     </div>
   );
 }

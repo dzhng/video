@@ -42,7 +42,7 @@ export default function Preview({ presentation, removePresentation }: PropTypes)
   return (
     <Grid container className={classes.container} spacing={3}>
       <Grid item xs={8} className={classes.imageGridItem}>
-        <PresentationDisplay presentation={presentation} startAt={0} />
+        <PresentationDisplay showControls presentation={presentation} startAt={0} />
       </Grid>
 
       <Grid item xs={4}>

@@ -7,7 +7,8 @@ interface CallContextTypes {
   isHost: boolean;
   endCall(): void;
   currentActivity?: Activity;
-  updateActivity(activity: Activity, path: string, value: ActivityDataTypes): void;
+  updateActivity(activity: Activity, path: string | null, value: ActivityDataTypes | object): void;
+  endActivity(): void;
 }
 
 export const CallContext = createContext<CallContextTypes>(null!);
