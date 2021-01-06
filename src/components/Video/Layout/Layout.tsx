@@ -23,7 +23,10 @@ const useStyles = makeStyles((theme) =>
     mainItem: {
       width: `${mainItemWidthPercent}%`,
       maxWidth: mainItemMaxWidth,
-      padding: theme.spacing(2),
+      padding: theme.spacing(3),
+      // less padding on bottom since controls will already have a lot
+      // this feels a bit hacky since layout shouldn't know about controls
+      paddingBottom: theme.spacing(1),
     },
     itemContainer: {
       flexGrow: 1,
