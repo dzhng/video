@@ -14,8 +14,7 @@ import { useAppState } from '~/state';
 // key of votes, keyed by userIds, value is array of option votes
 const VoteMapKey = 'voteMap';
 // boolean key indicating if results should be shown (stops voting)
-// when this is set to true, the activity is effectively finished
-const ShowResultsKey = 'showResults';
+const FinishKey = 'isFinished';
 
 interface VoteMapType {
   // key is uid, values is array of options
@@ -62,12 +61,22 @@ const useStyles = makeStyles((theme) =>
         boxShadow: theme.shadows[1],
       },
     },
+    votes: {
+      display: 'inline-block',
+      height: '1.15rem',
+      minWidth: '1.15rem',
+      lineHeight: '1.15rem',
+      borderRadius: '0.5rem',
+      backgroundColor: theme.palette.primary.dark,
+      color: 'white',
+      textAlign: 'center',
+    },
     progressBar: {
       position: 'absolute',
       top: 0,
       left: 0,
       height: '100%',
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.light + '50',
     },
     controls: {
       display: 'flex',
@@ -106,11 +115,20 @@ function PollOption({
       className={clsx(classes.option, disabled ? 'disabled' : 'enabled')}
       onClick={disabled ? undefined : vote}
     >
-      <Typography variant="h3">{option}</Typography>
-      <IconButton size="small" color={disabled ? 'default' : 'primary'}>
+      <Typography variant="h3">
+        {option}{' '}
+        {showVotes && votes > 0 && (
+          <Tooltip title={`${votes} participants voted for this option`} placement="top">
+            <span className={classes.votes}>{votes}</span>
+          </Tooltip>
+        )}
+      </Typography>
+      <IconButton size="small" color={disabled && !voted ? 'default' : 'primary'}>
         {voted ? <CheckedIcon /> : <UncheckedIcon />}
       </IconButton>
-      <div className={classes.progressBar} style={{ width: `${100 * (votes / maxVotes)}%` }} />
+      {showVotes && votes > 0 && (
+        <div className={classes.progressBar} style={{ width: `${100 * (votes / maxVotes)}%` }} />
+      )}
     </div>
   );
 }
@@ -180,20 +198,20 @@ export default function PollDisplay() {
     [currentActivity, currentCallData, updateActivity, user, metadata],
   );
 
-  const handleShowResults = useCallback(() => {
+  const handleFinish = useCallback(() => {
     if (!currentActivity) {
       return;
     }
 
-    updateActivity(currentActivity, ShowResultsKey, true);
+    updateActivity(currentActivity, FinishKey, true);
   }, [currentActivity, updateActivity]);
 
   const showVotes =
     metadata && currentCallData
-      ? (currentCallData[ShowResultsKey] as boolean) || metadata.showResultsRightAway
+      ? (currentCallData[FinishKey] as boolean) || metadata.showResultsRightAway
       : false;
 
-  const shouldDisable = currentCallData ? (currentCallData[ShowResultsKey] as boolean) : true;
+  const shouldDisable = currentCallData ? (currentCallData[FinishKey] as boolean) : true;
 
   return (
     <div className={classes.container}>
@@ -228,9 +246,9 @@ export default function PollDisplay() {
                 variant="contained"
                 disabled={shouldDisable}
                 color="primary"
-                onClick={handleShowResults}
+                onClick={handleFinish}
               >
-                Show Results
+                Finish Voting
               </Button>
             </div>
           </Tooltip>
