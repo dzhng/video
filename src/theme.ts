@@ -31,6 +31,10 @@ declare module '@material-ui/core/styles/createMuiTheme' {
   }
 }
 
+// colors:
+// Primary is for main actions
+// Secondary is for host or moderation related actions
+
 export default createMuiTheme({
   shape: {
     borderRadius: 6,

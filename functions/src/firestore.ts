@@ -9,8 +9,10 @@ import { region } from './constants';
 admin.initializeApp();
 
 // TODO: test this
+// This function needs extra memory to process slide images
 export const processPresentation = functions
   .region(region)
+  .runWith({ memory: '2GB', timeoutSeconds: 540 })
   .firestore.document(`${Collections.PRESENTATIONS}/{presentationId}`)
   .onCreate(async (snap, context) => {
     const doc = snap.data() as Presentation;

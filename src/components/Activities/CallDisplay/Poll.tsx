@@ -1,7 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
+import clsx from 'clsx';
 import { get, without, uniq, values, flatten } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Button } from '@material-ui/core';
+import { Typography, IconButton, Button, Tooltip } from '@material-ui/core';
 import {
   RadioButtonUnchecked as UncheckedIcon,
   RadioButtonChecked as CheckedIcon,
@@ -13,6 +14,7 @@ import { useAppState } from '~/state';
 // key of votes, keyed by userIds, value is array of option votes
 const VoteMapKey = 'voteMap';
 // boolean key indicating if results should be shown (stops voting)
+// when this is set to true, the activity is effectively finished
 const ShowResultsKey = 'showResults';
 
 interface VoteMapType {
@@ -33,6 +35,7 @@ const useStyles = makeStyles((theme) =>
       padding: theme.spacing(2),
     },
     option: {
+      position: 'relative',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -40,13 +43,31 @@ const useStyles = makeStyles((theme) =>
       borderRadius: theme.shape.borderRadius,
       marginBottom: theme.spacing(1),
       padding: theme.spacing(1),
-      cursor: 'pointer',
       transition: theme.transitionTime,
+      overflow: 'hidden',
 
-      '&:hover': {
+      '& h3,button': {
+        // so it shows above progress bar
+        zIndex: 10,
+      },
+
+      '&.enabled': {
+        cursor: 'pointer',
+      },
+      '&.disabled': {
+        backgroundColor: theme.palette.grey[50],
+      },
+      '&.enabled:hover': {
         backgroundColor: theme.palette.grey[100],
         boxShadow: theme.shadows[1],
       },
+    },
+    progressBar: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      height: '100%',
+      backgroundColor: theme.palette.primary.light,
     },
     controls: {
       display: 'flex',
@@ -59,15 +80,37 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-function PollOption({ option, vote, voted }: { option: string; vote(): void; voted: boolean }) {
+function PollOption({
+  option,
+  vote,
+  voted,
+  votes,
+  maxVotes,
+  showVotes,
+  disabled,
+}: {
+  option: string;
+  vote(): void;
+  voted: boolean;
+  votes: number;
+  maxVotes: number;
+  showVotes: boolean;
+
+  // disabled option cannot vote
+  disabled: boolean;
+}) {
   const classes = useStyles();
 
   return (
-    <div className={classes.option} onClick={vote}>
+    <div
+      className={clsx(classes.option, disabled ? 'disabled' : 'enabled')}
+      onClick={disabled ? undefined : vote}
+    >
       <Typography variant="h3">{option}</Typography>
-      <IconButton size="small" color="secondary">
+      <IconButton size="small" color={disabled ? 'default' : 'primary'}>
         {voted ? <CheckedIcon /> : <UncheckedIcon />}
       </IconButton>
+      <div className={classes.progressBar} style={{ width: `${100 * (votes / maxVotes)}%` }} />
     </div>
   );
 }
@@ -79,10 +122,33 @@ export default function PollDisplay() {
 
   const metadata = currentActivity?.metadata as PollActivityMetadata | undefined;
 
-  const totalVotes = useMemo<number>(() => {
+  const flattenedVotes = useMemo<string[]>(() => {
     const voteMap = (get(currentCallData, VoteMapKey) as VoteMapType) || {};
-    return flatten(values(voteMap)).length;
+    return flatten(values(voteMap));
   }, [currentCallData]);
+
+  const totalVotes = useMemo<number>(() => {
+    return flattenedVotes.length;
+  }, [flattenedVotes]);
+
+  const votesForOptionMap = useMemo<{ [option: string]: number }>(() => {
+    if (!metadata) {
+      return {};
+    }
+
+    return metadata.options.reduce(
+      (value, option) => ({
+        ...value,
+        [option]: flattenedVotes.filter((opt) => opt === option).length,
+      }),
+      {},
+    );
+  }, [metadata, flattenedVotes]);
+
+  // find the maximum number of votes for any option
+  const maxVotes = useMemo<number>(() => {
+    return Math.max(...values(votesForOptionMap));
+  }, [votesForOptionMap]);
 
   const votedForOption = useCallback(
     (option: string): boolean => {
@@ -122,6 +188,13 @@ export default function PollDisplay() {
     updateActivity(currentActivity, ShowResultsKey, true);
   }, [currentActivity, updateActivity]);
 
+  const showVotes =
+    metadata && currentCallData
+      ? (currentCallData[ShowResultsKey] as boolean) || metadata.showResultsRightAway
+      : false;
+
+  const shouldDisable = currentCallData ? (currentCallData[ShowResultsKey] as boolean) : true;
+
   return (
     <div className={classes.container}>
       <div className={classes.options}>
@@ -132,6 +205,10 @@ export default function PollDisplay() {
               option={option}
               voted={votedForOption(option)}
               vote={() => toggleOption(option)}
+              votes={votesForOptionMap[option] ?? 0}
+              maxVotes={maxVotes}
+              showVotes={showVotes}
+              disabled={shouldDisable}
             />
           ))}
       </div>
@@ -141,14 +218,22 @@ export default function PollDisplay() {
           <Typography variant="h4">
             <b>Total votes:</b> {totalVotes}
           </Typography>
-          <Button
-            variant="contained"
-            disabled={currentCallData && (currentCallData[ShowResultsKey] as boolean)}
-            color="primary"
-            onClick={handleShowResults}
+          <Tooltip
+            title={shouldDisable ? 'Currently showing results' : 'Stops voting and show results'}
+            placement="top"
           >
-            Show Results
-          </Button>
+            {/* add div so tooltip will still work with disabled button */}
+            <div>
+              <Button
+                variant="contained"
+                disabled={shouldDisable}
+                color="primary"
+                onClick={handleShowResults}
+              >
+                Show Results
+              </Button>
+            </div>
+          </Tooltip>
         </div>
       )}
     </div>
