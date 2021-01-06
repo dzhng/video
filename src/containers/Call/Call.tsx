@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
     activitiesSpacer: theme.customMixins.activitiesBarMini,
     content: {
       flexGrow: 1,
+      // this keeps large call content from growing too much and taking over activities spacer
+      // TODO: seems hacky, need better way to do this
+      flexShrink: 10,
       height: '100vh',
     },
   }),

@@ -121,7 +121,7 @@ export default createMuiTheme({
       width: '33%',
     },
     activitiesBarMini: {
-      maxWidth: 400,
+      maxWidth: 500,
       minWidth: 300,
       width: '25%',
     },
