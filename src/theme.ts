@@ -5,6 +5,7 @@ import type {} from '@material-ui/lab/themeAugmentation';
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
     modalWidth: number;
+    headerBarHeight: number;
     transitionTime: string;
     dividerBorder: string;
 
@@ -18,8 +19,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
   // allow configuration using `createMuiTheme`
   interface ThemeOptions {
     modalWidth?: number;
-    sidebarWidth?: number;
-    sidebarMobileHeight?: number;
+    headerBarHeight?: number;
     transitionTime?: string;
     dividerBorder?: string;
 
@@ -106,6 +106,7 @@ export default createMuiTheme({
 
   // custom
   modalWidth: 600,
+  headerBarHeight: 65,
   transitionTime: '0.3s',
   dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
 

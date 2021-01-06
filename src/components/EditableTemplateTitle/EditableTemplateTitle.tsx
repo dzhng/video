@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       padding: theme.spacing(1),
       borderBottom: theme.dividerBorder,
+      height: theme.headerBarHeight,
     },
     title: {
       flexGrow: 1,

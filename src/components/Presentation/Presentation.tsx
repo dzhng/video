@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       border: theme.dividerBorder,
       borderRadius: theme.shape.borderRadius,
       overflow: 'hidden',
+      backgroundColor: theme.palette.grey[900],
     },
     controls: {
       backgroundColor: theme.palette.background.default,

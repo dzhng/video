@@ -14,7 +14,6 @@ interface PropTypes {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     imageContainer: {
-      backgroundColor: theme.palette.grey[900],
       width: '100%',
       height: '100%',
       // need relative position here since Image is absolute positioned

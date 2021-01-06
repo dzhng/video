@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Skeleton } from '@material-ui/lab';
+import { CircularProgress } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import {
   Collections,
   Presentation,
@@ -12,7 +13,19 @@ import PresentationContainer from '~/components/Presentation/Presentation';
 
 const CurrentIndexKey = 'currentIndex';
 
+const useStyles = makeStyles(() =>
+  createStyles({
+    container: {
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  }),
+);
+
 export default function PresentationDisplay() {
+  const classes = useStyles();
   const { call, currentActivity, updateActivity } = useCallContext();
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
@@ -34,6 +47,8 @@ export default function PresentationDisplay() {
 
     if (currentActivity) {
       const metadata = currentActivity.metadata as PresentationActivityMetadata;
+      // if activity chanegs, make sure to clear data so user isn't stuck viewing older presentation
+      setPresentationData(null);
       getPresentation(metadata.presentationId);
     }
   }, [currentActivity]);
@@ -52,7 +67,7 @@ export default function PresentationDisplay() {
   );
 
   return (
-    <div>
+    <div className={classes.container}>
       {presentationData && (
         <PresentationContainer
           presentation={presentationData}
@@ -61,6 +76,8 @@ export default function PresentationDisplay() {
           setIndex={handleSetIndex}
         />
       )}
+
+      {!presentationData && <CircularProgress />}
     </div>
   );
 }
