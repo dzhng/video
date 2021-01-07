@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { without } from 'lodash';
 import * as Yup from 'yup';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Typography, Card, TextField, Button, Tooltip, Divider } from '@material-ui/core';
+import { Typography, Card, TextField, Button, Tooltip } from '@material-ui/core';
 import { QuestionsActivityMetadata } from '~/firebase/schema-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
+import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 import { useAppState } from '~/state';
 
 // index of current question shown
@@ -50,6 +52,7 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(1),
       },
     },
+    responses: {},
     responseCard: {
       padding: theme.spacing(2),
 
@@ -86,21 +89,33 @@ function LoadingState() {
   );
 }
 
-function Response({
-  name,
-  avatar,
+function ResponseCard({
+  uid,
   isAnonymous,
   response,
+  isOwnResponse,
   deleteResponse,
 }: {
-  name: string;
-  avatar?: string;
+  uid: string;
   isAnonymous: boolean;
   response: string;
+  isOwnResponse: boolean;
   deleteResponse(): void;
 }) {
   const classes = useStyles();
-  return <Card className={classes.responseCard}>{response}</Card>;
+  const user = useUserInfo(isAnonymous ? undefined : uid);
+
+  return (
+    <Card className={classes.responseCard}>
+      {user && (
+        <Tooltip title={user.displayName} placement="bottom">
+          <UserAvatar user={user} />
+        </Tooltip>
+      )}
+
+      <Typography variant="body1">{response}</Typography>
+    </Card>
+  );
 }
 
 export default function QuestionsDisplay() {
@@ -120,6 +135,16 @@ export default function QuestionsDisplay() {
   const currentQuestion = useMemo<string | undefined>(
     () => (metadata ? metadata.questions[currentIndex] : undefined),
     [currentIndex, metadata],
+  );
+
+  const currentResponses = useMemo<ResponseType[] | undefined>(
+    () =>
+      currentCallData && currentQuestion
+        ? (currentCallData[ResponsesKey] as { [question: string]: ResponseType[] })?.[
+            currentQuestion
+          ]
+        : undefined,
+    [currentCallData, currentQuestion],
   );
 
   const handleNextQuestion = useCallback(() => {
@@ -155,12 +180,26 @@ export default function QuestionsDisplay() {
         response,
       };
 
-      const currentResponses = (currentCallData[ResponsesKey] as ResponseType[]) || [];
-      updateActivity(currentActivity, ResponsesKey, [...currentResponses, responseObject]);
+      updateActivity(currentActivity, `${ResponsesKey}.${currentQuestion}`, [
+        ...(currentResponses || []),
+        responseObject,
+      ]);
       // clear text area on submit
       setResponseValues((state) => ({ ...state, [currentQuestion]: '' }));
     },
-    [currentQuestion, currentActivity, currentCallData, updateActivity, user],
+    [currentQuestion, currentActivity, currentCallData, currentResponses, updateActivity, user],
+  );
+
+  const handleDeleteResponse = useCallback(
+    (response: ResponseType) => {
+      if (!currentResponses || !currentActivity || !currentQuestion) {
+        return;
+      }
+
+      const newCurrentResponse = without(currentResponses, response);
+      updateActivity(currentActivity, `${ResponsesKey}.${currentQuestion}`, newCurrentResponse);
+    },
+    [currentResponses, currentActivity, currentQuestion],
   );
 
   const handleResponseChange = useCallback(
@@ -214,6 +253,21 @@ export default function QuestionsDisplay() {
             Submit
           </Button>
         </div>
+
+        {currentResponses && (
+          <div className={classes.responses}>
+            {currentResponses.map((response, idx) => (
+              <ResponseCard
+                key={idx}
+                uid={response.uid}
+                isAnonymous={response.isAnonymous}
+                response={response.response}
+                isOwnResponse={response.uid === user?.uid}
+                deleteResponse={() => handleDeleteResponse(response)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {isHost && (
