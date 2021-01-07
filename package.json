@@ -95,6 +95,7 @@
     "test:dev": "sh -c 'firebase emulators:exec \"jest --watch --runInBand --reporters=default --reporters=jest-junit --coverage $0 $1 $2 $3 $4\"' '--passWithNoTests'",
     "lint": "tsc ; eslint src/**/*.{ts,tsx} --fix",
     "server": "node server.js",
+    "get-indexes": "firebase firestore:indexes",
     "deploy:firebase": "firebase deploy --only firestore,storage",
     "deploy:functions": "firebase deploy --only functions",
     "logs": "firebase functions:log"
