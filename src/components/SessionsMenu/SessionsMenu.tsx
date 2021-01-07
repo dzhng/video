@@ -1,7 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Grid, IconButton, Tooltip, Divider, Button, TextField } from '@material-ui/core';
+import {
+  Grid,
+  IconButton,
+  Tooltip,
+  Divider,
+  Button,
+  TextField,
+  Menu,
+  MenuItem,
+} from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   MoreVert as SettingsIcon,
@@ -12,6 +21,9 @@ import { useSnackbar } from 'notistack';
 
 import { ROOT_URL } from '~/constants';
 import { VideoCallFilledIcon } from '~/components/Icons';
+import { Collections } from '~/firebase/schema-types';
+import { db } from '~/utils/firebase';
+import DeleteMenuItem from './DeleteMenuItem';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -91,6 +103,10 @@ export default function SessionsMenu() {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
+  // settings menu
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+
   const templateId = String(router.query.slug);
   const relativeCallLink = `/start/${templateId}`;
   const sharableCallLink = `${ROOT_URL}${relativeCallLink}`;
@@ -102,18 +118,29 @@ export default function SessionsMenu() {
     enqueueSnackbar('URL copied to clipboard!');
   }, [sharableCallLink, enqueueSnackbar]);
 
+  const handleDeleteTemplate = useCallback(() => {
+    templateId &&
+      db.collection(Collections.TEMPLATES).doc(templateId).update({
+        isDeleted: true,
+      });
+  }, [templateId]);
+
   return (
     <div className={classes.container}>
       <div className={classes.toolbar}>
-        <Tooltip title="Previous sessions" placement="bottom">
-          <IconButton>
-            <HistoryIcon />
-          </IconButton>
+        <Tooltip title="Previous sessions (Coming soon!)" placement="bottom">
+          <div>
+            <IconButton disabled>
+              <HistoryIcon />
+            </IconButton>
+          </div>
         </Tooltip>
         <Tooltip title="Template settings" placement="bottom">
-          <IconButton>
-            <SettingsIcon />
-          </IconButton>
+          <div ref={anchorRef}>
+            <IconButton onClick={() => setSettingsMenuOpen((state) => !state)}>
+              <SettingsIcon />
+            </IconButton>
+          </div>
         </Tooltip>
       </div>
 
@@ -157,6 +184,18 @@ export default function SessionsMenu() {
           </Grid>
         </Grid>
       </div>
+
+      <Menu
+        open={settingsMenuOpen}
+        onClose={() => setSettingsMenuOpen((state) => !state)}
+        anchorEl={anchorRef.current}
+      >
+        <MenuItem disabled>Settings</MenuItem>
+        <DeleteMenuItem
+          deleteTemplate={handleDeleteTemplate}
+          onClick={() => setSettingsMenuOpen(false)}
+        />
+      </Menu>
     </div>
   );
 }

@@ -113,11 +113,12 @@ service cloud.firestore {
 
       allow create, update: if 
         request.auth != null &&
-        assertKeys(['name', 'creatorId', 'workspaceId', 'ongoingCallId', 'activities', 'createdAt']) &&
+        assertKeys(['name', 'creatorId', 'workspaceId', 'ongoingCallId', 'activities', 'isDeleted', 'createdAt']) &&
         requiredStringKey('name', 1, 50) &&
         requiredStringKey('creatorId', 1, 30) &&
         requiredStringKey('workspaceId', 1, 30) &&
         optionalStringKey('ongoingCallId', 30) &&
+        optionalBoolKey('isDeleted') &&
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call

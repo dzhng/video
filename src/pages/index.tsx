@@ -35,6 +35,7 @@ export default withPrivateRoute(function IndexPage() {
     const unsubscribe = db
       .collection(Collections.TEMPLATES)
       .where('workspaceId', '==', currentWorkspaceId)
+      .where('isDeleted', '!=', true)
       .onSnapshot(function (querySnapshot) {
         const docs = snapshotToCall(querySnapshot);
         setTemplates(docs);

@@ -65,6 +65,7 @@ export declare interface Template {
   workspaceId: string;
   ongoingCallId?: string | null;
   activities: Activity[];
+  isDeleted?: boolean;
   createdAt: FbDate;
 }
 
