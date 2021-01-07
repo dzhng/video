@@ -2,7 +2,8 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { without } from 'lodash';
 import * as Yup from 'yup';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Typography, Card, TextField, Button, Tooltip } from '@material-ui/core';
+import { Typography, Card, TextField, Button, IconButton, Tooltip } from '@material-ui/core';
+import { DeleteOutline as DeleteIcon } from '@material-ui/icons';
 import { QuestionsActivityMetadata } from '~/firebase/schema-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
@@ -52,12 +53,25 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(1),
       },
     },
-    responses: {},
+    responses: {
+      marginTop: theme.spacing(2),
+    },
     responseCard: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: theme.spacing(2),
       padding: theme.spacing(2),
 
-      // important since it allows text to wrap on new lines set in question data
-      whiteSpace: 'pre-wrap',
+      '& p': {
+        flexGrow: 1,
+        alignSelf: 'center',
+
+        // important since it allows text to wrap on new lines set in question data
+        whiteSpace: 'pre-wrap',
+        marginLeft: theme.spacing(2),
+        marginRight: theme.spacing(2),
+      },
     },
     controls: {
       display: 'flex',
@@ -114,6 +128,14 @@ function ResponseCard({
       )}
 
       <Typography variant="body1">{response}</Typography>
+
+      {isOwnResponse && (
+        <Tooltip title="Delete your response" placement="bottom">
+          <IconButton size="small" onClick={deleteResponse}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      )}
     </Card>
   );
 }
@@ -173,6 +195,12 @@ export default function QuestionsDisplay() {
         return;
       }
 
+      // check if the user already has something in current responses
+      // don't allow the user to submit multiple
+      if (currentResponses?.find((response) => response.uid === user.uid)) {
+        return;
+      }
+
       // TODO: hash uid if isAnonymous, only need it to be stable for user
       const responseObject: ResponseType = {
         uid: user.uid,
@@ -199,7 +227,7 @@ export default function QuestionsDisplay() {
       const newCurrentResponse = without(currentResponses, response);
       updateActivity(currentActivity, `${ResponsesKey}.${currentQuestion}`, newCurrentResponse);
     },
-    [currentResponses, currentActivity, currentQuestion],
+    [currentResponses, currentActivity, currentQuestion, updateActivity],
   );
 
   const handleResponseChange = useCallback(
