@@ -47,14 +47,14 @@ const useStyles = makeStyles((theme) =>
     responseContainer: {
       marginTop: theme.spacing(3),
       paddingBottom: theme.spacing(2),
-      borderBottom: theme.dividerBorder,
 
       '& button': {
         marginTop: theme.spacing(1),
       },
     },
     responses: {
-      marginTop: theme.spacing(2),
+      paddingTop: theme.spacing(2),
+      borderTop: theme.dividerBorder,
     },
     responseCard: {
       display: 'flex',
@@ -247,6 +247,7 @@ export default function QuestionsDisplay() {
   }
 
   const isLastQuestion = currentIndex === metadata.questions.length - 1;
+  const haveSubmittedResponse = Boolean(currentResponses?.find((res) => res.uid === user?.uid));
 
   return (
     <div className={classes.container}>
@@ -255,32 +256,34 @@ export default function QuestionsDisplay() {
           <Typography variant="h1">{currentQuestion}</Typography>
         </Card>
 
-        <div className={classes.responseContainer}>
-          <TextField
-            fullWidth
-            multiline
-            label="Response"
-            rows={2}
-            rowsMax={5}
-            placeholder="Write your response..."
-            variant="outlined"
-            value={responseValues[currentQuestion] ?? ''}
-            onChange={handleResponseChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() =>
-              handleSubmit(responseValues[currentQuestion], metadata.allowAnonymousSubmission)
-            }
-          >
-            Submit
-          </Button>
-        </div>
+        {!haveSubmittedResponse && (
+          <div className={classes.responseContainer}>
+            <TextField
+              fullWidth
+              multiline
+              label="Response"
+              rows={2}
+              rowsMax={5}
+              placeholder="Write your response..."
+              variant="outlined"
+              value={responseValues[currentQuestion] ?? ''}
+              onChange={handleResponseChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={() =>
+                handleSubmit(responseValues[currentQuestion], metadata.allowAnonymousSubmission)
+              }
+            >
+              Submit
+            </Button>
+          </div>
+        )}
 
         {currentResponses && (
           <div className={classes.responses}>
