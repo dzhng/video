@@ -124,11 +124,15 @@ export default function SessionsMenu() {
   }, [sharableCallLink, enqueueSnackbar]);
 
   const handleDeleteTemplate = useCallback(() => {
-    templateId &&
+    if (templateId) {
       db.collection(Collections.TEMPLATES).doc(templateId).update({
         isDeleted: true,
       });
-  }, [templateId]);
+
+      // route to home when done
+      router.replace('/');
+    }
+  }, [templateId, router]);
 
   return (
     <div className={classes.container}>
