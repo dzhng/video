@@ -11,12 +11,15 @@ export default withPrivateRoute(function CreateCallPage() {
   const router = useRouter();
   const { user, markIsWriting, currentWorkspaceId } = useAppState();
 
+  // prefetch next page for fast loading
+  router.prefetch('/template/[slug]');
+
   const create = useCallback(
     async (values) => {
       if (!user || !currentWorkspaceId) {
         // do nothing if user doesn't exist
         console.warn('Trying to create template without signed in user');
-        return;
+        return Promise.reject('User is not authenticated');
       }
 
       // before adding, replace timestamp with server helper

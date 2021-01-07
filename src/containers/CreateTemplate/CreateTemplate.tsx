@@ -81,10 +81,11 @@ export default function CreateContainer({ save }: PropTypes) {
   };
 
   const submit = useCallback(
-    async (values, { setSubmitting }) => {
+    (values, { setSubmitting }) => {
       setSubmitting(true);
-      await save(values);
-      setSubmitting(false);
+      // just keep showing submit spinner even after created since we'll nav to new page
+      // hide if error though
+      save(values).catch(() => setSubmitting(false));
     },
     [save],
   );
