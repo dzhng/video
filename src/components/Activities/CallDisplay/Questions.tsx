@@ -197,7 +197,7 @@ export default function QuestionsDisplay() {
 
       // check if the user already has something in current responses
       // don't allow the user to submit multiple
-      if (currentResponses?.find((response) => response.uid === user.uid)) {
+      if (currentResponses?.find((res) => res.uid === user.uid)) {
         return;
       }
 
@@ -264,7 +264,7 @@ export default function QuestionsDisplay() {
             rowsMax={5}
             placeholder="Write your response..."
             variant="outlined"
-            value={responseValues[currentQuestion]}
+            value={responseValues[currentQuestion] ?? ''}
             onChange={handleResponseChange}
             InputLabelProps={{
               shrink: true,
