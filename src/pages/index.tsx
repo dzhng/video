@@ -6,7 +6,7 @@ import Home from '~/containers/Home/Home';
 import { useAppState } from '~/state';
 import { Collections, LocalModel, Template, Member, User, Invite } from '~/firebase/schema-types';
 
-const snapshotToCall = (
+const snapshotToTemplate = (
   snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>,
 ) => {
   return snapshot.docs.map(
@@ -39,7 +39,7 @@ export default withPrivateRoute(function IndexPage() {
       .where('isDeleted', 'in', [false, null])
       .orderBy('createdAt', 'desc')
       .onSnapshot(function (querySnapshot) {
-        const docs = snapshotToCall(querySnapshot);
+        const docs = snapshotToTemplate(querySnapshot);
         setTemplates(docs);
         setIsLoadingTemplates(false);
       });
