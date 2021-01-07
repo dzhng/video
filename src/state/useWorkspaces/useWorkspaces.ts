@@ -95,6 +95,7 @@ export default function useWorkspaces() {
       const newWorkspaceRef = db.collection(Collections.WORKSPACES).doc();
       const workspaceData: Workspace = {
         name,
+        isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
       batch.set(newWorkspaceRef, workspaceData);

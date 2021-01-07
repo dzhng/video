@@ -25,6 +25,7 @@ export default withPrivateRoute(function CreateCallPage() {
         workspaceId: currentWorkspaceId,
         creatorId: user.uid,
         activities: [],
+        isDeleted: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
 

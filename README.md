@@ -56,6 +56,12 @@ When writing functions, make sure they are idempotent as they can be run multipl
 
 Take extra care when renaming a background function, make sure to deploy the new one first before deleting the old one, so that they'll both run in parellel during the process. This is to prevent any time period where no background functions are deployed (this is also why idempotentcy is importent).
 
+### Firestore
+
+When updating indexes, if removing any index, make sure to deploy the new index first. It is probably better to do this manually than via the deployment script as that will remove the old index right away. As new indexes takes some time to create, there will be a significant down time when the app is non-functional.
+
+Also - try not to use any '!=' queries, as that does not work well with indexing. This is why most fields should be required instead of optional (to avoid the `!= true` type of queries).
+
 ## Testing Approach
 
 ### Rendering in Virtual DOM: testing-library vs enzyme

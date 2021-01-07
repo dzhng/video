@@ -19,9 +19,9 @@ import {
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 
-import { ROOT_URL } from '~/constants';
 import { VideoCallFilledIcon } from '~/components/Icons';
 import { Collections } from '~/firebase/schema-types';
+import { isBrowser } from '~/utils';
 import { db } from '~/utils/firebase';
 import DeleteMenuItem from './DeleteMenuItem';
 
@@ -106,10 +106,15 @@ export default function SessionsMenu() {
   // settings menu
   const anchorRef = useRef<HTMLDivElement>(null);
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const location = isBrowser ? window.location : ({} as Location);
 
   const templateId = String(router.query.slug);
   const relativeCallLink = `/start/${templateId}`;
-  const sharableCallLink = `${ROOT_URL}${relativeCallLink}`;
+
+  const sharableCallLink = `http${location.hostname === 'localhost' ? '' : 's'}://${
+    location.host
+  }${relativeCallLink}`;
+
   // for the start call button, include from param to go back to this page
   const callHref = `${relativeCallLink}?from=${encodeURIComponent(`/template/${templateId}`)}`;
 

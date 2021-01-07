@@ -32,11 +32,10 @@ export default withPrivateRoute(function IndexPage() {
       return;
     }
 
-    // query for isDeleted via 'in' instead of '!= true' because '!=' has orderBy limitations
     const unsubscribe = db
       .collection(Collections.TEMPLATES)
       .where('workspaceId', '==', currentWorkspaceId)
-      .where('isDeleted', 'in', [false, null])
+      .where('isDeleted', '==', false)
       .orderBy('createdAt', 'desc')
       .onSnapshot(function (querySnapshot) {
         const docs = snapshotToTemplate(querySnapshot);

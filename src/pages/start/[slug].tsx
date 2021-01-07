@@ -98,6 +98,7 @@ export default function StartPage() {
     const newCallData: Call = {
       templateId,
       creatorId: user.uid,
+      isFinished: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 

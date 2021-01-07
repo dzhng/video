@@ -118,7 +118,7 @@ service cloud.firestore {
         requiredStringKey('creatorId', 1, 30) &&
         requiredStringKey('workspaceId', 1, 30) &&
         optionalStringKey('ongoingCallId', 30) &&
-        optionalBoolKey('isDeleted') &&
+        requiredBoolKey('isDeleted') &&
         requiredCreatedAtKey() &&
 
         // array of step objects that define the call
@@ -146,7 +146,7 @@ service cloud.firestore {
         optionalObjectKey('activityData') &&
 
         // marks if this call has finished, and stores duration in seconds
-        optionalBoolKey('isFinished') &&
+        requiredBoolKey('isFinished') &&
         optionalIntKey('duration', 0, 50000);
     } // match call
 
@@ -195,7 +195,7 @@ service cloud.firestore {
         optionalStringKey('logoURL', 280) &&
         optionalStringKey('primaryColor', 10) &&
         optionalStringKey('backgroundColor', 10) &&
-        optionalBoolKey('isDeleted') &&
+        requiredBoolKey('isDeleted') &&
         requiredCreatedAtKey() &&
         // make sure member doc is also created
         // only workspace owners can update

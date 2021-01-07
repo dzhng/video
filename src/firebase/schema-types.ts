@@ -31,7 +31,7 @@ export declare interface Workspace {
   logoURL?: string | null;
   primaryColor?: string | null;
   backgroundColor?: string | null;
-  isDeleted?: boolean;
+  isDeleted: boolean;
   createdAt: FbDate;
 }
 
@@ -65,7 +65,7 @@ export declare interface Template {
   workspaceId: string;
   ongoingCallId?: string | null;
   activities: Activity[];
-  isDeleted?: boolean;
+  isDeleted: boolean;
   createdAt: FbDate;
 }
 
@@ -77,7 +77,7 @@ export declare interface Call {
   creatorId: string;
   currentActivityId?: string | null;
   activityData?: ActivityCallData;
-  isFinished?: boolean;
+  isFinished: boolean;
   duration?: number;
   createdAt: FbDate;
 }

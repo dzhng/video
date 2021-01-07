@@ -45,7 +45,7 @@ describe('firebase cloud firestore database rules', () => {
 
     // create a workspace
     const workspace = admin.collection('workspaces').doc('workspace');
-    await workspace.set({ createdAt: new Date(), name: 'My Workspace' });
+    await workspace.set({ createdAt: new Date(), name: 'My Workspace', isDeleted: false });
 
     // Create an owner user
     await admin.collection('users').doc('OwnerUser').set({
@@ -77,6 +77,7 @@ describe('firebase cloud firestore database rules', () => {
   describe('workspace', () => {
     const requiredFields = {
       name: 'workspace',
+      isDeleted: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -275,6 +276,7 @@ describe('firebase cloud firestore database rules', () => {
       creatorId: 'alice',
       workspaceId: 'workspace',
       activities: ['hello'],
+      isDeleted: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -361,6 +363,7 @@ describe('firebase cloud firestore database rules', () => {
       templateId: '123',
       creatorId: 'alice',
       activityData: {},
+      isFinished: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
