@@ -46,15 +46,17 @@ export default function useActivity(call?: LocalModel<Call>) {
     }
   }, [call]);
 
+  // NOTE: be careful when using arrays within activityData
+  // https://firebase.googleblog.com/2014/04/best-practices-arrays-in-firebase.html
   const updateActivityData = useCallback(
-    (activity: Activity, path: string | null, value: ActivityDataTypes | object) => {
+    (activity: Activity, path: string | null, value: ActivityDataTypes) => {
       if (!call) {
         console.error('Cannot update activity if call is not loaded');
         return;
       }
 
       const fullPath = `calls/${call.id}/activityData/${activity.id}${
-        path ? '/' + path.replace('.', '/') : ''
+        path ? '/' + path.replace(/\./g, '/') : ''
       }`;
       rtdb.ref().update({
         [fullPath]: value,

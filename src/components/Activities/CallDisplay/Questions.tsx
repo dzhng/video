@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { without } from 'lodash';
+import { entries } from 'lodash';
 import * as Yup from 'yup';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Card, TextField, Button, IconButton, Tooltip } from '@material-ui/core';
@@ -13,14 +13,14 @@ import { useAppState } from '~/state';
 // index of current question shown
 const CurrentIndexKey = 'currentIndex';
 // map of responses for questions, key is question, value is array of ResponseType
+// NOTE: because of firebase limitations, key has to be encoded via encodeURIComponent,
+// as questions can contain spaces or special characters that is not allowed as firebase keys
 const ResponsesKey = 'responses';
 
 interface ResponseType {
-  // for anonymous - it still needs a string for submission checking,
-  // but can be random (as long as its stable per user)
-  uid: string;
   isAnonymous: boolean;
   response: string;
+  createdAt: Date;
 }
 
 const ResponseSchema = Yup.string().min(1).max(500).required();
@@ -159,11 +159,11 @@ export default function QuestionsDisplay() {
     [currentIndex, metadata],
   );
 
-  const currentResponses = useMemo<ResponseType[] | undefined>(
+  const currentResponses = useMemo<{ [uid: string]: ResponseType } | undefined>(
     () =>
       currentActivityData && currentQuestion
-        ? (currentActivityData[ResponsesKey] as { [question: string]: ResponseType[] })?.[
-            currentQuestion
+        ? (currentActivityData[ResponsesKey] as { [question: string]: any })?.[
+            encodeURIComponent(currentQuestion)
           ]
         : undefined,
     [currentActivityData, currentQuestion],
@@ -197,21 +197,22 @@ export default function QuestionsDisplay() {
 
       // check if the user already has something in current responses
       // don't allow the user to submit multiple
-      if (currentResponses?.find((res) => res.uid === user.uid)) {
+      if (currentResponses?.[user.uid]) {
         return;
       }
 
-      // TODO: hash uid if isAnonymous, only need it to be stable for user
       const responseObject: ResponseType = {
-        uid: user.uid,
         isAnonymous,
         response,
+        createdAt: new Date(),
       };
 
-      updateActivityData(currentActivity, `${ResponsesKey}.${currentQuestion}`, [
-        ...(currentResponses || []),
+      updateActivityData(
+        currentActivity,
+        `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${user.uid}`,
         responseObject,
-      ]);
+      );
+
       // clear text area on submit
       setResponseValues((state) => ({ ...state, [currentQuestion]: '' }));
     },
@@ -225,17 +226,17 @@ export default function QuestionsDisplay() {
     ],
   );
 
-  const handleDeleteResponse = useCallback(
-    (response: ResponseType) => {
-      if (!currentResponses || !currentActivity || !currentQuestion) {
-        return;
-      }
+  const handleDeleteResponse = useCallback(() => {
+    if (!currentActivity || !currentQuestion || !user) {
+      return;
+    }
 
-      const newCurrentResponse = without(currentResponses, response);
-      updateActivityData(currentActivity, `${ResponsesKey}.${currentQuestion}`, newCurrentResponse);
-    },
-    [currentResponses, currentActivity, currentQuestion, updateActivityData],
-  );
+    updateActivityData(
+      currentActivity,
+      `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${user.uid}`,
+      null,
+    );
+  }, [currentActivity, currentQuestion, user, updateActivityData]);
 
   const handleResponseChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -254,7 +255,7 @@ export default function QuestionsDisplay() {
   }
 
   const isLastQuestion = currentIndex === metadata.questions.length - 1;
-  const haveSubmittedResponse = Boolean(currentResponses?.find((res) => res.uid === user?.uid));
+  const haveSubmittedResponse = Boolean(user ? currentResponses?.[user.uid] : false);
 
   return (
     <div className={classes.container}>
@@ -294,16 +295,18 @@ export default function QuestionsDisplay() {
 
         {currentResponses && (
           <div className={classes.responses}>
-            {currentResponses.map((response, idx) => (
-              <ResponseCard
-                key={idx}
-                uid={response.uid}
-                isAnonymous={response.isAnonymous}
-                response={response.response}
-                isOwnResponse={response.uid === user?.uid}
-                deleteResponse={() => handleDeleteResponse(response)}
-              />
-            ))}
+            {entries(currentResponses)
+              .sort((a, b) => b[1].createdAt.getTime() - a[1].createdAt.getTime())
+              .map(([uid, response], idx) => (
+                <ResponseCard
+                  key={idx}
+                  uid={uid}
+                  isAnonymous={response.isAnonymous}
+                  response={response.response}
+                  isOwnResponse={uid === user?.uid}
+                  deleteResponse={() => handleDeleteResponse()}
+                />
+              ))}
           </div>
         )}
       </div>

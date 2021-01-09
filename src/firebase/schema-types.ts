@@ -69,7 +69,7 @@ export declare interface Template {
   createdAt: FbDate;
 }
 
-export type ActivityDataTypes = string | object | object[] | number | boolean | null;
+export type ActivityDataTypes = string | object | number | boolean | null;
 export type ActivityData = { [key: string]: ActivityDataTypes };
 
 export declare interface Call {
