@@ -143,7 +143,7 @@ function ResponseCard({
 export default function QuestionsDisplay() {
   const classes = useStyles();
   const { user } = useAppState();
-  const { currentActivity, updateActivity, currentActivityData, isHost } = useCallContext();
+  const { currentActivity, updateActivityData, currentActivityData, isHost } = useCallContext();
 
   // map of pending responses in text area, keyed by question
   const [responseValues, setResponseValues] = useState<{ [question: string]: string }>({});
@@ -174,16 +174,16 @@ export default function QuestionsDisplay() {
       return;
     }
 
-    updateActivity(currentActivity, CurrentIndexKey, currentIndex + 1);
-  }, [metadata, currentActivity, currentIndex, updateActivity]);
+    updateActivityData(currentActivity, CurrentIndexKey, currentIndex + 1);
+  }, [metadata, currentActivity, currentIndex, updateActivityData]);
 
   const handlePrevQuestion = useCallback(() => {
     if (!metadata || !currentActivity || currentIndex <= 0) {
       return;
     }
 
-    updateActivity(currentActivity, CurrentIndexKey, currentIndex - 1);
-  }, [metadata, currentActivity, currentIndex, updateActivity]);
+    updateActivityData(currentActivity, CurrentIndexKey, currentIndex - 1);
+  }, [metadata, currentActivity, currentIndex, updateActivityData]);
 
   const handleSubmit = useCallback(
     (response: string, isAnonymous: boolean) => {
@@ -208,14 +208,21 @@ export default function QuestionsDisplay() {
         response,
       };
 
-      updateActivity(currentActivity, `${ResponsesKey}.${currentQuestion}`, [
+      updateActivityData(currentActivity, `${ResponsesKey}.${currentQuestion}`, [
         ...(currentResponses || []),
         responseObject,
       ]);
       // clear text area on submit
       setResponseValues((state) => ({ ...state, [currentQuestion]: '' }));
     },
-    [currentQuestion, currentActivity, currentActivityData, currentResponses, updateActivity, user],
+    [
+      currentQuestion,
+      currentActivity,
+      currentActivityData,
+      currentResponses,
+      updateActivityData,
+      user,
+    ],
   );
 
   const handleDeleteResponse = useCallback(
@@ -225,9 +232,9 @@ export default function QuestionsDisplay() {
       }
 
       const newCurrentResponse = without(currentResponses, response);
-      updateActivity(currentActivity, `${ResponsesKey}.${currentQuestion}`, newCurrentResponse);
+      updateActivityData(currentActivity, `${ResponsesKey}.${currentQuestion}`, newCurrentResponse);
     },
-    [currentResponses, currentActivity, currentQuestion, updateActivity],
+    [currentResponses, currentActivity, currentQuestion, updateActivityData],
   );
 
   const handleResponseChange = useCallback(

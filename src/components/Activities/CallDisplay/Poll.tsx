@@ -137,7 +137,7 @@ function PollOption({
 export default function PollDisplay() {
   const classes = useStyles();
   const { user } = useAppState();
-  const { currentActivity, updateActivity, currentActivityData, isHost } = useCallContext();
+  const { currentActivity, updateActivityData, currentActivityData, isHost } = useCallContext();
 
   const metadata = currentActivity?.metadata as PollActivityMetadata | undefined;
 
@@ -189,14 +189,14 @@ export default function PollDisplay() {
 
       const votes = (get(currentActivityData, [VoteMapKey, user.uid]) as string[]) || [];
       if (votes.includes(option)) {
-        updateActivity(currentActivity, `${VoteMapKey}.${user.uid}`, without(votes, option));
+        updateActivityData(currentActivity, `${VoteMapKey}.${user.uid}`, without(votes, option));
       } else {
         // if single choice is selectd, make sure to deselect this user from all other options first
         const newVotes = metadata.isMultipleChoice ? uniq([...votes, option]) : [option];
-        updateActivity(currentActivity, `${VoteMapKey}.${user.uid}`, newVotes);
+        updateActivityData(currentActivity, `${VoteMapKey}.${user.uid}`, newVotes);
       }
     },
-    [currentActivity, currentActivityData, updateActivity, user, metadata],
+    [currentActivity, currentActivityData, updateActivityData, user, metadata],
   );
 
   const handleFinish = useCallback(() => {
@@ -204,8 +204,8 @@ export default function PollDisplay() {
       return;
     }
 
-    updateActivity(currentActivity, FinishKey, true);
-  }, [currentActivity, updateActivity]);
+    updateActivityData(currentActivity, FinishKey, true);
+  }, [currentActivity, updateActivityData]);
 
   const showVotes =
     metadata && currentActivityData

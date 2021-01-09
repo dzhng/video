@@ -25,24 +25,6 @@ export default function useActivity(template: LocalModel<Template>, call?: Local
     [template],
   );
 
-  const updateActivity = useCallback(
-    (activity: Activity, path: string | null, value: ActivityDataTypes | object) => {
-      if (!template || !template.ongoingCallId) {
-        console.error('Cannot update activity if call is not loaded');
-        return;
-      }
-
-      const fullPath = `activityData.${activity.id}${path ? '.' + path : ''}`;
-
-      db.collection(Collections.CALLS)
-        .doc(template.ongoingCallId)
-        .update({
-          [fullPath]: value,
-        });
-    },
-    [template],
-  );
-
   const endActivity = useCallback(() => {
     if (!template || !template.ongoingCallId) {
       console.error('Cannot update activity if call is not loaded');
@@ -61,6 +43,24 @@ export default function useActivity(template: LocalModel<Template>, call?: Local
     }
   }, [call, template]);
 
+  const updateActivityData = useCallback(
+    (activity: Activity, path: string | null, value: ActivityDataTypes | object) => {
+      if (!template || !template.ongoingCallId) {
+        console.error('Cannot update activity if call is not loaded');
+        return;
+      }
+
+      const fullPath = `activityData.${activity.id}${path ? '.' + path : ''}`;
+
+      db.collection(Collections.CALLS)
+        .doc(template.ongoingCallId)
+        .update({
+          [fullPath]: value,
+        });
+    },
+    [template],
+  );
+
   const currentActivityData = useMemo<ActivityData | undefined>(() => {
     if (call && currentActivity) {
       return (call.activityData ? call.activityData[currentActivity.id] : {}) as ActivityData;
@@ -70,8 +70,8 @@ export default function useActivity(template: LocalModel<Template>, call?: Local
   return {
     currentActivity,
     startActivity,
-    updateActivity,
     endActivity,
+    updateActivityData,
     currentActivityData,
   };
 }

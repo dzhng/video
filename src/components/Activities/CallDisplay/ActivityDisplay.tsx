@@ -45,7 +45,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ActivityDisplay() {
   const classes = useStyles();
-  const { call, template, currentActivity, endActivity, updateActivity, isHost } = useCallContext();
+  const {
+    call,
+    template,
+    currentActivity,
+    endActivity,
+    updateActivityData,
+    isHost,
+  } = useCallContext();
 
   const handleRestartActivity = useCallback(() => {
     if (!currentActivity) {
@@ -53,8 +60,8 @@ export default function ActivityDisplay() {
     }
 
     // to restart, just clear the activity data for that activity
-    updateActivity(currentActivity, null, {});
-  }, [updateActivity, currentActivity]);
+    updateActivityData(currentActivity, null, {});
+  }, [updateActivityData, currentActivity]);
 
   if (!call || !call.currentActivityId) {
     return <ErrorDisplay />;

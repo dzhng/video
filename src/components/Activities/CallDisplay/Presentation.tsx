@@ -21,7 +21,7 @@ const useStyles = makeStyles(() =>
 
 export default function PresentationDisplay() {
   const classes = useStyles();
-  const { currentActivity, updateActivity, isHost, currentActivityData } = useCallContext();
+  const { currentActivity, isHost, updateActivityData, currentActivityData } = useCallContext();
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
   useEffect(() => {
@@ -52,9 +52,9 @@ export default function PresentationDisplay() {
         return;
       }
 
-      updateActivity(currentActivity, CurrentIndexKey, index);
+      updateActivityData(currentActivity, CurrentIndexKey, index);
     },
-    [currentActivity, updateActivity],
+    [currentActivity, updateActivityData],
   );
 
   return (

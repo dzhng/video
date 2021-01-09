@@ -18,8 +18,8 @@ interface CallContextTypes {
   endCall(): Promise<void>;
   currentActivity?: Activity;
   startActivity(activity: Activity): void;
-  updateActivity(activity: Activity, path: string | null, value: ActivityDataTypes): void;
   endActivity(): void;
+  updateActivityData(activity: Activity, path: string | null, value: ActivityDataTypes): void;
   currentActivityData?: ActivityData;
 }
 
