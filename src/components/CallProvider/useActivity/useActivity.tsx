@@ -1,76 +1,90 @@
-import { useCallback, useMemo } from 'react';
-import { db } from '~/utils/firebase';
+import { useEffect, useState, useCallback } from 'react';
+import { rtdb } from '~/utils/firebase';
 import {
-  Collections,
   LocalModel,
-  Template,
   Call,
   Activity,
   ActivityDataTypes,
   ActivityData,
 } from '~/firebase/schema-types';
 
-export default function useActivity(template: LocalModel<Template>, call?: LocalModel<Call>) {
+export default function useActivity(call?: LocalModel<Call>) {
   const startActivity = useCallback(
     (activity: Activity) => {
-      if (!template || !template.ongoingCallId) {
+      if (!call) {
         console.error('Cannot start activity if call is not loaded');
         return;
       }
 
-      db.collection(Collections.CALLS).doc(template.ongoingCallId).update({
-        currentActivityId: activity.id,
-      });
+      rtdb.ref(`calls/${call.id}/currentActivityId`).set(activity.id);
     },
-    [template],
+    [call],
   );
 
   const endActivity = useCallback(() => {
-    if (!template || !template.ongoingCallId) {
+    if (!call) {
       console.error('Cannot update activity if call is not loaded');
       return;
     }
 
-    db.collection(Collections.CALLS).doc(template.ongoingCallId).update({
-      currentActivityId: null,
-    });
-  }, [template]);
+    rtdb.ref(`calls/${call.id}/currentActivityId`).set(null);
+  }, [call]);
 
-  const currentActivity = useMemo(() => {
-    if (template && call && call.currentActivityId) {
-      const activityId = call.currentActivityId;
-      return template.activities.find((activity) => activity.id === activityId);
+  const [currentActivityId, setCurrentActivityId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (call) {
+      const valueRef = rtdb.ref(`calls/${call.id}/currentActivityId`);
+
+      valueRef.on('value', (snapshot) => {
+        setCurrentActivityId(snapshot.val());
+      });
+
+      return () => valueRef.off('value');
+    } else {
+      setCurrentActivityId(undefined);
     }
-  }, [call, template]);
+  }, [call]);
 
   const updateActivityData = useCallback(
     (activity: Activity, path: string | null, value: ActivityDataTypes | object) => {
-      if (!template || !template.ongoingCallId) {
+      if (!call) {
         console.error('Cannot update activity if call is not loaded');
         return;
       }
 
-      const fullPath = `activityData.${activity.id}${path ? '.' + path : ''}`;
-
-      db.collection(Collections.CALLS)
-        .doc(template.ongoingCallId)
-        .update({
-          [fullPath]: value,
-        });
+      const fullPath = `calls/${call.id}/activityData/${activity.id}${
+        path ? '/' + path.replace('.', '/') : ''
+      }`;
+      rtdb.ref().update({
+        [fullPath]: value,
+      });
     },
-    [template],
+    [call],
   );
 
-  const currentActivityData = useMemo<ActivityData | undefined>(() => {
-    if (call && currentActivity) {
-      return (call.activityData ? call.activityData[currentActivity.id] : {}) as ActivityData;
+  const [currentActivityData, setCurrentActivityData] = useState<ActivityData | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    if (call && currentActivityId) {
+      const valueRef = rtdb.ref(`calls/${call.id}/activityData/${currentActivityId}`);
+
+      valueRef.on('value', (snapshot) => {
+        setCurrentActivityData(snapshot.val() ?? {});
+      });
+
+      return () => valueRef.off('value');
+    } else {
+      setCurrentActivityData(undefined);
     }
-  }, [call, currentActivity]);
+  }, [call, currentActivityId]);
 
   return {
-    currentActivity,
     startActivity,
     endActivity,
+    currentActivityId,
     updateActivityData,
     currentActivityData,
   };

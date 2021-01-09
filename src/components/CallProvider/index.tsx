@@ -9,6 +9,7 @@ import {
 } from '~/firebase/schema-types';
 import useCall from './useCall/useCall';
 import useActivity from './useActivity/useActivity';
+import useCurrentActivity from './useCurrentActivity/useCurrentActivity';
 
 interface CallContextTypes {
   template: LocalModel<Template>;
@@ -32,16 +33,18 @@ export const CallContext = createContext<CallContextTypes>(null!);
 
 export function CallProvider({ children, template, isHost }: React.PropsWithChildren<PropTypes>) {
   const useCallProps = useCall(template);
-  const useActivityProps = useActivity(template, useCallProps.call);
+  const useActivityProps = useActivity(useCallProps.call);
+  const useCurrentActivityProps = useCurrentActivity(template, useActivityProps.currentActivityId);
 
   const value = useMemo<CallContextTypes>(
     () => ({
       ...useCallProps,
       ...useActivityProps,
+      ...useCurrentActivityProps,
       template,
       isHost,
     }),
-    [useCallProps, useActivityProps, template, isHost],
+    [useCallProps, useActivityProps, useCurrentActivityProps, template, isHost],
   );
 
   return <CallContext.Provider value={value}>{children}</CallContext.Provider>;
