@@ -49,7 +49,7 @@ export default function Room() {
   // (if not set, size will overflow and will be wrong)
   const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
-  const { call } = useCallContext();
+  const { currentActivity } = useCallContext();
   const {
     room: { localParticipant },
   } = useVideoContext();
@@ -75,7 +75,7 @@ export default function Room() {
     [localParticipant, participants, participantToItem],
   );
 
-  const variant = call?.currentActivityId ? 'focus' : 'grid';
+  const variant = currentActivity ? 'focus' : 'grid';
 
   return (
     <Container style={{ height: pageHeight }}>

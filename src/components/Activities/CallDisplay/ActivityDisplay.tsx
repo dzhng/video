@@ -45,14 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ActivityDisplay() {
   const classes = useStyles();
-  const {
-    call,
-    template,
-    currentActivity,
-    endActivity,
-    updateActivityData,
-    isHost,
-  } = useCallContext();
+  const { call, currentActivity, endActivity, updateActivityData, isHost } = useCallContext();
 
   const handleRestartActivity = useCallback(() => {
     if (!currentActivity) {
@@ -63,16 +56,11 @@ export default function ActivityDisplay() {
     updateActivityData(currentActivity, null, {});
   }, [updateActivityData, currentActivity]);
 
-  if (!call || !call.currentActivityId) {
+  if (!call || !currentActivity) {
     return <ErrorDisplay />;
   }
 
-  const activity = template.activities.find((act) => act.id === call.currentActivityId);
-  if (!activity) {
-    return <ErrorDisplay />;
-  }
-
-  const config = ActivityTypeConfig.find((_config) => _config.type === activity.type);
+  const config = ActivityTypeConfig.find((_config) => _config.type === currentActivity.type);
   if (!config) {
     return <ErrorDisplay />;
   }
@@ -81,7 +69,7 @@ export default function ActivityDisplay() {
     <Card className={classes.container}>
       <div className={classes.header}>
         <Typography variant="h2">
-          <b>{activity.name}</b>
+          <b>{currentActivity.name}</b>
         </Typography>
 
         {isHost && (
