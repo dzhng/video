@@ -21,7 +21,7 @@ const useStyles = makeStyles(() =>
 
 export default function PresentationDisplay() {
   const classes = useStyles();
-  const { currentActivity, updateActivity, isHost, currentCallData } = useCallContext();
+  const { currentActivity, updateActivity, isHost, currentActivityData } = useCallContext();
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
   useEffect(() => {
@@ -42,7 +42,9 @@ export default function PresentationDisplay() {
     }
   }, [currentActivity]);
 
-  const currentIndex: number = currentCallData ? (currentCallData[CurrentIndexKey] as number) : 0;
+  const currentIndex: number = currentActivityData
+    ? (currentActivityData[CurrentIndexKey] as number)
+    : 0;
 
   const handleSetIndex = useCallback(
     (index: number) => {

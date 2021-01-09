@@ -5,7 +5,7 @@ import {
   Template,
   Activity,
   ActivityDataTypes,
-  ActivityCallData,
+  ActivityData,
 } from '~/firebase/schema-types';
 import useCall from './useCall/useCall';
 import useActivity from './useActivity/useActivity';
@@ -20,7 +20,7 @@ interface CallContextTypes {
   startActivity(activity: Activity): void;
   updateActivity(activity: Activity, path: string | null, value: ActivityDataTypes): void;
   endActivity(): void;
-  currentCallData?: ActivityCallData;
+  currentActivityData?: ActivityData;
 }
 
 interface PropTypes {

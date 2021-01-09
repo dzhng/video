@@ -137,14 +137,14 @@ function PollOption({
 export default function PollDisplay() {
   const classes = useStyles();
   const { user } = useAppState();
-  const { currentActivity, updateActivity, currentCallData, isHost } = useCallContext();
+  const { currentActivity, updateActivity, currentActivityData, isHost } = useCallContext();
 
   const metadata = currentActivity?.metadata as PollActivityMetadata | undefined;
 
   const flattenedVotes = useMemo<string[]>(() => {
-    const voteMap = (get(currentCallData, VoteMapKey) as VoteMapType) || {};
+    const voteMap = (get(currentActivityData, VoteMapKey) as VoteMapType) || {};
     return flatten(values(voteMap));
-  }, [currentCallData]);
+  }, [currentActivityData]);
 
   const totalVotes = useMemo<number>(() => {
     return flattenedVotes.length;
@@ -171,23 +171,23 @@ export default function PollDisplay() {
 
   const votedForOption = useCallback(
     (option: string): boolean => {
-      if (!currentCallData || !user) {
+      if (!currentActivityData || !user) {
         return false;
       }
 
-      const votes = (get(currentCallData, [VoteMapKey, user.uid]) as string[]) || [];
+      const votes = (get(currentActivityData, [VoteMapKey, user.uid]) as string[]) || [];
       return votes.includes(option);
     },
-    [currentCallData, user],
+    [currentActivityData, user],
   );
 
   const toggleOption = useCallback(
     (option: string) => {
-      if (!currentActivity || !user || !currentCallData || !metadata) {
+      if (!currentActivity || !user || !currentActivityData || !metadata) {
         return;
       }
 
-      const votes = (get(currentCallData, [VoteMapKey, user.uid]) as string[]) || [];
+      const votes = (get(currentActivityData, [VoteMapKey, user.uid]) as string[]) || [];
       if (votes.includes(option)) {
         updateActivity(currentActivity, `${VoteMapKey}.${user.uid}`, without(votes, option));
       } else {
@@ -196,7 +196,7 @@ export default function PollDisplay() {
         updateActivity(currentActivity, `${VoteMapKey}.${user.uid}`, newVotes);
       }
     },
-    [currentActivity, currentCallData, updateActivity, user, metadata],
+    [currentActivity, currentActivityData, updateActivity, user, metadata],
   );
 
   const handleFinish = useCallback(() => {
@@ -208,11 +208,11 @@ export default function PollDisplay() {
   }, [currentActivity, updateActivity]);
 
   const showVotes =
-    metadata && currentCallData
-      ? (currentCallData[FinishKey] as boolean) || metadata.showResultsRightAway
+    metadata && currentActivityData
+      ? (currentActivityData[FinishKey] as boolean) || metadata.showResultsRightAway
       : false;
 
-  const shouldDisable = currentCallData ? (currentCallData[FinishKey] as boolean) : false;
+  const shouldDisable = currentActivityData ? (currentActivityData[FinishKey] as boolean) : false;
 
   return (
     <div className={classes.container}>

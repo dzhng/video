@@ -70,13 +70,13 @@ export declare interface Template {
 }
 
 export type ActivityDataTypes = string | object | object[] | number | boolean | null;
-export type ActivityCallData = { [key: string]: ActivityDataTypes };
+export type ActivityData = { [key: string]: ActivityDataTypes };
 
 export declare interface Call {
   templateId: string;
   creatorId: string;
   currentActivityId?: string | null;
-  activityData?: ActivityCallData;
+  activityData?: ActivityData;
   isFinished: boolean;
   duration?: number;
   createdAt: FbDate;

@@ -143,15 +143,15 @@ function ResponseCard({
 export default function QuestionsDisplay() {
   const classes = useStyles();
   const { user } = useAppState();
-  const { currentActivity, updateActivity, currentCallData, isHost } = useCallContext();
+  const { currentActivity, updateActivity, currentActivityData, isHost } = useCallContext();
 
   // map of pending responses in text area, keyed by question
   const [responseValues, setResponseValues] = useState<{ [question: string]: string }>({});
 
   const metadata = currentActivity?.metadata as QuestionsActivityMetadata | undefined;
   const currentIndex = useMemo<number>(
-    () => (currentCallData ? (currentCallData[CurrentIndexKey] as number) ?? 0 : 0),
-    [currentCallData],
+    () => (currentActivityData ? (currentActivityData[CurrentIndexKey] as number) ?? 0 : 0),
+    [currentActivityData],
   );
 
   const currentQuestion = useMemo<string | undefined>(
@@ -161,12 +161,12 @@ export default function QuestionsDisplay() {
 
   const currentResponses = useMemo<ResponseType[] | undefined>(
     () =>
-      currentCallData && currentQuestion
-        ? (currentCallData[ResponsesKey] as { [question: string]: ResponseType[] })?.[
+      currentActivityData && currentQuestion
+        ? (currentActivityData[ResponsesKey] as { [question: string]: ResponseType[] })?.[
             currentQuestion
           ]
         : undefined,
-    [currentCallData, currentQuestion],
+    [currentActivityData, currentQuestion],
   );
 
   const handleNextQuestion = useCallback(() => {
@@ -187,7 +187,7 @@ export default function QuestionsDisplay() {
 
   const handleSubmit = useCallback(
     (response: string, isAnonymous: boolean) => {
-      if (!currentActivity || !currentQuestion || !user || !currentCallData) {
+      if (!currentActivity || !currentQuestion || !user || !currentActivityData) {
         return;
       }
 
@@ -215,7 +215,7 @@ export default function QuestionsDisplay() {
       // clear text area on submit
       setResponseValues((state) => ({ ...state, [currentQuestion]: '' }));
     },
-    [currentQuestion, currentActivity, currentCallData, currentResponses, updateActivity, user],
+    [currentQuestion, currentActivity, currentActivityData, currentResponses, updateActivity, user],
   );
 
   const handleDeleteResponse = useCallback(

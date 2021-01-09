@@ -7,7 +7,7 @@ import {
   Call,
   Activity,
   ActivityDataTypes,
-  ActivityCallData,
+  ActivityData,
 } from '~/firebase/schema-types';
 
 export default function useActivity(template: LocalModel<Template>, call?: LocalModel<Call>) {
@@ -61,9 +61,9 @@ export default function useActivity(template: LocalModel<Template>, call?: Local
     }
   }, [call, template]);
 
-  const currentCallData = useMemo<ActivityCallData | undefined>(() => {
+  const currentActivityData = useMemo<ActivityData | undefined>(() => {
     if (call && currentActivity) {
-      return (call.activityData ? call.activityData[currentActivity.id] : {}) as ActivityCallData;
+      return (call.activityData ? call.activityData[currentActivity.id] : {}) as ActivityData;
     }
   }, [call, currentActivity]);
 
@@ -72,6 +72,6 @@ export default function useActivity(template: LocalModel<Template>, call?: Local
     startActivity,
     updateActivity,
     endActivity,
-    currentCallData,
+    currentActivityData,
   };
 }
