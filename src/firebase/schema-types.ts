@@ -75,8 +75,6 @@ export type ActivityData = { [key: string]: ActivityDataTypes };
 export declare interface Call {
   templateId: string;
   creatorId: string;
-  currentActivityId?: string | null;
-  activityData?: ActivityData;
   isFinished: boolean;
   duration?: number;
   createdAt: FbDate;

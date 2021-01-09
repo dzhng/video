@@ -136,14 +136,10 @@ service cloud.firestore {
 
       allow create, update: if
         request.auth != null &&
-        assertKeys(['templateId', 'creatorId', 'currentActivityId', 'activityData', 'isFinished', 'duration', 'createdAt']) &&
+        assertKeys(['templateId', 'creatorId', 'isFinished', 'duration', 'createdAt']) &&
         requiredStringKey('templateId', 1, 30) &&
         requiredStringKey('creatorId', 1, 30) &&
         requiredCreatedAtKey() &&
-        optionalStringKey('currentActivityId', 50) &&
-
-        // map of activityIds and the metadata for each step
-        optionalObjectKey('activityData') &&
 
         // marks if this call has finished, and stores duration in seconds
         requiredBoolKey('isFinished') &&
