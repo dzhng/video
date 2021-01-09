@@ -84,6 +84,9 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft: theme.spacing(1),
       },
     },
+    deleteButtonMenu: {
+      color: theme.palette.error.main,
+    },
   }),
 );
 
@@ -203,6 +206,7 @@ export default function SessionsMenu() {
         <DeleteMenuItem
           deleteTemplate={handleDeleteTemplate}
           onClick={() => setSettingsMenuOpen(false)}
+          className={classes.deleteButtonMenu}
         />
       </Menu>
     </div>
