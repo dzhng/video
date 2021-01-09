@@ -12,5 +12,8 @@
   },
   "storage": {
     "rules": "src/firebase/storage.rules"
+  },
+  "database": {
+    "rules": "src/firebase/database.rules.json"
   }
 }
