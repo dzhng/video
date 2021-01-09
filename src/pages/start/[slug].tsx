@@ -1,25 +1,18 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import {
-  Collections,
-  LocalModel,
-  Template,
-  Call,
-  Activity,
-  ActivityDataTypes,
-} from '~/firebase/schema-types';
-import firebase, { db } from '~/utils/firebase';
+import { Collections, LocalModel, Template } from '~/firebase/schema-types';
+import { db } from '~/utils/firebase';
+import { useAppState } from '~/state';
 import LoadingContainer from '~/containers/Loading/Loading';
 import CallContainer from '~/containers/Call/Call';
-import { useAppState } from '~/state';
+import { CallProvider } from '~/components/CallProvider';
 
 // start a call with given template id
 // TODO: all these here can probably be put into hooks and exposed in CallProvider
 export default function StartPage() {
   const router = useRouter();
   const { user } = useAppState();
-  const [ongoingCall, setOngoingCall] = useState<LocalModel<Call>>();
   const [template, setTemplate] = useState<LocalModel<Template>>();
   const [isHost, setIsHost] = useState<boolean | null>(null);
 
@@ -44,26 +37,6 @@ export default function StartPage() {
     return unsubscribe;
   }, [templateId]);
 
-  // fetching call model
-  useEffect(() => {
-    if (!template || !template.ongoingCallId) {
-      setOngoingCall(undefined);
-      return;
-    }
-
-    const unsubscribe = db
-      .collection(Collections.CALLS)
-      .doc(template.ongoingCallId)
-      .onSnapshot((result) => {
-        setOngoingCall({
-          id: result.id,
-          ...(result.data() as Call),
-        });
-      });
-
-    return unsubscribe;
-  }, [template]);
-
   // setting isHost
   useEffect(() => {
     if (!template) {
@@ -85,121 +58,11 @@ export default function StartPage() {
       .then((result) => setIsHost(result.exists));
   }, [template, user]);
 
-  // create a new call if one does not exist
-  const handleCreateCall = useCallback(async (): Promise<boolean> => {
-    if (!user) {
-      return false;
-    }
-
-    // create a new call ref locally so we can have the ID
-    const newCallRef = db.collection(Collections.CALLS).doc();
-    const templateRef = db.collection(Collections.TEMPLATES).doc(templateId);
-
-    const newCallData: Call = {
-      templateId,
-      creatorId: user.uid,
-      isFinished: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    };
-
-    const success = await db.runTransaction<boolean>(async (transaction) => {
-      const doc = await transaction.get(templateRef);
-      if (!doc.exists) {
-        return false;
-      }
-
-      const data = doc.data() as Template;
-      // if a call id already exist, there's a conflict and call has already been created, just exit
-      if (data.ongoingCallId) {
-        return false;
-      }
-
-      transaction.set(newCallRef, newCallData);
-      transaction.update(templateRef, { ongoingCallId: newCallRef.id });
-      return true;
-    });
-
-    return success;
-  }, [templateId, user]);
-
-  const handleEndCall = useCallback(async () => {
-    if (!template) {
-      return;
-    }
-
-    const batch = db.batch();
-    const templateRef = db.collection(Collections.TEMPLATES).doc(template.id);
-    const callRef = db.collection(Collections.CALLS).doc(template.ongoingCallId ?? undefined);
-
-    batch.update(templateRef, { ongoingCallId: null });
-    batch.update(callRef, { isFinished: true });
-
-    await batch.commit();
-  }, [template]);
-
-  const handleStartActivity = useCallback(
-    (activity: Activity) => {
-      if (!template || !template.ongoingCallId) {
-        console.error('Cannot start activity if call is not loaded');
-        return;
-      }
-
-      db.collection(Collections.CALLS).doc(template.ongoingCallId).update({
-        currentActivityId: activity.id,
-      });
-    },
-    [template],
-  );
-
-  const handleUpdateActivity = useCallback(
-    (activity: Activity, path: string | null, value: ActivityDataTypes | object) => {
-      if (!template || !template.ongoingCallId) {
-        console.error('Cannot update activity if call is not loaded');
-        return;
-      }
-
-      const fullPath = `activityData.${activity.id}${path ? '.' + path : ''}`;
-
-      db.collection(Collections.CALLS)
-        .doc(template.ongoingCallId)
-        .update({
-          [fullPath]: value,
-        });
-    },
-    [template],
-  );
-
-  const handleEndActivity = useCallback(() => {
-    if (!template || !template.ongoingCallId) {
-      console.error('Cannot update activity if call is not loaded');
-      return;
-    }
-
-    db.collection(Collections.CALLS).doc(template.ongoingCallId).update({
-      currentActivityId: null,
-    });
-  }, [template]);
-
-  const currentActivity = useMemo(() => {
-    if (template && ongoingCall && ongoingCall.currentActivityId) {
-      const activityId = ongoingCall.currentActivityId;
-      return template.activities.find((activity) => activity.id === activityId);
-    }
-  }, [ongoingCall, template]);
-
   // when both template and host status is ready, show call conatiner
   return template && isHost !== null ? (
-    <CallContainer
-      template={template}
-      isHost={isHost}
-      call={ongoingCall}
-      createCall={handleCreateCall}
-      endCall={handleEndCall}
-      currentActivity={currentActivity}
-      startActivity={handleStartActivity}
-      endActivity={handleEndActivity}
-      updateActivity={handleUpdateActivity}
-    />
+    <CallProvider template={template} isHost={isHost}>
+      <CallContainer />
+    </CallProvider>
   ) : (
     <LoadingContainer />
   );

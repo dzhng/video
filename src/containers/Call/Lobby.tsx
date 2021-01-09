@@ -2,8 +2,8 @@ import React, { useCallback, useEffect } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 import { useAppState } from '~/state';
-import { LocalModel, Call } from '~/firebase/schema-types';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useCallContext from '~/hooks/useCallContext/useCallContext';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import Room from '~/components/Video/Room/Room';
 import LocalPreview from './LocalPreview';
@@ -21,18 +21,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function CallLobby({
-  waitForJoin,
-  isHost,
-  call,
-}: {
-  waitForJoin: boolean;
-  isHost: boolean;
-  call?: LocalModel<Call>;
-}) {
+export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
   const classes = useStyles();
   const { getToken, isFetching } = useAppState();
   const { isConnecting: _isConnecting, connect, isAcquiringLocalTracks } = useVideoContext();
+  const { call } = useCallContext();
   const roomState = useRoomState();
 
   const isLoading = !call || isAcquiringLocalTracks;

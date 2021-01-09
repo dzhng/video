@@ -6,13 +6,7 @@ import Lobby from './Lobby';
 import CreateCall from './CreateCall';
 import WaitForHost from './WaitForHost';
 
-export default function CallFlow({
-  isCallStarted,
-  createCall,
-}: {
-  isCallStarted: boolean;
-  createCall(): Promise<boolean>;
-}) {
+export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) {
   const [mediaError, setMediaError] = useState<Error>();
   const {
     room,
@@ -20,7 +14,7 @@ export default function CallFlow({
     removeLocalAudioTrack,
     removeLocalVideoTrack,
   } = useVideoContext();
-  const { isHost, call } = useCallContext();
+  const { isHost, createCall } = useCallContext();
   const cleanUpTracks = useRef<() => void>();
 
   // tracks if the call was created by user or if just joining existing call
@@ -59,7 +53,7 @@ export default function CallFlow({
   return (
     <>
       {isCallStarted ? (
-        <Lobby waitForJoin={!callCreated} isHost={isHost} call={call} />
+        <Lobby waitForJoin={!callCreated} />
       ) : isHost ? (
         <CreateCall create={handleCreate} />
       ) : (

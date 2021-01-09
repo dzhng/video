@@ -3,14 +3,13 @@ import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
 
-import { LocalModel, Call, Template, Activity, ActivityDataTypes } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
-import { CallProvider } from '~/components/CallProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
 import ActivitiesBar from '~/components/Activities/ActivitiesBar/ActivitiesBar';
+import useCallContext from '~/hooks/useCallContext/useCallContext';
 import CallFlow from './CallFlow';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,31 +30,12 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function CallContainer({
-  template,
-  isHost,
-  call,
-  createCall,
-  endCall,
-  currentActivity,
-  startActivity,
-  endActivity,
-  updateActivity,
-}: {
-  template: LocalModel<Template>;
-  isHost: boolean;
-  call?: LocalModel<Call>;
-  createCall(): Promise<boolean>;
-  endCall(): void;
-  currentActivity?: Activity;
-  startActivity(activity: Activity): void;
-  endActivity(): void;
-  updateActivity(activity: Activity, path: string | null, value: ActivityDataTypes | object): void;
-}) {
+export default function CallContainer() {
   const classes = useStyles();
   const router = useRouter();
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
+  const { template, isHost, currentActivity, startActivity } = useCallContext();
 
   // URL that the back buttom goes to - set by the `from` query param. If not exist don't show back button
   const fromHref: string | undefined =
@@ -78,11 +58,6 @@ export default function CallContainer({
   const handleDisconnect = useCallback(() => {
     router.push(`/finish?fromHref=${encodeURIComponent(fromHref ?? false)}`);
   }, [router, fromHref]);
-
-  const handleEndCall = useCallback(() => {
-    endCall();
-    router.push(`/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? false)}`);
-  }, [endCall, router, fromHref]);
 
   // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
   const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
@@ -126,17 +101,7 @@ export default function CallContainer({
             onError={setError}
             onDisconnect={handleDisconnect}
           >
-            <CallProvider
-              call={call?.id === currentCall ? call : undefined}
-              template={template}
-              isHost={isHost}
-              endCall={handleEndCall}
-              currentActivity={currentActivity}
-              updateActivity={updateActivity}
-              endActivity={endActivity}
-            >
-              <CallFlow isCallStarted={isCallStarted} createCall={createCall} />
-            </CallProvider>
+            <CallFlow isCallStarted={isCallStarted} />
           </VideoProvider>
         </div>
       </div>

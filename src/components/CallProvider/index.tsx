@@ -7,38 +7,41 @@ import {
   ActivityDataTypes,
   ActivityCallData,
 } from '~/firebase/schema-types';
+import useCall from './useCall/useCall';
+import useActivity from './useActivity/useActivity';
 
 interface CallContextTypes {
-  call?: LocalModel<Call>;
   template: LocalModel<Template>;
+  call?: LocalModel<Call>;
   isHost: boolean;
-  endCall(): void;
+  createCall(): Promise<boolean>;
+  endCall(): Promise<void>;
   currentActivity?: Activity;
+  startActivity(activity: Activity): void;
   updateActivity(activity: Activity, path: string | null, value: ActivityDataTypes): void;
   endActivity(): void;
   currentCallData?: ActivityCallData;
 }
 
+interface PropTypes {
+  template: LocalModel<Template>;
+  isHost: boolean;
+}
+
 export const CallContext = createContext<CallContextTypes>(null!);
 
-export function CallProvider({
-  children,
-  ...otherProps
-}: React.PropsWithChildren<CallContextTypes>) {
-  const { call, currentActivity } = otherProps;
+export function CallProvider({ children, template, isHost }: React.PropsWithChildren<PropTypes>) {
+  const useCallProps = useCall(template);
+  const useActivityProps = useActivity(template, useCallProps.call);
 
-  const currentCallData = useMemo<ActivityCallData | undefined>(() => {
-    if (call && currentActivity) {
-      return (call.activityData ? call.activityData[currentActivity.id] : {}) as ActivityCallData;
-    }
-  }, [call, currentActivity]);
-
-  const value = useMemo(
+  const value = useMemo<CallContextTypes>(
     () => ({
-      ...otherProps,
-      currentCallData,
+      ...useCallProps,
+      ...useActivityProps,
+      template,
+      isHost,
     }),
-    [currentCallData, otherProps],
+    [useCallProps, useActivityProps, template, isHost],
   );
 
   return <CallContext.Provider value={value}>{children}</CallContext.Provider>;
