@@ -3,6 +3,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/database';
 import 'firebase/storage';
+import 'firebase/analytics';
 
 import { isBrowser, isTestEnv } from './index';
 
@@ -30,6 +31,7 @@ if (!firebase.apps?.length) {
 const db = firebase.firestore();
 const auth = firebase.auth();
 const rtdb = firebase.database();
+const analytics = isBrowser && firebase.analytics();
 
 // storage is only available in the browser
 const storage = (isBrowser && !isTestEnv ? firebase.storage() : {}) as firebase.storage.Storage;
@@ -54,4 +56,4 @@ if (isBrowser && !isTestEnv) {
 }
 
 export default firebase;
-export { db, rtdb, auth, storage };
+export { db, rtdb, auth, storage, analytics };

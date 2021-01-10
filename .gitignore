@@ -29,7 +29,7 @@ firebase-debug.log*
 database-debug.log*
 ui-debug.log*
 
-.env
+.env*
 .vscode
 
 service-account.json
