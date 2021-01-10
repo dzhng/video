@@ -62,6 +62,12 @@ When updating indexes, if removing any index, make sure to deploy the new index 
 
 Also - try not to use any '!=' queries, as that does not work well with indexing. This is why most fields should be required instead of optional (to avoid the `!= true` type of queries).
 
+### Service account credentials
+
+To get the credentials, create a JSON key from Google's service account panel and convert to base64.
+
+`cat service-account.json | base64`
+
 ## Testing Approach
 
 ### Rendering in Virtual DOM: testing-library vs enzyme
