@@ -6,7 +6,6 @@ import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '~/constants
 import VideoTrack from '~/components/Video/VideoTrack/VideoTrack';
 import useMediaStreamTrack from '~/hooks/Video/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
-import { useVideoInputDevices } from '~/hooks/Video/deviceHooks/deviceHooks';
 
 const useStyles = makeStyles({
   preview: {
@@ -17,8 +16,8 @@ const useStyles = makeStyles({
 
 export default function VideoInputList() {
   const classes = useStyles();
-  const videoInputDevices = useVideoInputDevices();
-  const { localTracks } = useVideoContext();
+  const { localTracks, devices } = useVideoContext();
+  const videoInputDevices = devices.videoInput;
 
   const localVideoTrack = localTracks.find((track) => track.kind === 'video') as LocalVideoTrack;
   const mediaStreamTrack = useMediaStreamTrack(localVideoTrack);

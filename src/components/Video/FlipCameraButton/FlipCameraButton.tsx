@@ -6,14 +6,13 @@ import { LocalVideoTrack } from 'twilio-video';
 import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
 import useMediaStreamTrack from '~/hooks/Video/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
-import { useVideoInputDevices } from '~/hooks/Video/deviceHooks/deviceHooks';
 
 export default function FlipCameraButton() {
-  const { localTracks } = useVideoContext();
+  const { localTracks, devices } = useVideoContext();
   const [supportsFacingMode, setSupportsFacingMode] = useState<Boolean | null>(null);
   const videoTrack = localTracks.find((track) => track.name.includes('camera')) as LocalVideoTrack;
   const mediaStreamTrack = useMediaStreamTrack(videoTrack);
-  const videoDeviceList = useVideoInputDevices();
+  const videoDeviceList = devices.videoInput;
 
   useEffect(() => {
     // The 'supportsFacingMode' variable determines if this component is rendered

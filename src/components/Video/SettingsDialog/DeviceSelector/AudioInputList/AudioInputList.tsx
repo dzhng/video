@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import useMediaStreamTrack from '~/hooks/Video/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import LocalAudioLevelIndicator from '~/components/Video/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
-import { useAudioInputDevices } from '~/hooks/Video/deviceHooks/deviceHooks';
 import { SELECTED_AUDIO_INPUT_KEY } from '~/constants';
 
 const useStyles = makeStyles({
@@ -18,8 +17,8 @@ const useStyles = makeStyles({
 
 export default function AudioInputList() {
   const classes = useStyles();
-  const audioInputDevices = useAudioInputDevices();
-  const { localTracks } = useVideoContext();
+  const { localTracks, devices } = useVideoContext();
+  const audioInputDevices = devices.audioInput;
 
   const localAudioTrack = localTracks.find((track) => track.kind === 'audio') as LocalAudioTrack;
   const mediaStreamTrack = useMediaStreamTrack(localAudioTrack);

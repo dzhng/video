@@ -1,11 +1,13 @@
 import React from 'react';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
 import useActiveSinkId from '~/hooks/Video/useActiveSinkId/useActiveSinkId';
-import { useAudioOutputDevices } from '~/hooks/Video/deviceHooks/deviceHooks';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 
 export default function AudioOutputList() {
-  const audioOutputDevices = useAudioOutputDevices();
+  const { devices } = useVideoContext();
   const { activeSinkId, setActiveSinkId } = useActiveSinkId();
+
+  const audioOutputDevices = devices.audioOutput;
   const activeOutputLabel = audioOutputDevices.find((device) => device.deviceId === activeSinkId)
     ?.label;
 
