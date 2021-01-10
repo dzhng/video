@@ -50,14 +50,19 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
   const router = useRouter();
   const { signIn, isAuthReady } = useAppState();
   const [authError, setAuthError] = useState<Error | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const login = useCallback(() => {
     setAuthError(null);
+    setIsAuthenticating(true);
     signIn()
       .then(() => {
         router.replace(previousPage ?? '/');
       })
-      .catch((err) => setAuthError(err));
+      .catch((err) => {
+        setAuthError(err);
+        setIsAuthenticating(false);
+      });
   }, [previousPage, router, signIn]);
 
   if (!isAuthReady) {
@@ -81,6 +86,7 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
 
         <Button
           fullWidth
+          disabled={isAuthenticating}
           variant="contained"
           className={classes.button}
           onClick={login}
