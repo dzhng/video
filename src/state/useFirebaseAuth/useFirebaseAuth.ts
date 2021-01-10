@@ -48,8 +48,8 @@ export default function useFirebaseAuth() {
     }
 
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/plus.login');
-    provider.addScope('https://www.googleapis.com/auth/presentations.readonly');
+    provider.addScope('profile');
+    provider.addScope('email');
 
     const ret = await auth.signInWithPopup(provider);
     setUser(ret.user);
