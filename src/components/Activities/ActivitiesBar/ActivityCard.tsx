@@ -50,12 +50,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface PropTypes {
   activity: Activity;
-  mode: 'edit' | 'call';
+  mode: 'edit' | 'call' | 'view';
   save(activity: Activity): void;
   onEdit(): void;
 
   // call mode props
-  isHost?: boolean;
   isStarted?: boolean;
   onStart?(): void;
 }
@@ -63,7 +62,6 @@ interface PropTypes {
 export default function ActivitiesCard({
   activity,
   mode,
-  isHost,
   isStarted,
   save,
   onEdit,
@@ -103,7 +101,7 @@ export default function ActivitiesCard({
     <Card className={classes.card}>
       <div className={classes.content}>
         <EditableTitle
-          disabled={(mode === 'call' && !isHost) || isStarted}
+          disabled={mode === 'view' || isStarted}
           title={activity.name}
           onChange={handleNameChange}
           variant="h2"
@@ -122,7 +120,7 @@ export default function ActivitiesCard({
           </Tooltip>
         )}
 
-        {mode === 'call' && isHost && (
+        {mode === 'call' && (
           <>
             {!isStarted && (
               <Tooltip title="Edit activity" placement="bottom">

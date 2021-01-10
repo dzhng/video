@@ -63,32 +63,30 @@ const ActivityTimelineItem = ({
   activity,
   index,
   mode,
-  isHost,
   isLastItem,
   ...otherProps
 }: {
   activity: Activity;
-  mode: 'edit' | 'call';
+  mode: 'edit' | 'call' | 'view';
   index: number;
   isLastItem: boolean;
   save(activity: Activity): void;
   onEdit(): void;
 
-  isHost?: boolean;
   isStarted?: boolean;
   onStart?(): void;
 }) => (
-  <Draggable draggableId={activity.id} isDragDisabled={mode === 'call' && !isHost} index={index}>
+  <Draggable draggableId={activity.id} isDragDisabled={mode === 'view'} index={index}>
     {({ innerRef, draggableProps, dragHandleProps }) => (
       <TimelineItem ref={innerRef} {...draggableProps} {...dragHandleProps}>
         <TimelineOppositeContent></TimelineOppositeContent>
         <TimelineSeparator>
           <TimelineDot />
-          {/* always show in edit mode; if in call mode, always show uness if it's last item and not host (because the new activity button will not be shown */}
-          {(mode === 'edit' || !(isLastItem && !isHost)) && <TimelineConnector />}
+          {/* always show in edit and call mode; if in view mode, always show uness if it's last item (because the new activity button will not be shown */}
+          {(mode !== 'view' || !isLastItem) && <TimelineConnector />}
         </TimelineSeparator>
         <TimelineContent>
-          <ActivityCard activity={activity} mode={mode} isHost={isHost} {...otherProps} />
+          <ActivityCard activity={activity} mode={mode} {...otherProps} />
         </TimelineContent>
       </TimelineItem>
     )}
@@ -107,10 +105,9 @@ interface PropTypes {
   template: LocalModel<Template>;
 
   // edit mode shows editing controls, call mode shows playback controls
-  mode: 'edit' | 'call';
+  mode: 'edit' | 'call' | 'view';
 
   // only valid in call mode
-  isHost?: boolean;
   currentActivity?: Activity;
   startActivity?(activity: Activity): void;
 }
@@ -118,7 +115,6 @@ interface PropTypes {
 export default function ActivitiesBar({
   template,
   mode,
-  isHost,
   startActivity,
   currentActivity,
 }: PropTypes) {
@@ -253,7 +249,6 @@ export default function ActivitiesBar({
                   isLastItem={index === activities.length - 1}
                   save={(values: Activity) => handleSaveActivity(values, index)}
                   onEdit={() => setEditActivityIndex(index)}
-                  isHost={isHost}
                   isStarted={currentActivity === activity}
                   onStart={() => handleStartActivity(activity)}
                 />
@@ -261,7 +256,7 @@ export default function ActivitiesBar({
 
               {placeholder}
 
-              {(mode === 'edit' || isHost) && (
+              {mode !== 'view' && (
                 <TimelineItem>
                   {/* Timeline items has a weird idiosyncracy here where if TimelineOppositeContent is not defined, it will add a 50% pad (because the timeline wants to be centered by default. Since we want our timeline to be on the left, we define an empty OppositeContent and get rid of the 50% pad via css */}
                   <TimelineOppositeContent></TimelineOppositeContent>

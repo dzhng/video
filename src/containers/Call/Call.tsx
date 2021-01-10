@@ -87,8 +87,7 @@ export default function CallContainer() {
           />
           <ActivitiesBar
             template={template}
-            mode={isCallStarted ? 'call' : 'edit'}
-            isHost={isHost}
+            mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
             currentActivity={currentActivity}
             startActivity={startActivity}
           />
