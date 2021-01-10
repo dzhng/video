@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
 import { useAppState } from '~/state';
+import LoadingContainer from '~/containers/Loading/Loading';
 
 const useStyles = makeStyles({
   container: {
@@ -46,7 +47,7 @@ const GoogleLogo = <img src="/google-logo.svg" />;
 export default function LoginPage({ previousPage }: { previousPage?: string }) {
   const classes = useStyles();
   const router = useRouter();
-  const { signIn, user, isAuthReady } = useAppState();
+  const { signIn, isAuthReady } = useAppState();
   const [authError, setAuthError] = useState<Error | null>(null);
 
   const login = useCallback(() => {
@@ -58,12 +59,8 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
       .catch((err) => setAuthError(err));
   }, [previousPage, router, signIn]);
 
-  if (user) {
-    router.replace('/');
-  }
-
   if (!isAuthReady) {
-    return null;
+    return <LoadingContainer />;
   }
 
   return (

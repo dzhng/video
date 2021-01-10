@@ -65,13 +65,14 @@ export default function useCall(template: LocalModel<Template>) {
   }, [template, user]);
 
   const endCall = useCallback(async () => {
-    if (!template) {
+    if (!template || !template.ongoingCallId) {
+      console.warn('Cannot end call when no call exist');
       return;
     }
 
     const batch = db.batch();
     const templateRef = db.collection(Collections.TEMPLATES).doc(template.id);
-    const callRef = db.collection(Collections.CALLS).doc(template.ongoingCallId ?? undefined);
+    const callRef = db.collection(Collections.CALLS).doc(template.ongoingCallId);
 
     batch.update(templateRef, { ongoingCallId: null });
     batch.update(callRef, { isFinished: true });

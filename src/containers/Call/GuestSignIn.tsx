@@ -75,7 +75,7 @@ export default function GuestSignin() {
       .then((user) => {
         if (user) {
           const userData: User = {
-            displayName: user.displayName || displayName || 'Aomni Customer',
+            displayName: user.displayName ?? displayName ?? 'Aomni Customer',
           };
           return db.collection(Collections.USERS).doc(user.uid).set(userData);
         }
