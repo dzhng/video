@@ -21,8 +21,9 @@ export interface StateContextType {
   // auth
   getToken(room: string): Promise<string>;
   user?: firebase.User | null;
-  signIn?(passcode?: string): Promise<void>;
-  signOut?(): Promise<void>;
+  signIn(): Promise<firebase.User | null>;
+  signInAnonymously(): Promise<firebase.User | null>;
+  signOut(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
 

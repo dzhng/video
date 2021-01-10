@@ -46,6 +46,13 @@ export default function useFirebaseAuth() {
 
     const ret = await auth.signInWithPopup(provider);
     setUser(ret.user);
+    return ret.user;
+  }, []);
+
+  const signInAnonymously = useCallback(async () => {
+    const ret = await auth.signInAnonymously();
+    setUser(ret.user);
+    return ret.user;
   }, []);
 
   const signOut = useCallback(async () => {
@@ -53,5 +60,5 @@ export default function useFirebaseAuth() {
     setUser(null);
   }, []);
 
-  return { user, signIn, signOut, isAuthReady, getToken };
+  return { user, signIn, signInAnonymously, signOut, isAuthReady, getToken };
 }

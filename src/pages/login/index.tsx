@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import Button from '@material-ui/core/Button';
@@ -43,20 +43,20 @@ const useStyles = makeStyles({
 
 const GoogleLogo = <img src="/google-logo.svg" />;
 
-export default function LoginPage(props: { previousPage?: string }) {
+export default function LoginPage({ previousPage }: { previousPage?: string }) {
   const classes = useStyles();
   const router = useRouter();
   const { signIn, user, isAuthReady } = useAppState();
   const [authError, setAuthError] = useState<Error | null>(null);
 
-  const login = () => {
+  const login = useCallback(() => {
     setAuthError(null);
-    signIn?.()
+    signIn()
       .then(() => {
-        router.replace(props?.previousPage ?? '/');
+        router.replace(previousPage ?? '/');
       })
       .catch((err) => setAuthError(err));
-  };
+  }, [previousPage, router, signIn]);
 
   if (user) {
     router.replace('/');

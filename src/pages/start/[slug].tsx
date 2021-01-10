@@ -6,13 +6,14 @@ import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import LoadingContainer from '~/containers/Loading/Loading';
 import CallContainer from '~/containers/Call/Call';
+import GuestSignIn from '~/containers/Call/GuestSignIn';
 import { CallProvider } from '~/components/CallProvider';
 
 // start a call with given template id
 // TODO: all these here can probably be put into hooks and exposed in CallProvider
 export default function StartPage() {
   const router = useRouter();
-  const { user } = useAppState();
+  const { isAuthReady, user } = useAppState();
   const [template, setTemplate] = useState<LocalModel<Template>>();
   const [isHost, setIsHost] = useState<boolean | null>(null);
 
@@ -57,6 +58,14 @@ export default function StartPage() {
       .get()
       .then((result) => setIsHost(result.exists));
   }, [template, user]);
+
+  if (!isAuthReady) {
+    return <LoadingContainer />;
+  }
+
+  if (!user) {
+    return <GuestSignIn />;
+  }
 
   // when both template and host status is ready, show call conatiner
   return template && isHost !== null ? (
