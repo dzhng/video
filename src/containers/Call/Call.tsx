@@ -84,6 +84,7 @@ export default function CallContainer() {
             template={template}
             showBackButton={!!fromHref && !isCallStarted}
             backHref={fromHref}
+            disabled={!isHost}
           />
           <ActivitiesBar
             template={template}

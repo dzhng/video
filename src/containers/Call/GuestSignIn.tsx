@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     joinButton: {
+      marginTop: theme.spacing(1),
       height: 42,
     },
     googleButton: {
@@ -98,7 +99,6 @@ export default function GuestSignin() {
         </Typography>
         <TextField
           fullWidth
-          className={classes.joinButton}
           variant="outlined"
           margin="normal"
           placeholder="What is your name?"
@@ -108,6 +108,7 @@ export default function GuestSignin() {
         />
         <Button
           fullWidth
+          className={classes.joinButton}
           disabled={isAuthenticating}
           variant="contained"
           color="primary"

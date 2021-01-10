@@ -25,14 +25,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ToolbarContent({
+export default function EditableTemplateTitle({
   template,
   showBackButton,
   backHref,
+  disabled,
 }: {
   template?: LocalModel<Template>;
   showBackButton?: boolean;
   backHref?: string;
+  disabled?: boolean;
 }) {
   const classes = useStyles();
   const { markIsWriting } = useAppState();
@@ -56,6 +58,7 @@ export default function ToolbarContent({
         className={classes.title}
         title={template?.name}
         isLoading={!template}
+        disabled={disabled}
         variant="h2"
         validationSchema={NameSchema}
         onChange={saveName}
