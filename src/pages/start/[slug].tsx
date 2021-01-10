@@ -15,7 +15,8 @@ export default function StartPage() {
   const router = useRouter();
   const { isAuthReady, user } = useAppState();
   const [template, setTemplate] = useState<LocalModel<Template>>();
-  const [isHost, setIsHost] = useState<boolean | null>(null);
+  // undefined means need to fetch
+  const [isHost, setIsHost] = useState<boolean | undefined>(undefined);
 
   const templateId = String(router.query.slug);
 
@@ -40,12 +41,8 @@ export default function StartPage() {
 
   // setting isHost
   useEffect(() => {
-    if (!template) {
-      return;
-    }
-
-    if (!user) {
-      setIsHost(false);
+    if (!template || !user) {
+      setIsHost(undefined);
       return;
     }
 
@@ -68,7 +65,7 @@ export default function StartPage() {
   }
 
   // when both template and host status is ready, show call conatiner
-  return template && isHost !== null ? (
+  return template && isHost !== undefined ? (
     <CallProvider template={template} isHost={isHost}>
       <CallContainer />
     </CallProvider>
