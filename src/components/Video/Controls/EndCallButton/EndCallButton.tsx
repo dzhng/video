@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import CallEnd from '@material-ui/icons/CallEnd';
@@ -18,12 +18,18 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function EndCallButton(props: object) {
   const classes = useStyles();
   const { room } = useVideoContext();
-  const { endCall } = useCallContext();
+  const { isHost, endCall } = useCallContext();
+  const [isEndingCall, setIsEndingCall] = useState(false);
 
-  const handleEndCall = useCallback(() => {
-    room.disconnect();
-    endCall();
-  }, [endCall, room]);
+  const handleEndCall = useCallback(async () => {
+    setIsEndingCall(true);
+    if (isHost) {
+      await endCall().catch(() => setIsEndingCall(false));
+      room.disconnect();
+    } else {
+      room.disconnect();
+    }
+  }, [isHost, endCall, room]);
 
   return (
     <Tooltip
@@ -32,9 +38,11 @@ export default function EndCallButton(props: object) {
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
-      <Fab className={classes.fab} color="secondary" {...props}>
-        <CallEnd />
-      </Fab>
+      <div>
+        <Fab className={classes.fab} color="secondary" disabled={isEndingCall} {...props}>
+          <CallEnd />
+        </Fab>
+      </div>
     </Tooltip>
   );
 }
