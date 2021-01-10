@@ -112,6 +112,10 @@ export default function GuestSignin() {
           disabled={isAuthenticating}
           value={displayName}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDisplayName(e.target.value)}
+          inputProps={{
+            onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) =>
+              e.key === 'Enter' && loginAnonymously(),
+          }}
         />
         <Button
           fullWidth
