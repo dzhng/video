@@ -59,10 +59,14 @@ export default function CallContainer() {
   const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
 
   const handleDisconnect = useCallback(() => {
+    if (!isCallEnded) {
+      router.push(`/finish?fromHref=${encodeURIComponent(fromHref ?? '')}`);
+    }
+  }, [isCallEnded, router, fromHref]);
+
+  useEffect(() => {
     if (isCallEnded) {
       router.push(`/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? '')}`);
-    } else {
-      router.push(`/finish?fromHref=${encodeURIComponent(fromHref ?? '')}`);
     }
   }, [isCallEnded, router, fromHref]);
 
