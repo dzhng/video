@@ -66,10 +66,12 @@ describe('firebase cloud firestore database rules', () => {
     // create a few sample user accounts first so it can be updated later
     await admin.collection('users').doc('charlie').set({
       displayName: 'charlie',
+      email: 'charlie@test.com',
       bio: 'hello',
     });
     await admin.collection('users').doc('alice').set({
       displayName: 'alice',
+      email: 'alice@test.com',
       bio: 'hello',
     });
   });

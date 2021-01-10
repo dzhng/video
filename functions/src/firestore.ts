@@ -51,6 +51,11 @@ export const createDefaultUserRecords = functions
   .region(region)
   .auth.user()
   .onCreate(async (user) => {
+    // ignore users created without email, since that's prob anonymous users so don't need default records
+    if (!user.email) {
+      return;
+    }
+
     const store = admin.firestore();
     const firstName = user.displayName ? capitalize(words(user.displayName)[0]) : null;
 

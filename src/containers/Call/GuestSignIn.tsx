@@ -10,6 +10,8 @@ import {
 } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import { Collections, User } from '~/firebase/schema-types';
+import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 
 const useStyles = makeStyles((theme) =>
@@ -71,7 +73,12 @@ export default function GuestSignin() {
     setIsAuthenticating(true);
     signInAnonymously()
       .then((user) => {
-        return user?.updateProfile({ displayName });
+        if (user) {
+          const userData: User = {
+            displayName: user.displayName || displayName || 'Aomni Customer',
+          };
+          return db.collection(Collections.USERS).doc(user.uid).set(userData);
+        }
       })
       .catch((err) => {
         setAuthError(err);
