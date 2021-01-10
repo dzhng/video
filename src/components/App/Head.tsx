@@ -27,7 +27,7 @@ export default function Head({ title, description, url, ogImage }: HeadProps) {
         href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;800&display=swap"
         rel="stylesheet"
       />
-      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" href="/favicon.png" />
 
       <meta property="og:url" content={url ?? defaultOGURL} />
       <meta property="og:title" content={title ?? defaultTitle} />
