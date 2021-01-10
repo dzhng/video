@@ -41,13 +41,19 @@ export default function useFirebaseAuth() {
   );
 
   const signIn = useCallback(async () => {
+    // if already signed in, sign out first
+    if (user) {
+      await auth.signOut();
+      setUser(null);
+    }
+
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/plus.login');
 
     const ret = await auth.signInWithPopup(provider);
     setUser(ret.user);
     return ret.user;
-  }, []);
+  }, [user]);
 
   const signInAnonymously = useCallback(async () => {
     const ret = await auth.signInAnonymously();
