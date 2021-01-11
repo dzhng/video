@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       cursor: 'pointer',
 
+      // fix webkit bug where borderRadius doesn't render
+      transform: 'translateZ(0)',
+
       '& video': {
         filter: 'none',
       },

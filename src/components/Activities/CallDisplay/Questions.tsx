@@ -28,7 +28,7 @@ const ResponseSchema = Yup.string().min(1).max(500).required();
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      height: '100%',
+      width: '100%',
       display: 'flex',
       backgroundColor: 'white',
       flexDirection: 'column',

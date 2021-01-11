@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'stretch',
+      width: '100%',
     },
     mainItem: {
       width: `${mainItemWidthPercent}%`,
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) =>
       // less padding on bottom since controls will already have a lot
       // TODO: this feels a bit hacky since layout shouldn't know about controls
       paddingBottom: theme.spacing(1),
+      display: 'flex', // make it easier to align children
     },
     itemContainer: {
       flexGrow: 1,
@@ -39,6 +41,7 @@ const useStyles = makeStyles((theme) =>
     gridItem: {
       overflow: 'hidden',
       padding: (props: StyleProps) => props.itemPadding + 'px',
+      display: 'flex', // make it easier to align children
     },
   }),
 );

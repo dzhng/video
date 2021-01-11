@@ -24,7 +24,7 @@ interface VoteMapType {
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      height: '100%',
+      width: '100%',
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: 'white',
