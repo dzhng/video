@@ -10,12 +10,14 @@ import {
   TextField,
   Menu,
   MenuItem,
+  Hidden,
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   MoreVert as SettingsIcon,
   HistoryOutlined as HistoryIcon,
   RssFeed as ShareIcon,
+  Menu as MenuIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 
@@ -31,8 +33,13 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(2),
       paddingRight: theme.spacing(1),
+      paddingLeft: theme.spacing(1),
       display: 'flex',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
+
+      '& >div:first-child': {
+        flexGrow: 1,
+      },
     },
     container: {
       display: 'flex',
@@ -43,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignSelf: 'center',
       alignItems: 'center',
-      width: '50%',
+      width: '90%',
       maxWidth: 400,
       flexGrow: 1,
     },
@@ -56,6 +63,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     addButton: {
+      [theme.breakpoints.up('sm')]: {
+        width: 110,
+        flexShrink: 0,
+      },
+
       '& svg': {
         marginRight: 2,
       },
@@ -101,7 +113,7 @@ function updateClipboard(newClip: string) {
   );
 }
 
-export default function SessionsMenu() {
+export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
   const router = useRouter();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -140,6 +152,14 @@ export default function SessionsMenu() {
   return (
     <div className={classes.container}>
       <div className={classes.toolbar}>
+        <div>
+          <Hidden smUp implementation="css">
+            <IconButton onClick={openDrawer}>
+              <MenuIcon />
+            </IconButton>
+          </Hidden>
+        </div>
+
         <Tooltip title="Previous sessions (Coming soon!)" placement="bottom">
           <div>
             <IconButton disabled>
@@ -174,17 +194,20 @@ export default function SessionsMenu() {
           <Divider className={classes.divider} />
 
           <Grid item xs={12} className={classes.sharePanel}>
-            <TextField
-              value={sharableCallLink}
-              variant="outlined"
-              size="small"
-              onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
-                e.target.setSelectionRange(0, 100);
-                handleShare();
-              }}
-            />
+            <Hidden xsDown implementation="js">
+              <TextField
+                value={sharableCallLink}
+                variant="outlined"
+                size="small"
+                onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+                  e.target.setSelectionRange(0, 100);
+                  handleShare();
+                }}
+              />
+            </Hidden>
             <Tooltip title="Copy link to clipboard" placement="bottom">
               <Button
+                fullWidth
                 color="secondary"
                 variant="outlined"
                 className={classes.addButton}

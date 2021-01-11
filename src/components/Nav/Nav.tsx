@@ -187,7 +187,15 @@ export default function Nav({
         </div>
       </div>
     ),
-    [classes, currentWorkspaceId, handleWorkspaceChange, isWorkspacesReady, workspaces, user],
+    [
+      classes,
+      currentWorkspaceId,
+      handleWorkspaceChange,
+      isWorkspacesReady,
+      workspaces,
+      user,
+      closeModal,
+    ],
   );
 
   const createWorkspaceModal = useMemo(

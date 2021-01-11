@@ -119,11 +119,13 @@ export default createMuiTheme({
       maxWidth: 500,
       minWidth: 325,
       width: '33%',
+      flexShrink: 0,
     },
     activitiesBarMini: {
       maxWidth: 500,
       minWidth: 300,
       width: '25%',
+      flexShrink: 0,
     },
     callButton: {
       background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
