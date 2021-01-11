@@ -71,7 +71,7 @@ export default function CreateQuestionsActivity() {
         description="By default, a participant can only submit one answer per question. We allow any participant to delete their previous submission in order to revise it."
       />
       <SwitchControl
-        name="allowAnonymousSubmission"
+        name="allowAnonymousSubmissions"
         title="Allow participants to submit anonymously"
       />
     </div>

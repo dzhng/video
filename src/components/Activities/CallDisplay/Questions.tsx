@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { values } from 'lodash';
+import { entries, values } from 'lodash';
 import * as Yup from 'yup';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Card, TextField, Button, IconButton, Tooltip } from '@material-ui/core';
@@ -21,7 +21,7 @@ interface ResponseType {
   uid: string;
   isAnonymous: boolean;
   response: string;
-  createdAt: Date;
+  createdAt: number; // since rtdb doesn't store dates, store ms timestamp
 }
 
 const ResponseSchema = Yup.string().min(1).max(500).required();
@@ -210,15 +210,15 @@ export default function QuestionsDisplay() {
         return;
       }
 
-      const now = new Date();
+      const nowMs = new Date().getTime();
       const responseObject: ResponseType = {
         uid: user.uid,
         isAnonymous,
         response,
-        createdAt: now,
+        createdAt: nowMs,
       };
       // key this by uid and timestamp, to avoid conflict with the user's prev response
-      const key = `${user.uid}.${now.getTime()}`;
+      const key = `${user.uid}-${nowMs}`;
 
       updateActivityData(
         currentActivity,
@@ -240,17 +240,20 @@ export default function QuestionsDisplay() {
     ],
   );
 
-  const handleDeleteResponse = useCallback(() => {
-    if (!currentActivity || !currentQuestion || !user) {
-      return;
-    }
+  const handleDeleteResponse = useCallback(
+    (key) => {
+      if (!currentActivity || !currentQuestion) {
+        return;
+      }
 
-    updateActivityData(
-      currentActivity,
-      `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${user.uid}`,
-      null,
-    );
-  }, [currentActivity, currentQuestion, user, updateActivityData]);
+      updateActivityData(
+        currentActivity,
+        `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${key}`,
+        null,
+      );
+    },
+    [currentActivity, currentQuestion, updateActivityData],
+  );
 
   const handleResponseChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -308,16 +311,16 @@ export default function QuestionsDisplay() {
 
         {currentResponses && (
           <div className={classes.responses}>
-            {values(currentResponses)
-              .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-              .map((response, idx) => (
+            {entries(currentResponses)
+              .sort((a, b) => b[1].createdAt - a[1].createdAt)
+              .map(([key, response], idx) => (
                 <ResponseCard
                   key={idx}
                   uid={response.uid}
                   isAnonymous={response.isAnonymous}
                   response={response.response}
                   isOwnResponse={response.uid === user?.uid}
-                  deleteResponse={() => handleDeleteResponse()}
+                  deleteResponse={() => handleDeleteResponse(key)}
                 />
               ))}
           </div>
