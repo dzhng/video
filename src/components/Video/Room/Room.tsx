@@ -26,6 +26,8 @@ const Container = styled('div')(({ theme }) => ({
 const LayoutContainer = styled('div')({
   flexGrow: 1,
   overflow: 'hidden',
+  display: 'flex',
+  alignItems: 'stretch',
 });
 
 const ControlsBar = styled('div')(({ theme }) => ({

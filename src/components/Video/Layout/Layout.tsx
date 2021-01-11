@@ -15,7 +15,6 @@ const mainItemMaxWidth = 1100;
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      height: '100%',
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'stretch',

@@ -198,6 +198,11 @@ The `connect` function from the SDK accepts a [configuration object](https://med
 
 This application dynamically changes the priority of remote video tracks to provide an optimal collaboration experience. Any video track that will be displayed in the main video area will have `track.setPriority('high')` called on it (see the [VideoTrack](https://github.com/twilio/twilio-video-app-react/blob/master/src/components/VideoTrack/VideoTrack.tsx#L25) component) when the component is mounted. This higher priority enables the track to be rendered at a high resolution. `track.setPriority(null)` is called when the component is unmounted so that the track's priority is set to its publish priority (low).
 
+### CSS
+
+Prioritize flex layout whenever possible - it is good to have one standard method of layout.
+However, be careful with using `height: 100%` on flex items as [it has undefined behavior in flex layout](https://stackoverflow.com/questions/33636796/chrome-safari-not-filling-100-height-of-flex-parent).
+
 ## TODO:
 
 - Look into moving all /pages/api functions to Cloud Functions, so can get rid of service account credentials and keep pages structure clean (frontend only)
