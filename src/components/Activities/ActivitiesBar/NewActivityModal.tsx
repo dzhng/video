@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { v1 as uuid } from 'uuid';
 import {
@@ -8,6 +9,7 @@ import {
   DialogActions,
   Grid,
   Card,
+  Tooltip,
   InputBase,
   Typography,
   IconButton,
@@ -45,6 +47,16 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
       boxShadow: theme.shadows[5],
       transition: theme.transitionTime,
+
+      // override transitions if coming soon
+      '&.comingSoon': {
+        cursor: 'default',
+        backgroundColor: theme.palette.primary.light,
+        '&:hover': {
+          backgroundColor: theme.palette.primary.light,
+          boxShadow: theme.shadows[5],
+        },
+      },
 
       '&:hover': {
         backgroundColor: theme.palette.primary.dark,
@@ -206,10 +218,18 @@ export default function NewActivityModal({
           <Grid container spacing={3}>
             {ActivityTypeConfig.map((activity) => (
               <Grid item xs={12} md={6} lg={4} key={activity.type}>
-                <Card className={classes.card} onClick={() => handleSelectType(activity.type)}>
-                  <Typography variant="h3">{activity.name}</Typography>
-                  {activity.icon}
-                </Card>
+                <Tooltip
+                  title={activity.isComingSoon ? 'Coming soon!' : activity.description}
+                  placement="bottom"
+                >
+                  <Card
+                    className={clsx(classes.card, { comingSoon: activity.isComingSoon })}
+                    onClick={() => activity.isComingSoon || handleSelectType(activity.type)}
+                  >
+                    <Typography variant="h3">{activity.name}</Typography>
+                    {activity.icon}
+                  </Card>
+                </Tooltip>
               </Grid>
             ))}
           </Grid>
