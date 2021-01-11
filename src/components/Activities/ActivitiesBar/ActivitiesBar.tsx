@@ -25,6 +25,8 @@ import ActivityCard from './ActivityCard';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      overflowY: 'scroll',
+
       '& .MuiTimelineOppositeContent-root': {
         flex: 0,
         paddingLeft: 0,

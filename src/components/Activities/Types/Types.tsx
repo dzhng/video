@@ -85,8 +85,8 @@ export const ActivityTypeConfig: {
     display: <QuestionsDisplay />,
     initialValue: {
       questions: [''], // start with 1 (invalid) option already defined
-      allowTextSubmission: true,
-      allowAnonymousSubmission: false,
+      allowMultipleSubmissions: false,
+      allowAnonymousSubmissions: false,
     },
     schema: Yup.object().shape({
       questions: Yup.array(

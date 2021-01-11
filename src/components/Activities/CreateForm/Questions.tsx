@@ -66,16 +66,14 @@ export default function CreateQuestionsActivity() {
       <Divider className={classes.divider} />
 
       <SwitchControl
-        name="allowTextSubmission"
-        title="Allow participants to submit answers with text"
-        description="During this activity, you can prompt the audience to respond to questions via voice, or allow the audience to type up their answers and submit it via text. Everyone will be able to see the submitted answers."
+        name="allowMultipleSubmissions"
+        title="Allow participants to submit multiple answers"
+        description="By default, a participant can only submit one answer per question. We allow any participant to delete their previous submission in order to revise it."
       />
-      {values.allowTextSubmission && (
-        <SwitchControl
-          name="allowAnonymousSubmission"
-          title="Allow participants to submit anonymously"
-        />
-      )}
+      <SwitchControl
+        name="allowAnonymousSubmission"
+        title="Allow participants to submit anonymously"
+      />
     </div>
   );
 }
