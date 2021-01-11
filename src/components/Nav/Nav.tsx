@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -23,7 +23,7 @@ import {
   Button,
 } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-import { VideoCallIcon, PresentIcon } from '~/components/Icons';
+import { VideoCallIcon } from '~/components/Icons';
 import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import Menu from './Menu/Menu';
@@ -95,10 +95,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Nav({
   mobileOpen,
-  toggleOpen,
+  closeModal,
 }: {
   mobileOpen: boolean;
-  toggleOpen(): void;
+  closeModal(): void;
 }) {
   const classes = useStyles();
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
@@ -128,102 +128,98 @@ export default function Nav({
   const handleCreateWorkspace = useCallback(() => {
     setIsCreatingWorkspace(false);
     createWorkspace(newWorkspaceName);
-  }, [newWorkspaceName, createWorkspace]);
+    closeModal();
+  }, [newWorkspaceName, createWorkspace, closeModal]);
 
-  const drawer = (
-    <div className={classes.drawerContent}>
-      <Typography className={classes.title} variant="h2">
-        AOMNI
-      </Typography>
-
-      <Divider className={classes.divider} />
-
-      <List className={classes.list}>
-        <Link href="/">
-          <ListItem button>
-            <ListItemIcon>
-              <VideoCallIcon />
-            </ListItemIcon>
-            <ListItemText>
-              <Typography variant="h3">Templates</Typography>
-            </ListItemText>
-          </ListItem>
-        </Link>
-
-        <Link href="/collaterals">
-          <ListItem button>
-            <ListItemIcon>
-              <PresentIcon />
-            </ListItemIcon>
-            <ListItemText>
-              <Typography variant="h3">Collatorals</Typography>
-            </ListItemText>
-          </ListItem>
-        </Link>
-      </List>
-
-      <div className={classes.drawerContentFooter}>
-        {isWorkspacesReady && workspaces ? (
-          <FormControl variant="outlined" className={classes.select}>
-            <InputLabel>Workspace</InputLabel>
-            <Select
-              label="Workspace"
-              value={currentWorkspaceId ?? ''}
-              onChange={handleWorkspaceChange}
-            >
-              {workspaces.map((workspace) => (
-                <MenuItem key={workspace.id} value={workspace.id}>
-                  <Typography variant="h4">{workspace.name}</Typography>
-                </MenuItem>
-              ))}
-              <MenuItem value={NewWorkspaceValue}>
-                <Typography variant="h4">New Workspace</Typography>
-              </MenuItem>
-            </Select>
-          </FormControl>
-        ) : (
-          <Skeleton variant="rect" height={45} className={classes.select} />
-        )}
+  const drawer = useMemo(
+    () => (
+      <div className={classes.drawerContent}>
+        <Typography className={classes.title} variant="h2">
+          AOMNI
+        </Typography>
 
         <Divider className={classes.divider} />
 
-        <div className={classes.profileMenu}>
-          <Menu />
-          <Typography className={classes.displayName} variant="h2">
-            {user?.displayName}
-          </Typography>
+        <List className={classes.list}>
+          <Link href="/">
+            <ListItem button onClick={closeModal}>
+              <ListItemIcon>
+                <VideoCallIcon />
+              </ListItemIcon>
+              <ListItemText>
+                <Typography variant="h3">Templates</Typography>
+              </ListItemText>
+            </ListItem>
+          </Link>
+        </List>
+
+        <div className={classes.drawerContentFooter}>
+          {isWorkspacesReady && workspaces ? (
+            <FormControl variant="outlined" className={classes.select}>
+              <InputLabel>Workspace</InputLabel>
+              <Select
+                label="Workspace"
+                value={currentWorkspaceId ?? ''}
+                onChange={handleWorkspaceChange}
+              >
+                {workspaces.map((workspace) => (
+                  <MenuItem key={workspace.id} value={workspace.id}>
+                    <Typography variant="h4">{workspace.name}</Typography>
+                  </MenuItem>
+                ))}
+                <MenuItem value={NewWorkspaceValue}>
+                  <Typography variant="h4">New Workspace</Typography>
+                </MenuItem>
+              </Select>
+            </FormControl>
+          ) : (
+            <Skeleton variant="rect" height={45} className={classes.select} />
+          )}
+
+          <Divider className={classes.divider} />
+
+          <div className={classes.profileMenu}>
+            <Menu />
+            <Typography className={classes.displayName} variant="h2">
+              {user?.displayName}
+            </Typography>
+          </div>
         </div>
       </div>
-    </div>
+    ),
+    [classes, currentWorkspaceId, handleWorkspaceChange, isWorkspacesReady, workspaces, user],
   );
 
-  const createWorkspaceModal = (
-    <Dialog open={isCreatingWorkspace} onClose={() => setIsCreatingWorkspace(false)}>
-      <DialogTitle>Create New Workspace</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          A workspace allows you to collaborate with a group of co-workers on calls.
-        </DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="Workspace Name"
-          type="text"
-          fullWidth
-          value={newWorkspaceName}
-          onChange={(e) => setNewWorkspaceName(e.target.value)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setIsCreatingWorkspace(false)} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleCreateWorkspace} color="primary">
-          Create
-        </Button>
-      </DialogActions>
-    </Dialog>
+  const createWorkspaceModal = useMemo(
+    () => (
+      <Dialog open={isCreatingWorkspace} onClose={() => setIsCreatingWorkspace(false)}>
+        <DialogTitle>Create New Workspace</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            A workspace allows you to collaborate with a group of co-workers on calls.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Workspace Name"
+            type="text"
+            fullWidth
+            value={newWorkspaceName}
+            onChange={(e) => setNewWorkspaceName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsCreatingWorkspace(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleCreateWorkspace} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+    ),
+    [handleCreateWorkspace, isCreatingWorkspace, newWorkspaceName],
   );
 
   const container = isBrowser ? () => window.document.body : undefined;
@@ -236,9 +232,9 @@ export default function Nav({
         <Drawer
           container={container}
           variant="temporary"
-          anchor="right"
+          anchor="left"
           open={mobileOpen}
-          onClose={toggleOpen}
+          onClose={closeModal}
           classes={{
             paper: classes.drawerPaper,
           }}
