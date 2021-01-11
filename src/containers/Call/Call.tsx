@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Drawer } from '@material-ui/core';
+import { Drawer, Hidden } from '@material-ui/core';
 
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
@@ -22,9 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
     activitiesSpacer: theme.customMixins.activitiesBarMini,
     content: {
       flexGrow: 1,
-      // this keeps large call content from growing too much and taking over activities spacer
-      // TODO: seems hacky, need better way to do this
-      flexShrink: 10,
       height: '100vh',
     },
   }),
@@ -75,27 +72,29 @@ export default function CallContainer() {
   return (
     <UnsupportedBrowserWarning>
       <div className={classes.container}>
-        <Drawer
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-          variant="permanent"
-          open
-        >
-          <TemplateTitle
-            template={template}
-            showBackButton={!!fromHref && !isCallStarted}
-            backHref={fromHref}
-            disabled={!isHost}
-          />
-          <ActivitiesBar
-            template={template}
-            mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
-            currentActivity={currentActivity}
-            startActivity={startActivity}
-          />
-        </Drawer>
-        <div className={classes.activitiesSpacer} />
+        <Hidden xsDown implementation="js">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            open
+          >
+            <TemplateTitle
+              template={template}
+              showBackButton={!!fromHref && !isCallStarted}
+              backHref={fromHref}
+              disabled={!isHost}
+            />
+            <ActivitiesBar
+              template={template}
+              mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
+              currentActivity={currentActivity}
+              startActivity={startActivity}
+            />
+          </Drawer>
+          <div className={classes.activitiesSpacer} />
+        </Hidden>
 
         <div className={classes.content}>
           <VideoProvider

@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
     },
     card: {
-      width: '50%',
+      width: '90%',
       marginLeft: 'auto',
       marginRight: 'auto',
       maxWidth: theme.modalWidth,

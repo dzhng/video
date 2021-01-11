@@ -33,6 +33,7 @@ const LayoutContainer = styled('div')({
 const ControlsBar = styled('div')(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(1),
+  flexShrink: 0,
   display: 'flex',
   justifyContent: 'center',
 }));
