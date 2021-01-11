@@ -6,6 +6,10 @@
 
 `npm install -g firebase-tools`
 
+### Install Vercel
+
+`npm install -g vercel`
+
 ### Install Java
 
 Some versions of Linux may not have Java installed by default (required for Firebase emulators)
