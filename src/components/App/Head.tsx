@@ -38,6 +38,14 @@ export default function Head({ title, description, url, ogImage }: HeadProps) {
       <meta property="og:image" content={ogImage ?? defaultOGImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+
+      {/* disable scroll bouncing effect on ios */}
+      <style>
+        {`html, body {
+            height: 100%;
+            overflow: hidden;
+        }`}
+      </style>
     </NextHead>
   );
 }
