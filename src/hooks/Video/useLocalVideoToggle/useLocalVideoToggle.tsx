@@ -8,7 +8,7 @@ export default function useLocalVideoToggle() {
     localTracks,
     onError,
   } = useVideoContext();
-  const videoTrack = localTracks.find((track) => track.name.includes('camera')) as LocalVideoTrack;
+  const videoTrack = localTracks.find((track) => track.name.includes('camera'));
 
   // tracks if currently publishing track, ignore toggle if it is still publishing
   const [isPublishing, setIsPublishing] = useState(false);
@@ -33,5 +33,5 @@ export default function useLocalVideoToggle() {
     }
   }, [videoTrack, localParticipant, isPublishing, onError]);
 
-  return [!videoTrack.isStopped, toggleVideoEnabled] as const;
+  return [videoTrack ? !videoTrack.isStopped : false, toggleVideoEnabled] as const;
 }
