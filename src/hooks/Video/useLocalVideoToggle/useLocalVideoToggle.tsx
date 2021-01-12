@@ -23,44 +23,31 @@ export default function useLocalVideoToggle() {
   // tracks if currently publishing track, ignore toggle if it is still publishing
   const [isPublishing, setIsPublishing] = useState(false);
 
-  const toggleVideoEnabled = useCallback(() => {
+  const toggleVideoEnabled = useCallback(async () => {
     if (isPublishing || !videoTrack) {
       return;
     }
 
-    // for mobile - Android chrome has a bug where it freeze when track is stopped,
+    // NOTE: for mobile - Android chrome has a bug where it freeze when track is stopped,
     // so enable/disable instead. Also makes it less resource intensive.
-    // TODO: remove trackUnpublished emit when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
-    if (isMobile) {
+    try {
       if (isEnabled) {
-        videoTrack.disable();
+        isMobile ? videoTrack.disable() : videoTrack.stop();
+
         const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
+        // TODO: remove trackUnpublished emit when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
         localParticipant?.emit('trackUnpublished', localTrackPublication);
         setIsEnabled(false);
       } else {
         setIsPublishing(true);
-        videoTrack.enable();
-        localParticipant
-          ?.publishTrack(videoTrack, { priority: 'low' })
-          .then(() => setIsEnabled(true))
-          .catch(onError)
-          .finally(() => setIsPublishing(false));
+
+        await (isMobile ? Promise.resolve(videoTrack.enable()) : videoTrack.restart());
+        await localParticipant?.publishTrack(videoTrack, { priority: 'low' });
+        setIsEnabled(true);
+        setIsPublishing(false);
       }
-    } else {
-      if (isEnabled) {
-        videoTrack.stop();
-        const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
-        localParticipant?.emit('trackUnpublished', localTrackPublication);
-        setIsEnabled(false);
-      } else {
-        setIsPublishing(true);
-        videoTrack
-          .restart()
-          .then(() => localParticipant?.publishTrack(videoTrack, { priority: 'low' }))
-          .then(() => setIsEnabled(true))
-          .catch(onError)
-          .finally(() => setIsPublishing(false));
-      }
+    } catch (e) {
+      onError(e);
     }
   }, [isEnabled, videoTrack, localParticipant, isPublishing, onError]);
 
