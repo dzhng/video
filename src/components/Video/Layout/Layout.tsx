@@ -5,24 +5,27 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 const MaxDisplayableGridItems = 50;
 
 interface StyleProps {
-  flexDirection: 'row' | 'column';
+  variant: 'grid' | 'focus';
+  isPortrait: boolean;
   itemPadding: number;
 }
 
 const mainItemWidthPercent = 70;
+const mainItemHeightPercent = 60;
 const mainItemMaxWidth = 1100;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: (props: StyleProps) => (props.isPortrait ? 'column' : 'row'),
       alignItems: 'stretch',
       width: '100%',
     },
     mainItem: {
-      width: `${mainItemWidthPercent}%`,
-      maxWidth: mainItemMaxWidth,
+      width: (props: StyleProps) => (props.isPortrait ? '100%' : `${mainItemWidthPercent}%`),
+      maxWidth: (props: StyleProps) => (props.isPortrait ? '100%' : mainItemMaxWidth),
+      height: (props: StyleProps) => (props.isPortrait ? `${mainItemHeightPercent}%` : '100%'),
       padding: theme.spacing(3),
       // less padding on bottom since controls will already have a lot
       // TODO: this feels a bit hacky since layout shouldn't know about controls
@@ -33,7 +36,7 @@ const useStyles = makeStyles((theme) =>
       flexGrow: 1,
       display: 'flex',
       overflow: 'hidden',
-      flexDirection: (props: StyleProps) => props.flexDirection,
+      flexDirection: (props: StyleProps) => (props.variant === 'grid' ? 'row' : 'column'),
       flexWrap: 'wrap',
       justifyContent: 'center',
       alignContent: 'center',
@@ -102,23 +105,28 @@ interface PropTypes {
 
 export default function VideoLayout({ width, height, variant, gridItems, mainItem }: PropTypes) {
   const displayableItems = take(gridItems, MaxDisplayableGridItems);
+  const isPortrait = height > width;
 
-  // calculate item container width based on given parent width
-  const itemContainerWidth =
-    variant === 'focus'
-      ? Math.min((width * (100 - mainItemWidthPercent)) / 100, mainItemMaxWidth)
-      : width;
+  const itemSize = useMemo<number>(() => {
+    // calculate item container width based on given parent width
+    const itemContainerWidth =
+      variant === 'focus' && !isPortrait
+        ? Math.min((width * (100 - mainItemWidthPercent)) / 100, mainItemMaxWidth)
+        : width;
 
-  const itemSize = useMemo<number>(
-    () => sizeForSquareThatFitInRect(itemContainerWidth, height, displayableItems.length),
-    [itemContainerWidth, height, displayableItems],
-  );
+    const itemContainerHeight =
+      variant === 'focus' && isPortrait ? height * ((100 - mainItemHeightPercent) / 100) : height;
 
-  const flexDirection = variant === 'grid' ? 'row' : 'column';
+    return sizeForSquareThatFitInRect(
+      itemContainerWidth,
+      itemContainerHeight,
+      displayableItems.length,
+    );
+  }, [variant, isPortrait, width, height, displayableItems]);
 
   // use 6% of item size as padding
   const itemPadding = itemSize * 0.06;
-  const classes = useStyles({ itemPadding, flexDirection });
+  const classes = useStyles({ itemPadding, variant, isPortrait });
 
   return (
     <div className={classes.container}>
