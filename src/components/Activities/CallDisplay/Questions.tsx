@@ -257,8 +257,7 @@ export default function QuestionsDisplay() {
 
   const handleResponseChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const { value } = e.target;
-      if (!currentQuestion || !ResponseSchema.isValidSync(value)) {
+      if (!currentQuestion) {
         return;
       }
 
