@@ -44,7 +44,7 @@ export const processPresentation = functions
     );
 
     // last, update original doc
-    return snap.ref.update({ slides: paths });
+    return snap.ref.update({ slides: paths, isProcessed: true });
   });
 
 export const createDefaultUserRecords = functions
