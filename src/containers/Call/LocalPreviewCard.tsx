@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       padding: theme.spacing(1),
+      flexShrink: 0,
     },
   }),
 );

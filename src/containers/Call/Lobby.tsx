@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
     joinButton: {
       height: 50,
       borderRadius: 0,
+      flexShrink: 0,
 
       '& div[role=progressbar]': {
         marginRight: theme.spacing(1),
