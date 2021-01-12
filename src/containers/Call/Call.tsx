@@ -53,7 +53,9 @@ export default function CallContainer() {
   const handleDisconnect = useCallback(() => {
     if (!isCallEnded) {
       window.location.assign(
-        `${window.location.host}/finish?fromHref=${encodeURIComponent(fromHref ?? '')}`,
+        `${window.location.protocol}//${window.location.host}/finish?fromHref=${encodeURIComponent(
+          fromHref ?? '',
+        )}`,
       );
     }
   }, [isCallEnded, fromHref]);
@@ -61,9 +63,9 @@ export default function CallContainer() {
   useEffect(() => {
     if (isCallEnded) {
       window.location.assign(
-        `${window.location.host}/finish?hostEnded=true&fromHref=${encodeURIComponent(
-          fromHref ?? '',
-        )}`,
+        `${window.location.protocol}//${
+          window.location.host
+        }/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? '')}`,
       );
     }
   }, [isCallEnded, fromHref]);
