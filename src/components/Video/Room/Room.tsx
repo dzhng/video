@@ -1,9 +1,13 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { LocalParticipant, RemoteParticipant } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
+import { Fab, Tooltip, Menu, MenuItem } from '@material-ui/core';
+import { MoreVert as SettingsIcon } from '@material-ui/icons';
 import useDimensions from 'react-cool-dimensions';
+import { useSnackbar } from 'notistack';
 
+import { isBrowser, updateClipboard } from '~/utils';
 import Controls from '~/components/Video/Controls/Controls';
 import ReconnectingNotification from '~/components/Video/ReconnectingNotification/ReconnectingNotification';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
@@ -34,7 +38,14 @@ const ControlsBar = styled('div')(({ theme }) => ({
   padding: theme.spacing(1),
   flexShrink: 0,
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+
+  '& .fab': {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.grey[900],
+    color: 'white',
+  },
 }));
 
 export default function Room() {
@@ -51,6 +62,10 @@ export default function Room() {
   // (if not set, size will overflow and will be wrong)
   const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
+  // for settings menu
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   const { currentActivity } = useCallContext();
   const {
     room: { localParticipant },
@@ -77,6 +92,15 @@ export default function Room() {
     [localParticipant, participants, participantToItem],
   );
 
+  const location = isBrowser ? window.location : ({} as Location);
+  const sharableCallLink = `${location.protocol}//${location.host}${location.pathname}`;
+
+  const handleShare = useCallback(() => {
+    updateClipboard(sharableCallLink);
+    enqueueSnackbar('URL copied to clipboard!');
+    setSettingsMenuOpen(false);
+  }, [sharableCallLink, enqueueSnackbar]);
+
   const variant = currentActivity ? 'focus' : 'grid';
 
   return (
@@ -91,9 +115,30 @@ export default function Room() {
         />
       </LayoutContainer>
       <ControlsBar>
+        <div className="left"></div>
+
         <Controls />
+
+        <div className="right">
+          <Tooltip title="Copy Call Link" placement="top" PopperProps={{ disablePortal: true }}>
+            <div ref={anchorRef}>
+              <Fab className="fab" onClick={() => setSettingsMenuOpen((state) => !state)}>
+                <SettingsIcon />
+              </Fab>
+            </div>
+          </Tooltip>
+        </div>
       </ControlsBar>
       <ReconnectingNotification />
+
+      <Menu
+        open={settingsMenuOpen}
+        onClose={() => setSettingsMenuOpen((state) => !state)}
+        anchorEl={anchorRef.current}
+      >
+        <MenuItem disabled>Call Settings</MenuItem>
+        <MenuItem onClick={handleShare}>Copy share link</MenuItem>
+      </Menu>
     </Container>
   );
 }

@@ -22,7 +22,7 @@ import { useSnackbar } from 'notistack';
 
 import { VideoCallFilledIcon } from '~/components/Icons';
 import { Collections } from '~/firebase/schema-types';
-import { isBrowser } from '~/utils';
+import { isBrowser, updateClipboard } from '~/utils';
 import { db } from '~/utils/firebase';
 import DeleteMenuItem from './DeleteMenuItem';
 
@@ -107,17 +107,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function updateClipboard(newClip: string) {
-  navigator.clipboard.writeText(newClip).then(
-    function () {
-      console.log('Copy successful!');
-    },
-    function (e) {
-      console.warn('Copy failed!', e);
-    },
-  );
-}
-
 export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
   const router = useRouter();
   const classes = useStyles();
@@ -131,9 +120,7 @@ export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
   const templateId = String(router.query.slug);
   const relativeCallLink = `/start/${templateId}`;
 
-  const sharableCallLink = `http${location.hostname === 'localhost' ? '' : 's'}://${
-    location.host
-  }${relativeCallLink}`;
+  const sharableCallLink = `${location.protocol}//${location.host}${relativeCallLink}`;
 
   // for the start call button, include from param to go back to this page
   const callHref = `${relativeCallLink}?from=${encodeURIComponent(`/template/${templateId}`)}`;

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       backgroundColor: theme.palette.grey[600],
       borderRadius: theme.shape.borderRadius,
-      boxShadow: theme.shadows[15],
+      boxShadow: theme.shadows[7],
       overflow: 'hidden',
       cursor: 'pointer',
 

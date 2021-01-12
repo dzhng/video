@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
+      boxShadow: theme.shadows[7],
     },
     header: {
       display: 'flex',
