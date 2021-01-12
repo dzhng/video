@@ -18,6 +18,7 @@ export default function Head({ title, description, url, ogImage }: HeadProps) {
       <meta charSet="UTF-8" />
       <title>{title ?? defaultTitle}</title>
       <meta name="description" content={description ?? defaultDescription} />
+      {/* this no longer applies to iOS, Apple disabled user-scalable, and other fixes are janky */}
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
