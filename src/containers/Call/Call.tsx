@@ -47,25 +47,26 @@ export default function CallContainer() {
     }
   }, [template.ongoingCallId, currentCall]);
 
-  // make sure finish page is prefetched for fast loading
-  useEffect(() => {
-    router.prefetch('/finish');
-  }, [router]);
-
   // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
   const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
 
   const handleDisconnect = useCallback(() => {
     if (!isCallEnded) {
-      router.push(`/finish?fromHref=${encodeURIComponent(fromHref ?? '')}`);
+      window.location.assign(
+        `${window.location.host}/finish?fromHref=${encodeURIComponent(fromHref ?? '')}`,
+      );
     }
-  }, [isCallEnded, router, fromHref]);
+  }, [isCallEnded, fromHref]);
 
   useEffect(() => {
     if (isCallEnded) {
-      router.push(`/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? '')}`);
+      window.location.assign(
+        `${window.location.host}/finish?hostEnded=true&fromHref=${encodeURIComponent(
+          fromHref ?? '',
+        )}`,
+      );
     }
-  }, [isCallEnded, router, fromHref]);
+  }, [isCallEnded, fromHref]);
 
   const isCallStarted: boolean = !!currentCall;
 

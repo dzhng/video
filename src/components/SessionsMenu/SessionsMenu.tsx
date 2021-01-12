@@ -52,6 +52,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '90%',
       maxWidth: 400,
       flexGrow: 1,
+      // shift things up a bit to make up for toolbar height
+      marginBottom: 60,
 
       '& a': {
         textDecoration: 'none',
