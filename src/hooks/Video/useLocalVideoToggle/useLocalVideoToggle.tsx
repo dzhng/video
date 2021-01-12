@@ -30,14 +30,26 @@ export default function useLocalVideoToggle() {
 
     // for mobile - Android chrome has a bug where it freeze when track is stopped,
     // so enable/disable instead. Also makes it less resource intensive.
+    // TODO: remove trackUnpublished emit when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
     if (isMobile) {
-      isEnabled ? videoTrack.disable() : videoTrack.enable();
-      setIsEnabled(!isEnabled);
+      if (isEnabled) {
+        videoTrack.disable();
+        const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
+        localParticipant?.emit('trackUnpublished', localTrackPublication);
+        setIsEnabled(false);
+      } else {
+        setIsPublishing(true);
+        videoTrack.enable();
+        localParticipant
+          ?.publishTrack(videoTrack, { priority: 'low' })
+          .then(() => setIsEnabled(true))
+          .catch(onError)
+          .finally(() => setIsPublishing(false));
+      }
     } else {
       if (isEnabled) {
         videoTrack.stop();
         const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
-        // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
         localParticipant?.emit('trackUnpublished', localTrackPublication);
         setIsEnabled(false);
       } else {
