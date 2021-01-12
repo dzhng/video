@@ -40,12 +40,6 @@ describe('the VideoTrack component', () => {
     expect(container.querySelector('video')!.style).toMatchObject({ objectFit: 'contain' });
   });
 
-  it('should have "object-fit: contain" applied when the track is a camera track in portrait orientation', () => {
-    mockUseVideoTrackDimensions.mockImplementationOnce(() => ({ width: 100, height: 200 }));
-    const { container } = render(<VideoTrack track={mockTrack} />);
-    expect(container.querySelector('video')!.style).toMatchObject({ objectFit: 'contain' });
-  });
-
   it('it should call the detach method when the component unmounts', () => {
     const { unmount } = render(<VideoTrack track={mockTrack} />);
     unmount();
