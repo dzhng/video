@@ -37,6 +37,8 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'row',
     },
     grid: {
+      maxHeight: '100vh',
+      overflowY: 'auto',
       paddingBottom: theme.spacing(1),
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
