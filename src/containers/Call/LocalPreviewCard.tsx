@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       maxHeight: '80vh',
+      boxShadow: theme.shadows[15],
     },
     videoContainer: {
       overflow: 'hidden',

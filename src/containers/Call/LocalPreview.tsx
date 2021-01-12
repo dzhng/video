@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      backgroundColor: theme.palette.grey[900],
       height: '100%',
     },
     card: {

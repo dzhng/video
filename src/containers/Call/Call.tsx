@@ -17,12 +17,34 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       display: 'flex',
       width: '100%',
+
+      background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #1d7b16)',
+      backgroundSize: '400% 400%',
+      animation: 'gradient 30s ease infinite',
     },
-    drawerPaper: theme.customMixins.activitiesBarMini,
+    drawerPaper: {
+      ...theme.customMixins.activitiesBarMini,
+      backgroundColor: 'rgba(255,255,255,0.75)',
+    },
     activitiesSpacer: theme.customMixins.activitiesBarMini,
     content: {
       flexGrow: 1,
       height: '100vh',
+    },
+
+    // define animation for container background
+    '@global': {
+      '@keyframes gradient': {
+        '0%': {
+          backgroundPosition: '0% 50%',
+        },
+        '50%': {
+          backgroundPosition: '100% 50%',
+        },
+        '100%': {
+          backgroundPosition: '0% 50%',
+        },
+      },
     },
   }),
 );
