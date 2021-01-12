@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import { Typography, Card, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { VideoCall } from '@material-ui/icons';
@@ -77,13 +76,16 @@ export default function TemplateCard({
             <b>{template.activities.length}</b> activities
           </Typography>
         </div>
-        <Link href={callLink}>
-          <Tooltip title="Start call" placement="left">
+        <a
+          href={callLink}
+          onClick={(e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
+        >
+          <Tooltip title="Start call" placement="top">
             <Button color="secondary" variant="contained">
               <VideoCall />
             </Button>
           </Tooltip>
-        </Link>
+        </a>
       </div>
     </Card>
   );

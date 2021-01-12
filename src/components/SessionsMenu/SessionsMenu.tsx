@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import {
   Grid,
   IconButton,
@@ -53,6 +52,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '90%',
       maxWidth: 400,
       flexGrow: 1,
+
+      '& a': {
+        textDecoration: 'none',
+      },
     },
     callButton: {
       ...theme.customMixins.callButton,
@@ -179,7 +182,7 @@ export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
       <div className={classes.content}>
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <Link href={callHref}>
+            <a href={callHref}>
               <Button
                 fullWidth
                 color="secondary"
@@ -188,7 +191,7 @@ export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
               >
                 <VideoCallFilledIcon /> Start Call
               </Button>
-            </Link>
+            </a>
           </Grid>
 
           <Divider className={classes.divider} />
