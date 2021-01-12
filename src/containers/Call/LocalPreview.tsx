@@ -15,10 +15,9 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
     },
     card: {
-      width: '90%',
+      ...theme.customMixins.modalPaper,
       marginLeft: 'auto',
       marginRight: 'auto',
-      maxWidth: theme.modalWidth,
     },
   }),
 );

@@ -4,12 +4,12 @@ import type {} from '@material-ui/lab/themeAugmentation';
 
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
-    modalWidth: number;
     headerBarHeight: number;
     transitionTime: string;
     dividerBorder: string;
 
     customMixins: {
+      modalPaper: CSSProperties;
       activitiesBar: CSSProperties;
       activitiesBarMini: CSSProperties;
       callButton: CSSProperties;
@@ -18,12 +18,12 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 
   // allow configuration using `createMuiTheme`
   interface ThemeOptions {
-    modalWidth?: number;
     headerBarHeight?: number;
     transitionTime?: string;
     dividerBorder?: string;
 
     customMixins: {
+      modalPaper?: CSSProperties;
       activitiesBar?: CSSProperties;
       activitiesBarMini?: CSSProperties;
       callButton?: CSSProperties;
@@ -109,12 +109,15 @@ export default createMuiTheme({
   },
 
   // custom
-  modalWidth: 600,
   headerBarHeight: 65,
   transitionTime: '0.3s',
   dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
 
   customMixins: {
+    modalPaper: {
+      width: '90%',
+      maxWidth: 600,
+    },
     activitiesBar: {
       maxWidth: 500,
       minWidth: 325,
