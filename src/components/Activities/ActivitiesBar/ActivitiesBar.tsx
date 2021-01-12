@@ -27,6 +27,21 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       overflowY: 'scroll',
 
+      // scroll bar customization
+      '&::-webkit-scrollbar': {
+        width: 10,
+      },
+      '&::-webkit-scrollbar-track': {
+        background: 'none',
+      },
+      '&::-webkit-scrollbar-thumb': {
+        borderRadius: 5,
+        background: theme.palette.grey[400],
+      },
+      '&::-webkit-scrollbar-thumb:hover': {
+        background: theme.palette.grey[500],
+      },
+
       '& .MuiTimelineOppositeContent-root': {
         flex: 0,
         paddingLeft: 0,
