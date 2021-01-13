@@ -19,13 +19,13 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       height: '100vh',
-      textAlign: 'center',
     },
     paper: {
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
       padding: '2em',
+      marginTop: 'calc(50vh - 150px)',
     },
     errorMessage: {
       color: 'red',
