@@ -2,8 +2,8 @@ import React, { useCallback, useState, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { LocalParticipant, RemoteParticipant } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
-import { Fab, Tooltip, Menu, MenuItem } from '@material-ui/core';
-import { MoreVert as SettingsIcon } from '@material-ui/icons';
+import { Fab, Tooltip, Menu, MenuItem, Hidden } from '@material-ui/core';
+import { MoreVert as SettingsIcon, Menu as MenuIcon } from '@material-ui/icons';
 import useDimensions from 'react-cool-dimensions';
 import { useSnackbar } from 'notistack';
 
@@ -66,7 +66,7 @@ export default function Room() {
   const anchorRef = useRef<HTMLDivElement>(null);
   const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const { currentActivity } = useCallContext();
+  const { currentActivity, setIsActivityDrawerOpen } = useCallContext();
   const {
     room: { localParticipant },
   } = useVideoContext();
@@ -114,13 +114,24 @@ export default function Room() {
           mainItem={<ActivityDisplay />}
         />
       </LayoutContainer>
+
       <ControlsBar>
-        <div className="left"></div>
+        <div className="left">
+          <Hidden smUp implementation="js">
+            <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
+              <div>
+                <Fab className="fab" onClick={() => setIsActivityDrawerOpen(true)}>
+                  <MenuIcon />
+                </Fab>
+              </div>
+            </Tooltip>
+          </Hidden>
+        </div>
 
         <Controls />
 
         <div className="right">
-          <Tooltip title="Copy Call Link" placement="top" PopperProps={{ disablePortal: true }}>
+          <Tooltip title="Call Settings" placement="top" PopperProps={{ disablePortal: true }}>
             <div ref={anchorRef}>
               <Fab className="fab" onClick={() => setSettingsMenuOpen((state) => !state)}>
                 <SettingsIcon />
@@ -129,6 +140,7 @@ export default function Room() {
           </Tooltip>
         </div>
       </ControlsBar>
+
       <ReconnectingNotification />
 
       <Menu

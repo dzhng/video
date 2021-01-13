@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Drawer, Hidden } from '@material-ui/core';
 
+import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
@@ -54,7 +55,14 @@ export default function CallContainer() {
   const router = useRouter();
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
-  const { template, isHost, currentActivity, startActivity } = useCallContext();
+  const {
+    template,
+    isHost,
+    currentActivity,
+    startActivity,
+    isActivityDrawerOpen,
+    setIsActivityDrawerOpen,
+  } = useCallContext();
 
   // URL that the back buttom goes to - set by the `from` query param. If not exist don't show back button
   const fromHref: string | undefined =
@@ -93,10 +101,45 @@ export default function CallContainer() {
   }, [isCallEnded, fromHref]);
 
   const isCallStarted: boolean = !!currentCall;
+  const container = isBrowser ? () => window.document.body : undefined;
+
+  const drawer = (
+    <>
+      <TemplateTitle
+        template={template}
+        showBackButton={!!fromHref && !isCallStarted}
+        backHref={fromHref}
+        disabled={!isHost}
+      />
+      <ActivitiesBar
+        template={template}
+        mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
+        currentActivity={currentActivity}
+        startActivity={startActivity}
+      />
+    </>
+  );
 
   return (
     <UnsupportedBrowserWarning>
       <div className={classes.container}>
+        <Hidden smUp implementation="js">
+          <Drawer
+            container={container}
+            variant="temporary"
+            anchor="left"
+            open={isActivityDrawerOpen}
+            onClose={() => setIsActivityDrawerOpen(false)}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
         <Hidden xsDown implementation="js">
           <Drawer
             classes={{
@@ -105,18 +148,7 @@ export default function CallContainer() {
             variant="permanent"
             open
           >
-            <TemplateTitle
-              template={template}
-              showBackButton={!!fromHref && !isCallStarted}
-              backHref={fromHref}
-              disabled={!isHost}
-            />
-            <ActivitiesBar
-              template={template}
-              mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
-              currentActivity={currentActivity}
-              startActivity={startActivity}
-            />
+            {drawer}
           </Drawer>
           <div className={classes.activitiesSpacer} />
         </Hidden>
