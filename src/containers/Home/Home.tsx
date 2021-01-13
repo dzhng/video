@@ -39,7 +39,9 @@ const useStyles = makeStyles((theme) =>
     grid: {
       maxHeight: '100vh',
       overflowY: 'auto',
-      paddingBottom: theme.spacing(1),
+      // add  a good amount of padding on bottom so fixed positioned intercom button doesn't
+      // overlap too much with items, it also looks better balanced with toolbar
+      paddingBottom: 72,
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
       flexGrow: 1,
