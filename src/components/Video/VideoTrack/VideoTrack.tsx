@@ -5,9 +5,13 @@ import { Track } from 'twilio-video';
 import { IVideoTrack } from '~/utils/twilio-types';
 import useMediaStreamTrack from '~/hooks/Video/useMediaStreamTrack/useMediaStreamTrack';
 
+// make the size a little bit bigger and add margin to fix issue
+// where some android browsers will display video with a 1px white border
 const Video = styled('video')({
-  width: '100%',
-  height: '100%',
+  width: 'calc(100% + 4px)',
+  height: 'calc(100% + 4px)',
+  marginTop: '-2px',
+  marginLeft: '-2px',
 });
 
 interface VideoTrackProps {

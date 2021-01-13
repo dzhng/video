@@ -25,7 +25,7 @@ import ActivityCard from './ActivityCard';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      overflowY: 'scroll',
+      overflowY: 'auto',
 
       // scroll bar customization
       '&::-webkit-scrollbar': {
