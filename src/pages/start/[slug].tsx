@@ -9,23 +9,15 @@ import LoadingContainer from '~/containers/Loading/Loading';
 import CallContainer from '~/containers/Call/Call';
 import GuestSignIn from '~/containers/Call/GuestSignIn';
 import { CallProvider } from '~/components/CallProvider';
-import useIntercom from '~/hooks/useIntercom/useIntercom';
 
 // start a call with given template id
 // TODO: all these here can probably be put into hooks and exposed in CallProvider
 export default function StartPage() {
   const router = useRouter();
-  const { showLauncher } = useIntercom();
   const { isAuthReady, user } = useAppState();
   const [template, setTemplate] = useState<LocalModel<Template>>();
   // undefined means need to fetch
   const [isHost, setIsHost] = useState<boolean | undefined>(undefined);
-
-  // make sure to hide launcher for this page, but reshow it when leaving the page
-  useEffect(() => {
-    showLauncher(false);
-    return () => showLauncher(true);
-  }, [showLauncher]);
 
   const templateId = String(router.query.slug);
 
@@ -74,18 +66,29 @@ export default function StartPage() {
   }
 
   // when both template and host status is ready, show call conatiner
-  return template && isHost !== undefined ? (
+  return (
     <>
       <Head>
         {/* On android, make browser UI dark in call mode */}
         <meta name="theme-color" content="#222" />
+        {/* disable intercom via css - cannot use hook because this page can be
+          hard loaded, and hard loading means showLauncher will be run before boot.
+          Hiding via css also means we don't get weird effects where it blinks in/out.
+        */}
+        <style>
+          {`.intercom-lightweight-app {
+          display: none;
+        }`}
+        </style>
       </Head>
 
-      <CallProvider template={template} isHost={isHost}>
-        <CallContainer />
-      </CallProvider>
+      {template && isHost !== undefined ? (
+        <CallProvider template={template} isHost={isHost}>
+          <CallContainer />
+        </CallProvider>
+      ) : (
+        <LoadingContainer />
+      )}
     </>
-  ) : (
-    <LoadingContainer />
   );
 }
