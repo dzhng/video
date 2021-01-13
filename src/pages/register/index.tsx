@@ -12,6 +12,8 @@ import {
 import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { db } from '~/utils/firebase';
+import { Collections, User } from '~/firebase/schema-types';
 
 import { useAppState } from '~/state';
 
@@ -54,8 +56,13 @@ export default function RegisterPage({ previousPage }: { previousPage?: string }
     setAuthError(null);
     setIsAuthenticating(true);
     register(email, password, name)
-      .then(() => {
-        // update display name in collection
+      .then((user) => {
+        if (user) {
+          const userData: User = {
+            displayName: user.displayName ?? name ?? 'Aomni Customer',
+          };
+          db.collection(Collections.USERS).doc(user.uid).set(userData);
+        }
         router.replace(previousPage ?? '/');
       })
       .catch((errMsg) => {
