@@ -40,7 +40,9 @@ export default function useFirebaseAuth() {
     [user],
   );
 
-  const signIn = useCallback(
+  //include google auth function
+
+  const signInWithEmailAndPassword = useCallback(
     async (email, password) => {
       // if already signed in, sign out first
       if (user) {
@@ -55,6 +57,22 @@ export default function useFirebaseAuth() {
     [user],
   );
 
+  const signInWithGoogle = useCallback(async () => {
+    // if already signed in, sign out first
+    if (user) {
+      await auth.signOut();
+      setUser(null);
+    }
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile');
+    provider.addScope('email');
+
+    const ret = await auth.signInWithPopup(provider);
+    setUser(ret.user);
+    return ret.user;
+  }, [user]);
+
   const signInAnonymously = useCallback(async () => {
     const ret = await auth.signInAnonymously();
     setUser(ret.user);
@@ -66,18 +84,30 @@ export default function useFirebaseAuth() {
     setUser(null);
   }, []);
 
-  const register = useCallback(async (email, password, name) => {
-    // const ret = await auth.createUserWithEmailAndPassword(email, password);
-    // setUser(ret.user);
-    // return ret;
-    await auth.createUserWithEmailAndPassword(email, password).then((data) => {
-      const ret = data.user?.updateProfile({
+  const register = useCallback(
+    async (email: string, password: string, name: string) => {
+      if (user) {
+        await auth.signOut();
+        setUser(null);
+      }
+      const data = await auth.createUserWithEmailAndPassword(email, password);
+      await data.user?.updateProfile({
         displayName: name,
       });
-      setUser(ret.user);
-      return ret;
-    });
-  }, []);
+      setUser(data.user);
+      return data.user;
+    },
+    [user],
+  );
 
-  return { user, signIn, signInAnonymously, signOut, isAuthReady, getToken, register };
+  return {
+    user,
+    signInWithEmailAndPassword,
+    signInWithGoogle,
+    signInAnonymously,
+    signOut,
+    isAuthReady,
+    getToken,
+    register,
+  };
 }

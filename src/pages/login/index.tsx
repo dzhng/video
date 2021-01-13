@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
@@ -14,6 +14,8 @@ import {
 
 import { useAppState } from '~/state';
 import LoadingContainer from '~/containers/Loading/Loading';
+
+const GoogleLogo = <img src="/google-logo.svg" />;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -54,7 +56,7 @@ const useStyles = makeStyles((theme) =>
 export default function LoginPage({ previousPage }: { previousPage?: string }) {
   const classes = useStyles();
   const router = useRouter();
-  const { signIn, isAuthReady } = useAppState();
+  const { signInWithEmailAndPassword, isAuthReady, signInWithGoogle } = useAppState();
   const [authError, setAuthError] = useState<Error | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [email, setEmail] = useState('');
@@ -63,7 +65,7 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
   const login = () => {
     setAuthError(null);
     setIsAuthenticating(true);
-    signIn(email, password)
+    signInWithEmailAndPassword(email, password)
       .then(() => {
         router.replace(previousPage ?? '/');
       })
@@ -72,6 +74,19 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
         setIsAuthenticating(false);
       });
   };
+
+  const loginWithGoogle = useCallback(() => {
+    setAuthError(null);
+    setIsAuthenticating(true);
+    signInWithGoogle()
+      .then(() => {
+        router.replace(previousPage ?? '/');
+      })
+      .catch((err) => {
+        setAuthError(err);
+        setIsAuthenticating(false);
+      });
+  }, [previousPage, router, signInWithGoogle]);
 
   if (!isAuthReady) {
     return <LoadingContainer />;
@@ -82,6 +97,24 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
       <Paper elevation={3} className={classes.paper}>
         <Typography variant="h1">Welcome to Aomni</Typography>
         <Typography variant="body1">Login to get started.</Typography>
+
+        {authError && (
+          <Typography variant="caption" className={classes.errorMessage}>
+            <ErrorIcon />
+            {authError.message}
+          </Typography>
+        )}
+
+        <Button
+          fullWidth
+          disabled={isAuthenticating}
+          variant="contained"
+          className={classes.button}
+          onClick={loginWithGoogle}
+          startIcon={GoogleLogo}
+        >
+          Sign in with Google
+        </Button>
 
         <FormControl>
           <InputLabel htmlFor="email">Email address</InputLabel>
@@ -105,12 +138,6 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
           />
         </FormControl>
         <br />
-        {authError && (
-          <Typography variant="caption" className={classes.errorMessage}>
-            <ErrorIcon />
-            {authError.message}
-          </Typography>
-        )}
         <br />
         <Button variant="contained" disabled={isAuthenticating} color="primary" onClick={login}>
           Login

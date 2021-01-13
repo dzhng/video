@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 
 import { useAppState } from '~/state';
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     container: {
       height: '100vh',
@@ -55,11 +55,10 @@ export default function RegisterPage({ previousPage }: { previousPage?: string }
     setIsAuthenticating(true);
     register(email, password, name)
       .then(() => {
-        // console.log("success")
+        // update display name in collection
         router.replace(previousPage ?? '/');
       })
       .catch((errMsg) => {
-        console.log(errMsg);
         setAuthError(errMsg);
         setIsAuthenticating(false);
       });
