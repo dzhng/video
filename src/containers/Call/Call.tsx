@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Drawer, Hidden } from '@material-ui/core';
@@ -95,42 +96,49 @@ export default function CallContainer() {
   const isCallStarted: boolean = !!currentCall;
 
   return (
-    <UnsupportedBrowserWarning>
-      <div className={classes.container}>
-        <Hidden xsDown implementation="js">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            <TemplateTitle
-              template={template}
-              showBackButton={!!fromHref && !isCallStarted}
-              backHref={fromHref}
-              disabled={!isHost}
-            />
-            <ActivitiesBar
-              template={template}
-              mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
-              currentActivity={currentActivity}
-              startActivity={startActivity}
-            />
-          </Drawer>
-          <div className={classes.activitiesSpacer} />
-        </Hidden>
+    <>
+      <Head>
+        {/* On android, make browser UI dark in call mode */}
+        <meta name="theme-color" content="#222" />
+      </Head>
 
-        <div className={classes.content}>
-          <VideoProvider
-            options={connectionOptions}
-            onError={setError}
-            onDisconnect={handleDisconnect}
-          >
-            <CallFlow isCallStarted={isCallStarted} />
-          </VideoProvider>
+      <UnsupportedBrowserWarning>
+        <div className={classes.container}>
+          <Hidden xsDown implementation="js">
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              variant="permanent"
+              open
+            >
+              <TemplateTitle
+                template={template}
+                showBackButton={!!fromHref && !isCallStarted}
+                backHref={fromHref}
+                disabled={!isHost}
+              />
+              <ActivitiesBar
+                template={template}
+                mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
+                currentActivity={currentActivity}
+                startActivity={startActivity}
+              />
+            </Drawer>
+            <div className={classes.activitiesSpacer} />
+          </Hidden>
+
+          <div className={classes.content}>
+            <VideoProvider
+              options={connectionOptions}
+              onError={setError}
+              onDisconnect={handleDisconnect}
+            >
+              <CallFlow isCallStarted={isCallStarted} />
+            </VideoProvider>
+          </div>
         </div>
-      </div>
-    </UnsupportedBrowserWarning>
+      </UnsupportedBrowserWarning>
+    </>
   );
 }
