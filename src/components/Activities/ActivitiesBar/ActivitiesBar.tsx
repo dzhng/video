@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       '&::-webkit-scrollbar-thumb': {
         borderRadius: 5,
-        background: theme.palette.grey[400],
+        background: 'rgba(0,0,0,0.2)',
       },
       '&::-webkit-scrollbar-thumb:hover': {
-        background: theme.palette.grey[500],
+        background: 'rgba(0,0,0,0.4)',
       },
 
       '& .MuiTimelineOppositeContent-root': {

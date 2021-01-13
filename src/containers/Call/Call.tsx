@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Drawer, Hidden } from '@material-ui/core';
@@ -21,10 +22,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
       background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #1d7b16)',
       backgroundSize: '400% 400%',
-      animation: 'gradient 30s ease infinite',
+      // steps(300) is important here since it tells browser to run at 10fps
+      // this is important for reducing cpu usage
+      animation: 'gradient 30s steps(300) infinite',
+      // do animation on gpu so its less taxing on cpu
+      transform: 'translateZ(0)',
     },
-    drawerPaper: {
-      ...theme.customMixins.activitiesBarMini,
+    drawerPaper: theme.customMixins.activitiesBarMini,
+    transparentBackground: {
       backgroundColor: 'rgba(255,255,255,0.75)',
     },
     activitiesSpacer: theme.customMixins.activitiesBarMini,
@@ -143,7 +148,7 @@ export default function CallContainer() {
         <Hidden xsDown implementation="js">
           <Drawer
             classes={{
-              paper: classes.drawerPaper,
+              paper: clsx(classes.drawerPaper, classes.transparentBackground),
             }}
             variant="permanent"
             open
