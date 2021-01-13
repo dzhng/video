@@ -53,7 +53,7 @@ export default function RegisterPage({ previousPage }: { previousPage?: string }
   const handleSubmit = () => {
     setAuthError(null);
     setIsAuthenticating(true);
-    register(email, password)
+    register(email, password, name)
       .then(() => {
         // console.log("success")
         router.replace(previousPage ?? '/');

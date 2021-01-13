@@ -62,7 +62,7 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
 
   const login = () => {
     setAuthError(null);
-    // setIsAuthenticating(true);
+    setIsAuthenticating(true);
     signIn(email, password)
       .then(() => {
         router.replace(previousPage ?? '/');

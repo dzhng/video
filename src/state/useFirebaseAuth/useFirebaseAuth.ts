@@ -66,10 +66,17 @@ export default function useFirebaseAuth() {
     setUser(null);
   }, []);
 
-  const register = useCallback(async (email, password) => {
-    const ret = await auth.createUserWithEmailAndPassword(email, password);
-    setUser(ret.user);
-    return ret;
+  const register = useCallback(async (email, password, name) => {
+    // const ret = await auth.createUserWithEmailAndPassword(email, password);
+    // setUser(ret.user);
+    // return ret;
+    await auth.createUserWithEmailAndPassword(email, password).then((data) => {
+      const ret = data.user?.updateProfile({
+        displayName: name,
+      });
+      setUser(ret.user);
+      return ret;
+    });
   }, []);
 
   return { user, signIn, signInAnonymously, signOut, isAuthReady, getToken, register };
