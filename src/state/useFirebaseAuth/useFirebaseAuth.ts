@@ -40,21 +40,20 @@ export default function useFirebaseAuth() {
     [user],
   );
 
-  const signIn = useCallback(async () => {
-    // if already signed in, sign out first
-    if (user) {
-      await auth.signOut();
-      setUser(null);
-    }
+  const signIn = useCallback(
+    async (email, password) => {
+      // if already signed in, sign out first
+      if (user) {
+        await auth.signOut();
+        setUser(null);
+      }
 
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('profile');
-    provider.addScope('email');
-
-    const ret = await auth.signInWithPopup(provider);
-    setUser(ret.user);
-    return ret.user;
-  }, [user]);
+      const ret = await auth.signInWithEmailAndPassword(email, password);
+      setUser(ret.user);
+      return ret.user;
+    },
+    [user],
+  );
 
   const signInAnonymously = useCallback(async () => {
     const ret = await auth.signInAnonymously();
@@ -67,5 +66,11 @@ export default function useFirebaseAuth() {
     setUser(null);
   }, []);
 
-  return { user, signIn, signInAnonymously, signOut, isAuthReady, getToken };
+  const register = useCallback(async (email, password) => {
+    const ret = await auth.createUserWithEmailAndPassword(email, password);
+    setUser(ret.user);
+    return ret;
+  }, []);
+
+  return { user, signIn, signInAnonymously, signOut, isAuthReady, getToken, register };
 }

@@ -26,6 +26,7 @@ export interface StateContextType {
   signOut(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
+  register(): Promise<firebase.User | null>;
 
   // workspaces
   currentWorkspaceId?: string | null;

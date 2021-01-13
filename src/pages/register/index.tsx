@@ -1,44 +1,31 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
 import {
-  Typography,
-  Button,
-  Paper,
+  makeStyles,
+  createStyles,
   Container,
+  Paper,
   FormControl,
-  Input,
   InputLabel,
+  Input,
+  Button,
+  Typography,
 } from '@material-ui/core';
+import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 import { useAppState } from '~/state';
-import LoadingContainer from '~/containers/Loading/Loading';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       height: '100vh',
+      textAlign: 'center',
     },
     paper: {
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
       padding: '2em',
-      marginTop: 'calc(50vh - 150px)',
-
-      '& h1': {
-        marginBottom: theme.spacing(1),
-      },
-      '& p': {
-        marginBottom: theme.spacing(1),
-      },
-    },
-    button: {
-      color: 'black',
-      background: 'white',
-      margin: '0.8em 0 0.7em',
-      textTransform: 'none',
     },
     errorMessage: {
       color: 'red',
@@ -51,37 +38,49 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function LoginPage({ previousPage }: { previousPage?: string }) {
-  const classes = useStyles();
+export default function RegisterPage({ previousPage }: { previousPage?: string }) {
   const router = useRouter();
-  const { signIn, isAuthReady } = useAppState();
-  const [authError, setAuthError] = useState<Error | null>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const classes = useStyles();
+
+  const { register } = useAppState();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState<Error | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  const login = () => {
+  const handleSubmit = () => {
     setAuthError(null);
-    // setIsAuthenticating(true);
-    signIn(email, password)
+    setIsAuthenticating(true);
+    register(email, password)
       .then(() => {
+        // console.log("success")
         router.replace(previousPage ?? '/');
       })
-      .catch((err) => {
-        setAuthError(err);
+      .catch((errMsg) => {
+        console.log(errMsg);
+        setAuthError(errMsg);
         setIsAuthenticating(false);
       });
   };
-
-  if (!isAuthReady) {
-    return <LoadingContainer />;
-  }
 
   return (
     <Container maxWidth="xs" className={classes.container}>
       <Paper elevation={3} className={classes.paper}>
         <Typography variant="h1">Welcome to Aomni</Typography>
-        <Typography variant="body1">Login to get started.</Typography>
+        <Typography variant="body1">Register to get started.</Typography>
+
+        <FormControl>
+          <InputLabel htmlFor="name">Name</InputLabel>
+          <Input
+            id="name"
+            aria-describedby="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </FormControl>
+        <br />
 
         <FormControl>
           <InputLabel htmlFor="email">Email address</InputLabel>
@@ -112,8 +111,13 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
           </Typography>
         )}
         <br />
-        <Button variant="contained" disabled={isAuthenticating} color="primary" onClick={login}>
-          Login
+        <Button
+          variant="contained"
+          disabled={isAuthenticating}
+          color="primary"
+          onClick={handleSubmit}
+        >
+          Register
         </Button>
       </Paper>
     </Container>
