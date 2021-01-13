@@ -9,15 +9,23 @@ import LoadingContainer from '~/containers/Loading/Loading';
 import CallContainer from '~/containers/Call/Call';
 import GuestSignIn from '~/containers/Call/GuestSignIn';
 import { CallProvider } from '~/components/CallProvider';
+import useIntercom from '~/hooks/useIntercom/useIntercom';
 
 // start a call with given template id
 // TODO: all these here can probably be put into hooks and exposed in CallProvider
 export default function StartPage() {
   const router = useRouter();
+  const { showLauncher } = useIntercom();
   const { isAuthReady, user } = useAppState();
   const [template, setTemplate] = useState<LocalModel<Template>>();
   // undefined means need to fetch
   const [isHost, setIsHost] = useState<boolean | undefined>(undefined);
+
+  // make sure to hide launcher for this page, but reshow it when leaving the page
+  useEffect(() => {
+    showLauncher(false);
+    return () => showLauncher(true);
+  }, [showLauncher]);
 
   const templateId = String(router.query.slug);
 
