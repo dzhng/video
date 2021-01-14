@@ -62,7 +62,7 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const login = () => {
+  const login = useCallback(() => {
     setAuthError(null);
     setIsAuthenticating(true);
     signInWithEmailAndPassword(email, password)
@@ -73,7 +73,7 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
         setAuthError(err);
         setIsAuthenticating(false);
       });
-  };
+  }, [email, password, previousPage, router, signInWithEmailAndPassword]);
 
   const loginWithGoogle = useCallback(() => {
     setAuthError(null);

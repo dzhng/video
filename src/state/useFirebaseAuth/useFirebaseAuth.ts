@@ -40,8 +40,6 @@ export default function useFirebaseAuth() {
     [user],
   );
 
-  //include google auth function
-
   const signInWithEmailAndPassword = useCallback(
     async (email, password) => {
       // if already signed in, sign out first

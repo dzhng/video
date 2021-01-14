@@ -42,7 +42,6 @@ const useStyles = makeStyles(() =>
 
 export default function RegisterPage({ previousPage }: { previousPage?: string }) {
   const router = useRouter();
-
   const classes = useStyles();
 
   const { register } = useAppState();
