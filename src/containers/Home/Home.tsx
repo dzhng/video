@@ -76,6 +76,9 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.grey[300],
       boxShadow: theme.shadows[3],
     },
+    cardSkeleton: {
+      borderRadius: theme.shape.borderRadius,
+    },
     divider: {
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(3),
@@ -129,7 +132,7 @@ export default function Home({
 
   const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
     <Grid item {...cardItemSizeProps} key={key}>
-      <Skeleton variant="rect" height={cardHeight} />
+      <Skeleton variant="rect" height={cardHeight} className={classes.cardSkeleton} />
     </Grid>
   ));
 
