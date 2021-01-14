@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1),
       borderBottom: theme.dividerBorder,
       height: theme.headerBarHeight,
+      // seems redundant but prevents height from being overridden
+      // due to flex layout
+      minHeight: theme.headerBarHeight,
     },
     title: {
       flexGrow: 1,

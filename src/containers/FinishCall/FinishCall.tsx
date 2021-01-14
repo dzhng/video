@@ -39,7 +39,7 @@ export default function FinishCall({ hostEnded, fromHref }: PropTypes) {
       <Typography variant="body1">{message}</Typography>
 
       <Link href={fromHref ? fromHref : '/'}>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" size="large">
           Finish
         </Button>
       </Link>

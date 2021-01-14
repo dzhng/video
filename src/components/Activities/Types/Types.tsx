@@ -28,6 +28,8 @@ const iconClassName = 'TypeIcon';
 export const ActivityTypeConfig: {
   type: ActivityTypes;
   name: string;
+  isComingSoon?: boolean;
+  description: string;
   icon: React.ReactElement;
   form: React.ReactElement;
   display: React.ReactElement;
@@ -37,6 +39,7 @@ export const ActivityTypeConfig: {
   {
     type: 'presentation',
     name: 'Presentation',
+    description: 'Present a PowerPoint or PDF slide document.',
     icon: <PresentIcon className={iconClassName} />,
     form: <PresentationForm />,
     display: <PresentationDisplay />,
@@ -46,19 +49,9 @@ export const ActivityTypeConfig: {
     }),
   },
   {
-    type: 'video',
-    name: 'Video',
-    icon: <VideoIcon className={iconClassName} />,
-    form: <VideoForm />,
-    display: <VideoDisplay />,
-    initialValue: { videoId: '' },
-    schema: Yup.object().shape({
-      videoId: Yup.string().max(30).required('Video not uploaded'),
-    }),
-  },
-  {
     type: 'poll',
     name: 'Poll',
+    description: 'Get instant feedback on a question.',
     icon: <PollIcon className={iconClassName} />,
     form: <PollForm />,
     display: <PollDisplay />,
@@ -86,13 +79,14 @@ export const ActivityTypeConfig: {
   {
     type: 'questions',
     name: 'Questions',
+    description: 'Ask participants questions with open-ended responses.',
     icon: <QuestionsIcon className={iconClassName} />,
     form: <QuestionsForm />,
     display: <QuestionsDisplay />,
     initialValue: {
       questions: [''], // start with 1 (invalid) option already defined
-      allowTextSubmission: true,
-      allowAnonymousSubmission: false,
+      allowMultipleSubmissions: false,
+      allowAnonymousSubmissions: false,
     },
     schema: Yup.object().shape({
       questions: Yup.array(
@@ -107,8 +101,23 @@ export const ActivityTypeConfig: {
     }),
   },
   {
+    type: 'video',
+    name: 'Video',
+    description: 'Watch a video together during the call.',
+    isComingSoon: true,
+    icon: <VideoIcon className={iconClassName} />,
+    form: <VideoForm />,
+    display: <VideoDisplay />,
+    initialValue: { videoId: '' },
+    schema: Yup.object().shape({
+      videoId: Yup.string().max(30).required('Video not uploaded'),
+    }),
+  },
+  {
     type: 'screenshare',
     name: 'Screenshare',
+    description: 'Share your screen to participants.',
+    isComingSoon: true,
     icon: <ScreenShareIcon className={iconClassName} />,
     form: <ScreenShareForm />,
     display: <ScreenShareDisplay />,
@@ -120,6 +129,8 @@ export const ActivityTypeConfig: {
   {
     type: 'breakout',
     name: 'Breakout',
+    description: 'Divide up the call into multiple smaller, private conversations',
+    isComingSoon: true,
     icon: <BreakoutIcon className={iconClassName} />,
     form: <BreakoutForm />,
     display: <BreakoutDisplay />,

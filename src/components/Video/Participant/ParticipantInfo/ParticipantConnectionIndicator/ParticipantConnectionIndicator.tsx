@@ -7,8 +7,8 @@ import useParticipantIsReconnecting from '~/hooks/Video/useParticipantIsReconnec
 
 const useStyles = makeStyles({
   indicator: {
-    width: '10px',
-    height: '10px',
+    width: '5px',
+    height: '5px',
     borderRadius: '100%',
     background: '#0c0',
     display: 'inline-block',

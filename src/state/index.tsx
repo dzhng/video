@@ -23,7 +23,7 @@ export interface StateContextType {
   user?: firebase.User | null;
   signInWithEmailAndPassword(name: string, password: string): Promise<firebase.User | null>;
   signInWithGoogle(): Promise<firebase.User | null>;
-  signInAnonymously(): Promise<firebase.User | null>;
+  signInAnonymously(displayName: string): Promise<firebase.User | null>;
   signOut(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;

@@ -30,6 +30,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+const sizesProp = `
+  (-webkit-min-device-pixel-ratio: 2) 50vw,
+  (min-resolution: 192dpi) 50vw,
+  (min-resolution: 2dppx) 50vw,
+  (-webkit-min-device-pixel-ratio: 3) 33.33vw,
+  (min-resolution: 288dpi) 33.33vw,
+  (min-resolution: 3dppx) 33.33vw,
+  100vw
+`;
+
 export default function Slide({ slideUrl, className, priority }: PropTypes) {
   const classes = useStyles();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -77,7 +87,8 @@ export default function Slide({ slideUrl, className, priority }: PropTypes) {
           alt="Presentation preview"
           layout="fill"
           objectFit="contain"
-          quality={100}
+          sizes={sizesProp}
+          quality={75}
           loading="eager"
           priority={priority}
           onLoad={onLoad}

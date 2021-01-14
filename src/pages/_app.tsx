@@ -10,6 +10,7 @@ import theme from '~/theme';
 import Head from '~/components/App/Head';
 import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
+import IntercomLoader from '~/components/IntercomLoader/IntercomLoader';
 import AppStateProvider from '~/state';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -36,6 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <CssBaseline />
           <PendingWrite />
           <ErrorDialog />
+          <IntercomLoader />
           <Component previousPage={previousPage} {...pageProps} />
         </SnackbarProvider>
       </AppStateProvider>

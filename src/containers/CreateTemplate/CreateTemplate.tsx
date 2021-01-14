@@ -20,8 +20,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     paper: {
+      ...theme.customMixins.modalPaper,
       padding: theme.spacing(3),
-      maxWidth: theme.modalWidth,
       // assume height maxes out at ~300px (change if needed)
       marginTop: 'calc(50vh - 150px)',
       marginLeft: 'auto',

@@ -22,7 +22,7 @@ import useTrack from '~/hooks/Video/useTrack/useTrack';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
-import PinIcon from './PinIcon/PinIcon';
+//import PinIcon from './PinIcon/PinIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,8 +34,12 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       backgroundColor: theme.palette.grey[600],
       borderRadius: theme.shape.borderRadius,
+      boxShadow: theme.shadows[7],
       overflow: 'hidden',
       cursor: 'pointer',
+
+      // fix webkit bug where borderRadius doesn't render
+      transform: 'translateZ(0)',
 
       '& video': {
         filter: 'none',
@@ -77,8 +81,10 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'black',
     },
     identity: {
-      background: 'rgba(0, 0, 0, 0.7)',
-      padding: '0.1em 0.3em',
+      height: 22,
+      background: 'rgba(255, 255, 255, 0.85)',
+      borderRadius: 11,
+      padding: '0.1em 0.6em',
       margin: 0,
       display: 'flex',
       alignItems: 'center',
@@ -86,6 +92,8 @@ const useStyles = makeStyles((theme: Theme) =>
     infoRow: {
       display: 'flex',
       justifyContent: 'space-between',
+      alignItems: 'center',
+      margin: '1%',
     },
   }),
 );
@@ -100,7 +108,7 @@ interface ParticipantInfoProps {
 export default function ParticipantInfo({
   participant,
   onClick,
-  isSelected,
+  //isSelected,
   children,
 }: ParticipantInfoProps) {
   const publications = usePublications(participant);
@@ -146,7 +154,7 @@ export default function ParticipantInfo({
           <AudioLevelIndicator audioTrack={audioTrack} />
           {!isVideoEnabled && <VideocamOff data-testid="camoff-icon" />}
           {isScreenShareEnabled && <ScreenShare data-testid="screenshare-icon" />}
-          {isSelected && <PinIcon data-testid="pin-icon" />}
+          {/*isSelected && <PinIcon data-testid="pin-icon" />*/}
         </div>
       </div>
       {isParticipantReconnecting && (

@@ -1,4 +1,4 @@
-import React, { createContext, useMemo } from 'react';
+import React, { createContext, useState, useMemo } from 'react';
 import {
   LocalModel,
   Call,
@@ -22,6 +22,8 @@ interface CallContextTypes {
   endActivity(): void;
   updateActivityData(activity: Activity, path: string | null, value: ActivityDataTypes): void;
   currentActivityData?: ActivityData;
+  isActivityDrawerOpen: boolean;
+  setIsActivityDrawerOpen(open: boolean): void;
 }
 
 interface PropTypes {
@@ -32,6 +34,8 @@ interface PropTypes {
 export const CallContext = createContext<CallContextTypes>(null!);
 
 export function CallProvider({ children, template, isHost }: React.PropsWithChildren<PropTypes>) {
+  const [isActivityDrawerOpen, setIsActivityDrawerOpen] = useState(false);
+
   const useCallProps = useCall(template);
   const useActivityProps = useActivity(useCallProps.call);
   const useCurrentActivityProps = useCurrentActivity(template, useActivityProps.currentActivityId);
@@ -43,8 +47,17 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
       ...useCurrentActivityProps,
       template,
       isHost,
+      isActivityDrawerOpen,
+      setIsActivityDrawerOpen,
     }),
-    [useCallProps, useActivityProps, useCurrentActivityProps, template, isHost],
+    [
+      useCallProps,
+      useActivityProps,
+      useCurrentActivityProps,
+      template,
+      isHost,
+      isActivityDrawerOpen,
+    ],
   );
 
   return <CallContext.Provider value={value}>{children}</CallContext.Provider>;

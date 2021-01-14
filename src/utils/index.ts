@@ -53,6 +53,17 @@ export async function ensureMediaPermissions() {
   }
 }
 
+export function updateClipboard(newClip: string) {
+  navigator.clipboard.writeText(newClip).then(
+    function () {
+      console.log('Copy successful!');
+    },
+    function (e) {
+      console.warn('Copy failed!', e);
+    },
+  );
+}
+
 // Recursively removes any object keys with a value of undefined
 export function removeUndefineds<T>(obj: T): T {
   if (!isPlainObject(obj)) return obj;

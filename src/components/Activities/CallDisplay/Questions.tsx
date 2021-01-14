@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { entries } from 'lodash';
+import { entries, values } from 'lodash';
 import * as Yup from 'yup';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Card, TextField, Button, IconButton, Tooltip } from '@material-ui/core';
@@ -18,9 +18,10 @@ const CurrentIndexKey = 'currentIndex';
 const ResponsesKey = 'responses';
 
 interface ResponseType {
+  uid: string;
   isAnonymous: boolean;
   response: string;
-  createdAt: Date;
+  createdAt: number; // since rtdb doesn't store dates, store ms timestamp
 }
 
 const ResponseSchema = Yup.string().min(1).max(500).required();
@@ -28,7 +29,7 @@ const ResponseSchema = Yup.string().min(1).max(500).required();
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      height: '100%',
+      width: '100%',
       display: 'flex',
       backgroundColor: 'white',
       flexDirection: 'column',
@@ -159,7 +160,7 @@ export default function QuestionsDisplay() {
     [currentIndex, metadata],
   );
 
-  const currentResponses = useMemo<{ [uid: string]: ResponseType } | undefined>(
+  const currentResponses = useMemo<{ [key: string]: ResponseType } | undefined>(
     () =>
       currentActivityData && currentQuestion
         ? (currentActivityData[ResponsesKey] as { [question: string]: any })?.[
@@ -167,6 +168,14 @@ export default function QuestionsDisplay() {
           ]
         : undefined,
     [currentActivityData, currentQuestion],
+  );
+
+  const haveSubmittedResponse = useMemo(
+    () =>
+      Boolean(
+        user ? values(currentResponses).find((response) => response.uid === user.uid) : false,
+      ),
+    [currentResponses, user],
   );
 
   const handleNextQuestion = useCallback(() => {
@@ -197,19 +206,23 @@ export default function QuestionsDisplay() {
 
       // check if the user already has something in current responses
       // don't allow the user to submit multiple
-      if (currentResponses?.[user.uid]) {
+      if (!metadata?.allowMultipleSubmissions && haveSubmittedResponse) {
         return;
       }
 
+      const nowMs = new Date().getTime();
       const responseObject: ResponseType = {
+        uid: user.uid,
         isAnonymous,
         response,
-        createdAt: new Date(),
+        createdAt: nowMs,
       };
+      // key this by uid and timestamp, to avoid conflict with the user's prev response
+      const key = `${user.uid}-${nowMs}`;
 
       updateActivityData(
         currentActivity,
-        `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${user.uid}`,
+        `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${key}`,
         responseObject,
       );
 
@@ -220,28 +233,31 @@ export default function QuestionsDisplay() {
       currentQuestion,
       currentActivity,
       currentActivityData,
-      currentResponses,
       updateActivityData,
       user,
+      haveSubmittedResponse,
+      metadata,
     ],
   );
 
-  const handleDeleteResponse = useCallback(() => {
-    if (!currentActivity || !currentQuestion || !user) {
-      return;
-    }
+  const handleDeleteResponse = useCallback(
+    (key) => {
+      if (!currentActivity || !currentQuestion) {
+        return;
+      }
 
-    updateActivityData(
-      currentActivity,
-      `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${user.uid}`,
-      null,
-    );
-  }, [currentActivity, currentQuestion, user, updateActivityData]);
+      updateActivityData(
+        currentActivity,
+        `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${key}`,
+        null,
+      );
+    },
+    [currentActivity, currentQuestion, updateActivityData],
+  );
 
   const handleResponseChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const { value } = e.target;
-      if (!currentQuestion || !ResponseSchema.isValidSync(value)) {
+      if (!currentQuestion) {
         return;
       }
 
@@ -255,7 +271,6 @@ export default function QuestionsDisplay() {
   }
 
   const isLastQuestion = currentIndex === metadata.questions.length - 1;
-  const haveSubmittedResponse = Boolean(user ? currentResponses?.[user.uid] : false);
 
   return (
     <div className={classes.container}>
@@ -264,7 +279,7 @@ export default function QuestionsDisplay() {
           <Typography variant="h1">{currentQuestion}</Typography>
         </Card>
 
-        {!haveSubmittedResponse && (
+        {(metadata.allowMultipleSubmissions || !haveSubmittedResponse) && (
           <div className={classes.responseContainer}>
             <TextField
               fullWidth
@@ -285,7 +300,7 @@ export default function QuestionsDisplay() {
               variant="contained"
               color="primary"
               onClick={() =>
-                handleSubmit(responseValues[currentQuestion], metadata.allowAnonymousSubmission)
+                handleSubmit(responseValues[currentQuestion], metadata.allowAnonymousSubmissions)
               }
             >
               Submit
@@ -296,15 +311,15 @@ export default function QuestionsDisplay() {
         {currentResponses && (
           <div className={classes.responses}>
             {entries(currentResponses)
-              .sort((a, b) => b[1].createdAt.getTime() - a[1].createdAt.getTime())
-              .map(([uid, response], idx) => (
+              .sort((a, b) => b[1].createdAt - a[1].createdAt)
+              .map(([key, response], idx) => (
                 <ResponseCard
                   key={idx}
-                  uid={uid}
+                  uid={response.uid}
                   isAnonymous={response.isAnonymous}
                   response={response.response}
-                  isOwnResponse={uid === user?.uid}
-                  deleteResponse={() => handleDeleteResponse()}
+                  isOwnResponse={response.uid === user?.uid}
+                  deleteResponse={() => handleDeleteResponse(key)}
                 />
               ))}
           </div>

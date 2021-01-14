@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Typography, Grid, Menu, MenuItem, IconButton, Tooltip } from '@material-ui/core';
+import { Typography, Grid, Menu, MenuItem, IconButton, Tooltip, Hidden } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { MoreVert as MoreIcon } from '@material-ui/icons';
+import { MoreVert as MoreIcon, Menu as MenuIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
 import Link from 'next/link';
 
@@ -37,10 +37,11 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'row',
     },
     grid: {
-      // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-      transform: 'translateZ(0)',
-      paddingTop: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
+      maxHeight: '100vh',
+      overflowY: 'auto',
+      // add  a good amount of padding on bottom so fixed positioned intercom button doesn't
+      // overlap too much with items, it also looks better balanced with toolbar
+      paddingBottom: 72,
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
       flexGrow: 1,
@@ -52,6 +53,17 @@ const useStyles = makeStyles((theme) =>
     titleBar: {
       display: 'flex',
       justifyContent: 'space-between',
+      alignItems: 'center',
+      height: 72,
+    },
+    titleSection: {
+      display: 'flex',
+      alignItems: 'center',
+
+      '& .MuiIconButton-root': {
+        // cancel out the padding, but don't set padding at 0 since that changes hover shape
+        marginLeft: '-12px',
+      },
     },
     title: {
       display: 'inline',
@@ -73,8 +85,6 @@ const useStyles = makeStyles((theme) =>
       marginLeft: theme.spacing(2),
     },
     settingsContainer: {
-      display: 'inline',
-
       '& button': {
         width: avatarSize,
         height: avatarSize,
@@ -129,13 +139,21 @@ export default function Home({
 
   return (
     <div className={classes.container}>
-      <Nav mobileOpen={mobileOpen} toggleOpen={() => setMobileOpen((state) => !state)} />
+      <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
 
       <Grid container className={classes.grid} spacing={3}>
         <Grid item xs={12} className={classes.titleBar}>
-          <Typography variant="h1" className={classes.title}>
-            {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}
-          </Typography>
+          <div className={classes.titleSection}>
+            <Hidden smUp implementation="css">
+              <IconButton onClick={() => setMobileOpen(true)}>
+                <MenuIcon />
+              </IconButton>
+            </Hidden>
+            <Typography variant="h1" className={classes.title}>
+              {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}
+            </Typography>
+          </div>
+
           <span className={classes.membersList}>
             {!workspace || isLoadingMembers
               ? loadingMemberSkeletons
@@ -147,8 +165,8 @@ export default function Home({
 
             <div className={classes.settingsContainer} ref={anchorRef}>
               <Tooltip title="Settings" placement="bottom">
-                {/* wrap in span so tooltip still works even with the button disabled */}
-                <span>
+                {/* wrap in div so tooltip still works even with the button disabled */}
+                <div>
                   <IconButton
                     color="inherit"
                     disabled={!workspace}
@@ -156,7 +174,7 @@ export default function Home({
                   >
                     <MoreIcon />
                   </IconButton>
-                </span>
+                </div>
               </Tooltip>
               <Menu
                 open={settingsMenuOpen}

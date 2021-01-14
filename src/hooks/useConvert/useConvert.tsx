@@ -26,7 +26,7 @@ export default function useConvert() {
   const { token, isFetchingToken } = useConvertToken();
 
   const convert = useCallback(
-    async (from: fromType, to: toType, file: File): Promise<ConvertResultFile[]> => {
+    async (from: fromType, to: toType, file: File): Promise<ConvertResultFile[] | null> => {
       if (!(token && !isFetchingToken)) {
         console.warn('Token is not ready for conversion');
         return Promise.reject('Convert API not ready');
@@ -42,7 +42,7 @@ export default function useConvert() {
 
       if (!response.ok) {
         console.warn('Invalid conversion result');
-        return Promise.reject('Invalid file format, conversion failed');
+        return null;
       }
 
       const results: ConvertResult = await response.json();

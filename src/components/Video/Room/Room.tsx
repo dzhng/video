@@ -1,9 +1,13 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { LocalParticipant, RemoteParticipant } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
+import { Fab, Tooltip, Menu, MenuItem, Hidden } from '@material-ui/core';
+import { MoreVert as SettingsIcon, Menu as MenuIcon } from '@material-ui/icons';
 import useDimensions from 'react-cool-dimensions';
+import { useSnackbar } from 'notistack';
 
+import { isBrowser, updateClipboard } from '~/utils';
 import Controls from '~/components/Video/Controls/Controls';
 import ReconnectingNotification from '~/components/Video/ReconnectingNotification/ReconnectingNotification';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
@@ -17,22 +21,31 @@ import Participant from '~/components/Video/Participant/Participant';
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
-const Container = styled('div')(({ theme }) => ({
+const Container = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: theme.palette.grey[900],
 }));
 
 const LayoutContainer = styled('div')({
   flexGrow: 1,
   overflow: 'hidden',
+  display: 'flex',
+  alignItems: 'stretch',
 });
 
 const ControlsBar = styled('div')(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(1),
+  flexShrink: 0,
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+
+  '& .fab': {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.grey[900],
+    color: 'white',
+  },
 }));
 
 export default function Room() {
@@ -49,7 +62,11 @@ export default function Room() {
   // (if not set, size will overflow and will be wrong)
   const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
-  const { currentActivity } = useCallContext();
+  // for settings menu
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const { currentActivity, setIsActivityDrawerOpen } = useCallContext();
   const {
     room: { localParticipant },
   } = useVideoContext();
@@ -75,6 +92,15 @@ export default function Room() {
     [localParticipant, participants, participantToItem],
   );
 
+  const location = isBrowser ? window.location : ({} as Location);
+  const sharableCallLink = `${location.protocol}//${location.host}${location.pathname}`;
+
+  const handleShare = useCallback(() => {
+    updateClipboard(sharableCallLink);
+    enqueueSnackbar('URL copied to clipboard!');
+    setSettingsMenuOpen(false);
+  }, [sharableCallLink, enqueueSnackbar]);
+
   const variant = currentActivity ? 'focus' : 'grid';
 
   return (
@@ -88,10 +114,43 @@ export default function Room() {
           mainItem={<ActivityDisplay />}
         />
       </LayoutContainer>
+
       <ControlsBar>
+        <div className="left">
+          <Hidden smUp implementation="js">
+            <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
+              <div>
+                <Fab className="fab" onClick={() => setIsActivityDrawerOpen(true)}>
+                  <MenuIcon />
+                </Fab>
+              </div>
+            </Tooltip>
+          </Hidden>
+        </div>
+
         <Controls />
+
+        <div className="right">
+          <Tooltip title="Call Settings" placement="top" PopperProps={{ disablePortal: true }}>
+            <div ref={anchorRef}>
+              <Fab className="fab" onClick={() => setSettingsMenuOpen((state) => !state)}>
+                <SettingsIcon />
+              </Fab>
+            </div>
+          </Tooltip>
+        </div>
       </ControlsBar>
+
       <ReconnectingNotification />
+
+      <Menu
+        open={settingsMenuOpen}
+        onClose={() => setSettingsMenuOpen((state) => !state)}
+        anchorEl={anchorRef.current}
+      >
+        <MenuItem disabled>Call Settings</MenuItem>
+        <MenuItem onClick={handleShare}>Copy share link</MenuItem>
+      </Menu>
     </Container>
   );
 }

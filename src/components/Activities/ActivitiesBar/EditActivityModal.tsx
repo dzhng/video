@@ -20,10 +20,7 @@ import { ActivityTypeConfig } from '../Types/Types';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     modal: {
-      '& .MuiDialog-paper': {
-        width: '50%',
-        maxWidth: theme.modalWidth,
-      },
+      '& .MuiDialog-paper': theme.customMixins.modalPaper,
       '& .MuiDialogContent-root': {
         paddingBottom: theme.spacing(3),
       },
