@@ -115,9 +115,7 @@ const EmailTextField = ({
   );
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
   }, [inputRef]);
 
   return (

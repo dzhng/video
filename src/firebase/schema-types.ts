@@ -46,7 +46,6 @@ export declare interface Member {
 export declare interface Invite {
   inviterId: string;
   email: string;
-  isProcessed?: boolean;
   createdAt: FbDate;
 }
 
