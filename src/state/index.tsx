@@ -22,7 +22,7 @@ export interface StateContextType {
   getToken(room: string): Promise<string>;
   user?: firebase.User | null;
   signIn(): Promise<firebase.User | null>;
-  signInAnonymously(): Promise<firebase.User | null>;
+  signInAnonymously(displayName: string): Promise<firebase.User | null>;
   signOut(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;

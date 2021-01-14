@@ -71,11 +71,14 @@ export default function GuestSignin() {
   const loginAnonymously = useCallback(() => {
     setAuthError(null);
     setIsAuthenticating(true);
-    signInAnonymously()
+    const finalDisplayName = displayName ?? 'Aomni Customer';
+
+    signInAnonymously(finalDisplayName)
       .then((user) => {
         if (user) {
+          // copy data to user record for quick querying
           const userData: User = {
-            displayName: user.displayName ?? displayName ?? 'Aomni Customer',
+            displayName: finalDisplayName,
           };
           return db.collection(Collections.USERS).doc(user.uid).set(userData);
         }

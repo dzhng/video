@@ -56,8 +56,13 @@ export default function useFirebaseAuth() {
     return ret.user;
   }, [user]);
 
-  const signInAnonymously = useCallback(async () => {
+  const signInAnonymously = useCallback(async (displayName: string) => {
     const ret = await auth.signInAnonymously();
+    // TODO: not sure if anonymous accounts supports display names, it's not being set locally right away after updating profile. Need to test this.
+    await ret.user?.updateProfile({
+      displayName,
+    });
+
     setUser(ret.user);
     return ret.user;
   }, []);

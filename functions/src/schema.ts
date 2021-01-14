@@ -10,6 +10,7 @@ export enum Collections {
   PRESENTATIONS = 'presentations',
   WORKSPACES = 'workspaces',
   MEMBERS = 'members', // this is a subcollection of workspaces
+  INVITES = 'invites', // this is a subcollection of workspaces
 }
 
 export declare interface Presentation {
@@ -34,6 +35,12 @@ export declare interface Workspace {
 export declare interface Member {
   memberId: string;
   role: 'owner' | 'member' | 'deleted';
+  createdAt: admin.firestore.FieldValue;
+}
+
+export declare interface Invite {
+  email: string;
+  isProcessed?: boolean;
   createdAt: admin.firestore.FieldValue;
 }
 
