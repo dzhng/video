@@ -1,5 +1,5 @@
-import { useEffect, useCallback } from 'react';
-import { useAppState } from '~/state';
+import firebase from '~/utils/firebase';
+import { useCallback } from 'react';
 
 declare global {
   interface Window {
@@ -8,23 +8,20 @@ declare global {
 }
 
 export default function useIntercom() {
-  const { user, isAuthReady, userRecord } = useAppState();
-
-  useEffect(() => {
-    if (userRecord && user) {
+  const boot = useCallback((user: firebase.User) => {
+    if (user) {
       window.Intercom('boot', {
         app_id: 'w0k8mz0m',
         user_id: user.uid,
-        name: userRecord.displayName,
-        email: userRecord.email,
+        email: user.email,
+        name: user.displayName,
       });
-    } else {
-      // if auth is ready and there are no record, means logged out
-      if (isAuthReady) {
-        window.Intercom('shutdown');
-      }
     }
-  }, [userRecord, user, isAuthReady]);
+  }, []);
+
+  const shutdown = useCallback(() => {
+    window.Intercom('shutdown');
+  }, []);
 
   const showLauncher = useCallback((show: boolean) => {
     window.Intercom('update', {
@@ -32,5 +29,5 @@ export default function useIntercom() {
     });
   }, []);
 
-  return { showLauncher };
+  return { boot, shutdown, showLauncher };
 }
