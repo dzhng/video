@@ -161,7 +161,7 @@ export const inviteWorkspaceMember = functions
     const workspaceName = (workspaceRecord.data() as Workspace).name;
 
     // first check if a user with that email already exist
-    admin
+    return admin
       .auth()
       .getUserByEmail(doc.email)
       .then(
@@ -175,7 +175,7 @@ export const inviteWorkspaceMember = functions
           // don't await, don't want to trigger catch block,
           // and not critically important if it fails
           const data = {
-            from: 'Team Aomni <postmaster@hello.aomni.co>',
+            from: 'Aomni <mailer@hello.aomni.co>',
             to: doc.email,
             subject: 'Hello',
             template: 'invite-existing-account',
@@ -185,15 +185,18 @@ export const inviteWorkspaceMember = functions
               dashboardLink,
             },
           };
-          mailgun.messages().send(data, function (error) {
-            console.error('Error sending email', error);
+
+          await mailgun.messages().send(data, function (error) {
+            if (error) {
+              console.error('Error sending email', error);
+            }
           });
         },
       )
-      .catch(() => {
+      .catch(async () => {
         // user does not exist, send out an invite email to the user
         const data = {
-          from: 'Team Aomni <postmaster@hello.aomni.co>',
+          from: 'Aomni <mailer@hello.aomni.co>',
           to: doc.email,
           subject: 'You have been invited to Aomni',
           template: 'invite-create-new-account',
@@ -203,8 +206,11 @@ export const inviteWorkspaceMember = functions
             registerLink,
           },
         };
-        mailgun.messages().send(data, function (error) {
-          console.error('Error sending email', error);
+
+        await mailgun.messages().send(data, function (error) {
+          if (error) {
+            console.error('Error sending email', error);
+          }
         });
       });
   });
