@@ -173,7 +173,11 @@ service cloud.firestore {
       allow read: if 
         request.auth != null &&
         resource.data.memberId == request.auth.uid;
+    }
 
+    match /{path=**}/invites/{inviteId} {
+      allow read: if 
+        request.auth != null;
     }
 
     match /workspaces/{workspaceId} {

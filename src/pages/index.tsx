@@ -125,7 +125,7 @@ export default withPrivateRoute(function IndexPage() {
 
   const addMembers = useCallback(
     async (emails: string[]) => {
-      if (!currentWorkspaceId || !user) {
+      if (!currentWorkspaceId || !user || emails.length === 0) {
         return;
       }
 
@@ -153,7 +153,7 @@ export default withPrivateRoute(function IndexPage() {
 
   const removeMembers = useCallback(
     async (ids: string[]) => {
-      if (!currentWorkspaceId) {
+      if (!currentWorkspaceId || ids.length === 0) {
         return;
       }
 

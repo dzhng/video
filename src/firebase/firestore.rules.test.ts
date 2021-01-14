@@ -220,6 +220,19 @@ describe('firebase cloud firestore database rules', () => {
 
       await firebase.assertFails(db.collection('workspaces').doc('workspace').delete());
     });
+
+    it('allows members to invite other users via email', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+      const inviteData = {
+        inviterId: 'OwnerUser',
+        email: 'hello@test.com',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      await firebase.assertSucceeds(
+        db.collection('workspaces').doc('workspace').collection('invites').add(inviteData),
+      );
+    });
   });
 
   describe('user', () => {
