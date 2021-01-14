@@ -8,10 +8,32 @@ import { Collections, Presentation, User, Workspace, Member, Invite } from './sc
 import { region, registerLink, dashboardLink } from './constants';
 
 admin.initializeApp();
+
+const store = admin.firestore();
 const mailgun = mailgunInit({
   apiKey: functions.config().mailgun.key,
   domain: functions.config().mailgun.domain,
 });
+
+async function addMemberToWorkspaceInBatch(
+  batch: FirebaseFirestore.WriteBatch,
+  memberId: string,
+  workspaceId: string,
+) {
+  const memberData: Member = {
+    memberId: memberId,
+    role: 'owner',
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  const memberRef = store
+    .collection(Collections.WORKSPACES)
+    .doc(workspaceId)
+    .collection(Collections.MEMBERS)
+    .doc(memberData.memberId);
+
+  batch.set(memberRef, memberData);
+}
 
 // TODO: test this
 // This function needs extra memory to process slide images
@@ -61,36 +83,40 @@ export const createDefaultUserRecords = functions
       return;
     }
 
-    const store = admin.firestore();
     const firstName = user.displayName ? capitalize(words(user.displayName)[0]) : null;
 
     const batch = store.batch();
 
+    // create and add new user to their default workspace
     const workspaceData: Workspace = {
       name: firstName ? `${firstName}'s Workspace` : 'My Workspace',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
     const workspaceRef = store.collection(Collections.WORKSPACES).doc();
     batch.set(workspaceRef, workspaceData);
+    addMemberToWorkspaceInBatch(batch, user.uid, workspaceRef.id);
+
+    // look at existing invites and see if the user belong to any other workspaces
+    const invites = await store
+      .collectionGroup(Collections.INVITES)
+      .where('email', '==', user.email)
+      .get();
+    invites.forEach((invite) => {
+      // add to invited workspace and delete the invite
+      addMemberToWorkspaceInBatch(batch, user.uid, invite.ref.parent.id);
+      batch.delete(invite.ref);
+    });
 
     const userData: User = {
       displayName: user.displayName ?? user.email ?? 'Aomni Customer',
       email: user.email,
       photoURL: user.photoURL,
-      defaultWorkspaceId: workspaceRef.id,
+      // for default workspace id, ideally it should be one of the invited workspace, if not fallback to default workspace
+      defaultWorkspaceId: invites.size > 0 ? invites.docs[0].ref.parent.id : workspaceRef.id,
     };
     // share same uid as auth user record
     const userRef = store.collection(Collections.USERS).doc(user.uid);
     batch.set(userRef, userData);
-
-    const memberData: Member = {
-      memberId: user.uid,
-      role: 'owner',
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-    // share the same uid as auth user record
-    const memberRef = workspaceRef.collection(Collections.MEMBERS).doc(user.uid);
-    batch.set(memberRef, memberData);
 
     await batch.commit();
   });
@@ -103,8 +129,6 @@ export const deleteWorkspaceMembers = functions
     if (!(change.after.data() as Workspace).isDeleted) {
       return;
     }
-
-    const store = admin.firestore();
 
     const members = await store
       .collection(Collections.WORKSPACES)
@@ -126,7 +150,6 @@ export const inviteWorkspaceMember = functions
   .firestore.document(`${Collections.WORKSPACES}/{workspaceId}/${Collections.INVITES}/{inviteId}`)
   .onCreate(async (snap, context) => {
     const doc = snap.data() as Invite;
-    const store = admin.firestore();
 
     const inviterUser = await admin.auth().getUser(doc.inviterId);
     const inviterName = inviterUser.displayName;
@@ -145,20 +168,7 @@ export const inviteWorkspaceMember = functions
         async (userRecord): Promise<void> => {
           // user does exist, add the user to the workspace member list and remove invite
           const batch = store.batch();
-
-          const memberData: Member = {
-            memberId: userRecord.uid,
-            role: 'owner',
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          };
-
-          const memberRef = store
-            .collection(Collections.WORKSPACES)
-            .doc(context.params.workspaceId)
-            .collection(Collections.MEMBERS)
-            .doc(memberData.memberId);
-
-          batch.set(memberRef, memberData);
+          addMemberToWorkspaceInBatch(batch, userRecord.uid, context.params.workspaceId);
           batch.delete(snap.ref);
           await batch.commit();
 
