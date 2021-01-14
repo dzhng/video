@@ -2,11 +2,16 @@ import * as functions from 'firebase-functions';
 import 'firebase-functions';
 import admin from 'firebase-admin';
 import fetch from 'isomorphic-unfetch';
+import mailgunInit from 'mailgun-js';
 import { words, capitalize } from 'lodash';
 import { Collections, Presentation, User, Workspace, Member, Invite } from './schema';
-import { region } from './constants';
+import { region, registerLink, dashboardLink } from './constants';
 
 admin.initializeApp();
+const mailgun = mailgunInit({
+  apiKey: functions.config().mailgun.key,
+  domain: functions.config().mailgun.domain,
+});
 
 // TODO: test this
 // This function needs extra memory to process slide images
@@ -123,33 +128,73 @@ export const inviteWorkspaceMember = functions
     const doc = snap.data() as Invite;
     const store = admin.firestore();
 
+    const inviterUser = await admin.auth().getUser(doc.inviterId);
+    const inviterName = inviterUser.displayName;
+
+    const workspaceRecord = await store
+      .collection(Collections.WORKSPACES)
+      .doc(context.params.workspaceId)
+      .get();
+    const workspaceName = (workspaceRecord.data() as Workspace).name;
+
     // first check if a user with that email already exist
     admin
       .auth()
       .getUserByEmail(doc.email)
-      .then((userRecord): void => {
-        // user does exist, add the user to the workspace member list and remove invite
-        const batch = store.batch();
+      .then(
+        async (userRecord): Promise<void> => {
+          // user does exist, add the user to the workspace member list and remove invite
+          const batch = store.batch();
 
-        const memberData: Member = {
-          memberId: userRecord.uid,
-          role: 'owner',
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        };
+          const memberData: Member = {
+            memberId: userRecord.uid,
+            role: 'owner',
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          };
 
-        const memberRef = store
-          .collection(Collections.WORKSPACES)
-          .doc(context.params.workspaceId)
-          .collection(Collections.MEMBERS)
-          .doc(memberData.memberId);
+          const memberRef = store
+            .collection(Collections.WORKSPACES)
+            .doc(context.params.workspaceId)
+            .collection(Collections.MEMBERS)
+            .doc(memberData.memberId);
 
-        batch.set(memberRef, memberData);
-        batch.delete(snap.ref);
-        // don't await, don't want to trigger catch block,
-        // and not critically important if it fails
-        batch.commit();
-      })
+          batch.set(memberRef, memberData);
+          batch.delete(snap.ref);
+          await batch.commit();
+
+          // don't await, don't want to trigger catch block,
+          // and not critically important if it fails
+          const data = {
+            from: 'Team Aomni <postmaster@hello.aomni.co>',
+            to: doc.email,
+            subject: 'Hello',
+            template: 'invite-existing-account',
+            'h:X-Mailgun-Variables': {
+              inviterName,
+              workspaceName,
+              dashboardLink,
+            },
+          };
+          mailgun.messages().send(data, function (error) {
+            console.error('Error sending email', error);
+          });
+        },
+      )
       .catch(() => {
         // user does not exist, send out an invite email to the user
+        const data = {
+          from: 'Team Aomni <postmaster@hello.aomni.co>',
+          to: doc.email,
+          subject: 'You have been invited to Aomni',
+          template: 'invite-create-new-account',
+          'h:X-Mailgun-Variables': {
+            inviterName,
+            workspaceName,
+            registerLink,
+          },
+        };
+        mailgun.messages().send(data, function (error) {
+          console.error('Error sending email', error);
+        });
       });
   });

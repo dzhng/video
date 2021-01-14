@@ -10,9 +10,11 @@
   },
   "main": "build/index.js",
   "dependencies": {
+    "@types/mailgun-js": "^0.22.11",
     "firebase-admin": "^9.4.1",
     "firebase-functions": "^3.13.0",
-    "isomorphic-unfetch": "^3.1.0"
+    "isomorphic-unfetch": "^3.1.0",
+    "mailgun-js": "^0.22.0"
   },
   "devDependencies": {
     "eslint": "^7.6.0",
