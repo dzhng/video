@@ -231,7 +231,8 @@ service cloud.firestore {
 
         allow create: if
           request.auth != null &&
-          assertKeys(['email', 'isProcessed', 'createdAt']) &&
+          assertKeys(['inviterId', 'email', 'isProcessed', 'createdAt']) &&
+          requiredStringKey('inviterId', 1, 30) &&
           requiredStringKey('email', 1, 50) &&
           optionalBoolKey('isProcessed') &&
           requiredCreatedAtKey();

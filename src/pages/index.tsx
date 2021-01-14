@@ -125,7 +125,7 @@ export default withPrivateRoute(function IndexPage() {
 
   const addMembers = useCallback(
     async (emails: string[]) => {
-      if (!currentWorkspaceId) {
+      if (!currentWorkspaceId || !user) {
         return;
       }
 
@@ -139,6 +139,7 @@ export default withPrivateRoute(function IndexPage() {
           .doc();
 
         const inviteData: Invite = {
+          inviterId: user.uid,
           email,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         };
@@ -147,7 +148,7 @@ export default withPrivateRoute(function IndexPage() {
 
       await batch.commit();
     },
-    [currentWorkspaceId],
+    [currentWorkspaceId, user],
   );
 
   const removeMembers = useCallback(

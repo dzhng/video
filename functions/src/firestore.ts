@@ -3,7 +3,7 @@ import 'firebase-functions';
 import admin from 'firebase-admin';
 import fetch from 'isomorphic-unfetch';
 import { words, capitalize } from 'lodash';
-import { Collections, Presentation, User, Workspace, Member } from './schema';
+import { Collections, Presentation, User, Workspace, Member, Invite } from './schema';
 import { region } from './constants';
 
 admin.initializeApp();
@@ -114,4 +114,42 @@ export const deleteWorkspaceMembers = functions
       }),
     );
     await batch.commit();
+  });
+
+export const inviteWorkspaceMember = functions
+  .region(region)
+  .firestore.document(`${Collections.WORKSPACES}/{workspaceId}/${Collections.INVITES}/{inviteId}`)
+  .onCreate(async (snap, context) => {
+    const doc = snap.data() as Invite;
+    const store = admin.firestore();
+
+    // first check if a user with that email already exist
+    admin
+      .auth()
+      .getUserByEmail(doc.email)
+      .then((userRecord): void => {
+        // user does exist, add the user to the workspace member list and remove invite
+        const batch = store.batch();
+
+        const memberData: Member = {
+          memberId: userRecord.uid,
+          role: 'owner',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        };
+
+        const memberRef = store
+          .collection(Collections.WORKSPACES)
+          .doc(context.params.workspaceId)
+          .collection(Collections.MEMBERS)
+          .doc(memberData.memberId);
+
+        batch.set(memberRef, memberData);
+        batch.delete(snap.ref);
+        // don't await, don't want to trigger catch block,
+        // and not critically important if it fails
+        batch.commit();
+      })
+      .catch(() => {
+        // user does not exist, send out an invite email to the user
+      });
   });

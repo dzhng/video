@@ -60,6 +60,19 @@ When writing functions, make sure they are idempotent as they can be run multipl
 
 Take extra care when renaming a background function, make sure to deploy the new one first before deleting the old one, so that they'll both run in parellel during the process. This is to prevent any time period where no background functions are deployed (this is also why idempotentcy is importent).
 
+### Env variables
+
+The typical Firestore environment variables are set automatically by cloud functions. However 3rd party services needs to have their environment variables added to the runtime.
+
+To set environment variable:
+
+`firebase functions:config:set service.key="KEY"`
+
+Currently the following keys needs to be set:
+
+`mailgun.key`
+`mailgun.domain`
+
 ### Firestore
 
 When updating indexes, if removing any index, make sure to deploy the new index first. It is probably better to do this manually than via the deployment script as that will remove the old index right away. As new indexes takes some time to create, there will be a significant down time when the app is non-functional.
