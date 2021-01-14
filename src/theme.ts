@@ -43,7 +43,7 @@ export default createMuiTheme({
     type: 'light',
   },
   typography: {
-    // for main page title
+    // for hero text
     h1: {
       fontSize: '1.4rem',
       fontWeight: 400,

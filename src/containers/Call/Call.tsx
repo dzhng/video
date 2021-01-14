@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       width: '100%',
 
-      background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #1d7b16)',
+      background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
       backgroundSize: '400% 400%',
       // steps(300) is important here since it tells browser to run at 10fps
       // this is important for reducing cpu usage

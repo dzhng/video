@@ -76,9 +76,9 @@ export default function StartPage() {
           Hiding via css also means we don't get weird effects where it blinks in/out.
         */}
         <style>
-          {`.intercom-lightweight-app {
-          display: none;
-        }`}
+          {`#intercom-container {
+            display: none;
+          }`}
         </style>
       </Head>
 
