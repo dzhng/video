@@ -179,11 +179,11 @@ export const inviteWorkspaceMember = functions
             to: doc.email,
             subject: 'Hello',
             template: 'invite-existing-account',
-            'h:X-Mailgun-Variables': {
+            'h:X-Mailgun-Variables': JSON.stringify({
               inviterName,
               workspaceName,
               dashboardLink,
-            },
+            }),
           };
 
           await mailgun.messages().send(data, function (error) {
@@ -200,11 +200,11 @@ export const inviteWorkspaceMember = functions
           to: doc.email,
           subject: 'You have been invited to Aomni',
           template: 'invite-create-new-account',
-          'h:X-Mailgun-Variables': {
+          'h:X-Mailgun-Variables': JSON.stringify({
             inviterName,
             workspaceName,
             registerLink,
-          },
+          }),
         };
 
         await mailgun.messages().send(data, function (error) {
