@@ -97,13 +97,18 @@ export const createDefaultUserRecords = functions
     addMemberToWorkspaceInBatch(batch, user.uid, workspaceRef.id);
 
     // look at existing invites and see if the user belong to any other workspaces
+    let lastInvitedWorkspaceId: string | undefined;
     const invites = await store
       .collectionGroup(Collections.INVITES)
       .where('email', '==', user.email)
       .get();
     invites.forEach((invite) => {
       // add to invited workspace and delete the invite
-      addMemberToWorkspaceInBatch(batch, user.uid, invite.ref.parent.id);
+      const workspaceId = invite.ref.parent.parent?.id;
+      if (workspaceId) {
+        addMemberToWorkspaceInBatch(batch, user.uid, workspaceId);
+        lastInvitedWorkspaceId = workspaceId;
+      }
       batch.delete(invite.ref);
     });
 
@@ -112,7 +117,7 @@ export const createDefaultUserRecords = functions
       email: user.email,
       photoURL: user.photoURL,
       // for default workspace id, ideally it should be one of the invited workspace, if not fallback to default workspace
-      defaultWorkspaceId: invites.size > 0 ? invites.docs[0].ref.parent.id : workspaceRef.id,
+      defaultWorkspaceId: lastInvitedWorkspaceId ?? workspaceRef.id,
     };
     // share same uid as auth user record
     const userRef = store.collection(Collections.USERS).doc(user.uid);
