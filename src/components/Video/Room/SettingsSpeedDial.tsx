@@ -7,10 +7,11 @@ import {
   MoreVert as SettingsIcon,
   ShareOutlined as ShareIcon,
   Fullscreen as FullscreenIcon,
-  SwitchVideoOutlined as SwitchCameraIcon,
+  FlipCameraIosOutlined as SwitchCameraIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 import { isBrowser, updateClipboard } from '~/utils';
+import useSwitchCamera from '~/hooks/Video/useSwitchCamera/useSwitchCamera';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -31,10 +32,13 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
+type ActionsType = { icon: React.ReactNode; name: string; onClick(): void; disabled?: boolean }[];
+
 export default function SettingsSpeedDial({ className }: { className?: string }) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
+  const { isSupported, shouldDisable, toggleCamera } = useSwitchCamera();
 
   const location = isBrowser ? window.location : ({} as Location);
   const sharableCallLink = `${location.protocol}//${location.host}${location.pathname}`;
@@ -48,8 +52,15 @@ export default function SettingsSpeedDial({ className }: { className?: string })
   const actions = [
     { icon: <ShareIcon />, name: 'Copy Link', onClick: handleShare },
     { icon: <FullscreenIcon />, name: 'Full Screen', onClick: () => null },
-    { icon: <SwitchCameraIcon />, name: 'Swith Camera', onClick: () => null },
-  ];
+    isSupported
+      ? {
+          icon: <SwitchCameraIcon />,
+          name: 'Swith Camera',
+          onClick: toggleCamera,
+          disabled: shouldDisable,
+        }
+      : null,
+  ].filter((el) => !!el) as ActionsType;
 
   return (
     <>
@@ -69,6 +80,9 @@ export default function SettingsSpeedDial({ className }: { className?: string })
             tooltipTitle={action.name}
             tooltipOpen
             onClick={action.onClick}
+            FabProps={{
+              disabled: action.disabled,
+            }}
           />
         ))}
       </SpeedDial>

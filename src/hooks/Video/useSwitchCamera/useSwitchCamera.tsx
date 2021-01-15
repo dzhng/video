@@ -1,13 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
-import { IconButton } from '@material-ui/core';
+import { useCallback, useEffect, useState } from 'react';
 import { LocalVideoTrack } from 'twilio-video';
 
 import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
 import useMediaStreamTrack from '~/hooks/Video/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 
-export default function FlipCameraButton() {
+export default function useSwitchCamera() {
   const { localTracks, devices } = useVideoContext();
   const [supportsFacingMode, setSupportsFacingMode] = useState<Boolean | null>(null);
   const videoTrack = localTracks.find((track) => track.name.includes('camera')) as LocalVideoTrack;
@@ -26,7 +24,7 @@ export default function FlipCameraButton() {
     }
   }, [mediaStreamTrack, supportsFacingMode]);
 
-  const toggleFacingMode = useCallback(() => {
+  const toggleCamera = useCallback(() => {
     const newFacingMode =
       mediaStreamTrack?.getSettings().facingMode === 'user' ? 'environment' : 'user';
     videoTrack.restart({
@@ -35,9 +33,9 @@ export default function FlipCameraButton() {
     });
   }, [mediaStreamTrack, videoTrack]);
 
-  return supportsFacingMode && videoDeviceList.length > 1 ? (
-    <IconButton onClick={toggleFacingMode} disabled={!videoTrack}>
-      <FlipCameraIosIcon />
-    </IconButton>
-  ) : null;
+  const isSupported: boolean = Boolean(supportsFacingMode && videoDeviceList.length > 1);
+
+  const shouldDisable: boolean = !videoTrack;
+
+  return { isSupported, shouldDisable, toggleCamera };
 }
