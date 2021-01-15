@@ -77,7 +77,9 @@ export default function useLocalVideoToggle(
 
     setIsPublishing(true);
     if (isEnabled) {
+      videoTrack.disable();
       localParticipant?.unpublishTrack(videoTrack);
+      await new Promise((resovle) => setTimeout(resovle));
     }
 
     const newFacingMode =
@@ -89,6 +91,7 @@ export default function useLocalVideoToggle(
 
     // turn video back on
     if (isEnabled) {
+      videoTrack.enable();
       await localParticipant?.publishTrack(videoTrack, { priority: 'low' });
     }
 
