@@ -47,6 +47,7 @@ export default function useSwitchCamera() {
 
     // turn video back on
     if (isEnabled) {
+      videoTrack.enable();
       await localParticipant?.publishTrack(videoTrack, { priority: 'low' });
     }
   }, [mediaStreamTrack, videoTrack, isEnabled, localParticipant]);
