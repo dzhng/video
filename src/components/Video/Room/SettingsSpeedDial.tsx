@@ -12,6 +12,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { isBrowser, updateClipboard } from '~/utils';
 import useSwitchCamera from '~/hooks/Video/useSwitchCamera/useSwitchCamera';
+import useFullScreenToggle from '~/hooks/Video/useFullScreenToggle/useFullScreenToggle';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -38,7 +39,8 @@ export default function SettingsSpeedDial({ className }: { className?: string })
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
-  const { isSupported, shouldDisable, toggleCamera } = useSwitchCamera();
+  const { isSupported: isToggleCameraSupported, shouldDisable, toggleCamera } = useSwitchCamera();
+  const { isSupported: isFullScreenSupported, toggleFullScreen } = useFullScreenToggle();
 
   const location = isBrowser ? window.location : ({} as Location);
   const sharableCallLink = `${location.protocol}//${location.host}${location.pathname}`;
@@ -51,8 +53,10 @@ export default function SettingsSpeedDial({ className }: { className?: string })
 
   const actions = [
     { icon: <ShareIcon />, name: 'Copy Link', onClick: handleShare },
-    { icon: <FullscreenIcon />, name: 'Full Screen', onClick: () => null },
-    isSupported
+    isFullScreenSupported
+      ? { icon: <FullscreenIcon />, name: 'Full Screen', onClick: toggleFullScreen }
+      : null,
+    isToggleCameraSupported
       ? {
           icon: <SwitchCameraIcon />,
           name: 'Swith Camera',
