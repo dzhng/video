@@ -40,6 +40,7 @@ export default function useSwitchCamera() {
       localParticipant?.unpublishTrack(videoTrack);
     }
 
+    await new Promise((resolve) => setTimeout(resolve));
     await videoTrack.restart({
       ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
       facingMode: newFacingMode,
@@ -47,8 +48,8 @@ export default function useSwitchCamera() {
 
     // turn video back on
     if (isEnabled) {
-      videoTrack.enable();
       await localParticipant?.publishTrack(videoTrack, { priority: 'low' });
+      videoTrack.enable();
     }
   }, [mediaStreamTrack, videoTrack, isEnabled, localParticipant]);
 
