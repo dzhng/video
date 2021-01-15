@@ -16,7 +16,7 @@ export default function useLocalVideoToggle() {
   // everytime video track changes, set a new enabled flag
   useEffect(() => {
     if (videoTrack) {
-      setIsEnabled(true);
+      setIsEnabled(isMobile ? videoTrack.isEnabled : !videoTrack.isStopped);
     }
   }, [videoTrack]);
 

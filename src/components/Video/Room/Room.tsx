@@ -1,13 +1,11 @@
-import React, { useCallback, useState, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { LocalParticipant, RemoteParticipant } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
-import { Fab, Tooltip, Menu, MenuItem, Hidden } from '@material-ui/core';
-import { MoreVert as SettingsIcon, Menu as MenuIcon } from '@material-ui/icons';
+import { Fab, Tooltip, Hidden } from '@material-ui/core';
+import { Menu as MenuIcon } from '@material-ui/icons';
 import useDimensions from 'react-cool-dimensions';
-import { useSnackbar } from 'notistack';
 
-import { isBrowser, updateClipboard } from '~/utils';
 import Controls from '~/components/Video/Controls/Controls';
 import ReconnectingNotification from '~/components/Video/ReconnectingNotification/ReconnectingNotification';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
@@ -17,6 +15,7 @@ import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
+import SettingsSpeedDial from './SettingsSpeedDial';
 
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
@@ -43,8 +42,13 @@ const ControlsBar = styled('div')(({ theme }) => ({
 
   '& .fab': {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.grey[900],
     color: 'white',
+  },
+
+  '& .rightSpeedDial': {
+    position: 'absolute',
+    bottom: theme.spacing(1),
+    right: theme.spacing(1),
   },
 }));
 
@@ -62,10 +66,6 @@ export default function Room() {
   // (if not set, size will overflow and will be wrong)
   const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
-  // for settings menu
-  const anchorRef = useRef<HTMLDivElement>(null);
-  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
   const { currentActivity, setIsActivityDrawerOpen } = useCallContext();
   const {
     room: { localParticipant },
@@ -92,15 +92,6 @@ export default function Room() {
     [localParticipant, participants, participantToItem],
   );
 
-  const location = isBrowser ? window.location : ({} as Location);
-  const sharableCallLink = `${location.protocol}//${location.host}${location.pathname}`;
-
-  const handleShare = useCallback(() => {
-    updateClipboard(sharableCallLink);
-    enqueueSnackbar('URL copied to clipboard!');
-    setSettingsMenuOpen(false);
-  }, [sharableCallLink, enqueueSnackbar]);
-
   const variant = currentActivity ? 'focus' : 'grid';
 
   return (
@@ -116,7 +107,7 @@ export default function Room() {
       </LayoutContainer>
 
       <ControlsBar>
-        <div className="left">
+        <div className="left" style={{ width: 72 }}>
           <Hidden smUp implementation="js">
             <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
               <div>
@@ -130,27 +121,12 @@ export default function Room() {
 
         <Controls />
 
-        <div className="right">
-          <Tooltip title="Call Settings" placement="top" PopperProps={{ disablePortal: true }}>
-            <div ref={anchorRef}>
-              <Fab className="fab" onClick={() => setSettingsMenuOpen((state) => !state)}>
-                <SettingsIcon />
-              </Fab>
-            </div>
-          </Tooltip>
+        <div className="right" style={{ width: 72, height: 72, position: 'relative' }}>
+          <SettingsSpeedDial className="rightSpeedDial" />
         </div>
       </ControlsBar>
 
       <ReconnectingNotification />
-
-      <Menu
-        open={settingsMenuOpen}
-        onClose={() => setSettingsMenuOpen((state) => !state)}
-        anchorEl={anchorRef.current}
-      >
-        <MenuItem disabled>Call Settings</MenuItem>
-        <MenuItem onClick={handleShare}>Copy share link</MenuItem>
-      </Menu>
     </Container>
   );
 }
