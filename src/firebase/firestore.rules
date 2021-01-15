@@ -125,10 +125,10 @@ service cloud.firestore {
         requiredArrayKey('activities', 0, 100) &&
 
         // when creating, make sure creatorId is set
-        // when editing, make sure only creator can edit
+        // when editing, make sure only members from the same workspace
         (isNewDoc() ? 
           (request.resource.data.creatorId == request.auth.uid) : 
-          (resource.data.creatorId == request.auth.uid));
+          (exists(/databases/$(database)/documents/workspaces/$(resource.data.workspaceId)/members/$(request.auth.uid))));
     } // match template
 
     match /calls/{callId} {

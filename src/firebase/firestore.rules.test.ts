@@ -348,8 +348,8 @@ describe('firebase cloud firestore database rules', () => {
       );
     });
 
-    it('should let creators update the template', async () => {
-      const db = getAuthedFirestore({ uid: 'alice' });
+    it('should let workspace members update the template', async () => {
+      let db = getAuthedFirestore({ uid: 'alice' });
       let template = db.collection('templates').doc('doc');
       await template.set({
         ...requiredFields,
@@ -358,6 +358,15 @@ describe('firebase cloud firestore database rules', () => {
       });
 
       // unsetting a activity
+      await firebase.assertFails(
+        template.update({
+          activities: ['hello'],
+        }),
+      );
+
+      db = getAuthedFirestore({ uid: 'OwnerUser' });
+      template = db.collection('templates').doc('doc');
+
       await firebase.assertSucceeds(
         template.update({
           activities: ['hello'],
