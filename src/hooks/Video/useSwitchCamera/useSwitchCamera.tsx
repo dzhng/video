@@ -34,11 +34,7 @@ export default function useSwitchCamera() {
     const newFacingMode =
       mediaStreamTrack?.getSettings().facingMode === 'user' ? 'environment' : 'user';
 
-    // first turn off video if enabled
-    if (isEnabled) {
-      videoTrack.disable();
-      localParticipant?.unpublishTrack(videoTrack);
-    }
+    localParticipant?.unpublishTrack(videoTrack);
 
     await new Promise((resolve) => setTimeout(resolve));
     await videoTrack.restart({
@@ -47,11 +43,8 @@ export default function useSwitchCamera() {
     });
 
     // turn video back on
-    if (isEnabled) {
-      await localParticipant?.publishTrack(videoTrack, { priority: 'low' });
-      videoTrack.enable();
-    }
-  }, [mediaStreamTrack, videoTrack, isEnabled, localParticipant]);
+    await localParticipant?.publishTrack(videoTrack, { priority: 'low' });
+  }, [mediaStreamTrack, videoTrack, localParticipant]);
 
   const isSupported: boolean = Boolean(supportsFacingMode && videoDeviceList.length > 1);
 

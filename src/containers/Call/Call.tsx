@@ -87,23 +87,25 @@ export default function CallContainer() {
 
   const handleDisconnect = useCallback(() => {
     if (!isCallEnded) {
-      window.location.assign(
+      /*window.location.assign(
         `${window.location.protocol}//${window.location.host}/finish?fromHref=${encodeURIComponent(
           fromHref ?? '',
         )}`,
-      );
+        );*/
+      router.replace(`/finish?fromHref=${encodeURIComponent(fromHref ?? '')}`);
     }
-  }, [isCallEnded, fromHref]);
+  }, [isCallEnded, fromHref, router]);
 
   useEffect(() => {
     if (isCallEnded) {
-      window.location.assign(
+      /*window.location.assign(
         `${window.location.protocol}//${
           window.location.host
         }/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? '')}`,
-      );
+        );*/
+      router.replace(`/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? '')}`);
     }
-  }, [isCallEnded, fromHref]);
+  }, [isCallEnded, fromHref, router]);
 
   const isCallStarted: boolean = !!currentCall;
   const container = isBrowser ? () => window.document.body : undefined;
