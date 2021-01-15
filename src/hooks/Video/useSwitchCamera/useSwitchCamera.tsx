@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { LocalVideoTrack } from 'twilio-video';
 
-//import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
+import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
 import useMediaStreamTrack from '~/hooks/Video/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useLocalVideoToggle from '~/hooks/Video/useLocalVideoToggle/useLocalVideoToggle';
 
 export default function useSwitchCamera() {
-  const { localTracks, devices, getLocalVideoTrack } = useVideoContext();
+  const { localTracks, devices } = useVideoContext();
   const [isEnabled] = useLocalVideoToggle();
   const [supportsFacingMode, setSupportsFacingMode] = useState<Boolean | null>(null);
   const videoTrack = localTracks.find((track) => track.name.includes('camera')) as LocalVideoTrack;
@@ -31,14 +31,13 @@ export default function useSwitchCamera() {
       mediaStreamTrack?.getSettings().facingMode === 'user' ? 'environment' : 'user';
 
     videoTrack.disable();
-    /*await videoTrack.restart({
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    await videoTrack.restart({
       ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
       facingMode: newFacingMode,
-      });*/
-    //videoTrack.enable();
-    // experiment - just get new track, don't stop old one
-    getLocalVideoTrack({ facingMode: newFacingMode });
-  }, [mediaStreamTrack, videoTrack, getLocalVideoTrack]);
+    });
+    videoTrack.enable();
+  }, [mediaStreamTrack, videoTrack]);
 
   const isSupported: boolean = Boolean(supportsFacingMode && videoDeviceList.length > 1);
 
