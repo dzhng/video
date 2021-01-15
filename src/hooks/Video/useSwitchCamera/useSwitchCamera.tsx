@@ -7,8 +7,12 @@ import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useLocalVideoToggle from '~/hooks/Video/useLocalVideoToggle/useLocalVideoToggle';
 
 export default function useSwitchCamera() {
-  const { localTracks, devices } = useVideoContext();
-  const [isEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+  const {
+    room: { localParticipant },
+    localTracks,
+    devices,
+  } = useVideoContext();
+  const [isEnabled] = useLocalVideoToggle();
   const [supportsFacingMode, setSupportsFacingMode] = useState<Boolean | null>(null);
   const videoTrack = localTracks.find((track) => track.name.includes('camera')) as LocalVideoTrack;
   const mediaStreamTrack = useMediaStreamTrack(videoTrack);
@@ -32,8 +36,8 @@ export default function useSwitchCamera() {
 
     // first turn off video if enabled
     if (isEnabled) {
-      await toggleVideoEnabled();
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      videoTrack.disable();
+      localParticipant?.unpublishTrack(videoTrack);
     }
 
     await videoTrack.restart({
@@ -43,10 +47,9 @@ export default function useSwitchCamera() {
 
     // turn video back on
     if (isEnabled) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await toggleVideoEnabled();
+      await localParticipant?.publishTrack(videoTrack, { priority: 'low' });
     }
-  }, [mediaStreamTrack, videoTrack, isEnabled, toggleVideoEnabled]);
+  }, [mediaStreamTrack, videoTrack, isEnabled, localParticipant]);
 
   const isSupported: boolean = Boolean(supportsFacingMode && videoDeviceList.length > 1);
 
