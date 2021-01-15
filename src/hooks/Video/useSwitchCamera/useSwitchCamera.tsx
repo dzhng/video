@@ -4,9 +4,11 @@ import { LocalVideoTrack } from 'twilio-video';
 import { DEFAULT_VIDEO_CONSTRAINTS } from '~/constants';
 import useMediaStreamTrack from '~/hooks/Video/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useLocalVideoToggle from '~/hooks/Video/useLocalVideoToggle/useLocalVideoToggle';
 
 export default function useSwitchCamera() {
   const { localTracks, devices } = useVideoContext();
+  const [isEnabled] = useLocalVideoToggle();
   const [supportsFacingMode, setSupportsFacingMode] = useState<Boolean | null>(null);
   const videoTrack = localTracks.find((track) => track.name.includes('camera')) as LocalVideoTrack;
   const mediaStreamTrack = useMediaStreamTrack(videoTrack);
@@ -37,7 +39,7 @@ export default function useSwitchCamera() {
 
   const isSupported: boolean = Boolean(supportsFacingMode && videoDeviceList.length > 1);
 
-  const shouldDisable: boolean = !videoTrack;
+  const shouldDisable: boolean = !videoTrack || !isEnabled;
 
   return { isSupported, shouldDisable, toggleCamera };
 }

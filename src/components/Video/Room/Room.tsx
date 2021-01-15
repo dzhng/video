@@ -41,6 +41,7 @@ const ControlsBar = styled('div')(({ theme }) => ({
   alignItems: 'center',
 
   '& .fab': {
+    backgroundColor: theme.palette.grey[900],
     margin: theme.spacing(1),
     color: 'white',
   },

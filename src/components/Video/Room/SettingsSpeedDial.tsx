@@ -56,20 +56,30 @@ export default function SettingsSpeedDial({ className }: { className?: string })
     setOpen(false);
   }, [sharableCallLink, enqueueSnackbar]);
 
+  const handleToggleCamera = useCallback(() => {
+    toggleCamera();
+    setOpen(false);
+  }, [toggleCamera]);
+
+  const handleToggleFullScreen = useCallback(() => {
+    toggleFullScreen();
+    setOpen(false);
+  }, [toggleFullScreen]);
+
   const actions = [
     { icon: <ShareIcon />, name: 'Copy Link', onClick: handleShare },
     isFullScreenSupported
       ? {
           icon: isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />,
           name: isFullScreen ? 'Exit Full Screen' : 'Full Screen',
-          onClick: toggleFullScreen,
+          onClick: handleToggleFullScreen,
         }
       : null,
     isToggleCameraSupported
       ? {
           icon: <SwitchCameraIcon />,
           name: 'Swith Camera',
-          onClick: toggleCamera,
+          onClick: handleToggleCamera,
           disabled: shouldDisable,
         }
       : null,
