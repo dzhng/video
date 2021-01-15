@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ToggleVideoButton(props: { disabled?: boolean }) {
   const classes = useStyles();
-  const { isVideoEnabled, toggleVideoEnabled } = useVideoContext();
+  const { isVideoEnabled, toggleVideoEnabled, shouldDisableVideoToggle } = useVideoContext();
   const lastClickTimeRef = useRef(0);
 
   const toggleVideo = useCallback(() => {
@@ -36,7 +36,11 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
     >
       {/* Wrapping <Fab/> in <div/> so that tooltip can wrap a disabled element */}
       <div>
-        <Fab className={classes.fab} onClick={toggleVideo} disabled={props.disabled}>
+        <Fab
+          className={classes.fab}
+          onClick={toggleVideo}
+          disabled={props.disabled || shouldDisableVideoToggle}
+        >
           {isVideoEnabled ? (
             <Videocam data-testid="video-icon" />
           ) : (
