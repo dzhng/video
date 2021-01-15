@@ -33,6 +33,7 @@ export default function useSwitchCamera() {
     // first turn off video if enabled
     if (isEnabled) {
       await toggleVideoEnabled();
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     await videoTrack.restart({
@@ -42,9 +43,10 @@ export default function useSwitchCamera() {
 
     // turn video back on
     if (isEnabled) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
       await toggleVideoEnabled();
     }
-  }, [mediaStreamTrack, videoTrack]);
+  }, [mediaStreamTrack, videoTrack, isEnabled, toggleVideoEnabled]);
 
   const isSupported: boolean = Boolean(supportsFacingMode && videoDeviceList.length > 1);
 
