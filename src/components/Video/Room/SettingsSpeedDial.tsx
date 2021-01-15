@@ -12,7 +12,7 @@ import {
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 import { isBrowser, updateClipboard } from '~/utils';
-import useSwitchCamera from '~/hooks/Video/useSwitchCamera/useSwitchCamera';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useFullScreenToggle from '~/hooks/Video/useFullScreenToggle/useFullScreenToggle';
 
 const useStyles = makeStyles((theme) =>
@@ -40,7 +40,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
-  const { isSupported: isToggleCameraSupported, shouldDisable, toggleCamera } = useSwitchCamera();
+  const { isToggleCameraSupported, shouldDisableVideoToggle, toggleCamera } = useVideoContext();
   const {
     isSupported: isFullScreenSupported,
     isFullScreen,
@@ -80,7 +80,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
           icon: <SwitchCameraIcon />,
           name: 'Swith Camera',
           onClick: handleToggleCamera,
-          disabled: shouldDisable,
+          disabled: shouldDisableVideoToggle,
         }
       : null,
   ].filter((el) => !!el) as ActionsType;

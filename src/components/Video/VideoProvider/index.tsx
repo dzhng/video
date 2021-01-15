@@ -15,6 +15,7 @@ import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
+import useLocalVideoToggle from './useLocalVideoToggle/useLocalVideoToggle';
 import useDevices from './useDevices/useDevices';
 import useRoom from './useRoom/useRoom';
 
@@ -55,6 +56,11 @@ export interface IVideoContext {
   removeLocalVideoTrack: () => void;
   removeLocalAudioTrack: () => void;
   getAudioAndVideoTracks: () => Promise<void>;
+  isVideoEnabled: boolean;
+  toggleVideoEnabled(): void;
+  isToggleCameraSupported: boolean;
+  shouldDisableVideoToggle: boolean;
+  toggleCamera(): void;
 }
 
 export const VideoContext = createContext<IVideoContext>(null!);
@@ -99,6 +105,14 @@ export function VideoProvider({
 
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
+  const {
+    isVideoEnabled,
+    toggleVideoEnabled,
+    isToggleCameraSupported,
+    shouldDisableVideoToggle,
+    toggleCamera,
+  } = useLocalVideoToggle(room, localTracks, devices.videoInput, onErrorCallback);
+
   // Register onError and onDisconnect callback functions.
   useHandleRoomDisconnectionErrors(room, onError);
   useHandleTrackPublicationFailed(room, onError);
@@ -120,6 +134,11 @@ export function VideoProvider({
         removeLocalVideoTrack,
         removeLocalAudioTrack,
         getAudioAndVideoTracks,
+        isVideoEnabled,
+        toggleVideoEnabled,
+        isToggleCameraSupported,
+        shouldDisableVideoToggle,
+        toggleCamera,
       }}
     >
       <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>

@@ -6,7 +6,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Videocam from '@material-ui/icons/Videocam';
 import VideocamOff from '@material-ui/icons/VideocamOff';
 
-import useLocalVideoToggle from '~/hooks/Video/useLocalVideoToggle/useLocalVideoToggle';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ToggleVideoButton(props: { disabled?: boolean }) {
   const classes = useStyles();
-  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+  const { isVideoEnabled, toggleVideoEnabled } = useVideoContext();
   const lastClickTimeRef = useRef(0);
 
   const toggleVideo = useCallback(() => {

@@ -33,17 +33,18 @@ export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) 
 
   // keep a latest up to date version of cleanup methods at all times, to call during unmount
   useEffect(() => {
-    cleanUpTracks.current = async () => {
+    cleanUpTracks.current = () => {
       console.log('Cleaning up local tracks...');
 
-      // disconnect method may not exist since it may be stubed by EventEmitter in VideoContext
-      room.disconnect?.();
-
-      // unpublish before removing track to prevent chrome freezing
+      // unpublish before removing track to prevent chrome freezing on android:
+      // https://github.com/twilio/twilio-video-app-react/issues/355
       const videoTrack = localTracks.find((track) =>
         track.name.includes('camera'),
       ) as LocalVideoTrack;
       room.localParticipant.unpublishTrack(videoTrack);
+
+      // disconnect method may not exist since it may be stubed by EventEmitter in VideoContext
+      room.disconnect?.();
 
       removeLocalVideoTrack();
       removeLocalAudioTrack();
