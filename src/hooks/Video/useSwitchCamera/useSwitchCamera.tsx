@@ -24,13 +24,15 @@ export default function useSwitchCamera() {
     }
   }, [mediaStreamTrack, supportsFacingMode]);
 
-  const toggleCamera = useCallback(() => {
+  const toggleCamera = useCallback(async () => {
     const newFacingMode =
       mediaStreamTrack?.getSettings().facingMode === 'user' ? 'environment' : 'user';
-    videoTrack.restart({
+    videoTrack.disable();
+    await videoTrack.restart({
       ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
       facingMode: newFacingMode,
     });
+    videoTrack.enable();
   }, [mediaStreamTrack, videoTrack]);
 
   const isSupported: boolean = Boolean(supportsFacingMode && videoDeviceList.length > 1);
