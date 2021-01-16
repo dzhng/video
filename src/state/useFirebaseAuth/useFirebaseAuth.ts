@@ -40,7 +40,22 @@ export default function useFirebaseAuth() {
     [user],
   );
 
-  const signIn = useCallback(async () => {
+  const signInWithEmailAndPassword = useCallback(
+    async (email, password) => {
+      // if already signed in, sign out first
+      if (user) {
+        await auth.signOut();
+        setUser(null);
+      }
+
+      const ret = await auth.signInWithEmailAndPassword(email, password);
+      setUser(ret.user);
+      return ret.user;
+    },
+    [user],
+  );
+
+  const signInWithGoogle = useCallback(async () => {
     // if already signed in, sign out first
     if (user) {
       await auth.signOut();
@@ -72,5 +87,30 @@ export default function useFirebaseAuth() {
     setUser(null);
   }, []);
 
-  return { user, signIn, signInAnonymously, signOut, isAuthReady, getToken };
+  const register = useCallback(
+    async (email: string, password: string, name: string) => {
+      if (user) {
+        await auth.signOut();
+        setUser(null);
+      }
+      const data = await auth.createUserWithEmailAndPassword(email, password);
+      await data.user?.updateProfile({
+        displayName: name,
+      });
+      setUser(data.user);
+      return data.user;
+    },
+    [user],
+  );
+
+  return {
+    user,
+    signInWithEmailAndPassword,
+    signInWithGoogle,
+    signInAnonymously,
+    signOut,
+    isAuthReady,
+    getToken,
+    register,
+  };
 }

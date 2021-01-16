@@ -2,10 +2,20 @@ import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
-import { Typography, Button, Paper, Container } from '@material-ui/core';
+import {
+  Typography,
+  Button,
+  Paper,
+  Container,
+  FormControl,
+  Input,
+  InputLabel,
+} from '@material-ui/core';
 
 import { useAppState } from '~/state';
 import LoadingContainer from '~/containers/Loading/Loading';
+
+const GoogleLogo = <img src="/google-logo.svg" />;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -43,19 +53,19 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-const GoogleLogo = <img src="/google-logo.svg" />;
-
 export default function LoginPage({ previousPage }: { previousPage?: string }) {
   const classes = useStyles();
   const router = useRouter();
-  const { signIn, isAuthReady } = useAppState();
+  const { signInWithEmailAndPassword, isAuthReady, signInWithGoogle } = useAppState();
   const [authError, setAuthError] = useState<Error | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const login = useCallback(() => {
     setAuthError(null);
     setIsAuthenticating(true);
-    signIn()
+    signInWithEmailAndPassword(email, password)
       .then(() => {
         router.replace(previousPage ?? '/');
       })
@@ -63,36 +73,74 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
         setAuthError(err);
         setIsAuthenticating(false);
       });
-  }, [previousPage, router, signIn]);
+  }, [email, password, previousPage, router, signInWithEmailAndPassword]);
+
+  const loginWithGoogle = useCallback(() => {
+    setAuthError(null);
+    setIsAuthenticating(true);
+    signInWithGoogle()
+      .then(() => {
+        router.replace(previousPage ?? '/');
+      })
+      .catch((err) => {
+        setAuthError(err);
+        setIsAuthenticating(false);
+      });
+  }, [previousPage, router, signInWithGoogle]);
 
   if (!isAuthReady) {
     return <LoadingContainer />;
   }
 
   return (
-    <Container maxWidth="xs" className={classes.container} data-testid="container">
-      <Paper className={classes.paper} elevation={3}>
+    <Container maxWidth="xs" className={classes.container}>
+      <Paper elevation={3} className={classes.paper}>
         <Typography variant="h1">Welcome to Aomni</Typography>
-        <Typography variant="body1">Sign in to get started.</Typography>
+        <Typography variant="body1">Login to get started.</Typography>
 
-        <div>
-          {authError && (
-            <Typography variant="caption" className={classes.errorMessage}>
-              <ErrorIcon />
-              {authError.message}
-            </Typography>
-          )}
-        </div>
+        {authError && (
+          <Typography variant="caption" className={classes.errorMessage}>
+            <ErrorIcon />
+            {authError.message}
+          </Typography>
+        )}
 
         <Button
           fullWidth
           disabled={isAuthenticating}
           variant="contained"
           className={classes.button}
-          onClick={login}
+          onClick={loginWithGoogle}
           startIcon={GoogleLogo}
         >
           Sign in with Google
+        </Button>
+
+        <FormControl>
+          <InputLabel htmlFor="email">Email address</InputLabel>
+          <Input
+            id="email"
+            aria-describedby="email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </FormControl>
+        <br />
+
+        <FormControl>
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <Input
+            type="password"
+            id="password"
+            aria-describedby="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </FormControl>
+        <br />
+        <br />
+        <Button variant="contained" disabled={isAuthenticating} color="primary" onClick={login}>
+          Login
         </Button>
       </Paper>
     </Container>
