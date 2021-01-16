@@ -18,7 +18,6 @@ interface PropTypes {
   members: LocalModel<User>[];
   addMembers(emails: string[]): Promise<void>;
   removeMembers(ids: string[]): Promise<void>;
-  onClick(): void;
   className?: string;
 }
 
@@ -33,29 +32,18 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default forwardRef(function AddMemberMenuItem(
-  { addMembers, removeMembers, members, onClick, className }: PropTypes,
-  ref,
-) {
-  const [formOpen, setFormOpen] = useState(false);
+export function AddMemberDialog({
+  open,
+  setOpen,
+  addMembers,
+  removeMembers,
+  members,
+  onFinished,
+}: PropTypes & { open: boolean; setOpen(open: boolean): void; onFinished?(): void }) {
+  const classes = useStyles();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [removedUsers, setRemovedUsers] = useState<LocalModel<User>[]>([]);
   const [addedEmails, setAddedEmails] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const classes = useStyles();
-
-  const handleClick = useCallback(() => {
-    setFormOpen(true);
-  }, []);
-
-  const handleCancel = useCallback(() => {
-    // don't allow cancel while you are submitting
-    if (isSubmitting) {
-      return;
-    }
-
-    setFormOpen(false);
-    onClick();
-  }, [isSubmitting, onClick]);
 
   const handleMembersChange = useCallback(
     (_addedEmails: string[], _removedUsers: LocalModel<User>[]) => {
@@ -64,6 +52,16 @@ export default forwardRef(function AddMemberMenuItem(
     },
     [],
   );
+
+  const handleCancel = useCallback(() => {
+    // don't allow cancel while you are submitting
+    if (isSubmitting) {
+      return;
+    }
+
+    setOpen(false);
+    onFinished?.();
+  }, [isSubmitting, onFinished, setOpen]);
 
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) {
@@ -81,9 +79,72 @@ export default forwardRef(function AddMemberMenuItem(
     }
 
     setIsSubmitting(false);
-    setFormOpen(false);
-    onClick();
-  }, [isSubmitting, onClick, removeMembers, addMembers, removedUsers, addedEmails]);
+    setOpen(false);
+    onFinished?.();
+  }, [isSubmitting, onFinished, setOpen, removeMembers, addMembers, removedUsers, addedEmails]);
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleCancel}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle>Manage Workspace Members</DialogTitle>
+
+      <DialogContent className={classes.dialogContent}>
+        <DialogContentText>
+          Workspace members will be able to access all content in this workspace. We will send them
+          an invite email to new members to register for Aomni.
+        </DialogContentText>
+        <MembersField users={members} onChange={handleMembersChange} />
+        {(addedEmails.length > 0 || removedUsers.length > 0) && (
+          <Alert severity="info" className={classes.alert}>
+            Saving will{' '}
+            {addedEmails.length > 0 &&
+              `add ${addedEmails.length} member${addedEmails.length > 1 ? 's' : ''}`}
+            {addedEmails.length > 0 && removedUsers.length > 0 ? ' and ' : ''}
+            {removedUsers.length > 0 &&
+              `remove ${removedUsers.length} member${removedUsers.length > 1 ? 's' : ''}`}
+            .
+          </Alert>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button disabled={isSubmitting} onClick={handleCancel} color="primary">
+          Cancel
+        </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={isSubmitting}
+          autoFocus
+          onClick={handleSubmit}
+        >
+          {isSubmitting ? <CircularProgress color="inherit" size={'1.5rem'} /> : 'Save'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+export default forwardRef(function AddMemberMenuItem(
+  {
+    addMembers,
+    removeMembers,
+    members,
+    onClick,
+    className,
+  }: PropTypes & {
+    onClick(): void;
+  },
+  ref,
+) {
+  const [formOpen, setFormOpen] = useState(false);
+
+  const handleClick = useCallback(() => {
+    setFormOpen(true);
+  }, []);
 
   return (
     <>
@@ -94,47 +155,14 @@ export default forwardRef(function AddMemberMenuItem(
       >
         Manage Workspace Members
       </MenuItem>
-      <Dialog
+      <AddMemberDialog
         open={formOpen}
-        onClose={handleCancel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle>Manage Workspace Members</DialogTitle>
-
-        <DialogContent className={classes.dialogContent}>
-          <DialogContentText>
-            Workspace members will be able to access all content in this workspace. We will send
-            them an invite email to new members to register for Aomni.
-          </DialogContentText>
-          <MembersField users={members} onChange={handleMembersChange} />
-          {(addedEmails.length > 0 || removedUsers.length > 0) && (
-            <Alert severity="info" className={classes.alert}>
-              Saving will{' '}
-              {addedEmails.length > 0 &&
-                `add ${addedEmails.length} member${addedEmails.length > 1 ? 's' : ''}`}
-              {addedEmails.length > 0 && removedUsers.length > 0 ? ' and ' : ''}
-              {removedUsers.length > 0 &&
-                `remove ${removedUsers.length} member${removedUsers.length > 1 ? 's' : ''}`}
-              .
-            </Alert>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button disabled={isSubmitting} onClick={handleCancel} color="primary">
-            Cancel
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            disabled={isSubmitting}
-            autoFocus
-            onClick={handleSubmit}
-          >
-            {isSubmitting ? <CircularProgress color="inherit" size={'1.5rem'} /> : 'Save'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        setOpen={setFormOpen}
+        addMembers={addMembers}
+        removeMembers={removeMembers}
+        members={members}
+        onFinished={onClick}
+      />
     </>
   );
 });

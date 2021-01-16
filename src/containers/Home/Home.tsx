@@ -12,7 +12,7 @@ import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import Nav from '~/components/Nav/Nav';
 import TemplateCard from './TemplateCard';
 import CreateCard from './CreateCard';
-import AddMemberMenuItem from './AddMemberMenuItem';
+import AddMemberMenuItem, { AddMemberDialog } from './AddMemberMenuItem';
 import LeaveMenuItem from './LeaveMenuItem';
 import DeleteMenuItem from './DeleteMenuItem';
 
@@ -80,6 +80,7 @@ const useStyles = makeStyles((theme) =>
       height: avatarSize,
       marginRight: theme.spacing(1),
       boxShadow: theme.shadows[3],
+      cursor: 'pointer',
     },
     cardSkeleton: {
       borderRadius: theme.shape.borderRadius,
@@ -141,6 +142,7 @@ export default function Home({
   const classes = useStyles();
   const anchorRef = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [membersDialogOpen, setMembersDialogOpen] = useState(false);
 
   // measure width of header bar to calculate how many avatars to show
   const { ref, width } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
@@ -183,13 +185,20 @@ export default function Home({
               ? loadingMemberSkeletons
               : members.slice(0, numberOfAvatars).map((member) => (
                   <Tooltip key={member.id} title={member.displayName} placement="bottom">
-                    <UserAvatar className={classes.avatar} user={member} />
+                    <UserAvatar
+                      className={classes.avatar}
+                      user={member}
+                      onClick={() => setMembersDialogOpen(true)}
+                    />
                   </Tooltip>
                 ))}
 
             {workspace && !isLoadingMembers && numberOfAvatars < members.length && (
               <Tooltip title={`${members.length} members in this workspace`} placement="bottom">
-                <div className={clsx(classes.memberNumber, classes.avatar)}>
+                <div
+                  className={clsx(classes.memberNumber, classes.avatar)}
+                  onClick={() => setMembersDialogOpen(true)}
+                >
                   +{members.length - numberOfAvatars}
                 </div>
               </Tooltip>
@@ -262,6 +271,14 @@ export default function Home({
               </Grid>
             ))}
       </Grid>
+
+      <AddMemberDialog
+        open={membersDialogOpen}
+        setOpen={setMembersDialogOpen}
+        addMembers={addMembers}
+        removeMembers={removeMembers}
+        members={members}
+      />
     </div>
   );
 }
