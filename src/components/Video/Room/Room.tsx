@@ -15,7 +15,7 @@ import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
-import SettingsSpeedDial from './SettingsSpeedDial';
+import SettingsSpeedDial from '~/components/Video/SettingsSpeedDial/SettingsSpeedDial';
 
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });

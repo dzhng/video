@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) =>
       '& .MuiSpeedDialAction-staticTooltipLabel': {
         whiteSpace: 'nowrap',
       },
+      '& .MuiSpeedDialAction-fab.Mui-disabled': {
+        backgroundColor: theme.palette.grey[400],
+      },
     },
   }),
 );

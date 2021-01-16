@@ -22,9 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
       background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
       backgroundSize: '400% 400%',
-      // steps(300) is important here since it tells browser to run at 10fps
+      // steps is important here since it tells browser to run at steps/seconds fps
       // this is important for reducing cpu usage
-      animation: 'gradient 30s steps(300) infinite',
+      animation: 'gradient 30s steps(150) infinite',
       // do animation on gpu so its less taxing on cpu
       transform: 'translateZ(0)',
     },
