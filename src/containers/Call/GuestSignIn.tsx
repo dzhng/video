@@ -54,7 +54,7 @@ const GoogleLogo = <img src="/google-logo.svg" />;
 
 export default function GuestSignin() {
   const classes = useStyles();
-  const { signIn, signInAnonymously } = useAppState();
+  const { signInWithGoogle, signInAnonymously } = useAppState();
   const [authError, setAuthError] = useState<Error | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -62,11 +62,11 @@ export default function GuestSignin() {
   const loginWithGoogle = useCallback(() => {
     setAuthError(null);
     setIsAuthenticating(true);
-    signIn().catch((err) => {
+    signInWithGoogle().catch((err) => {
       setAuthError(err);
       setIsAuthenticating(false);
     });
-  }, [signIn]);
+  }, [signInWithGoogle]);
 
   const loginAnonymously = useCallback(() => {
     setAuthError(null);

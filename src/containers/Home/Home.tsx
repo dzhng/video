@@ -209,14 +209,16 @@ export default function Home({
           </span>
         </Grid>
 
-        <Grid item {...cardItemSizeProps}>
-          <Link href="/template/create">
-            {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
-            <div>
-              <CreateCard height={cardHeight} />
-            </div>
-          </Link>
-        </Grid>
+        {workspace && !isLoadingTemplates && (
+          <Grid item {...cardItemSizeProps}>
+            <Link href="/template/create">
+              {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
+              <div>
+                <CreateCard height={cardHeight} />
+              </div>
+            </Link>
+          </Grid>
+        )}
 
         {isLoadingTemplates
           ? loadingTemplateSkeletons
