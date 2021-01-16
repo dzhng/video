@@ -105,7 +105,7 @@ export default function Nav({
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
 
   const {
-    user,
+    userRecord,
     workspaces,
     isWorkspacesReady,
     currentWorkspaceId,
@@ -181,7 +181,7 @@ export default function Nav({
           <div className={classes.profileMenu}>
             <Menu />
             <Typography className={classes.displayName} variant="h2">
-              {user?.displayName}
+              {userRecord?.displayName}
             </Typography>
           </div>
         </div>
@@ -193,7 +193,7 @@ export default function Nav({
       handleWorkspaceChange,
       isWorkspacesReady,
       workspaces,
-      user,
+      userRecord,
       closeModal,
     ],
   );

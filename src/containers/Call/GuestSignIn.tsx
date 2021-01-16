@@ -73,20 +73,10 @@ export default function GuestSignin() {
     setIsAuthenticating(true);
     const finalDisplayName = displayName ?? 'Aomni Customer';
 
-    signInAnonymously(finalDisplayName)
-      .then((user) => {
-        if (user) {
-          // copy data to user record for quick querying
-          const userData: User = {
-            displayName: finalDisplayName,
-          };
-          return db.collection(Collections.USERS).doc(user.uid).set(userData);
-        }
-      })
-      .catch((err) => {
-        setAuthError(err);
-        setIsAuthenticating(false);
-      });
+    signInAnonymously(finalDisplayName).catch((err) => {
+      setAuthError(err);
+      setIsAuthenticating(false);
+    });
   }, [signInAnonymously, displayName]);
 
   return (

@@ -135,13 +135,7 @@ export default function RegisterPage() {
       setAuthError(null);
       setSubmitting(true);
       register(values.email, values.password, values.name)
-        .then((user) => {
-          if (user) {
-            const userData: User = {
-              displayName: user.displayName ?? values.name ?? 'Aomni Customer',
-            };
-            db.collection(Collections.USERS).doc(user.uid).set(userData);
-          }
+        .then(() => {
           router.replace('/');
         })
         .catch((errMsg) => {

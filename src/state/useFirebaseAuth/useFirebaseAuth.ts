@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import fetch from 'isomorphic-unfetch';
-import firebase, { auth } from '~/utils/firebase';
+import firebase, { db, auth } from '~/utils/firebase';
+import { Collections, User } from '~/firebase/schema-types';
 import { TWILIO_TOKEN_ENDPOINT } from '~/constants';
 
 export default function useFirebaseAuth() {
@@ -73,10 +74,16 @@ export default function useFirebaseAuth() {
 
   const signInAnonymously = useCallback(async (displayName: string) => {
     const ret = await auth.signInAnonymously();
-    // TODO: not sure if anonymous accounts supports display names, it's not being set locally right away after updating profile. Need to test this.
-    await ret.user?.updateProfile({
-      displayName,
-    });
+
+    if (ret.user) {
+      // pre create the user data to set displayName, make sure to merge
+      // for anonymous users, it's up to the client to create the User record,
+      // cloud functions won't process.
+      const userData: User = {
+        displayName,
+      };
+      db.collection(Collections.USERS).doc(ret.user.uid).set(userData);
+    }
 
     setUser(ret.user);
     return ret.user;
@@ -93,10 +100,29 @@ export default function useFirebaseAuth() {
         await auth.signOut();
         setUser(null);
       }
+
       const data = await auth.createUserWithEmailAndPassword(email, password);
-      await data.user?.updateProfile({
-        displayName: name,
-      });
+
+      // This part is a bit hacky, we basically want to update the display name
+      // once the user record has been created by the cloud function. Yes we can
+      // make the cloud function smarter by having it check user data, but I prefer
+      // to keep complexity on client where it's easier to test / deploy.
+      if (data.user) {
+        const userData: User = {
+          displayName: name ?? 'Aomni Customer',
+        };
+
+        let unsubscribe = db
+          .collection(Collections.USERS)
+          .doc(data.user.uid)
+          .onSnapshot(async (snap) => {
+            if (snap.exists) {
+              await snap.ref.update(userData);
+              unsubscribe();
+            }
+          });
+      }
+
       setUser(data.user);
       return data.user;
     },
