@@ -5,6 +5,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Card } from '@material-ui/core';
 import LocalVideoPreview from '~/components/Video/LocalVideoPreview/LocalVideoPreview';
 import Controls from '~/components/Video/Controls/Controls';
+import SettingsSpeedDial from '~/components/Video/SettingsSpeedDial/SettingsSpeedDial';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,9 +21,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     controlsContainer: {
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       padding: theme.spacing(1),
       flexShrink: 0,
+
+      '& .rightSpeedDial': {
+        position: 'absolute',
+        bottom: theme.spacing(1),
+        right: theme.spacing(1),
+      },
     },
   }),
 );
@@ -46,7 +53,11 @@ export default function LocalPreviewCard({
           <LocalVideoPreview />
         </div>
         <div className={classes.controlsContainer}>
+          <div className="left" style={{ width: 72, height: 72, position: 'relative' }} />
           <Controls />
+          <div className="right" style={{ width: 72, height: 72, position: 'relative' }}>
+            <SettingsSpeedDial className="rightSpeedDial" />
+          </div>
         </div>
         {actionBar}
       </Card>

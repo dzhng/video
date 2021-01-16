@@ -41,8 +41,11 @@ export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) 
       const videoTrack = localTracks.find((track) =>
         track.name.includes('camera'),
       ) as LocalVideoTrack;
-      videoTrack.disable();
-      room.localParticipant.unpublishTrack(videoTrack);
+
+      if (videoTrack) {
+        videoTrack.disable();
+        room.localParticipant.unpublishTrack(videoTrack);
+      }
 
       removeLocalVideoTrack();
       removeLocalAudioTrack();

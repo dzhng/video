@@ -97,6 +97,12 @@ export default function useLocalTracks(
           setAudioTrack(audioTrack as LocalAudioTrack);
         }
       })
+      .catch((e) => {
+        // if it erros out, it's likely to be the default video/audio devices - it may not exist anymore, clear them
+        window.localStorage.removeItem(SELECTED_AUDIO_INPUT_KEY);
+        window.localStorage.removeItem(SELECTED_VIDEO_INPUT_KEY);
+        return Promise.reject(e);
+      })
       .finally(() => setIsAcquiringLocalTracks(false));
   }, [
     hasAudio,
