@@ -10,6 +10,10 @@ const FormSchema = Yup.object().shape({
   name: Yup.string().min(1, 'Too Short!').max(50, 'Too Long!').required(),
 });
 
+const initialValues = {
+  name: '',
+};
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -74,11 +78,6 @@ interface PropTypes {
 
 export default function CreateContainer({ save }: PropTypes) {
   const classes = useStyles();
-
-  // A lot of these values are not editable in the UI, but we initialize them anyways with existing or default values so that we get nice typescript checking via the Presentation model. Maybe there's a better way to do this in the future that's cleaner and still get same type checking.
-  const initialValues = {
-    name: '',
-  };
 
   const submit = useCallback(
     (values, { setSubmitting }) => {

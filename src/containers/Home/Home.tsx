@@ -73,7 +73,6 @@ const useStyles = makeStyles((theme) =>
       width: avatarSize,
       height: avatarSize,
       marginRight: theme.spacing(1),
-      backgroundColor: theme.palette.grey[300],
       boxShadow: theme.shadows[3],
     },
     cardSkeleton: {
