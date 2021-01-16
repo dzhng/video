@@ -170,6 +170,7 @@ export default function Home({
                 {/* wrap in div so tooltip still works even with the button disabled */}
                 <div>
                   <IconButton
+                    id="workspaceSettingsButton"
                     color="inherit"
                     disabled={!workspace}
                     onClick={() => setSettingsMenuOpen((state) => !state)}

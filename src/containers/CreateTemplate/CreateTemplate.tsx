@@ -44,6 +44,7 @@ const TemplateForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
     <Paper className={classes.paper}>
       <Typography variant="h1">Create Call Template</Typography>
       <Field
+        id="templateName"
         component={TextField}
         name="name"
         type="text"
@@ -58,6 +59,7 @@ const TemplateForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
       />
 
       <Button
+        id="createButton"
         fullWidth
         className={classes.submitButton}
         size="large"
