@@ -87,6 +87,14 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: 0,
       display: 'flex',
       alignItems: 'center',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      marginRight: theme.spacing(1),
+
+      '& span': {
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+      },
     },
     infoRow: {
       display: 'flex',
@@ -145,7 +153,7 @@ export default function ParticipantInfo({
         <div className={classes.infoRow}>
           <h4 className={classes.identity}>
             <ParticipantConnectionIndicator participant={participant} />
-            {userInfo?.displayName}
+            <span>{userInfo?.displayName}</span>
           </h4>
           <NetworkQualityLevel participant={participant} />
         </div>
