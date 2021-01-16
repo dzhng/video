@@ -4,14 +4,16 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Backdrop } from '@material-ui/core';
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab';
 import {
-  MoreVert as SettingsIcon,
+  MoreVert as SpeedDialIcon,
   ShareOutlined as ShareIcon,
   Fullscreen as FullscreenIcon,
   FullscreenExit as FullscreenExitIcon,
   FlipCameraIosOutlined as SwitchCameraIcon,
+  TuneOutlined as SettingsIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
-import { isBrowser, updateClipboard } from '~/utils';
+import { isMobile, isBrowser, updateClipboard } from '~/utils';
+import SettingsDialog from '~/components/Video/SettingsDialog/SettingsDialog';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useFullScreenToggle from '~/hooks/Video/useFullScreenToggle/useFullScreenToggle';
 
@@ -39,22 +41,37 @@ type ActionsType = { icon: React.ReactNode; name: string; onClick(): void; disab
 export default function SettingsSpeedDial({ className }: { className?: string }) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [open, setOpen] = useState(false);
   const { isToggleCameraSupported, shouldDisableVideoToggle, toggleCamera } = useVideoContext();
   const {
     isSupported: isFullScreenSupported,
     isFullScreen,
     toggleFullScreen,
   } = useFullScreenToggle();
+  const [open, setOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const location = isBrowser ? window.location : ({} as Location);
   const sharableCallLink = `${location.protocol}//${location.host}${location.pathname}`;
 
   const handleShare = useCallback(() => {
     updateClipboard(sharableCallLink);
-    enqueueSnackbar('URL copied to clipboard!');
+    enqueueSnackbar('URL copied to clipboard!', {
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+    });
     setOpen(false);
   }, [sharableCallLink, enqueueSnackbar]);
+
+  const handleDeviceSettings = useCallback(() => {
+    setOpen(false);
+    setSettingsOpen(true);
+  }, []);
+
+  const handleDeviceSettingsClose = useCallback(() => {
+    setSettingsOpen(false);
+  }, []);
 
   const handleToggleCamera = useCallback(() => {
     toggleCamera();
@@ -68,6 +85,13 @@ export default function SettingsSpeedDial({ className }: { className?: string })
 
   const actions = [
     { icon: <ShareIcon />, name: 'Copy Link', onClick: handleShare },
+    !isMobile
+      ? {
+          icon: <SettingsIcon />,
+          name: 'Change Camera or Mic',
+          onClick: handleDeviceSettings,
+        }
+      : null,
     isFullScreenSupported
       ? {
           icon: isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />,
@@ -91,7 +115,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
       <SpeedDial
         ariaLabel="Call Settings"
         className={clsx(classes.button, className)}
-        icon={<SettingsIcon />}
+        icon={<SpeedDialIcon />}
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         open={open}
@@ -109,6 +133,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
           />
         ))}
       </SpeedDial>
+      <SettingsDialog open={settingsOpen} onClose={handleDeviceSettingsClose} />
     </>
   );
 }
