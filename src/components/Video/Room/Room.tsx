@@ -2,6 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { LocalParticipant, RemoteParticipant } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
+import { Fab, Tooltip, Hidden } from '@material-ui/core';
+import { Menu as MenuIcon } from '@material-ui/icons';
 import useDimensions from 'react-cool-dimensions';
 
 import Controls from '~/components/Video/Controls/Controls';
@@ -13,26 +15,42 @@ import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
+import SettingsSpeedDial from './SettingsSpeedDial';
 
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
-const Container = styled('div')(({ theme }) => ({
+const Container = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: theme.palette.grey[900],
 }));
 
 const LayoutContainer = styled('div')({
   flexGrow: 1,
   overflow: 'hidden',
+  display: 'flex',
+  alignItems: 'stretch',
 });
 
 const ControlsBar = styled('div')(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(1),
+  flexShrink: 0,
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+
+  '& .fab': {
+    backgroundColor: theme.palette.grey[900],
+    margin: theme.spacing(1),
+    color: 'white',
+  },
+
+  '& .rightSpeedDial': {
+    position: 'absolute',
+    bottom: theme.spacing(1),
+    right: theme.spacing(1),
+  },
 }));
 
 export default function Room() {
@@ -49,7 +67,7 @@ export default function Room() {
   // (if not set, size will overflow and will be wrong)
   const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
-  const { currentActivity } = useCallContext();
+  const { currentActivity, setIsActivityDrawerOpen } = useCallContext();
   const {
     room: { localParticipant },
   } = useVideoContext();
@@ -88,9 +106,27 @@ export default function Room() {
           mainItem={<ActivityDisplay />}
         />
       </LayoutContainer>
+
       <ControlsBar>
+        <div className="left" style={{ width: 72 }}>
+          <Hidden smUp implementation="js">
+            <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
+              <div>
+                <Fab className="fab" onClick={() => setIsActivityDrawerOpen(true)}>
+                  <MenuIcon />
+                </Fab>
+              </div>
+            </Tooltip>
+          </Hidden>
+        </div>
+
         <Controls />
+
+        <div className="right" style={{ width: 72, height: 72, position: 'relative' }}>
+          <SettingsSpeedDial className="rightSpeedDial" />
+        </div>
       </ControlsBar>
+
       <ReconnectingNotification />
     </Container>
   );

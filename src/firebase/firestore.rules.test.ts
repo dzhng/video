@@ -220,6 +220,19 @@ describe('firebase cloud firestore database rules', () => {
 
       await firebase.assertFails(db.collection('workspaces').doc('workspace').delete());
     });
+
+    it('allows members to invite other users via email', async () => {
+      const db = getAuthedFirestore({ uid: 'OwnerUser' });
+      const inviteData = {
+        inviterId: 'OwnerUser',
+        email: 'hello@test.com',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      await firebase.assertSucceeds(
+        db.collection('workspaces').doc('workspace').collection('invites').add(inviteData),
+      );
+    });
   });
 
   describe('user', () => {
@@ -335,8 +348,8 @@ describe('firebase cloud firestore database rules', () => {
       );
     });
 
-    it('should let creators update the template', async () => {
-      const db = getAuthedFirestore({ uid: 'alice' });
+    it('should let workspace members update the template', async () => {
+      let db = getAuthedFirestore({ uid: 'alice' });
       let template = db.collection('templates').doc('doc');
       await template.set({
         ...requiredFields,
@@ -345,6 +358,15 @@ describe('firebase cloud firestore database rules', () => {
       });
 
       // unsetting a activity
+      await firebase.assertFails(
+        template.update({
+          activities: ['hello'],
+        }),
+      );
+
+      db = getAuthedFirestore({ uid: 'OwnerUser' });
+      template = db.collection('templates').doc('doc');
+
       await firebase.assertSucceeds(
         template.update({
           activities: ['hello'],

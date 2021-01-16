@@ -6,6 +6,10 @@
 
 `npm install -g firebase-tools`
 
+### Install Vercel
+
+`npm install -g vercel`
+
 ### Install Java
 
 Some versions of Linux may not have Java installed by default (required for Firebase emulators)
@@ -55,6 +59,19 @@ In functions triggered via HTTP, make sure to set permissions to be public in cl
 When writing functions, make sure they are idempotent as they can be run multiple times during retries or deployment switchovers.
 
 Take extra care when renaming a background function, make sure to deploy the new one first before deleting the old one, so that they'll both run in parellel during the process. This is to prevent any time period where no background functions are deployed (this is also why idempotentcy is importent).
+
+### Env variables
+
+The typical Firestore environment variables are set automatically by cloud functions. However 3rd party services needs to have their environment variables added to the runtime.
+
+To set environment variable:
+
+`firebase functions:config:set service.key="KEY"`
+
+Currently the following keys needs to be set:
+
+`mailgun.key`
+`mailgun.domain`
 
 ### Firestore
 
@@ -193,6 +210,11 @@ The `connect` function from the SDK accepts a [configuration object](https://med
 ### Track Priority Settings
 
 This application dynamically changes the priority of remote video tracks to provide an optimal collaboration experience. Any video track that will be displayed in the main video area will have `track.setPriority('high')` called on it (see the [VideoTrack](https://github.com/twilio/twilio-video-app-react/blob/master/src/components/VideoTrack/VideoTrack.tsx#L25) component) when the component is mounted. This higher priority enables the track to be rendered at a high resolution. `track.setPriority(null)` is called when the component is unmounted so that the track's priority is set to its publish priority (low).
+
+### CSS
+
+Prioritize flex layout whenever possible - it is good to have one standard method of layout.
+However, be careful with using `height: 100%` on flex items as [it has undefined behavior in flex layout](https://stackoverflow.com/questions/33636796/chrome-safari-not-filling-100-height-of-flex-parent).
 
 ## TODO:
 

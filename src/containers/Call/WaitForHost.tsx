@@ -2,9 +2,25 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Container, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
-    container: {},
+    container: {
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+      justifyContent: 'center',
+      textAlign: 'center',
+      color: 'white',
+
+      '& h1': {
+        fontSize: '3rem',
+      },
+      '& p': {
+        marginTop: theme.spacing(2),
+        fontSize: '1.2rem',
+      },
+    },
   }),
 );
 
@@ -12,12 +28,10 @@ export default function WaitForHost() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.container} style={{ height: '100vh', textAlign: 'center' }}>
-      <Typography
-        variant="h1"
-        style={{ textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', marginTop: '45vh' }}
-      >
-        Waiting for host to start the call...
+    <Container className={classes.container}>
+      <Typography variant="h1">Waiting for host to start the call...</Typography>
+      <Typography variant="body1">
+        This page will automatically update when the call starts.
       </Typography>
     </Container>
   );

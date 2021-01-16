@@ -56,7 +56,7 @@ export default function useLocalTracks(
 
   const removeLocalAudioTrack = useCallback(() => {
     if (audioTrack) {
-      audioTrack.disable();
+      audioTrack.stop();
       setAudioTrack(undefined);
     }
   }, [audioTrack]);

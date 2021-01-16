@@ -13,9 +13,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       width: '100%',
-      height: '100%',
       display: 'flex',
       flexDirection: 'column',
+      boxShadow: theme.shadows[7],
     },
     header: {
       display: 'flex',
@@ -39,6 +39,8 @@ const useStyles = makeStyles((theme: Theme) =>
       // not really needed but just in case
       // NOTE: children should handle overflow scroll
       overflow: 'hidden',
+      // align children to 100% height
+      display: 'flex',
     },
   }),
 );

@@ -9,6 +9,7 @@ import {
   Button,
   CircularProgress,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { LocalModel, User } from '~/firebase/schema-types';
 import MembersField from './MembersField';
@@ -21,10 +22,13 @@ interface PropTypes {
   className?: string;
 }
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     dialogContent: {
       paddingTop: 0,
+    },
+    alert: {
+      marginTop: theme.spacing(2),
     },
   }),
 );
@@ -104,6 +108,17 @@ export default forwardRef(function AddMemberMenuItem(
             them an invite email to new members to register for Aomni.
           </DialogContentText>
           <MembersField users={members} onChange={handleMembersChange} />
+          {(addedEmails.length > 0 || removedUsers.length > 0) && (
+            <Alert severity="info" className={classes.alert}>
+              Saving will{' '}
+              {addedEmails.length > 0 &&
+                `add ${addedEmails.length} member${addedEmails.length > 1 ? 's' : ''}`}
+              {addedEmails.length > 0 && removedUsers.length > 0 ? ' and ' : ''}
+              {removedUsers.length > 0 &&
+                `remove ${removedUsers.length} member${removedUsers.length > 1 ? 's' : ''}`}
+              .
+            </Alert>
+          )}
         </DialogContent>
         <DialogActions>
           <Button disabled={isSubmitting} onClick={handleCancel} color="primary">

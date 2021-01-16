@@ -11,14 +11,12 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      backgroundColor: theme.palette.grey[900],
       height: '100%',
     },
     card: {
-      width: '50%',
+      ...theme.customMixins.modalPaper,
       marginLeft: 'auto',
       marginRight: 'auto',
-      maxWidth: theme.modalWidth,
     },
   }),
 );

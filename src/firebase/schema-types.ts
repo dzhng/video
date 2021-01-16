@@ -44,8 +44,8 @@ export declare interface Member {
 }
 
 export declare interface Invite {
+  inviterId: string;
   email: string;
-  isProcessed?: boolean;
   createdAt: FbDate;
 }
 
@@ -121,10 +121,10 @@ export declare interface PollActivityMetadata {
 
 export declare interface QuestionsActivityMetadata {
   questions: string[];
-  // allow anyone to submit answers via text
-  allowTextSubmission: boolean;
-  // allow text submissions to be anonymous
-  allowAnonymousSubmission: boolean;
+  // allow participants to submit multiple answers
+  allowMultipleSubmissions: boolean;
+  // allow submissions to be anonymous
+  allowAnonymousSubmissions: boolean;
 }
 
 export declare interface ScreenShareActivityMetadata {

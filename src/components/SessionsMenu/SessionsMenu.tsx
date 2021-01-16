@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import {
   Grid,
   IconButton,
@@ -10,18 +9,20 @@ import {
   TextField,
   Menu,
   MenuItem,
+  Hidden,
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   MoreVert as SettingsIcon,
   HistoryOutlined as HistoryIcon,
   RssFeed as ShareIcon,
+  Menu as MenuIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 
 import { VideoCallFilledIcon } from '~/components/Icons';
 import { Collections } from '~/firebase/schema-types';
-import { isBrowser } from '~/utils';
+import { isBrowser, updateClipboard } from '~/utils';
 import { db } from '~/utils/firebase';
 import DeleteMenuItem from './DeleteMenuItem';
 
@@ -31,8 +32,13 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(2),
       paddingRight: theme.spacing(1),
+      paddingLeft: theme.spacing(1),
       display: 'flex',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
+
+      '& >div:first-child': {
+        flexGrow: 1,
+      },
     },
     container: {
       display: 'flex',
@@ -43,9 +49,15 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignSelf: 'center',
       alignItems: 'center',
-      width: '50%',
+      width: '90%',
       maxWidth: 400,
       flexGrow: 1,
+      // shift things up a bit to make up for toolbar height
+      marginBottom: 60,
+
+      '& a': {
+        textDecoration: 'none',
+      },
     },
     callButton: {
       ...theme.customMixins.callButton,
@@ -56,6 +68,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     addButton: {
+      [theme.breakpoints.up('sm')]: {
+        width: 110,
+        flexShrink: 0,
+      },
+
       '& svg': {
         marginRight: 2,
       },
@@ -90,18 +107,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function updateClipboard(newClip: string) {
-  navigator.clipboard.writeText(newClip).then(
-    function () {
-      console.log('Copy successful!');
-    },
-    function (e) {
-      console.warn('Copy failed!', e);
-    },
-  );
-}
-
-export default function SessionsMenu() {
+export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
   const router = useRouter();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -114,9 +120,7 @@ export default function SessionsMenu() {
   const templateId = String(router.query.slug);
   const relativeCallLink = `/start/${templateId}`;
 
-  const sharableCallLink = `http${location.hostname === 'localhost' ? '' : 's'}://${
-    location.host
-  }${relativeCallLink}`;
+  const sharableCallLink = `${location.protocol}//${location.host}${relativeCallLink}`;
 
   // for the start call button, include from param to go back to this page
   const callHref = `${relativeCallLink}?from=${encodeURIComponent(`/template/${templateId}`)}`;
@@ -140,6 +144,14 @@ export default function SessionsMenu() {
   return (
     <div className={classes.container}>
       <div className={classes.toolbar}>
+        <div>
+          <Hidden smUp implementation="css">
+            <IconButton onClick={openDrawer}>
+              <MenuIcon />
+            </IconButton>
+          </Hidden>
+        </div>
+
         <Tooltip title="Previous sessions (Coming soon!)" placement="bottom">
           <div>
             <IconButton disabled>
@@ -159,7 +171,7 @@ export default function SessionsMenu() {
       <div className={classes.content}>
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <Link href={callHref}>
+            <a href={callHref}>
               <Button
                 fullWidth
                 color="secondary"
@@ -168,23 +180,26 @@ export default function SessionsMenu() {
               >
                 <VideoCallFilledIcon /> Start Call
               </Button>
-            </Link>
+            </a>
           </Grid>
 
           <Divider className={classes.divider} />
 
           <Grid item xs={12} className={classes.sharePanel}>
-            <TextField
-              value={sharableCallLink}
-              variant="outlined"
-              size="small"
-              onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
-                e.target.setSelectionRange(0, 100);
-                handleShare();
-              }}
-            />
+            <Hidden xsDown implementation="js">
+              <TextField
+                value={sharableCallLink}
+                variant="outlined"
+                size="small"
+                onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+                  e.target.setSelectionRange(0, 100);
+                  handleShare();
+                }}
+              />
+            </Hidden>
             <Tooltip title="Copy link to clipboard" placement="bottom">
               <Button
+                fullWidth
                 color="secondary"
                 variant="outlined"
                 className={classes.addButton}

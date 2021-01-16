@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { Collections, LocalModel, Template } from '~/firebase/schema-types';
@@ -65,11 +66,29 @@ export default function StartPage() {
   }
 
   // when both template and host status is ready, show call conatiner
-  return template && isHost !== undefined ? (
-    <CallProvider template={template} isHost={isHost}>
-      <CallContainer />
-    </CallProvider>
-  ) : (
-    <LoadingContainer />
+  return (
+    <>
+      <Head>
+        {/* On android, make browser UI dark in call mode */}
+        <meta name="theme-color" content="#222" />
+        {/* disable intercom via css - cannot use hook because this page can be
+          hard loaded, and hard loading means showLauncher will be run before boot.
+          Hiding via css also means we don't get weird effects where it blinks in/out.
+        */}
+        <style>
+          {`#intercom-container, .intercom-lightweight-app, .intercom-app {
+            display: none;
+          }`}
+        </style>
+      </Head>
+
+      {template && isHost !== undefined ? (
+        <CallProvider template={template} isHost={isHost}>
+          <CallContainer />
+        </CallProvider>
+      ) : (
+        <LoadingContainer />
+      )}
+    </>
   );
 }

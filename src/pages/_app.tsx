@@ -6,10 +6,12 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { SnackbarProvider } from 'notistack';
 
 import '~/utils/progress-indicator';
+import { isMobile } from '~/utils';
 import theme from '~/theme';
 import Head from '~/components/App/Head';
 import PendingWrite from '~/components/PendingWrite/PendingWrite';
 import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
+import IntercomLoader from '~/components/IntercomLoader/IntercomLoader';
 import AppStateProvider from '~/state';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -36,6 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <CssBaseline />
           <PendingWrite />
           <ErrorDialog />
+          {!isMobile && <IntercomLoader />}
           <Component previousPage={previousPage} {...pageProps} />
         </SnackbarProvider>
       </AppStateProvider>

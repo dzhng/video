@@ -21,11 +21,13 @@ export interface StateContextType {
   // auth
   getToken(room: string): Promise<string>;
   user?: firebase.User | null;
-  signIn(): Promise<firebase.User | null>;
-  signInAnonymously(): Promise<firebase.User | null>;
+  signInWithEmailAndPassword(name: string, password: string): Promise<firebase.User | null>;
+  signInWithGoogle(): Promise<firebase.User | null>;
+  signInAnonymously(displayName: string): Promise<firebase.User | null>;
   signOut(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
+  register(email: string, password: string, name: string): Promise<firebase.User | null>;
 
   // workspaces
   currentWorkspaceId?: string | null;

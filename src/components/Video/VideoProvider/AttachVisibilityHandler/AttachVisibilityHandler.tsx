@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { isMobile } from '~/utils';
-import useLocalVideoToggle from '~/hooks/Video/useLocalVideoToggle/useLocalVideoToggle';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 
 /* 
@@ -14,8 +13,7 @@ import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 */
 
 export default function AttachVisibilityHandler() {
-  const { room } = useVideoContext();
-  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+  const { room, isVideoEnabled, toggleVideoEnabled } = useVideoContext();
   const shouldRepublishVideoOnForeground = useRef(false);
 
   useEffect(() => {
