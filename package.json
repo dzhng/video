@@ -94,6 +94,7 @@
     "start": "next start",
     "test": "sh -c 'firebase --only firestore emulators:exec \"jest $0 $1 $2 $3 $4\"' '--passWithNoTests'",
     "test:dev": "sh -c 'firebase emulators:exec \"jest --watch --runInBand --reporters=default --reporters=jest-junit --coverage $0 $1 $2 $3 $4\"' '--passWithNoTests'",
+    "test:cypress": "cypress open",
     "lint": "tsc ; eslint src/**/*.{ts,tsx} --fix",
     "server": "node server.js",
     "get-indexes": "firebase firestore:indexes",
