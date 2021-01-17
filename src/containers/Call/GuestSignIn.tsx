@@ -10,8 +10,6 @@ import {
 } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { Collections, User } from '~/firebase/schema-types';
-import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 
 const useStyles = makeStyles((theme) =>
