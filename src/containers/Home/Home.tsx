@@ -15,6 +15,7 @@ import CreateCard from './CreateCard';
 import AddMemberMenuItem, { AddMemberDialog } from './AddMemberMenuItem';
 import LeaveMenuItem from './LeaveMenuItem';
 import DeleteMenuItem from './DeleteMenuItem';
+import { useAppState } from '~/state';
 
 interface PropTypes {
   workspace?: LocalModel<Workspace>;
@@ -143,6 +144,7 @@ export default function Home({
   const anchorRef = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+  const { workspaces } = useAppState();
 
   // measure width of header bar to calculate how many avatars to show
   const { ref, width } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
@@ -150,6 +152,132 @@ export default function Home({
   const handleMenuClick = useCallback(() => {
     setSettingsMenuOpen(false);
   }, []);
+
+  const renderTemplateCards = () => {
+    if (workspaces.length === 0) {
+      return (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          style={{ height: '100vh' }}
+        >
+          <Typography variant="h1">No Workspace Exists</Typography>
+          <Typography variant="h2">Create A Workspace To Get Started</Typography>
+        </Grid>
+      );
+    } else {
+      return (
+        <Grid container className={classes.grid} spacing={3}>
+          <Grid item xs={12} className={classes.titleBar} ref={ref}>
+            <div className={classes.titleSection}>
+              <Hidden smUp implementation="css">
+                <IconButton onClick={() => setMobileOpen(true)}>
+                  <MenuIcon />
+                </IconButton>
+              </Hidden>
+              <Typography variant="h1" className={classes.title}>
+                {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}{' '}
+                {/* workspace name */}
+              </Typography>
+            </div>
+
+            <span className={classes.membersList}>
+              {' '}
+              {/* workspace template cards */}
+              {!workspace || isLoadingMembers
+                ? loadingMemberSkeletons
+                : members.slice(0, numberOfAvatars).map((member) => (
+                    <Tooltip key={member.id} title={member.displayName} placement="bottom">
+                      <UserAvatar
+                        className={classes.avatar}
+                        user={member}
+                        onClick={() => setMembersDialogOpen(true)}
+                      />
+                    </Tooltip>
+                  ))}
+              {workspace && !isLoadingMembers && numberOfAvatars < members.length && (
+                <Tooltip title={`${members.length} members in this workspace`} placement="bottom">
+                  <div
+                    className={clsx(classes.memberNumber, classes.avatar)}
+                    onClick={() => setMembersDialogOpen(true)}
+                  >
+                    +{members.length - numberOfAvatars}
+                  </div>
+                </Tooltip>
+              )}
+              <div className={classes.settingsContainer} ref={anchorRef}>
+                <Tooltip title="Settings" placement="bottom">
+                  {/* wrap in div so tooltip still works even with the button disabled */}
+                  <div>
+                    <IconButton
+                      color="inherit"
+                      disabled={!workspace}
+                      onClick={() => setSettingsMenuOpen((state) => !state)}
+                    >
+                      <MoreIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+                <Menu
+                  open={settingsMenuOpen}
+                  onClose={() => setSettingsMenuOpen((state) => !state)}
+                  anchorEl={anchorRef.current}
+                >
+                  <MenuItem disabled>Settings</MenuItem>
+
+                  {isAdmin && (
+                    <AddMemberMenuItem
+                      onClick={handleMenuClick}
+                      addMembers={addMembers}
+                      removeMembers={removeMembers}
+                      members={members}
+                    />
+                  )}
+
+                  <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
+
+                  {isAdmin && (
+                    <DeleteMenuItem
+                      onClick={handleMenuClick}
+                      deleteWorkspace={deleteWorkspace}
+                      className={classes.deleteButtonMenu}
+                    />
+                  )}
+                </Menu>
+              </div>
+            </span>
+          </Grid>
+
+          {workspace && !isLoadingTemplates && (
+            <Grid item {...cardItemSizeProps}>
+              <Link href="/template/create">
+                {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
+                <div>
+                  <CreateCard height={cardHeight} />
+                </div>
+              </Link>
+            </Grid>
+          )}
+
+          {isLoadingTemplates
+            ? loadingTemplateSkeletons
+            : templates.map((template) => (
+                <Grid item {...cardItemSizeProps} key={template.id}>
+                  <Link href={`/template/${template.id}`}>
+                    {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
+                    <div>
+                      <TemplateCard template={template} height={cardHeight} />
+                    </div>
+                  </Link>
+                </Grid>
+              ))}
+        </Grid>
+      );
+    }
+  };
 
   const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
     <Grid item {...cardItemSizeProps} key={key}>
@@ -167,110 +295,7 @@ export default function Home({
     <div className={classes.container}>
       <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
 
-      <Grid container className={classes.grid} spacing={3}>
-        <Grid item xs={12} className={classes.titleBar} ref={ref}>
-          <div className={classes.titleSection}>
-            <Hidden smUp implementation="css">
-              <IconButton onClick={() => setMobileOpen(true)}>
-                <MenuIcon />
-              </IconButton>
-            </Hidden>
-            <Typography variant="h1" className={classes.title}>
-              {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}
-            </Typography>
-          </div>
-
-          <span className={classes.membersList}>
-            {!workspace || isLoadingMembers
-              ? loadingMemberSkeletons
-              : members.slice(0, numberOfAvatars).map((member) => (
-                  <Tooltip key={member.id} title={member.displayName} placement="bottom">
-                    <UserAvatar
-                      className={classes.avatar}
-                      user={member}
-                      onClick={() => setMembersDialogOpen(true)}
-                    />
-                  </Tooltip>
-                ))}
-
-            {workspace && !isLoadingMembers && numberOfAvatars < members.length && (
-              <Tooltip title={`${members.length} members in this workspace`} placement="bottom">
-                <div
-                  className={clsx(classes.memberNumber, classes.avatar)}
-                  onClick={() => setMembersDialogOpen(true)}
-                >
-                  +{members.length - numberOfAvatars}
-                </div>
-              </Tooltip>
-            )}
-
-            <div className={classes.settingsContainer} ref={anchorRef}>
-              <Tooltip title="Settings" placement="bottom">
-                {/* wrap in div so tooltip still works even with the button disabled */}
-                <div>
-                  <IconButton
-                    color="inherit"
-                    disabled={!workspace}
-                    onClick={() => setSettingsMenuOpen((state) => !state)}
-                  >
-                    <MoreIcon />
-                  </IconButton>
-                </div>
-              </Tooltip>
-              <Menu
-                open={settingsMenuOpen}
-                onClose={() => setSettingsMenuOpen((state) => !state)}
-                anchorEl={anchorRef.current}
-              >
-                <MenuItem disabled>Settings</MenuItem>
-
-                {isAdmin && (
-                  <AddMemberMenuItem
-                    onClick={handleMenuClick}
-                    addMembers={addMembers}
-                    removeMembers={removeMembers}
-                    members={members}
-                  />
-                )}
-
-                <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
-
-                {isAdmin && (
-                  <DeleteMenuItem
-                    onClick={handleMenuClick}
-                    deleteWorkspace={deleteWorkspace}
-                    className={classes.deleteButtonMenu}
-                  />
-                )}
-              </Menu>
-            </div>
-          </span>
-        </Grid>
-
-        {workspace && !isLoadingTemplates && (
-          <Grid item {...cardItemSizeProps}>
-            <Link href="/template/create">
-              {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
-              <div>
-                <CreateCard height={cardHeight} />
-              </div>
-            </Link>
-          </Grid>
-        )}
-
-        {isLoadingTemplates
-          ? loadingTemplateSkeletons
-          : templates.map((template) => (
-              <Grid item {...cardItemSizeProps} key={template.id}>
-                <Link href={`/template/${template.id}`}>
-                  {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
-                  <div>
-                    <TemplateCard template={template} height={cardHeight} />
-                  </div>
-                </Link>
-              </Grid>
-            ))}
-      </Grid>
+      {renderTemplateCards()}
 
       <AddMemberDialog
         open={membersDialogOpen}
