@@ -13,8 +13,6 @@ import {
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
-import { db } from '~/utils/firebase';
-import { Collections, User } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 
 const FormSchema = Yup.object().shape({
