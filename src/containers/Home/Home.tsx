@@ -153,23 +153,56 @@ export default function Home({
     setSettingsMenuOpen(false);
   }, []);
 
-  const renderTemplateCards = () => {
-    if ((!workspaces || workspaces.length === 0) && isWorkspacesReady) {
-      return (
-        <Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justify="center"
-          style={{ height: '100vh' }}
-        >
-          <Typography variant="h1">No Workspace Exists</Typography>
-          <Typography variant="h2">Create A Workspace To Get Started</Typography>
+  const noWorkspaceExists = (
+    <Grid
+      container
+      spacing={0}
+      direction="column"
+      alignItems="center"
+      justify="center"
+      style={{ height: '100vh' }}
+    >
+      <Typography variant="h1">No Workspace Exists</Typography>
+      <Typography variant="h2">Create A Workspace To Get Started</Typography>
+    </Grid>
+  );
+
+  const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
+    <Grid item {...cardItemSizeProps} key={key}>
+      <Skeleton variant="rect" height={cardHeight} className={classes.cardSkeleton} />
+    </Grid>
+  ));
+
+  const loadingMemberSkeletons = (
+    <Skeleton variant="circle" height={avatarSize} width={avatarSize} className={classes.avatar} />
+  );
+
+  const numberOfAvatars = Math.max(Math.floor((width * 0.5) / avatarSize) - 2, 1);
+
+  return (
+    <div className={classes.container}>
+      <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
+      {!isWorkspacesReady && (isLoadingMembers || isLoadingTemplates) ? (
+        <Grid container className={classes.grid} spacing={3}>
+          <Grid item xs={12} className={classes.titleBar} ref={ref}>
+            <div className={classes.titleSection}>
+              <Hidden smUp implementation="css">
+                <IconButton onClick={() => setMobileOpen(true)}>
+                  <MenuIcon />
+                </IconButton>
+              </Hidden>
+              <Typography variant="h1" className={classes.title}>
+                <Skeleton width={150} height={avatarSize} />
+              </Typography>
+            </div>
+
+            <span className={classes.membersList}>{loadingMemberSkeletons}</span>
+          </Grid>
+          {loadingTemplateSkeletons}
         </Grid>
-      );
-    } else {
-      return (
+      ) : isWorkspacesReady && workspaces && workspaces.length === 0 ? (
+        noWorkspaceExists
+      ) : (
         <Grid container className={classes.grid} spacing={3}>
           <Grid item xs={12} className={classes.titleBar} ref={ref}>
             <div className={classes.titleSection}>
@@ -184,7 +217,6 @@ export default function Home({
             </div>
 
             <span className={classes.membersList}>
-              {' '}
               {!workspace || isLoadingMembers
                 ? loadingMemberSkeletons
                 : members.slice(0, numberOfAvatars).map((member) => (
@@ -273,27 +305,8 @@ export default function Home({
                 </Grid>
               ))}
         </Grid>
-      );
-    }
-  };
-
-  const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
-    <Grid item {...cardItemSizeProps} key={key}>
-      <Skeleton variant="rect" height={cardHeight} className={classes.cardSkeleton} />
-    </Grid>
-  ));
-
-  const loadingMemberSkeletons = (
-    <Skeleton variant="circle" height={avatarSize} width={avatarSize} className={classes.avatar} />
-  );
-
-  const numberOfAvatars = Math.max(Math.floor((width * 0.5) / avatarSize) - 2, 1);
-
-  return (
-    <div className={classes.container}>
-      <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
-
-      {renderTemplateCards()}
+      )}
+      {/* {renderTemplateCards()} */}
 
       <AddMemberDialog
         open={membersDialogOpen}
