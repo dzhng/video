@@ -2,6 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
+import { isMobile } from '~/utils';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
@@ -36,14 +37,13 @@ export default function Controls({ showControls = true }: { showControls?: boole
   const { isFetching } = useAppState();
   const { isAcquiringLocalTracks, isConnecting } = useVideoContext();
   const isReconnecting = roomState === 'reconnecting';
-  const isScreenShareSupported = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || isReconnecting;
 
   return (
     <div data-testid="container" className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={disableButtons} />
-      {roomState !== 'disconnected' && isScreenShareSupported && <ToggleScreenShareButton />}
+      {roomState !== 'disconnected' && !isMobile && <ToggleScreenShareButton />}
       {roomState !== 'disconnected' && <EndCallButton />}
     </div>
   );
