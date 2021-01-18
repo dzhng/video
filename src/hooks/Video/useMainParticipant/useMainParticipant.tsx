@@ -18,11 +18,20 @@ export default function useMainParticipant() {
 
   // The participant that is returned is displayed in the main video area. Changing the order of the following
   // variables will change the how the main speaker is determined.
-  return (
+  const mainParticipant =
     selectedParticipant ||
     remoteScreenShareParticipant ||
     dominantSpeaker ||
     participants[0] ||
-    localParticipant
-  );
+    localParticipant;
+
+  const videoPriority: 'high' | null =
+    mainParticipant === selectedParticipant || mainParticipant === screenShareParticipant
+      ? 'high'
+      : null;
+
+  return {
+    mainParticipant,
+    videoPriority,
+  };
 }

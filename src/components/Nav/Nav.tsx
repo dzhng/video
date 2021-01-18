@@ -44,6 +44,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: sidebarWidth - theme.spacing(2) * 2 - 2,
       margin: theme.spacing(2),
     },
+    createWorkspaceItem: {
+      color: theme.palette.primary.main,
+    },
     menuButton: {
       marginRight: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
@@ -168,7 +171,9 @@ export default function Nav({
                   </MenuItem>
                 ))}
                 <MenuItem value={NewWorkspaceValue}>
-                  <Typography variant="h4">New Workspace</Typography>
+                  <Typography variant="h5" className={classes.createWorkspaceItem}>
+                    <b>+ New Workspace</b>
+                  </Typography>
                 </MenuItem>
               </Select>
             </FormControl>

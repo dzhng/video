@@ -60,8 +60,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       justifyContent: 'space-between',
       height: '100%',
-      padding: '0.4em',
       width: '100%',
+      padding: '0.4em',
       background: 'transparent',
     },
     reconnectingContainer: {
@@ -101,6 +101,9 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'space-between',
       alignItems: 'center',
       margin: '1%',
+    },
+    indicators: {
+      color: 'white',
     },
   }),
 );
@@ -157,7 +160,7 @@ export default function ParticipantInfo({
           </h4>
           <NetworkQualityLevel participant={participant} />
         </div>
-        <div>
+        <div className={classes.indicators}>
           <AudioLevelIndicator audioTrack={audioTrack} />
           {!isVideoEnabled && <VideocamOff data-testid="camoff-icon" />}
           {isScreenShareEnabled && <ScreenShare data-testid="screenshare-icon" />}
