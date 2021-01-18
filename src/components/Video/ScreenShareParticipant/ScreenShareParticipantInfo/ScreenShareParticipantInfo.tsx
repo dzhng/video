@@ -3,18 +3,24 @@ import clsx from 'clsx';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
 
+import BandwidthWarning from '~/components/Video/BandwidthWarning/BandwidthWarning';
 import useIsTrackSwitchedOff from '~/hooks/Video/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import usePublications from '~/hooks/Video/usePublications/usePublications';
 import useTrack from '~/hooks/Video/useTrack/useTrack';
-import BandwidthWarning from '~/components/Video/BandwidthWarning/BandwidthWarning';
+import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       position: 'relative',
       display: 'flex',
+      width: '100%',
+      height: '100%',
       alignItems: 'center',
-      gridArea: 'participantList',
+      background: 'black',
+      borderRadius: theme.shape.borderRadius,
+      boxShadow: theme.shadows[7],
+      overflow: 'hidden',
     },
     isVideoSwitchedOff: {
       '& video': {
@@ -44,6 +50,8 @@ const useStyles = makeStyles((theme) =>
       height: '100%',
       width: '100%',
       padding: '0.4em',
+      display: 'flex',
+      justifyContent: 'space-between',
     },
   }),
 );
@@ -58,6 +66,7 @@ export default function ScreenShareParticipantInfo({
   children,
 }: ScreenShareParticipantInfoProps) {
   const classes = useStyles();
+  const userInfo = useUserInfo(participant.identity);
 
   const publications = usePublications(participant);
   const screenSharePublication = publications.find((p) => p.trackName.includes('screen'));
@@ -73,7 +82,9 @@ export default function ScreenShareParticipantInfo({
       className={clsx(classes.container, { [classes.isVideoSwitchedOff]: isVideoSwitchedOff })}
     >
       <div className={classes.infoContainer}>
-        <h4 className={classes.identity}>{participant.identity}</h4>
+        <h4 className={classes.identity}>
+          <span>{userInfo?.displayName}</span>
+        </h4>
       </div>
       {isVideoSwitchedOff && <BandwidthWarning />}
       {children}

@@ -15,6 +15,7 @@ import AudioLevelIndicator from '~/components/Video/AudioLevelIndicator/AudioLev
 import BandwidthWarning from '~/components/Video/BandwidthWarning/BandwidthWarning';
 import NetworkQualityLevel from '~/components/Video/NetworkQualityLevel/NetworkQualityLevel';
 
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import usePublications from '~/hooks/Video/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/Video/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useParticipantIsReconnecting from '~/hooks/Video/useParticipantIsReconnecting/useParticipantIsReconnecting';
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       width: '100%',
       height: '100%',
-      backgroundColor: theme.palette.grey[600],
+      backgroundColor: 'black',
       borderRadius: theme.shape.borderRadius,
       boxShadow: theme.shadows[7],
       overflow: 'hidden',
@@ -40,7 +41,13 @@ const useStyles = makeStyles((theme: Theme) =>
       // fix webkit bug where borderRadius doesn't render
       transform: 'translateZ(0)',
 
+      // make the size a little bit bigger and add margin to fix issue
+      // where some android browsers will display video with a 1px white border
       '& video': {
+        width: 'calc(100% + 4px)',
+        height: 'calc(100% + 4px)',
+        marginTop: '-2px',
+        marginLeft: '-2px',
         filter: 'none',
       },
       '& svg': {
@@ -104,6 +111,19 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     indicators: {
       color: 'white',
+      display: 'flex',
+      alignItems: 'center',
+
+      '& svg:first-child': {
+        height: 34,
+        width: 34,
+        padding: 5,
+        backgroundColor: theme.palette.grey[800],
+        borderRadius: 17,
+      },
+      '& svg': {
+        marginRight: 5,
+      },
     },
   }),
 );
@@ -121,12 +141,12 @@ export default function ParticipantInfo({
   //isSelected,
   children,
 }: ParticipantInfoProps) {
+  const { isVideoEnabled } = useVideoContext();
   const publications = usePublications(participant);
 
   const audioPublication = publications.find((p) => p.kind === 'audio');
   const videoPublication = publications.find((p) => p.trackName.includes('camera'));
 
-  const isVideoEnabled = Boolean(videoPublication);
   const isScreenShareEnabled = publications.find((p) => p.trackName.includes('screen'));
 
   const videoTrack = useTrack(videoPublication);

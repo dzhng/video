@@ -36,13 +36,14 @@ export default function Controls({ showControls = true }: { showControls?: boole
   const { isFetching } = useAppState();
   const { isAcquiringLocalTracks, isConnecting } = useVideoContext();
   const isReconnecting = roomState === 'reconnecting';
+  const isScreenShareSupported = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || isReconnecting;
 
   return (
     <div data-testid="container" className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={disableButtons} />
-      {roomState !== 'disconnected' && <ToggleScreenShareButton />}
+      {roomState !== 'disconnected' && isScreenShareSupported && <ToggleScreenShareButton />}
       {roomState !== 'disconnected' && <EndCallButton />}
     </div>
   );
