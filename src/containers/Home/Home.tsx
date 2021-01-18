@@ -144,7 +144,7 @@ export default function Home({
   const anchorRef = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [membersDialogOpen, setMembersDialogOpen] = useState(false);
-  const { workspaces } = useAppState();
+  const { workspaces, isWorkspacesReady } = useAppState();
 
   // measure width of header bar to calculate how many avatars to show
   const { ref, width } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
@@ -154,7 +154,7 @@ export default function Home({
   }, []);
 
   const renderTemplateCards = () => {
-    if (workspaces.length === 0) {
+    if ((!workspaces || workspaces.length === 0) && isWorkspacesReady) {
       return (
         <Grid
           container
@@ -179,14 +179,12 @@ export default function Home({
                 </IconButton>
               </Hidden>
               <Typography variant="h1" className={classes.title}>
-                {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}{' '}
-                {/* workspace name */}
+                {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}
               </Typography>
             </div>
 
             <span className={classes.membersList}>
               {' '}
-              {/* workspace template cards */}
               {!workspace || isLoadingMembers
                 ? loadingMemberSkeletons
                 : members.slice(0, numberOfAvatars).map((member) => (
