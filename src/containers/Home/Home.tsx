@@ -182,27 +182,9 @@ export default function Home({
   return (
     <div className={classes.container}>
       <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
-      {!isWorkspacesReady && (isLoadingMembers || isLoadingTemplates) ? (
-        <Grid container className={classes.grid} spacing={3}>
-          <Grid item xs={12} className={classes.titleBar} ref={ref}>
-            <div className={classes.titleSection}>
-              <Hidden smUp implementation="css">
-                <IconButton onClick={() => setMobileOpen(true)}>
-                  <MenuIcon />
-                </IconButton>
-              </Hidden>
-              <Typography variant="h1" className={classes.title}>
-                <Skeleton width={150} height={avatarSize} />
-              </Typography>
-            </div>
-
-            <span className={classes.membersList}>{loadingMemberSkeletons}</span>
-          </Grid>
-          {loadingTemplateSkeletons}
-        </Grid>
-      ) : isWorkspacesReady && workspaces && workspaces.length === 0 ? (
+      {isWorkspacesReady === true && workspaces && workspaces.length === 0 ? (
         noWorkspaceExists
-      ) : (
+      ) : isWorkspacesReady === true && workspaces && workspaces.length > 0 ? (
         <Grid container className={classes.grid} spacing={3}>
           <Grid item xs={12} className={classes.titleBar} ref={ref}>
             <div className={classes.titleSection}>
@@ -304,6 +286,24 @@ export default function Home({
                   </Link>
                 </Grid>
               ))}
+        </Grid>
+      ) : (
+        <Grid container className={classes.grid} spacing={3}>
+          <Grid item xs={12} className={classes.titleBar} ref={ref}>
+            <div className={classes.titleSection}>
+              <Hidden smUp implementation="css">
+                <IconButton onClick={() => setMobileOpen(true)}>
+                  <MenuIcon />
+                </IconButton>
+              </Hidden>
+              <Typography variant="h1" className={classes.title}>
+                <Skeleton width={150} height={avatarSize} />
+              </Typography>
+            </div>
+
+            <span className={classes.membersList}>{loadingMemberSkeletons}</span>
+          </Grid>
+          {loadingTemplateSkeletons}
         </Grid>
       )}
       {/* {renderTemplateCards()} */}
