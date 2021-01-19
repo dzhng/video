@@ -38,6 +38,19 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       height: '100vh',
     },
+    actionArea: {
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+
+      '& >div:first-child': {
+        maxHeight: '50%',
+      },
+      '& >div:nth-child(2)': {
+        flexBasis: '50%',
+        flexGrow: 1,
+      },
+    },
 
     // define animation for container background
     '@global': {
@@ -117,13 +130,15 @@ export default function CallContainer() {
         backHref={fromHref}
         disabled={!isHost}
       />
-      <ActivitiesBar
-        template={template}
-        mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
-        currentActivity={currentActivity}
-        startActivity={startActivity}
-      />
-      <Interactions />
+      <div className={classes.actionArea}>
+        <ActivitiesBar
+          template={template}
+          mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
+          currentActivity={currentActivity}
+          startActivity={startActivity}
+        />
+        {isCallStarted && <Interactions />}
+      </div>
     </>
   );
 

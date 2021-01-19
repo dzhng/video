@@ -2,15 +2,6 @@ import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
 import { Typography, Button, CardContent } from '@material-ui/core';
-import {
-  Timeline,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineItem,
-  TimelineOppositeContent,
-  TimelineSeparator,
-} from '@material-ui/lab';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AddOutlined as AddIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
@@ -57,6 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.info.light + '40',
       borderBottom: theme.dividerBorder,
     },
+    timelineItem: {
+      margin: theme.spacing(2),
+    },
     addButton: {
       borderStyle: 'dashed',
       // add some transparency
@@ -68,10 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     isDragging: {
-      '& .MuiTimelineSeparator-root': {
-        opacity: 0,
-        transition: theme.transitionTime,
-      },
+      // NOTE: put item dragging css here
     },
   }),
 );
@@ -80,35 +71,33 @@ const ActivityTimelineItem = ({
   activity,
   index,
   mode,
-  isLastItem,
   ...otherProps
 }: {
   activity: Activity;
   mode: 'edit' | 'call' | 'view';
   index: number;
-  isLastItem: boolean;
   save(activity: Activity): void;
   onEdit(): void;
 
   isStarted?: boolean;
   onStart?(): void;
-}) => (
-  <Draggable draggableId={activity.id} isDragDisabled={mode === 'view'} index={index}>
-    {({ innerRef, draggableProps, dragHandleProps }) => (
-      <TimelineItem ref={innerRef} {...draggableProps} {...dragHandleProps}>
-        <TimelineOppositeContent></TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineDot />
-          {/* always show in edit and call mode; if in view mode, always show uness if it's last item (because the new activity button will not be shown */}
-          {(mode !== 'view' || !isLastItem) && <TimelineConnector />}
-        </TimelineSeparator>
-        <TimelineContent>
+}) => {
+  const classes = useStyles();
+  return (
+    <Draggable draggableId={activity.id} isDragDisabled={mode === 'view'} index={index}>
+      {({ innerRef, draggableProps, dragHandleProps }) => (
+        <div
+          className={classes.timelineItem}
+          ref={innerRef}
+          {...draggableProps}
+          {...dragHandleProps}
+        >
           <ActivityCard activity={activity} mode={mode} {...otherProps} />
-        </TimelineContent>
-      </TimelineItem>
-    )}
-  </Draggable>
-);
+        </div>
+      )}
+    </Draggable>
+  );
+};
 
 function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
   const result = Array.from(list);
@@ -242,7 +231,7 @@ export default function ActivitiesBar({
             {...droppableProps}
           >
             {/* Hide hint card after more than 2 activities since the user probably know what it is at that point. It also takes up a lot of space. */}
-            {activities.length <= 2 && (
+            {activities.length <= 2 && mode === 'edit' && (
               <div className={classes.hintCard}>
                 <CardContent>
                   <Typography variant="h2">
@@ -256,49 +245,34 @@ export default function ActivitiesBar({
               </div>
             )}
 
-            <Timeline>
-              {activities.map((activity, index) => (
-                <ActivityTimelineItem
-                  key={activity.id}
-                  activity={activity}
-                  mode={mode}
-                  index={index}
-                  isLastItem={index === activities.length - 1}
-                  save={(values: Activity) => handleSaveActivity(values, index)}
-                  onEdit={() => setEditActivityIndex(index)}
-                  isStarted={currentActivity === activity}
-                  onStart={() => handleStartActivity(activity)}
-                />
-              ))}
+            {activities.map((activity, index) => (
+              <ActivityTimelineItem
+                key={activity.id}
+                activity={activity}
+                mode={mode}
+                index={index}
+                save={(values: Activity) => handleSaveActivity(values, index)}
+                onEdit={() => setEditActivityIndex(index)}
+                isStarted={currentActivity === activity}
+                onStart={() => handleStartActivity(activity)}
+              />
+            ))}
 
-              {placeholder}
+            {placeholder}
 
-              {mode !== 'view' && (
-                <TimelineItem>
-                  {/* Timeline items has a weird idiosyncracy here where if TimelineOppositeContent is not defined, it will add a 50% pad (because the timeline wants to be centered by default. Since we want our timeline to be on the left, we define an empty OppositeContent and get rid of the 50% pad via css */}
-                  <TimelineOppositeContent></TimelineOppositeContent>
-
-                  {/* It only makes sense to show timeline on create button when there's at least one activity, or else it'll just be a weird icon there by itself */}
-                  {activities.length > 0 && (
-                    <TimelineSeparator>
-                      <TimelineDot />
-                    </TimelineSeparator>
-                  )}
-
-                  <TimelineContent>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      fullWidth
-                      className={classes.addButton}
-                      onClick={() => setNewActivityOpen((state) => !state)}
-                    >
-                      <AddIcon /> New Activity
-                    </Button>
-                  </TimelineContent>
-                </TimelineItem>
-              )}
-            </Timeline>
+            {mode !== 'view' && (
+              <div className={classes.timelineItem}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  className={classes.addButton}
+                  onClick={() => setNewActivityOpen((state) => !state)}
+                >
+                  <AddIcon /> New Activity
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Droppable>
