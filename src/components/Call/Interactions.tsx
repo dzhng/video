@@ -12,6 +12,15 @@ const useStyles = makeStyles((theme) =>
     container: {
       height: '100%',
       margin: theme.spacing(2),
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    content: {
+      flexGrow: 1,
+    },
+    nav: {
+      borderTop: theme.dividerBorder,
+      flexShrink: 0,
     },
   }),
 );
@@ -22,8 +31,11 @@ export default function Interactions() {
 
   return (
     <Card className={classes.container}>
-      <Notes />
+      <div className={classes.content}>
+        <Notes />
+      </div>
       <BottomNavigation
+        className={classes.nav}
         value={navItem}
         onChange={(_, newValue) => {
           setNavItem(newValue);

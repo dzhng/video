@@ -29,17 +29,17 @@ const useStyles = makeStyles((theme: Theme) =>
       // do animation on gpu so its less taxing on cpu
       transform: 'translateZ(0)',
     },
-    drawerPaper: theme.customMixins.activitiesBarMini,
-    transparentBackground: {
-      backgroundColor: 'rgba(255,255,255,0.75)',
+    drawerPaper: {
+      ...theme.customMixins.activitiesBarMini,
+      display: 'flex',
+      flexDirection: 'column',
     },
-    activitiesSpacer: theme.customMixins.activitiesBarMini,
     content: {
       flexGrow: 1,
       height: '100vh',
     },
     actionArea: {
-      height: '100%',
+      flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',
 
@@ -163,16 +163,7 @@ export default function CallContainer() {
           </Drawer>
         </Hidden>
         <Hidden xsDown implementation="js">
-          <Drawer
-            classes={{
-              paper: clsx(classes.drawerPaper, classes.transparentBackground),
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-          <div className={classes.activitiesSpacer} />
+          <div className={classes.drawerPaper}>{drawer}</div>
         </Hidden>
 
         <div className={classes.content}>
