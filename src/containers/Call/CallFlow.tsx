@@ -44,7 +44,7 @@ export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) 
 
       if (videoTrack) {
         videoTrack.disable();
-        room.localParticipant.unpublishTrack(videoTrack);
+        room.localParticipant?.unpublishTrack(videoTrack);
       }
 
       removeLocalVideoTrack();
