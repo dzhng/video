@@ -88,12 +88,12 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingRight: theme.spacing(1),
 
       // have transparent border here so its correctly sized
-      border: '1px solid transparent',
+      border: '1px solid ' + theme.palette.grey[300],
       borderRadius: theme.shape.borderRadius,
       transition: theme.transitionTime,
 
       '&:hover': {
-        border: '1px solid ' + theme.palette.grey[300],
+        border: '1px solid ' + theme.palette.grey[400],
       },
 
       '&.Mui-focused': {
