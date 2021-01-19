@@ -52,9 +52,6 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(2),
     },
     addButton: {
-      borderStyle: 'dashed',
-      // add some transparency
-      backgroundColor: theme.palette.primary.main + '10',
       height: 60,
 
       '& svg': {
@@ -263,7 +260,7 @@ export default function ActivitiesBar({
             {mode !== 'view' && (
               <div className={classes.timelineItem}>
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   fullWidth
                   className={classes.addButton}
