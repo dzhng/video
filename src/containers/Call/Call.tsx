@@ -11,6 +11,7 @@ import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOpti
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
 import ActivitiesBar from '~/components/Activities/ActivitiesBar/ActivitiesBar';
+import Interactions from '~/components/Call/Interactions';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import CallFlow from './CallFlow';
 
@@ -122,6 +123,7 @@ export default function CallContainer() {
         currentActivity={currentActivity}
         startActivity={startActivity}
       />
+      <Interactions />
     </>
   );
 
