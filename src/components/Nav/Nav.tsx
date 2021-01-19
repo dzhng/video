@@ -28,6 +28,10 @@ import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import Menu from './Menu/Menu';
 
+const Logo = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img src="/logo.png" {...props} />
+);
+
 const NewWorkspaceValue = '__New_Workspace__';
 const sidebarWidth = 300;
 
@@ -87,7 +91,9 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'right',
     },
     title: {
-      padding: theme.spacing(3),
+      padding: theme.spacing(2.5),
+      objectFit: 'contain',
+      maxWidth: 140,
     },
     divider: {
       marginLeft: theme.spacing(2),
@@ -137,10 +143,7 @@ export default function Nav({
   const drawer = useMemo(
     () => (
       <div className={classes.drawerContent}>
-        <Typography className={classes.title} variant="h2">
-          AOMNI
-        </Typography>
-
+        <Logo className={classes.title} />
         <Divider className={classes.divider} />
 
         <List className={classes.list}>
