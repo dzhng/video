@@ -95,7 +95,6 @@ export type ActivityMetadata = {
   video: VideoActivityMetadata;
   poll: PollActivityMetadata;
   questions: QuestionsActivityMetadata;
-  screenshare: ScreenShareActivityMetadata;
   breakout: BreakoutActivityMetadata;
 };
 
@@ -125,11 +124,6 @@ export declare interface QuestionsActivityMetadata {
   allowMultipleSubmissions: boolean;
   // allow submissions to be anonymous
   allowAnonymousSubmissions: boolean;
-}
-
-export declare interface ScreenShareActivityMetadata {
-  // if only the host can share share, or everyone can
-  hostOnly: boolean;
 }
 
 export declare interface BreakoutActivityMetadata {
