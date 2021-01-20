@@ -1,26 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Drawer, Fab, Hidden } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 
-import { BackIcon } from '~/components/Icons';
-import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
-import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
-import ActivitiesBar from '~/components/Activities/ActivitiesBar/ActivitiesBar';
-import Interactions from '~/components/Call/Interactions';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import CallFlow from './CallFlow';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     container: {
-      display: 'flex',
       width: '100%',
+      height: '100vh',
 
       background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
       backgroundSize: '400% 400%',
@@ -29,36 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
       animation: 'gradient 30s steps(150) infinite',
       // do animation on gpu so its less taxing on cpu
       transform: 'translateZ(0)',
-    },
-    drawerPaper: {
-      ...theme.customMixins.activitiesBarMini,
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    backButton: {
-      marginLeft: theme.spacing(2),
-      marginTop: theme.spacing(2),
-    },
-    content: {
-      flexGrow: 1,
-      height: '100vh',
-    },
-    actionArea: {
-      flexGrow: 1,
-      display: 'flex',
-      flexDirection: 'column',
-
-      // if only child, go 100% height
-      '& >div:first-child:last-child': {
-        maxHeight: '100%',
-      },
-      '& >div:first-child': {
-        maxHeight: '50%',
-      },
-      '& >div:nth-child(2)': {
-        flexBasis: '50%',
-        flexGrow: 1,
-      },
     },
 
     // define animation for container background
@@ -83,14 +46,7 @@ export default function CallContainer() {
   const router = useRouter();
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
-  const {
-    template,
-    isHost,
-    currentActivity,
-    startActivity,
-    isActivityDrawerOpen,
-    setIsActivityDrawerOpen,
-  } = useCallContext();
+  const { template } = useCallContext();
 
   // URL that the back buttom goes to - set by the `from` query param. If not exist don't show back button
   const fromHref: string | undefined =
@@ -129,63 +85,17 @@ export default function CallContainer() {
   }, [isCallEnded, fromHref]);
 
   const isCallStarted: boolean = !!currentCall;
-  const container = isBrowser ? () => window.document.body : undefined;
-
-  const drawer = (
-    <>
-      {!!fromHref && !isCallStarted && (
-        <Link href={fromHref}>
-          <Fab size="small" className={classes.backButton}>
-            <BackIcon />
-          </Fab>
-        </Link>
-      )}
-
-      <div className={classes.actionArea}>
-        <ActivitiesBar
-          template={template}
-          mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
-          currentActivity={currentActivity}
-          startActivity={startActivity}
-        />
-        {isCallStarted && <Interactions />}
-      </div>
-    </>
-  );
 
   return (
     <UnsupportedBrowserWarning>
       <div className={classes.container}>
-        <Hidden smUp implementation="js">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor="left"
-            open={isActivityDrawerOpen}
-            onClose={() => setIsActivityDrawerOpen(false)}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="js">
-          <div className={classes.drawerPaper}>{drawer}</div>
-        </Hidden>
-
-        <div className={classes.content}>
-          <VideoProvider
-            options={connectionOptions}
-            onError={setError}
-            onDisconnect={handleDisconnect}
-          >
-            <CallFlow isCallStarted={isCallStarted} />
-          </VideoProvider>
-        </div>
+        <VideoProvider
+          options={connectionOptions}
+          onError={setError}
+          onDisconnect={handleDisconnect}
+        >
+          <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
+        </VideoProvider>
       </div>
     </UnsupportedBrowserWarning>
   );

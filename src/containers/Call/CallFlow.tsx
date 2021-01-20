@@ -1,13 +1,34 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { LocalVideoTrack } from 'twilio-video';
+import { styled } from '@material-ui/core/styles';
+
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import MediaErrorSnackbar from './MediaErrorSnackbar/MediaErrorSnackbar';
+import ActivityDrawer from './ActivityDrawer';
 import Lobby from './Lobby';
 import CreateCall from './CreateCall';
 import WaitForHost from './WaitForHost';
 
-export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) {
+const Container = styled('div')({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'stretch',
+
+  '& #main': {
+    flexGrow: 1,
+  },
+});
+
+export default function CallFlow({
+  isCallStarted,
+  fromHref,
+}: {
+  isCallStarted: boolean;
+  fromHref?: string;
+}) {
   const [mediaError, setMediaError] = useState<Error>();
   const {
     room,
@@ -16,6 +37,7 @@ export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) 
     removeLocalAudioTrack,
     removeLocalVideoTrack,
   } = useVideoContext();
+  const roomState = useRoomState();
   const { isHost, createCall } = useCallContext();
   const cleanUpTracks = useRef<() => void>();
 
@@ -64,15 +86,22 @@ export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) 
   }, [createCall]);
 
   return (
-    <>
-      {isCallStarted ? (
-        <Lobby waitForJoin={!callCreated} />
-      ) : isHost ? (
-        <CreateCall create={handleCreate} />
-      ) : (
-        <WaitForHost />
+    <Container>
+      {(roomState === 'connected' || isHost) && (
+        <ActivityDrawer isCallStarted={isCallStarted} fromHref={fromHref} />
       )}
+
+      <div id="main">
+        {isCallStarted ? (
+          <Lobby waitForJoin={!callCreated} />
+        ) : isHost ? (
+          <CreateCall create={handleCreate} />
+        ) : (
+          <WaitForHost />
+        )}
+      </div>
+
       <MediaErrorSnackbar error={mediaError} />
-    </>
+    </Container>
   );
 }
