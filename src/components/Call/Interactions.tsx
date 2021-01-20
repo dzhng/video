@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { Card, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
 import {
   SubjectOutlined as NotesIcon,
   ChatBubbleOutlineOutlined as ChatsIcon,
