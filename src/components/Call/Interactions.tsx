@@ -6,6 +6,7 @@ import {
   ChatBubbleOutlineOutlined as ChatsIcon,
 } from '@material-ui/icons';
 import Notes from './Notes';
+import Chats from './Chats';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -31,9 +32,8 @@ export default function Interactions() {
 
   return (
     <Card className={classes.container}>
-      <div className={classes.content}>
-        <Notes />
-      </div>
+      <div className={classes.content}>{navItem === 0 ? <Notes /> : <Chats />}</div>
+
       <BottomNavigation
         className={classes.nav}
         value={navItem}

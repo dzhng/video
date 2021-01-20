@@ -1,17 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { Button } from '@material-ui/core';
 
 import { Collections, LocalModel, Template } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import LoadingContainer from '~/containers/Loading/Loading';
-import CallContainer from '~/containers/Call/Call';
 import GuestSignIn from '~/containers/Call/GuestSignIn';
 import { CallProvider } from '~/components/CallProvider';
+import useCallContext from '~/hooks/useCallContext/useCallContext';
+import ActivityDrawer from '~/containers/Call/ActivityDrawer';
 
-// start a call with given template id
-export default function StartPage() {
+// this component is just responsible for creating a call model for testing
+// note that if a call exits createCall will just fail, but it is fine because
+// as long as there's an ongoing call to work with we are on
+function CallCreator() {
+  const { call, createCall, endCall } = useCallContext();
+  useEffect(() => {
+    createCall();
+  }, [createCall]);
+
+  // clicking on restart call will end current call, effect will then create a new call
+  return (
+    <div style={{ marginLeft: 'auto', marginRight: 'auto', marginTop: '45vh' }}>
+      {call && (
+        <Button variant="contained" onClick={endCall}>
+          Restart Call
+        </Button>
+      )}
+    </div>
+  );
+}
+
+export default function CallTest() {
   const router = useRouter();
   const { isAuthReady, user } = useAppState();
   const [template, setTemplate] = useState<LocalModel<Template>>();
@@ -19,6 +41,8 @@ export default function StartPage() {
   const [isHost, setIsHost] = useState<boolean | undefined>(undefined);
 
   const templateId = String(router.query.slug);
+  const isCallStarted = Boolean(router.query.isCallStarted);
+  const fromHref = String(router.query.fromHref);
 
   // fetching template model
   useEffect(() => {
@@ -83,7 +107,17 @@ export default function StartPage() {
 
       {template && isHost !== undefined ? (
         <CallProvider template={template} isHost={isHost}>
-          <CallContainer />
+          <div
+            style={{
+              backgroundColor: 'black',
+              height: '100vh',
+              display: 'flex',
+              alignItems: 'stretch',
+            }}
+          >
+            <ActivityDrawer isCallStarted={isCallStarted} fromHref={fromHref} />
+            <CallCreator />
+          </div>
         </CallProvider>
       ) : (
         <LoadingContainer />
