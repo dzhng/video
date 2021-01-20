@@ -179,12 +179,18 @@ export default function Home({
 
   const numberOfAvatars = Math.max(Math.floor((width * 0.5) / avatarSize) - 2, 1);
 
-  return (
-    <div className={classes.container}>
-      <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
-      {isWorkspacesReady === true && workspaces && workspaces.length === 0 ? (
-        noWorkspaceExists
-      ) : isWorkspacesReady === true && workspaces && workspaces.length > 0 ? (
+  // console.log(`${isWorkspacesReady} | ${workspaces} | ${workspaces?.length}`)
+  console.log(`${isLoadingMembers} | ${isLoadingTemplates}`);
+
+  if (
+    isWorkspacesReady &&
+    workspaces &&
+    workspaces.length > 0 &&
+    (!isLoadingTemplates || !isLoadingMembers)
+  ) {
+    return (
+      <div className={classes.container}>
+        <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
         <Grid container className={classes.grid} spacing={3}>
           <Grid item xs={12} className={classes.titleBar} ref={ref}>
             <div className={classes.titleSection}>
@@ -287,7 +293,35 @@ export default function Home({
                 </Grid>
               ))}
         </Grid>
-      ) : (
+      </div>
+    );
+  } else if (
+    isWorkspacesReady &&
+    workspaces &&
+    workspaces.length === 0 &&
+    isLoadingTemplates == false &&
+    !isLoadingMembers == false
+  ) {
+    return (
+      <div className={classes.container}>
+        <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          style={{ height: '100vh' }}
+        >
+          <Typography variant="h1">No Workspace Exists</Typography>
+          <Typography variant="h2">Create A Workspace To Get Started</Typography>
+        </Grid>
+      </div>
+    );
+  } else {
+    return (
+      <div className={classes.container}>
+        <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
         <Grid container className={classes.grid} spacing={3}>
           <Grid item xs={12} className={classes.titleBar} ref={ref}>
             <div className={classes.titleSection}>
@@ -305,16 +339,11 @@ export default function Home({
           </Grid>
           {loadingTemplateSkeletons}
         </Grid>
-      )}
-      {/* {renderTemplateCards()} */}
-
-      <AddMemberDialog
-        open={membersDialogOpen}
-        setOpen={setMembersDialogOpen}
-        addMembers={addMembers}
-        removeMembers={removeMembers}
-        members={members}
-      />
-    </div>
-  );
+      </div>
+    );
+  }
 }
+
+/* 
+
+*/
