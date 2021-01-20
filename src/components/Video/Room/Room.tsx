@@ -13,9 +13,11 @@ import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
+import ScreenShareParticipant from '~/components/Video/ScreenShareParticipant/ScreenShareParticipant';
+import useScreenShareParticipant from '~/hooks/Video/useScreenShareParticipant/useScreenShareParticipant';
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
-import SettingsSpeedDial from './SettingsSpeedDial';
+import SettingsSpeedDial from '~/components/Video/SettingsSpeedDial/SettingsSpeedDial';
 
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
@@ -72,6 +74,7 @@ export default function Room() {
     room: { localParticipant },
   } = useVideoContext();
   const participants = useParticipants();
+  const screenShareParticipant = useScreenShareParticipant();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   const participantToItem = useCallback(
@@ -93,7 +96,7 @@ export default function Room() {
     [localParticipant, participants, participantToItem],
   );
 
-  const variant = currentActivity ? 'focus' : 'grid';
+  const variant = currentActivity || screenShareParticipant ? 'focus' : 'grid';
 
   return (
     <Container style={{ height: pageHeight }}>
@@ -103,7 +106,7 @@ export default function Room() {
           width={width}
           height={height}
           gridItems={items}
-          mainItem={<ActivityDisplay />}
+          mainItem={screenShareParticipant ? <ScreenShareParticipant /> : <ActivityDisplay />}
         />
       </LayoutContainer>
 

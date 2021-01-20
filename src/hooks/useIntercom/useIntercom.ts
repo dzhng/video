@@ -1,4 +1,5 @@
 import firebase from '~/utils/firebase';
+import { User } from '~/firebase/schema-types';
 import { useCallback } from 'react';
 
 declare global {
@@ -8,15 +9,13 @@ declare global {
 }
 
 export default function useIntercom() {
-  const boot = useCallback((user: firebase.User) => {
-    if (user) {
-      window.Intercom('boot', {
-        app_id: 'w0k8mz0m',
-        user_id: user.uid,
-        email: user.email,
-        name: user.displayName,
-      });
-    }
+  const boot = useCallback((user: firebase.User, record: User) => {
+    window.Intercom('boot', {
+      app_id: 'w0k8mz0m',
+      user_id: user.uid,
+      email: record.email,
+      name: record.displayName,
+    });
   }, []);
 
   const shutdown = useCallback(() => {

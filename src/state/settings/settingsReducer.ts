@@ -21,10 +21,10 @@ export interface SettingsAction {
 }
 
 export const initialSettings: Settings = {
-  trackSwitchOffMode: undefined,
+  trackSwitchOffMode: 'predicted',
   dominantSpeakerPriority: 'standard',
-  bandwidthProfileMode: 'collaboration',
-  maxTracks: isMobile ? '5' : '10',
+  bandwidthProfileMode: 'grid',
+  maxTracks: isMobile ? '8' : '50',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
   renderDimensionStandard: 'wvga',

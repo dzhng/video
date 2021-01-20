@@ -1,16 +1,18 @@
 import React, { useRef, useState, useCallback } from 'react';
+import clsx from 'clsx';
+import Link from 'next/link';
 import { Typography, Grid, Menu, MenuItem, IconButton, Tooltip, Hidden } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { MoreVert as MoreIcon, Menu as MenuIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
-import Link from 'next/link';
+import useDimensions from 'react-cool-dimensions';
 
 import { LocalModel, Template, Workspace, User } from '~/firebase/schema-types';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import Nav from '~/components/Nav/Nav';
 import TemplateCard from './TemplateCard';
 import CreateCard from './CreateCard';
-import AddMemberMenuItem from './AddMemberMenuItem';
+import AddMemberMenuItem, { AddMemberDialog } from './AddMemberMenuItem';
 import LeaveMenuItem from './LeaveMenuItem';
 import DeleteMenuItem from './DeleteMenuItem';
 
@@ -59,6 +61,7 @@ const useStyles = makeStyles((theme) =>
     titleSection: {
       display: 'flex',
       alignItems: 'center',
+      overflow: 'hidden', // need it for title ellipsis
 
       '& .MuiIconButton-root': {
         // cancel out the padding, but don't set padding at 0 since that changes hover shape
@@ -68,12 +71,16 @@ const useStyles = makeStyles((theme) =>
     title: {
       display: 'inline',
       lineHeight: `${avatarSize}px`,
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
     },
     avatar: {
       width: avatarSize,
       height: avatarSize,
       marginRight: theme.spacing(1),
       boxShadow: theme.shadows[3],
+      cursor: 'pointer',
     },
     cardSkeleton: {
       borderRadius: theme.shape.borderRadius,
@@ -85,6 +92,17 @@ const useStyles = makeStyles((theme) =>
     membersList: {
       display: 'flex',
       marginLeft: theme.spacing(2),
+    },
+    memberNumber: {
+      width: avatarSize,
+      height: avatarSize,
+      backgroundColor: theme.palette.secondary.main,
+      lineHeight: `${avatarSize}px`,
+      borderRadius: avatarSize / 2,
+      fontSize: 15,
+      textAlign: 'center',
+      fontWeight: 'bold',
+      color: 'white',
     },
     settingsContainer: {
       '& button': {
@@ -124,6 +142,10 @@ export default function Home({
   const classes = useStyles();
   const anchorRef = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+
+  // measure width of header bar to calculate how many avatars to show
+  const { ref, width } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
   const handleMenuClick = useCallback(() => {
     setSettingsMenuOpen(false);
@@ -139,12 +161,14 @@ export default function Home({
     <Skeleton variant="circle" height={avatarSize} width={avatarSize} className={classes.avatar} />
   );
 
+  const numberOfAvatars = Math.max(Math.floor((width * 0.5) / avatarSize) - 2, 1);
+
   return (
     <div className={classes.container}>
       <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
 
       <Grid container className={classes.grid} spacing={3}>
-        <Grid item xs={12} className={classes.titleBar}>
+        <Grid item xs={12} className={classes.titleBar} ref={ref}>
           <div className={classes.titleSection}>
             <Hidden smUp implementation="css">
               <IconButton onClick={() => setMobileOpen(true)}>
@@ -159,11 +183,26 @@ export default function Home({
           <span className={classes.membersList}>
             {!workspace || isLoadingMembers
               ? loadingMemberSkeletons
-              : members.map((member) => (
+              : members.slice(0, numberOfAvatars).map((member) => (
                   <Tooltip key={member.id} title={member.displayName} placement="bottom">
-                    <UserAvatar className={classes.avatar} user={member} />
+                    <UserAvatar
+                      className={classes.avatar}
+                      user={member}
+                      onClick={() => setMembersDialogOpen(true)}
+                    />
                   </Tooltip>
                 ))}
+
+            {workspace && !isLoadingMembers && numberOfAvatars < members.length && (
+              <Tooltip title={`${members.length} members in this workspace`} placement="bottom">
+                <div
+                  className={clsx(classes.memberNumber, classes.avatar)}
+                  onClick={() => setMembersDialogOpen(true)}
+                >
+                  +{members.length - numberOfAvatars}
+                </div>
+              </Tooltip>
+            )}
 
             <div className={classes.settingsContainer} ref={anchorRef}>
               <Tooltip title="Settings" placement="bottom">
@@ -233,6 +272,14 @@ export default function Home({
               </Grid>
             ))}
       </Grid>
+
+      <AddMemberDialog
+        open={membersDialogOpen}
+        setOpen={setMembersDialogOpen}
+        addMembers={addMembers}
+        removeMembers={removeMembers}
+        members={members}
+      />
     </div>
   );
 }

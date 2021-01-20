@@ -2,6 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
+import { isMobile } from '~/utils';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
@@ -9,6 +10,7 @@ import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
+import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -41,11 +43,8 @@ export default function Controls({ showControls = true }: { showControls?: boole
     <div data-testid="container" className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={disableButtons} />
-      {roomState !== 'disconnected' && (
-        <>
-          <EndCallButton />
-        </>
-      )}
+      {roomState !== 'disconnected' && !isMobile && <ToggleScreenShareButton />}
+      {roomState !== 'disconnected' && <EndCallButton />}
     </div>
   );
 }

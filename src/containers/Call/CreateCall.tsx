@@ -9,6 +9,9 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 50,
       borderRadius: 0,
       flexShrink: 0,
+      fontWeight: 'bold',
+      fontSize: '1.1rem',
+      ...theme.customMixins.callButton,
 
       '& div[role=progressbar]': {
         marginRight: theme.spacing(1),
@@ -38,7 +41,7 @@ export default function CreateCall({ create }: { create(): Promise<boolean> }) {
       variant="contained"
       disabled={isCreating}
     >
-      {isCreating ? <CircularProgress color="inherit" size={'1rem'} /> : 'Create'}
+      {isCreating ? <CircularProgress color="inherit" size={'1rem'} /> : 'Start Call'}
     </Button>
   );
 

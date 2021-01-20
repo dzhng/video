@@ -28,6 +28,10 @@ import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import Menu from './Menu/Menu';
 
+const Logo = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img src="/logo.png" {...props} />
+);
+
 const NewWorkspaceValue = '__New_Workspace__';
 const sidebarWidth = 300;
 
@@ -43,6 +47,9 @@ const useStyles = makeStyles((theme: Theme) =>
       // subtract an extra 2 for the border
       width: sidebarWidth - theme.spacing(2) * 2 - 2,
       margin: theme.spacing(2),
+    },
+    createWorkspaceItem: {
+      color: theme.palette.primary.main,
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -84,7 +91,9 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'right',
     },
     title: {
-      padding: theme.spacing(3),
+      padding: theme.spacing(2.5),
+      objectFit: 'contain',
+      maxWidth: 140,
     },
     divider: {
       marginLeft: theme.spacing(2),
@@ -105,7 +114,7 @@ export default function Nav({
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
 
   const {
-    user,
+    userRecord,
     workspaces,
     isWorkspacesReady,
     currentWorkspaceId,
@@ -134,10 +143,7 @@ export default function Nav({
   const drawer = useMemo(
     () => (
       <div className={classes.drawerContent}>
-        <Typography className={classes.title} variant="h2">
-          AOMNI
-        </Typography>
-
+        <Logo className={classes.title} />
         <Divider className={classes.divider} />
 
         <List className={classes.list}>
@@ -168,7 +174,9 @@ export default function Nav({
                   </MenuItem>
                 ))}
                 <MenuItem value={NewWorkspaceValue}>
-                  <Typography variant="h4">New Workspace</Typography>
+                  <Typography variant="h5" className={classes.createWorkspaceItem}>
+                    <b>+ New Workspace</b>
+                  </Typography>
                 </MenuItem>
               </Select>
             </FormControl>
@@ -181,7 +189,7 @@ export default function Nav({
           <div className={classes.profileMenu}>
             <Menu />
             <Typography className={classes.displayName} variant="h2">
-              {user?.displayName}
+              {userRecord?.displayName}
             </Typography>
           </div>
         </div>
@@ -193,7 +201,7 @@ export default function Nav({
       handleWorkspaceChange,
       isWorkspacesReady,
       workspaces,
-      user,
+      userRecord,
       closeModal,
     ],
   );

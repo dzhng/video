@@ -12,6 +12,10 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     fab: {
       margin: theme.spacing(1),
+
+      '&.Mui-disabled': {
+        backgroundColor: theme.palette.grey[400],
+      },
     },
   }),
 );

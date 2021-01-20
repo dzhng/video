@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { Avatar } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { Person } from '@material-ui/icons';
-import { StateContextType } from '~/state';
 import { User } from '~/firebase/schema-types';
 
 const useStyles = makeStyles({
@@ -28,7 +27,7 @@ export default forwardRef(function UserAvatar(
     user,
     ...otherProps
   }: {
-    user: StateContextType['user'] | User;
+    user: User;
     [other: string]: any;
   },
   ref,

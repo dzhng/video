@@ -13,8 +13,6 @@ import {
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
-import { db } from '~/utils/firebase';
-import { Collections, User } from '~/firebase/schema-types';
 import { useAppState } from '~/state';
 
 const FormSchema = Yup.object().shape({
@@ -135,13 +133,7 @@ export default function RegisterPage() {
       setAuthError(null);
       setSubmitting(true);
       register(values.email, values.password, values.name)
-        .then((user) => {
-          if (user) {
-            const userData: User = {
-              displayName: user.displayName ?? values.name ?? 'Aomni Customer',
-            };
-            db.collection(Collections.USERS).doc(user.uid).set(userData);
-          }
+        .then(() => {
           router.replace('/');
         })
         .catch((errMsg) => {

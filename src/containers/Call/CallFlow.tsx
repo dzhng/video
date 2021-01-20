@@ -41,13 +41,17 @@ export default function CallFlow({ isCallStarted }: { isCallStarted: boolean }) 
       const videoTrack = localTracks.find((track) =>
         track.name.includes('camera'),
       ) as LocalVideoTrack;
-      room.localParticipant.unpublishTrack(videoTrack);
 
-      // disconnect method may not exist since it may be stubed by EventEmitter in VideoContext
-      room.disconnect?.();
+      if (videoTrack) {
+        videoTrack.disable();
+        room.localParticipant?.unpublishTrack(videoTrack);
+      }
 
       removeLocalVideoTrack();
       removeLocalAudioTrack();
+
+      // disconnect method may not exist since it may be stubed by EventEmitter in VideoContext
+      room.disconnect?.();
     };
   }, [removeLocalVideoTrack, removeLocalAudioTrack, room, localTracks]);
 

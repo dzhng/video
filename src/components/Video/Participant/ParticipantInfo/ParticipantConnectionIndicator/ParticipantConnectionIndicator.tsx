@@ -13,6 +13,7 @@ const useStyles = makeStyles({
     background: '#0c0',
     display: 'inline-block',
     marginRight: '3px',
+    flexShrink: 0,
   },
   isReconnecting: {
     background: '#ffb100',

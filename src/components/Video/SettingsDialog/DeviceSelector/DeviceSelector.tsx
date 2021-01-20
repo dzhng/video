@@ -1,5 +1,4 @@
 import React from 'react';
-import { DialogContent } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import VideoInputList from './VideoInputList/VideoInputList';
@@ -15,11 +14,11 @@ const useStyles = makeStyles({
   },
 });
 
-export function DeviceSelector({ className, hidden }: { className?: string; hidden?: boolean }) {
+export function DeviceSelector() {
   const classes = useStyles();
 
   return (
-    <DialogContent className={className} hidden={hidden}>
+    <>
       <div className={classes.listSection}>
         <AudioInputList />
       </div>
@@ -29,6 +28,6 @@ export function DeviceSelector({ className, hidden }: { className?: string; hidd
       <div className={classes.listSection}>
         <VideoInputList />
       </div>
-    </DialogContent>
+    </>
   );
 }

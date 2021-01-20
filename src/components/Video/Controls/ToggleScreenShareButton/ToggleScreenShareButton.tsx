@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import { ScreenShare, StopScreenShare } from '@material-ui/icons';
@@ -30,6 +30,18 @@ export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
   const [isScreenShared, toggleScreenShare] = useScreenShareToggle();
   const screenShareParticipant = useScreenShareParticipant();
   const { room } = useVideoContext();
+  const cleanUpScreenShare = useRef<() => void>();
+
+  // when this component is unmounted, turn screen sharing off
+  useEffect(() => () => cleanUpScreenShare.current?.(), []);
+  useEffect(() => {
+    cleanUpScreenShare.current = () => {
+      if (isScreenShared) {
+        toggleScreenShare();
+      }
+    };
+  }, [isScreenShared, toggleScreenShare]);
+
   const disableScreenShareButton =
     screenShareParticipant && screenShareParticipant !== room.localParticipant;
   const isScreenShareSupported = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
