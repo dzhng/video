@@ -66,7 +66,8 @@ export default function MediaErrorSnackbar({ error }: { error?: Error }) {
   const hasVideo = devices.videoInput.length > 0;
 
   const isSnackbarOpen =
-    !isSnackbarDismissed && !isAcquiringLocalTracks && (Boolean(error) || !hasAudio || !hasVideo);
+    !isSnackbarDismissed &&
+    (Boolean(error) || (!isAcquiringLocalTracks && (!hasAudio || !hasVideo)));
 
   const { headline, message } = getSnackbarContent(hasAudio, hasVideo, error);
 
