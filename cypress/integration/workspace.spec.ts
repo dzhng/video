@@ -1,8 +1,12 @@
 describe('Workspace Test', () => {
+  it('will create a test workspace', () => {
+    cy.visit('/');
+    cy.get('[data-cy=workspaceListMenu]').select('[data-cy=newWorkspaceOption]');
+  });
   it('will delete a workspace', () => {
     cy.visit('/');
-    cy.get('#workspaceSettingsButton').click();
-    cy.get('#deleteWorkspaceButton').click();
-    cy.get('#deleteButton').click();
+    cy.get('[data-cy=workspaceSettingsButton]').click();
+    cy.get('[data-cy=deleteWorkspaceButton]').click();
+    cy.get('[data-cy=deleteButton]').click();
   });
 });

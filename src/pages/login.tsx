@@ -75,6 +75,7 @@ const LoginForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
     <>
       <Field
         id="email"
+        data-cy="email"
         component={TextField}
         aria-describedby="email address"
         name="email"
@@ -91,6 +92,7 @@ const LoginForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
 
       <Field
         id="password"
+        data-cy="password"
         component={TextField}
         aria-describedby="password"
         name="password"
@@ -106,7 +108,7 @@ const LoginForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
       />
 
       <Button
-        id="signInButton"
+        data-cy="signInButton"
         fullWidth
         className={classes.button}
         size="large"

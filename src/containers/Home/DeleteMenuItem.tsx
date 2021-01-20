@@ -39,7 +39,7 @@ export default forwardRef(function DeleteMenuItem(
   return (
     <>
       <MenuItem
-        id="deleteWorkspaceButton"
+        data-cy="deleteWorkspaceButton"
         ref={ref as React.RefObject<HTMLLIElement>}
         className={className}
         onClick={handleClick}
@@ -60,11 +60,11 @@ export default forwardRef(function DeleteMenuItem(
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button id="cancelButton" onClick={handleCancel} color="primary">
+          <Button onClick={handleCancel} color="primary">
             Cancel
           </Button>
           <Button
-            id="deleteButton"
+            data-cy="deleteButton"
             onClick={handleConfirm}
             color="primary"
             variant="contained"
