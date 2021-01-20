@@ -68,6 +68,7 @@ export default function useWorkspaces() {
       setWorkspaces(records);
       setIsWorkspacesReady(true);
     };
+
     if (workspaceIds !== null) {
       queryWorkspaces();
     }
