@@ -12,7 +12,7 @@ import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import Nav from '~/components/Nav/Nav';
 import TemplateCard from './TemplateCard';
 import CreateCard from './CreateCard';
-import AddMemberMenuItem from './AddMemberMenuItem';
+import AddMemberMenuItem, { AddMemberDialog } from './AddMemberMenuItem';
 import LeaveMenuItem from './LeaveMenuItem';
 import DeleteMenuItem from './DeleteMenuItem';
 import { useAppState } from '~/state';
@@ -169,6 +169,7 @@ export default function Home({
     return (
       <div className={classes.container}>
         <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
+
         <Grid container className={classes.grid} spacing={3}>
           <Grid item xs={12} className={classes.titleBar} ref={ref}>
             <div className={classes.titleSection}>
@@ -194,6 +195,7 @@ export default function Home({
                       />
                     </Tooltip>
                   ))}
+
               {workspace && !isLoadingMembers && numberOfAvatars < members.length && (
                 <Tooltip title={`${members.length} members in this workspace`} placement="bottom">
                   <div
@@ -204,6 +206,7 @@ export default function Home({
                   </div>
                 </Tooltip>
               )}
+
               <div className={classes.settingsContainer} ref={anchorRef}>
                 <Tooltip title="Settings" placement="bottom">
                   {/* wrap in div so tooltip still works even with the button disabled */}
@@ -271,6 +274,14 @@ export default function Home({
                 </Grid>
               ))}
         </Grid>
+
+        <AddMemberDialog
+          open={membersDialogOpen}
+          setOpen={setMembersDialogOpen}
+          addMembers={addMembers}
+          removeMembers={removeMembers}
+          members={members}
+        />
       </div>
     );
   } else if (isWorkspacesReady && workspaces && workspaces.length === 0) {
