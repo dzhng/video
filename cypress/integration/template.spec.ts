@@ -7,6 +7,7 @@ describe('Template Tests', () => {
     cy.get('#createButton').click();
     cy.get('#templateName-helper-text').should('contain', 'required field');
   });
+
   it('will create a new template and then delete it', () => {
     cy.get('#templateName').type('test template >-<');
     cy.get('#createButton').click();

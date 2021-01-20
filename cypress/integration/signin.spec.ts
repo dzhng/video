@@ -12,7 +12,7 @@ describe('sign in test', () => {
     cy.get('#password-helper-text').should('contain', 'password is a required field');
   });
 
-  it('will attempt to sign in with invalid email format and passsword', () => {
+  it('will attempt to sign in with invalid email format and password', () => {
     cy.visit('/login');
     cy.get('[data-cy=email]').type('aad598@nyu');
     cy.get('[data-cy=password]').type('12345678');
