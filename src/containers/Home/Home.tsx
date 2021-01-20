@@ -153,20 +153,6 @@ export default function Home({
     setSettingsMenuOpen(false);
   }, []);
 
-  const noWorkspaceExists = (
-    <Grid
-      container
-      spacing={0}
-      direction="column"
-      alignItems="center"
-      justify="center"
-      style={{ height: '100vh' }}
-    >
-      <Typography variant="h1">No Workspace Exists</Typography>
-      <Typography variant="h2">Create A Workspace To Get Started</Typography>
-    </Grid>
-  );
-
   const loadingTemplateSkeletons = [0, 1, 2].map((key) => (
     <Grid item {...cardItemSizeProps} key={key}>
       <Skeleton variant="rect" height={cardHeight} className={classes.cardSkeleton} />
@@ -179,15 +165,7 @@ export default function Home({
 
   const numberOfAvatars = Math.max(Math.floor((width * 0.5) / avatarSize) - 2, 1);
 
-  // console.log(`${isWorkspacesReady} | ${workspaces} | ${workspaces?.length}`)
-  console.log(`${isLoadingMembers} | ${isLoadingTemplates}`);
-
-  if (
-    isWorkspacesReady &&
-    workspaces &&
-    workspaces.length > 0 &&
-    (!isLoadingTemplates || !isLoadingMembers)
-  ) {
+  if (isWorkspacesReady && workspaces && workspaces.length > 0) {
     return (
       <div className={classes.container}>
         <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
@@ -295,13 +273,7 @@ export default function Home({
         </Grid>
       </div>
     );
-  } else if (
-    isWorkspacesReady &&
-    workspaces &&
-    workspaces.length === 0 &&
-    isLoadingTemplates == false &&
-    !isLoadingMembers == false
-  ) {
+  } else if (isWorkspacesReady && workspaces && workspaces.length === 0) {
     return (
       <div className={classes.container}>
         <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />

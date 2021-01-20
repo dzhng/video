@@ -7,7 +7,7 @@ export default function useWorkspaces() {
   const { user, isAuthReady } = useFirebaseAuth();
   const [workspaces, setWorkspaces] = useState<LocalModel<Workspace>[]>([]);
   const [userRecord, setUserRecord] = useState<User | null>(null);
-  const [workspaceIds, setWorkspaceIds] = useState<string[]>([]);
+  const [workspaceIds, setWorkspaceIds] = useState<string[] | null>(null);
   const [isWorkspacesReady, setIsWorkspacesReady] = useState(false);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function useWorkspaces() {
 
   useEffect(() => {
     const queryWorkspaces = async () => {
-      if (workspaceIds.length <= 0) {
+      if (workspaceIds && workspaceIds.length <= 0) {
         setWorkspaces([]);
         setIsWorkspacesReady(true);
         return;
@@ -68,8 +68,9 @@ export default function useWorkspaces() {
       setWorkspaces(records);
       setIsWorkspacesReady(true);
     };
-
-    queryWorkspaces();
+    if (workspaceIds !== null) {
+      queryWorkspaces();
+    }
   }, [workspaceIds]);
 
   const setCurrentWorkspaceId = useCallback(
