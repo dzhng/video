@@ -12,7 +12,7 @@ import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import Nav from '~/components/Nav/Nav';
 import TemplateCard from './TemplateCard';
 import CreateCard from './CreateCard';
-import AddMemberMenuItem, { AddMemberDialog } from './AddMemberMenuItem';
+import AddMemberMenuItem from './AddMemberMenuItem';
 import LeaveMenuItem from './LeaveMenuItem';
 import DeleteMenuItem from './DeleteMenuItem';
 import { useAppState } from '~/state';
