@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
-import { Typography, Button, CardContent } from '@material-ui/core';
+import { Typography, Button, Card, CardContent } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { AddOutlined as AddIcon } from '@material-ui/icons';
+import { AddOutlined as AddIcon, InfoOutlined as InfoIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Collections, LocalModel, Template, Activity } from '~/firebase/schema-types';
 import { db } from '~/utils/firebase';
@@ -44,9 +44,13 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     hintCard: {
-      // add some transparency
-      backgroundColor: theme.palette.info.light + '40',
-      borderBottom: theme.dividerBorder,
+      border: '2px solid ' + theme.palette.info.light,
+
+      '& svg': {
+        marginTop: '-5px',
+        marginLeft: '-3px',
+        color: theme.palette.info.main,
+      },
     },
     timelineItem: {
       margin: theme.spacing(2),
@@ -229,8 +233,9 @@ export default function ActivitiesBar({
           >
             {/* Hide hint card after more than 2 activities since the user probably know what it is at that point. It also takes up a lot of space. */}
             {activities.length <= 2 && mode === 'edit' && (
-              <div className={classes.hintCard}>
+              <Card className={clsx(classes.hintCard, classes.timelineItem)}>
                 <CardContent>
+                  <InfoIcon />
                   <Typography variant="h2">
                     <b>Structure your call with activities</b>
                   </Typography>
@@ -239,7 +244,7 @@ export default function ActivitiesBar({
                     are driven purely by the host, some engage everyone in the call.
                   </Typography>
                 </CardContent>
-              </div>
+              </Card>
             )}
 
             {activities.map((activity, index) => (

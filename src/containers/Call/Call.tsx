@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import clsx from 'clsx';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Drawer, Hidden } from '@material-ui/core';
+import { Drawer, Fab, Hidden } from '@material-ui/core';
 
+import { BackIcon } from '~/components/Icons';
 import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
@@ -34,6 +35,10 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
     },
+    backButton: {
+      marginLeft: theme.spacing(2),
+      marginTop: theme.spacing(2),
+    },
     content: {
       flexGrow: 1,
       height: '100vh',
@@ -43,6 +48,10 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
 
+      // if only child, go 100% height
+      '& >div:first-child:last-child': {
+        maxHeight: '100%',
+      },
       '& >div:first-child': {
         maxHeight: '50%',
       },
@@ -124,12 +133,14 @@ export default function CallContainer() {
 
   const drawer = (
     <>
-      <TemplateTitle
-        template={template}
-        showBackButton={!!fromHref && !isCallStarted}
-        backHref={fromHref}
-        disabled={!isHost}
-      />
+      {!!fromHref && !isCallStarted && (
+        <Link href={fromHref}>
+          <Fab size="small" className={classes.backButton}>
+            <BackIcon />
+          </Fab>
+        </Link>
+      )}
+
       <div className={classes.actionArea}>
         <ActivitiesBar
           template={template}
