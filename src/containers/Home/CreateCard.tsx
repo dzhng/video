@@ -40,7 +40,7 @@ export default function CreateCard({ height }: { height: number }) {
 
   return (
     <Card className={classes.card} style={{ height }}>
-      <Typography variant="h2">New template</Typography>
+      <Typography variant="h2">New room</Typography>
       <AddIcon className={classes.icon} />
     </Card>
   );

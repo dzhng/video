@@ -26,10 +26,14 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       ...theme.customMixins.modalPaper,
       padding: theme.spacing(3),
-      // assume height maxes out at ~300px (change if needed)
-      marginTop: 'calc(50vh - 150px)',
+      // assume height maxes out at ~330px (change if needed)
+      marginTop: 'calc(50vh - 165px)',
       marginLeft: 'auto',
       marginRight: 'auto',
+
+      '& h1,p': {
+        marginBottom: theme.spacing(1),
+      },
     },
     submitButton: {
       marginTop: theme.spacing(3),
@@ -42,7 +46,12 @@ const TemplateForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
   const classes = useStyles();
   return (
     <Paper className={classes.paper}>
-      <Typography variant="h1">Create Call Template</Typography>
+      <Typography variant="h1">Create a new room</Typography>
+      <Typography variant="body1">
+        A room is a space for collaboration. Plan out your call by configuring different activities,
+        share the call to participants with a permanent call link, and start the call with one
+        click!
+      </Typography>
       <Field
         component={TextField}
         name="name"
