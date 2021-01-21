@@ -10,14 +10,15 @@ import Linkify from 'react-linkify';
 import { useAppState } from '~/state';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
+import {
+  MessageType,
+  ChatsDataKey,
+  PublicChatsChannelKey,
+} from '~/components/CallProvider/useCallChat/useCallChat';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
-import { MessageType, ChatChannelType } from './types';
+import { ChatChannelType } from './types';
 
-const ChatsDataKey = 'tasks';
 const MaxDisplayableMessages = 500;
-
-// TODO: support other channels in the future (host only, private 1-1)
-const PublicChatsChannelKey = 'all';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
