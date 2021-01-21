@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { get, values } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Divider, TextField, Tooltip, IconButton } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 import { SendOutlined as SendIcon } from '@material-ui/icons';
 import { useAppState } from '~/state';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
@@ -60,16 +61,16 @@ const useStyles = makeStyles((theme) =>
         flexDirection: 'row-reverse',
         textAlign: 'right',
       },
-      '& .MuiAvatar-root': {
-        width: 25,
-        height: 25,
-      },
       '& p': {
         flexGrow: 1,
         alignSelf: 'center',
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
       },
+    },
+    messageAvatar: {
+      width: 25,
+      height: 25,
     },
     composeBar: {
       padding: theme.spacing(1),
@@ -84,10 +85,12 @@ const Message = ({ message, isSelf }: { message: MessageType; isSelf: boolean })
 
   return (
     <div className={clsx(classes.message, { isSelf })}>
-      {user && (
+      {user ? (
         <Tooltip title={user.displayName} placement="bottom">
-          <UserAvatar user={user} />
+          <UserAvatar user={user} className={classes.messageAvatar} />
         </Tooltip>
+      ) : (
+        <Skeleton variant="circle" className={classes.messageAvatar} />
       )}
 
       <Typography variant="body1">{message.data}</Typography>

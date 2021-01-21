@@ -3,6 +3,7 @@ import { entries, values } from 'lodash';
 import * as Yup from 'yup';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Card, TextField, Button, IconButton, Tooltip } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 import { DeleteOutline as DeleteIcon } from '@material-ui/icons';
 import { QuestionsActivityMetadata } from '~/firebase/schema-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
@@ -74,6 +75,10 @@ const useStyles = makeStyles((theme) =>
         marginRight: theme.spacing(2),
       },
     },
+    userAvatar: {
+      width: 30,
+      height: 30,
+    },
     controls: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -122,10 +127,12 @@ function ResponseCard({
 
   return (
     <Card className={classes.responseCard}>
-      {user && (
+      {user ? (
         <Tooltip title={user.displayName} placement="bottom">
-          <UserAvatar user={user} />
+          <UserAvatar user={user} className={classes.userAvatar} />
         </Tooltip>
+      ) : (
+        <Skeleton variant="circle" className={classes.userAvatar} />
       )}
 
       <Typography variant="body1">{response}</Typography>
