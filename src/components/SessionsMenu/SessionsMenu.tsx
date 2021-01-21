@@ -162,7 +162,7 @@ export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
         <Tooltip title="Template settings" placement="bottom">
           <div ref={anchorRef}>
             <IconButton
-              id="templateSettingsMenuButton"
+              id="template-settings-menu-button"
               onClick={() => setSettingsMenuOpen((state) => !state)}
             >
               <SettingsIcon />

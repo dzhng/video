@@ -1,4 +1,4 @@
 {
   "baseUrl": "http://localhost:3000",
-  "testFiles": ["signin.spec.ts", "workspace.spec.ts", "template.spec.ts"]
+  "testFiles": ["signin.spec.ts", "homepage.spec.ts", "workspace.spec.ts", "template.spec.ts"]
 }

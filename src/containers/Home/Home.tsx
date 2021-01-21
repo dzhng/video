@@ -164,7 +164,7 @@ export default function Home({
   const numberOfAvatars = Math.max(Math.floor((width * 0.5) / avatarSize) - 2, 1);
 
   return (
-    <div className={classes.container}>
+    <div data-testid="container" className={classes.container}>
       <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
 
       <Grid container className={classes.grid} spacing={3}>
@@ -209,7 +209,7 @@ export default function Home({
                 {/* wrap in div so tooltip still works even with the button disabled */}
                 <div>
                   <IconButton
-                    data-cy="workspaceSettingsButton"
+                    data-testid="workspace-settings-button"
                     color="inherit"
                     disabled={!workspace}
                     onClick={() => setSettingsMenuOpen((state) => !state)}

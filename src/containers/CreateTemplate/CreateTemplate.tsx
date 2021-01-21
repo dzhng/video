@@ -44,7 +44,7 @@ const TemplateForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
     <Paper className={classes.paper}>
       <Typography variant="h1">Create Call Template</Typography>
       <Field
-        id="templateName"
+        data-testid="template-name"
         component={TextField}
         name="name"
         type="text"
@@ -59,7 +59,7 @@ const TemplateForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
       />
 
       <Button
-        id="createButton"
+        data-testid="create-button"
         fullWidth
         className={classes.submitButton}
         size="large"
@@ -85,7 +85,7 @@ export default function CreateContainer({ save }: PropTypes) {
     (values, { setSubmitting }) => {
       setSubmitting(true);
       // just keep showing submit spinner even after created since we'll nav to new page
-      // hide if error though
+      // hide if error
       save(values).catch(() => setSubmitting(false));
     },
     [save],

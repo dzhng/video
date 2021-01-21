@@ -75,7 +75,7 @@ const LoginForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
     <>
       <Field
         id="email"
-        data-cy="email"
+        data-testid="email"
         component={TextField}
         aria-describedby="email address"
         name="email"
@@ -92,7 +92,7 @@ const LoginForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
 
       <Field
         id="password"
-        data-cy="password"
+        data-testid="password"
         component={TextField}
         aria-describedby="password"
         name="password"
@@ -108,7 +108,7 @@ const LoginForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
       />
 
       <Button
-        data-cy="signInButton"
+        data-testid="sign-in-button"
         fullWidth
         className={classes.button}
         size="large"
@@ -199,7 +199,11 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
         </Formik>
 
         {authError && (
-          <Typography id="errorMessage" variant="caption" className={classes.errorMessage}>
+          <Typography
+            data-testid="error-message"
+            variant="caption"
+            className={classes.errorMessage}
+          >
             <ErrorIcon />
             {authError.message}
           </Typography>

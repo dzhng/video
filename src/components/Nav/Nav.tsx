@@ -164,7 +164,7 @@ export default function Nav({
             <FormControl variant="outlined" className={classes.select}>
               <InputLabel>Workspace</InputLabel>
               <Select
-                data-cy="workspaceListMenu"
+                data-testid="workspace-list-menu"
                 label="Workspace"
                 value={currentWorkspaceId ?? ''}
                 onChange={handleWorkspaceChange}
@@ -174,7 +174,7 @@ export default function Nav({
                     <Typography variant="h4">{workspace.name}</Typography>
                   </MenuItem>
                 ))}
-                <MenuItem data-cy="newWorkspaceOption" value={NewWorkspaceValue}>
+                <MenuItem data-testid="newWorkspaceOption" value={NewWorkspaceValue}>
                   <Typography variant="h5" className={classes.createWorkspaceItem}>
                     <b>+ New Workspace</b>
                   </Typography>
