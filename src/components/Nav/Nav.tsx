@@ -153,7 +153,7 @@ export default function Nav({
                 <VideoCallIcon />
               </ListItemIcon>
               <ListItemText>
-                <Typography variant="h3">Templates</Typography>
+                <Typography variant="h3">Rooms</Typography>
               </ListItemText>
             </ListItem>
           </Link>

@@ -68,8 +68,8 @@ export default function SettingsSpeedDial({ className }: { className?: string })
   }, [sharableCallLink, enqueueSnackbar]);
 
   const handleDeviceSettings = useCallback(() => {
-    setOpen(false);
     setSettingsOpen(true);
+    setOpen(false);
   }, []);
 
   const handleDeviceSettingsClose = useCallback(() => {
@@ -119,8 +119,8 @@ export default function SettingsSpeedDial({ className }: { className?: string })
         ariaLabel="Call Settings"
         className={clsx(classes.button, className)}
         icon={<SpeedDialIcon />}
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
+        onClose={(_, reason) => reason === 'toggle' && setOpen(false)}
+        onOpen={(_, reason) => reason === 'toggle' && setOpen(true)}
         open={open}
       >
         {actions.map((action) => (

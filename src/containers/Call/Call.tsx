@@ -1,24 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import clsx from 'clsx';
 import { useRouter } from 'next/router';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Drawer, Hidden } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 
-import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
-import TemplateTitle from '~/components/EditableTemplateTitle/EditableTemplateTitle';
-import ActivitiesBar from '~/components/Activities/ActivitiesBar/ActivitiesBar';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import CallFlow from './CallFlow';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     container: {
-      display: 'flex',
       width: '100%',
+      height: '100vh',
 
       background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
       backgroundSize: '400% 400%',
@@ -27,15 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
       animation: 'gradient 30s steps(150) infinite',
       // do animation on gpu so its less taxing on cpu
       transform: 'translateZ(0)',
-    },
-    drawerPaper: theme.customMixins.activitiesBarMini,
-    transparentBackground: {
-      backgroundColor: 'rgba(255,255,255,0.75)',
-    },
-    activitiesSpacer: theme.customMixins.activitiesBarMini,
-    content: {
-      flexGrow: 1,
-      height: '100vh',
     },
 
     // define animation for container background
@@ -60,14 +46,7 @@ export default function CallContainer() {
   const router = useRouter();
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
-  const {
-    template,
-    isHost,
-    currentActivity,
-    startActivity,
-    isActivityDrawerOpen,
-    setIsActivityDrawerOpen,
-  } = useCallContext();
+  const { template } = useCallContext();
 
   // URL that the back buttom goes to - set by the `from` query param. If not exist don't show back button
   const fromHref: string | undefined =
@@ -106,67 +85,17 @@ export default function CallContainer() {
   }, [isCallEnded, fromHref]);
 
   const isCallStarted: boolean = !!currentCall;
-  const container = isBrowser ? () => window.document.body : undefined;
-
-  const drawer = (
-    <>
-      <TemplateTitle
-        template={template}
-        showBackButton={!!fromHref && !isCallStarted}
-        backHref={fromHref}
-        disabled={!isHost}
-      />
-      <ActivitiesBar
-        template={template}
-        mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
-        currentActivity={currentActivity}
-        startActivity={startActivity}
-      />
-    </>
-  );
 
   return (
     <UnsupportedBrowserWarning>
       <div className={classes.container}>
-        <Hidden smUp implementation="js">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor="left"
-            open={isActivityDrawerOpen}
-            onClose={() => setIsActivityDrawerOpen(false)}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="js">
-          <Drawer
-            classes={{
-              paper: clsx(classes.drawerPaper, classes.transparentBackground),
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-          <div className={classes.activitiesSpacer} />
-        </Hidden>
-
-        <div className={classes.content}>
-          <VideoProvider
-            options={connectionOptions}
-            onError={setError}
-            onDisconnect={handleDisconnect}
-          >
-            <CallFlow isCallStarted={isCallStarted} />
-          </VideoProvider>
-        </div>
+        <VideoProvider
+          options={connectionOptions}
+          onError={setError}
+          onDisconnect={handleDisconnect}
+        >
+          <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
+        </VideoProvider>
       </div>
     </UnsupportedBrowserWarning>
   );

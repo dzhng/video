@@ -1,26 +1,17 @@
 import { ActivityMetadata, ActivityTypes } from '~/firebase/schema-types';
 import * as Yup from 'yup';
-import {
-  PresentIcon,
-  VideoIcon,
-  PollIcon,
-  QuestionsIcon,
-  ScreenShareIcon,
-  BreakoutIcon,
-} from '~/components/Icons';
+import { PresentIcon, VideoIcon, PollIcon, QuestionsIcon, BreakoutIcon } from '~/components/Icons';
 
 import PresentationForm from '../CreateForm/Presentation';
 import VideoForm from '../CreateForm/Video';
 import PollForm from '../CreateForm/Poll';
 import QuestionsForm from '../CreateForm/Questions';
-import ScreenShareForm from '../CreateForm/ScreenShare';
 import BreakoutForm from '../CreateForm/Breakout';
 
 import PresentationDisplay from '../CallDisplay/Presentation';
 import VideoDisplay from '../CallDisplay/Video';
 import PollDisplay from '../CallDisplay/Poll';
 import QuestionsDisplay from '../CallDisplay/Questions';
-import ScreenShareDisplay from '../CallDisplay/Screenshare';
 import BreakoutDisplay from '../CallDisplay/Breakout';
 
 const iconClassName = 'TypeIcon';
@@ -111,19 +102,6 @@ export const ActivityTypeConfig: {
     initialValue: { videoId: '' },
     schema: Yup.object().shape({
       videoId: Yup.string().max(30).required('Video not uploaded'),
-    }),
-  },
-  {
-    type: 'screenshare',
-    name: 'Screenshare',
-    description: 'Share your screen to participants.',
-    isComingSoon: true,
-    icon: <ScreenShareIcon className={iconClassName} />,
-    form: <ScreenShareForm />,
-    display: <ScreenShareDisplay />,
-    initialValue: { hostOnly: false },
-    schema: Yup.object().shape({
-      hostOnly: Yup.boolean().required(),
     }),
   },
   {

@@ -23,7 +23,6 @@ declare module 'twilio-video' {
   // eslint-disable-next-line
   interface RemoteVideoTrack {
     isSwitchedOff: boolean;
-    setPriority: (priority: Track.Priority | null) => void;
   }
 
   interface VideoBandwidthProfileOptions {

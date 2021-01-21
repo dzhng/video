@@ -4,12 +4,14 @@ import {
   Call,
   Template,
   Activity,
-  ActivityDataTypes,
-  ActivityData,
+  CallDataTypes,
+  CallData,
 } from '~/firebase/schema-types';
 import useCall from './useCall/useCall';
 import useActivity from './useActivity/useActivity';
+import useCallData from './useCallData/useCallData';
 import useCurrentActivity from './useCurrentActivity/useCurrentActivity';
+import useCallChat, { MessageType } from './useCallChat/useCallChat';
 
 interface CallContextTypes {
   template: LocalModel<Template>;
@@ -17,11 +19,23 @@ interface CallContextTypes {
   isHost: boolean;
   createCall(): Promise<boolean>;
   endCall(): Promise<void>;
+
+  // activity data management
   currentActivity?: Activity;
   startActivity(activity: Activity): void;
   endActivity(): void;
-  updateActivityData(activity: Activity, path: string | null, value: ActivityDataTypes): void;
-  currentActivityData?: ActivityData;
+  updateActivityData(activity: Activity, path: string | null, value: CallDataTypes): void;
+  currentActivityData?: CallData;
+
+  // call data management
+  currentCallData?: CallData;
+  updateCallData(key: string, path: string | null, value: CallDataTypes): void;
+
+  // chat notifications
+  notiMessages: MessageType[];
+  clearNotiMessage(message: MessageType): void;
+
+  // ui states
   isActivityDrawerOpen: boolean;
   setIsActivityDrawerOpen(open: boolean): void;
 }
@@ -38,12 +52,16 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
 
   const useCallProps = useCall(template);
   const useActivityProps = useActivity(useCallProps.call);
+  const useCallDataProps = useCallData(useCallProps.call);
+  const useCallChatProps = useCallChat(useCallProps.call);
   const useCurrentActivityProps = useCurrentActivity(template, useActivityProps.currentActivityId);
 
   const value = useMemo<CallContextTypes>(
     () => ({
       ...useCallProps,
       ...useActivityProps,
+      ...useCallDataProps,
+      ...useCallChatProps,
       ...useCurrentActivityProps,
       template,
       isHost,
@@ -53,6 +71,8 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
     [
       useCallProps,
       useActivityProps,
+      useCallDataProps,
+      useCallChatProps,
       useCurrentActivityProps,
       template,
       isHost,

@@ -44,7 +44,7 @@ export default forwardRef(function DeleteMenuItem(
         className={className}
         onClick={handleClick}
       >
-        Delete Template
+        Delete Room
       </MenuItem>
       <Dialog
         open={confirmOpen}
@@ -52,11 +52,11 @@ export default forwardRef(function DeleteMenuItem(
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle>Delete Template?</DialogTitle>
+        <DialogTitle>Delete Room?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Deleting a template will delete it for all members in its workspace. You will lose all
-            activities created in this template.
+            Deleting a room will delete it for all members in its workspace. You will lose all
+            activities created in this room, as well as data from past calls.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
