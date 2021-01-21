@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Card, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
+import { Card, BottomNavigation, BottomNavigationAction, Tooltip } from '@material-ui/core';
 import {
   SubjectOutlined as NotesIcon,
   ChatBubbleOutlineOutlined as ChatsIcon,
@@ -44,8 +44,19 @@ export default function Interactions() {
         }}
         showLabels
       >
-        <BottomNavigationAction label="Notes" icon={<NotesIcon />} />
-        <BottomNavigationAction label="Chats" icon={<ChatsIcon />} />
+        <Tooltip
+          placement="top"
+          title="Collaborate with other participants on shared notes, eveyone can edit notes collaboratively."
+        >
+          <BottomNavigationAction label="Notes" icon={<NotesIcon />} />
+        </Tooltip>
+
+        <Tooltip
+          placement="top"
+          title="Message other participants, new participants joining will be able to see past messages."
+        >
+          <BottomNavigationAction label="Chats" icon={<ChatsIcon />} />
+        </Tooltip>
       </BottomNavigation>
     </Card>
   );
