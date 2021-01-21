@@ -35,21 +35,7 @@ const useStyles = makeStyles((theme) =>
       flexGrow: 1,
       marginTop: theme.spacing(1),
       overflowY: 'auto',
-
-      // scroll bar customization
-      '&::-webkit-scrollbar': {
-        width: 8,
-      },
-      '&::-webkit-scrollbar-track': {
-        background: 'none',
-      },
-      '&::-webkit-scrollbar-thumb': {
-        borderRadius: 4,
-        background: 'rgba(0,0,0,0.2)',
-      },
-      '&::-webkit-scrollbar-thumb:hover': {
-        background: 'rgba(0,0,0,0.4)',
-      },
+      ...theme.customMixins.scrollBar,
     },
     message: {
       display: 'flex',
@@ -63,6 +49,11 @@ const useStyles = makeStyles((theme) =>
       '&.isSelf': {
         flexDirection: 'row-reverse',
         textAlign: 'right',
+
+        '& p': {
+          border: '1px solid ' + theme.palette.secondary.main + '70',
+          backgroundColor: theme.palette.secondary.main + '10',
+        },
       },
       '& p': {
         alignSelf: 'center',
@@ -70,8 +61,9 @@ const useStyles = makeStyles((theme) =>
         marginRight: theme.spacing(1),
         padding: theme.spacing(1),
         borderRadius: theme.shape.borderRadius,
-        border: '1px solid ' + theme.palette.secondary.main + '70',
-        backgroundColor: theme.palette.secondary.main + '10',
+
+        border: '1px solid ' + theme.palette.grey[400],
+        backgroundColor: theme.palette.grey[100],
       },
     },
     messageAvatar: {

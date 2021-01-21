@@ -16,22 +16,8 @@ import ActivityCard from './ActivityCard';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      ...theme.customMixins.scrollBar,
       overflowY: 'auto',
-
-      // scroll bar customization
-      '&::-webkit-scrollbar': {
-        width: 10,
-      },
-      '&::-webkit-scrollbar-track': {
-        background: 'none',
-      },
-      '&::-webkit-scrollbar-thumb': {
-        borderRadius: 5,
-        background: 'rgba(0,0,0,0.2)',
-      },
-      '&::-webkit-scrollbar-thumb:hover': {
-        background: 'rgba(0,0,0,0.4)',
-      },
 
       '& .MuiTimelineOppositeContent-root': {
         flex: 0,

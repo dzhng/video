@@ -13,6 +13,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       activitiesBar: CSSProperties;
       activitiesBarMini: CSSProperties;
       callButton: CSSProperties;
+      scrollBar: CSSProperties;
     };
   }
 
@@ -27,6 +28,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       activitiesBar?: CSSProperties;
       activitiesBarMini?: CSSProperties;
       callButton?: CSSProperties;
+      scrollBar?: CSSProperties;
     };
   }
 }
@@ -132,6 +134,22 @@ export default createMuiTheme({
     },
     callButton: {
       background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    },
+    scrollBar: {
+      // scroll bar customization
+      '&::-webkit-scrollbar': {
+        width: 8,
+      },
+      '&::-webkit-scrollbar-track': {
+        background: 'none',
+      },
+      '&::-webkit-scrollbar-thumb': {
+        borderRadius: 4,
+        background: 'rgba(0,0,0,0.2)',
+      },
+      '&::-webkit-scrollbar-thumb:hover': {
+        background: 'rgba(0,0,0,0.4)',
+      },
     },
   },
 });

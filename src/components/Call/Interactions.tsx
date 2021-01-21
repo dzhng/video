@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) =>
     content: {
       flexGrow: 1,
       overflowY: 'auto',
+      ...theme.customMixins.scrollBar,
     },
     nav: {
       borderTop: theme.dividerBorder,
