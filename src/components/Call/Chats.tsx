@@ -100,7 +100,7 @@ const Message = ({ message, isSelf }: { message: MessageType; isSelf: boolean })
 
       <Typography variant="body1">
         <Linkify
-          componentDecorator={(decoratedHref: string, decoratedText: string, key: string) => (
+          componentDecorator={(decoratedHref, decoratedText, key) => (
             <a target="blank" href={decoratedHref} key={key}>
               {decoratedText}
             </a>
