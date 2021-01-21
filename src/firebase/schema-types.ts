@@ -69,8 +69,8 @@ export declare interface Template {
   createdAt: FbDate;
 }
 
-export type ActivityDataTypes = string | object | number | boolean | null;
-export type ActivityData = { [key: string]: ActivityDataTypes };
+export type CallDataTypes = string | object | number | boolean | null;
+export type CallData = { [key: string]: CallDataTypes };
 
 export declare interface Call {
   templateId: string;

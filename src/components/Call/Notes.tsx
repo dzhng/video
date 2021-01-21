@@ -2,6 +2,13 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Divider } from '@material-ui/core';
 
+interface TaskType {
+  uid: string;
+  isDone: boolean;
+  name: string;
+  createdAt: number; // since rtdb doesn't store dates, store ms timestamp
+}
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     section: {
@@ -13,7 +20,7 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-const TaskSection = ({ name }: { name: string }) => {
+const TaskSection = ({ name, tasks }: { name: string; tasks: string[] }) => {
   const classes = useStyles();
 
   return (
@@ -29,9 +36,9 @@ const TaskSection = ({ name }: { name: string }) => {
 export default function Notes() {
   return (
     <div>
-      <TaskSection name="Action Items" />
-      <TaskSection name="Questions" />
-      <TaskSection name="Take Aways" />
+      <TaskSection name="Action Items" tasks={[]} />
+      <TaskSection name="Questions" tasks={[]} />
+      <TaskSection name="Take Aways" tasks={[]} />
     </div>
   );
 }

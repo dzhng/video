@@ -1,12 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { rtdb } from '~/utils/firebase';
-import {
-  LocalModel,
-  Call,
-  Activity,
-  ActivityDataTypes,
-  ActivityData,
-} from '~/firebase/schema-types';
+import { LocalModel, Call, Activity, CallDataTypes, CallData } from '~/firebase/schema-types';
 
 export default function useActivity(call?: LocalModel<Call>) {
   const startActivity = useCallback(
@@ -49,7 +43,7 @@ export default function useActivity(call?: LocalModel<Call>) {
   // NOTE: be careful when using arrays within activityData
   // https://firebase.googleblog.com/2014/04/best-practices-arrays-in-firebase.html
   const updateActivityData = useCallback(
-    (activity: Activity, path: string | null, value: ActivityDataTypes) => {
+    (activity: Activity, path: string | null, value: CallDataTypes) => {
       if (!call) {
         console.error('Cannot update activity if call is not loaded');
         return;
@@ -65,9 +59,7 @@ export default function useActivity(call?: LocalModel<Call>) {
     [call],
   );
 
-  const [currentActivityData, setCurrentActivityData] = useState<ActivityData | undefined>(
-    undefined,
-  );
+  const [currentActivityData, setCurrentActivityData] = useState<CallData | undefined>(undefined);
 
   useEffect(() => {
     if (call && currentActivityId) {
