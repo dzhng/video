@@ -175,7 +175,8 @@ export default function TaskSection({
         startAdornment={
           <IconButton
             size="small"
-            color={input.length > 0 ? 'secondary' : 'default'}
+            color="secondary"
+            disabled={input.length === 0}
             className={classes.checkButton}
             onClick={handleCreate}
           >

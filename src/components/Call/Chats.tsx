@@ -129,7 +129,12 @@ const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
       }}
       InputProps={{
         endAdornment: (
-          <IconButton size="small" onClick={handleSend}>
+          <IconButton
+            size="small"
+            color="secondary"
+            disabled={input.length === 0}
+            onClick={handleSend}
+          >
             <SendIcon />
           </IconButton>
         ),
