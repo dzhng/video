@@ -80,7 +80,6 @@ export default function ReconnectingNotification() {
       const lastMessage = notiMessages[notiMessages.length - 1];
 
       enqueueSnackbar(<Message message={lastMessage} />, {
-        autoHideDuration: null,
         variant: 'default',
         content: (key, message) => (
           <MessageWrapper key={key} id={key}>
