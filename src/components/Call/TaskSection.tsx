@@ -5,6 +5,8 @@ import { Typography, Divider, InputBase, IconButton } from '@material-ui/core';
 import { AddOutlined as NewIcon } from '@material-ui/icons';
 import { TaskSectionType } from './types';
 
+const MaxTaskLength = 280;
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     section: {
@@ -12,9 +14,23 @@ const useStyles = makeStyles((theme) =>
     },
     sectionTitle: {
       marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
     },
     input: {
-      minHeight: 30,
+      minHeight: 27,
+
+      '& textarea': {
+        minHeight: 17,
+        lineHeight: '17px',
+      },
+      '& button': {
+        width: 23,
+        height: 23,
+        // so it can fit in same space as textarea's height
+        // to prevent jumpy effect when button is shown
+        marginBottom: '-3px',
+        marginTop: '-3px',
+      },
     },
   }),
 );
@@ -33,6 +49,7 @@ const Task = ({
   return (
     <div>
       <InputBase
+        fullWidth
         multiline
         margin="dense"
         rows={1}
@@ -69,12 +86,15 @@ export default function TaskSection({
   }, [input, createTask]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
+    if (e.target.value.length < MaxTaskLength) {
+      setInput(e.target.value);
+    }
   }, []);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter') {
+        e.preventDefault();
         handleCreate();
       }
     },
