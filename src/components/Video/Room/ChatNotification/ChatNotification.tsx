@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useCallback } from 'react';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Typography, Slide } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
@@ -7,6 +7,7 @@ import { shortName } from '~/utils';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 import { MessageType } from '~/components/CallProvider/useCallChat/useCallChat';
+import { CallEvents } from '~/components/CallProvider/events';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 
 const useStyles = makeStyles((theme) =>
@@ -36,13 +37,19 @@ const useStyles = makeStyles((theme) =>
 const MessageWrapper = forwardRef(
   ({ id, children }: { id: string | number; children: React.ReactNode }, ref) => {
     const classes = useStyles();
+    const { events } = useCallContext();
     const { closeSnackbar } = useSnackbar();
+
+    const handleClick = useCallback(() => {
+      closeSnackbar(id);
+      events.emit(CallEvents.MESSAGE_NOTI_CLICKED);
+    }, [closeSnackbar, id, events]);
 
     return (
       <div
         ref={ref as React.RefObject<HTMLDivElement>}
         className={classes.container}
-        onClick={() => closeSnackbar(id)}
+        onClick={handleClick}
       >
         {children}
       </div>
@@ -71,19 +78,17 @@ const Message = ({ message }: { message: MessageType }) => {
 };
 
 export default function ReconnectingNotification() {
-  const { notiMessages } = useCallContext();
+  const { events } = useCallContext();
   const { enqueueSnackbar } = useSnackbar();
 
   // everytime noti messages change, send to snackbar
   useEffect(() => {
-    if (notiMessages.length > 0) {
-      const lastMessage = notiMessages[notiMessages.length - 1];
-
-      enqueueSnackbar(<Message message={lastMessage} />, {
+    const handleNewMessage = (message: MessageType) => {
+      enqueueSnackbar(<Message message={message} />, {
         variant: 'default',
-        content: (key, message) => (
+        content: (key, node) => (
           <MessageWrapper key={key} id={key}>
-            {message}
+            {node}
           </MessageWrapper>
         ),
         // @ts-ignore
@@ -93,8 +98,13 @@ export default function ReconnectingNotification() {
           direction: 'left',
         },
       });
-    }
-  }, [notiMessages, enqueueSnackbar]);
+    };
+
+    events.on(CallEvents.NEW_MESSAGE, handleNewMessage);
+    return () => {
+      events.off(CallEvents.NEW_MESSAGE, handleNewMessage);
+    };
+  }, [events, enqueueSnackbar]);
 
   return null;
 }

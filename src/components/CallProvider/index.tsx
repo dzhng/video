@@ -11,7 +11,8 @@ import useCall from './useCall/useCall';
 import useActivity from './useActivity/useActivity';
 import useCallData from './useCallData/useCallData';
 import useCurrentActivity from './useCurrentActivity/useCurrentActivity';
-import useCallChat, { MessageType } from './useCallChat/useCallChat';
+import useCallChat from './useCallChat/useCallChat';
+import { CallEmitter, CallEmitterType } from './events';
 
 interface CallContextTypes {
   template: LocalModel<Template>;
@@ -31,13 +32,12 @@ interface CallContextTypes {
   currentCallData?: CallData;
   updateCallData(key: string, path: string | null, value: CallDataTypes): void;
 
-  // chat notifications
-  notiMessages: MessageType[];
-  clearNotiMessage(message: MessageType): void;
-
   // ui states
   isActivityDrawerOpen: boolean;
   setIsActivityDrawerOpen(open: boolean): void;
+
+  // for other user events
+  events: CallEmitterType;
 }
 
 interface PropTypes {
@@ -53,26 +53,27 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
   const useCallProps = useCall(template);
   const useActivityProps = useActivity(useCallProps.call);
   const useCallDataProps = useCallData(useCallProps.call);
-  const useCallChatProps = useCallChat(useCallProps.call);
   const useCurrentActivityProps = useCurrentActivity(template, useActivityProps.currentActivityId);
+
+  // init call chat events
+  useCallChat(CallEmitter, useCallProps.call);
 
   const value = useMemo<CallContextTypes>(
     () => ({
       ...useCallProps,
       ...useActivityProps,
       ...useCallDataProps,
-      ...useCallChatProps,
       ...useCurrentActivityProps,
       template,
       isHost,
       isActivityDrawerOpen,
       setIsActivityDrawerOpen,
+      events: CallEmitter,
     }),
     [
       useCallProps,
       useActivityProps,
       useCallDataProps,
-      useCallChatProps,
       useCurrentActivityProps,
       template,
       isHost,
