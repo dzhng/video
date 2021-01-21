@@ -246,6 +246,7 @@ export default function QuestionsDisplay() {
         return;
       }
 
+      // setting to null is the same as deleting it in rtdb
       updateActivityData(
         currentActivity,
         `${ResponsesKey}.${encodeURIComponent(currentQuestion)}.${key}`,
