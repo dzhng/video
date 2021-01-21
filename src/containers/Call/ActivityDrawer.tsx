@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) =>
       flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',
+      overflow: 'hidden',
 
       // if only child, go 100% height
       '& >div:first-child:last-child': {

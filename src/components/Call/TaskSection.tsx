@@ -1,8 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { values } from 'lodash';
+import clsx from 'clsx';
+import { entries } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Divider, InputBase, IconButton } from '@material-ui/core';
-import { AddOutlined as NewIcon } from '@material-ui/icons';
+import {
+  AddOutlined as NewIcon,
+  DeleteOutlined as DeleteIcon,
+  RadioButtonUncheckedOutlined as UncheckedIcon,
+  RadioButtonCheckedOutlined as CheckedIcon,
+} from '@material-ui/icons';
 import { TaskSectionType } from './types';
 
 const MaxTaskLength = 280;
@@ -19,6 +25,21 @@ const useStyles = makeStyles((theme) =>
     input: {
       minHeight: 27,
 
+      // if it's marked as done, decorate text
+      '&.isDone': {
+        color: theme.palette.grey[600],
+      },
+
+      // hide delete button until hover
+      '&:hover': {
+        '& .deleteButton': {
+          visibility: 'visible',
+        },
+      },
+      '& .deleteButton': {
+        visibility: 'hidden',
+      },
+
       '& textarea': {
         minHeight: 17,
         lineHeight: '17px',
@@ -31,52 +52,75 @@ const useStyles = makeStyles((theme) =>
         marginBottom: '-3px',
         marginTop: '-3px',
       },
+      '& svg': {
+        width: '0.85em',
+        height: '0.85em',
+      },
+    },
+    checkButton: {
+      marginRight: theme.spacing(1),
     },
   }),
 );
 
 const Task = ({
   name,
+  isDone,
   updateTask,
   deleteTask,
 }: {
   name: string;
-  updateTask(name: string): void;
+  isDone: boolean;
+  updateTask(name?: string, isDone?: boolean): void;
   deleteTask(): void;
 }) => {
   const classes = useStyles();
 
   return (
-    <div>
-      <InputBase
-        fullWidth
-        multiline
-        margin="dense"
-        rows={1}
-        rowsMax={3}
-        className={classes.input}
-        value={name}
-      />
-    </div>
+    <InputBase
+      fullWidth
+      multiline
+      margin="dense"
+      rows={1}
+      rowsMax={3}
+      className={clsx(classes.input, { isDone })}
+      value={name}
+      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateTask(e.target.value)}
+      startAdornment={
+        <IconButton
+          size="small"
+          color="secondary"
+          className={classes.checkButton}
+          onClick={() => updateTask(undefined, !isDone)}
+        >
+          {isDone ? <CheckedIcon /> : <UncheckedIcon />}
+        </IconButton>
+      }
+      endAdornment={
+        <IconButton size="small" onClick={deleteTask} className="deleteButton">
+          <DeleteIcon />
+        </IconButton>
+      }
+    />
   );
 };
 
 export default function TaskSection({
-  name,
+  title,
   tasks,
   createTask,
   updateTask,
   deleteTask,
 }: {
-  name: string;
+  title: string;
   tasks: TaskSectionType;
   createTask(name: string): void;
-  updateTask(id: string, name: string): void;
+  updateTask(id: string, name?: string, isDone?: boolean): void;
   deleteTask(id: string): void;
 }) {
   const classes = useStyles();
   const [input, setInput] = useState('');
-  const tasksList = values(tasks).sort((a, b) => a.order - b.order);
+  const tasksEntries = entries(tasks).sort((a, b) => a[1].order - b[1].order);
 
   const handleCreate = useCallback(() => {
     if (input.length > 0) {
@@ -104,11 +148,17 @@ export default function TaskSection({
   return (
     <div className={classes.section}>
       <Typography variant="h3" className={classes.sectionTitle}>
-        <b>{name}</b>
+        <b>{title}</b>
       </Typography>
 
-      {tasksList.map((task) => (
-        <Task name={task.name} />
+      {tasksEntries.map(([id, task]) => (
+        <Task
+          key={id}
+          name={task.name}
+          isDone={task.isDone}
+          updateTask={(name, isDone) => updateTask(id, name, isDone)}
+          deleteTask={() => deleteTask(id)}
+        />
       ))}
 
       <InputBase
@@ -121,13 +171,16 @@ export default function TaskSection({
         value={input}
         onChange={handleChange}
         onKeyPress={handleKeyPress}
-        placeholder={`Create a new ${name.toLowerCase().replace(/s$/, '')}`}
-        endAdornment={
-          input.length > 0 && (
-            <IconButton size="small" color="secondary" onClick={handleCreate}>
-              <NewIcon />
-            </IconButton>
-          )
+        placeholder={`Create a new ${title.toLowerCase().replace(/s$/, '')}`}
+        startAdornment={
+          <IconButton
+            size="small"
+            color="secondary"
+            className={classes.checkButton}
+            onClick={handleCreate}
+          >
+            <NewIcon />
+          </IconButton>
         }
       />
       <Divider />

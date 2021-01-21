@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) =>
     },
     content: {
       flexGrow: 1,
+      overflowY: 'auto',
     },
     nav: {
       borderTop: theme.dividerBorder,

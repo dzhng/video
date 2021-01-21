@@ -41,8 +41,13 @@ export default function Notes() {
   );
 
   const updateTask = useCallback(
-    (type: string, id: string, name: string) => {
-      updateCallData(TasksDataKey, `${type}.${id}.name`, name);
+    (type: string, id: string, name?: string, isDone?: boolean) => {
+      if (name !== undefined) {
+        updateCallData(TasksDataKey, `${type}.${id}.name`, name);
+      }
+      if (isDone !== undefined) {
+        updateCallData(TasksDataKey, `${type}.${id}.isDone`, isDone);
+      }
     },
     [updateCallData],
   );
@@ -64,10 +69,14 @@ export default function Notes() {
     // it's done in map of static var which means it's a guarenteed ordered synchronous call
     // eslint-disable-next-line react-hooks/rules-of-hooks,react-hooks/exhaustive-deps
     const createCallback = useMemo(() => (name: string) => createTask(key, name), [createTask]);
-    // eslint-disable-next-line react-hooks/rules-of-hooks,react-hooks/exhaustive-deps
-    const updateCallback = useMemo(() => (id: string, name: string) => updateTask(key, id, name), [
-      updateTask,
-    ]);
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const updateCallback = useMemo(
+      () => (id: string, name?: string, isDone?: boolean) => updateTask(key, id, name, isDone),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [updateTask],
+    );
+
     // eslint-disable-next-line react-hooks/rules-of-hooks,react-hooks/exhaustive-deps
     const deleteCallback = useMemo(() => (id: string) => deleteTask(key, id), [deleteTask]);
     const tasks = get(currentCallData, [TasksDataKey, key], {}) as TaskSectionType;
@@ -75,7 +84,7 @@ export default function Notes() {
     return (
       <TaskSection
         key={key}
-        name={title}
+        title={title}
         tasks={tasks}
         createTask={createCallback}
         updateTask={updateCallback}
