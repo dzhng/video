@@ -5,6 +5,8 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, Divider, TextField, Tooltip, IconButton } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { SendOutlined as SendIcon } from '@material-ui/icons';
+import Linkify from 'react-linkify';
+
 import { useAppState } from '~/state';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
@@ -62,10 +64,13 @@ const useStyles = makeStyles((theme) =>
         textAlign: 'right',
       },
       '& p': {
-        flexGrow: 1,
         alignSelf: 'center',
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
+        padding: theme.spacing(1),
+        borderRadius: theme.shape.borderRadius,
+        border: '1px solid ' + theme.palette.secondary.main + '70',
+        backgroundColor: theme.palette.secondary.main + '10',
       },
     },
     messageAvatar: {
@@ -93,7 +98,17 @@ const Message = ({ message, isSelf }: { message: MessageType; isSelf: boolean })
         <Skeleton variant="circle" className={classes.messageAvatar} />
       )}
 
-      <Typography variant="body1">{message.data}</Typography>
+      <Typography variant="body1">
+        <Linkify
+          componentDecorator={(decoratedHref: string, decoratedText: string, key: string) => (
+            <a target="blank" href={decoratedHref} key={key}>
+              {decoratedText}
+            </a>
+          )}
+        >
+          {message.data}
+        </Linkify>
+      </Typography>
     </div>
   );
 };
@@ -113,6 +128,7 @@ const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
     <TextField
       className={classes.composeBar}
       variant="outlined"
+      color="secondary"
       fullWidth
       multiline
       rows={1}
@@ -215,7 +231,11 @@ export default function Chats() {
 
       <div ref={listRef} className={classes.messageList} onScroll={handleScroll}>
         {messageList.map((message) => (
-          <Message message={message} isSelf={user?.uid === message.uid} />
+          <Message
+            key={`${message.uid}-${message.createdAt}}`}
+            message={message}
+            isSelf={user?.uid === message.uid}
+          />
         ))}
       </div>
 
