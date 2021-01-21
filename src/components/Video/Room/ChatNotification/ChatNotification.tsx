@@ -3,6 +3,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Typography, Slide } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { useSnackbar } from 'notistack';
+
 import { shortName } from '~/utils';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
@@ -35,15 +36,17 @@ const useStyles = makeStyles((theme) =>
 );
 
 const MessageWrapper = forwardRef(
-  ({ id, children }: { id: string | number; children: React.ReactNode }, ref) => {
+  (
+    { id, onClick, children }: { id: string | number; onClick(): void; children: React.ReactNode },
+    ref,
+  ) => {
     const classes = useStyles();
-    const { events } = useCallContext();
     const { closeSnackbar } = useSnackbar();
 
     const handleClick = useCallback(() => {
       closeSnackbar(id);
-      events.emit(CallEvents.MESSAGE_NOTI_CLICKED);
-    }, [closeSnackbar, id, events]);
+      onClick();
+    }, [closeSnackbar, id, onClick]);
 
     return (
       <div
@@ -81,13 +84,17 @@ export default function ReconnectingNotification() {
   const { events } = useCallContext();
   const { enqueueSnackbar } = useSnackbar();
 
+  const sendEvent = useCallback(() => {
+    events.emit(CallEvents.MESSAGE_NOTI_CLICKED);
+  }, [events]);
+
   // everytime noti messages change, send to snackbar
   useEffect(() => {
     const handleNewMessage = (message: MessageType) => {
       enqueueSnackbar(<Message message={message} />, {
         variant: 'default',
         content: (key, node) => (
-          <MessageWrapper key={key} id={key}>
+          <MessageWrapper key={key} id={key} onClick={sendEvent}>
             {node}
           </MessageWrapper>
         ),

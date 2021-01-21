@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Card, BottomNavigation, BottomNavigationAction, Tooltip } from '@material-ui/core';
 import {
   SubjectOutlined as NotesIcon,
   ChatBubbleOutlineOutlined as ChatsIcon,
 } from '@material-ui/icons';
+
+import useCallContext from '~/hooks/useCallContext/useCallContext';
+import { CallEvents } from '~/components/CallProvider/events';
 import Notes from './Notes';
 import Chats from './Chats';
 
@@ -30,7 +33,20 @@ const useStyles = makeStyles((theme) =>
 
 export default function Interactions() {
   const classes = useStyles();
+  const { events } = useCallContext();
   const [navItem, setNavItem] = useState(0);
+
+  useEffect(() => {
+    const handleNotiClick = () => {
+      // set index for chats
+      setNavItem(1);
+    };
+
+    events.on(CallEvents.MESSAGE_NOTI_CLICKED, handleNotiClick);
+    return () => {
+      events.off(CallEvents.MESSAGE_NOTI_CLICKED, handleNotiClick);
+    };
+  }, [events]);
 
   return (
     <Card className={classes.container}>
