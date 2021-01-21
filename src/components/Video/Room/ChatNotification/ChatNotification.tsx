@@ -111,7 +111,7 @@ export default function ReconnectingNotification() {
     return () => {
       events.off(CallEvents.NEW_MESSAGE, handleNewMessage);
     };
-  }, [events, enqueueSnackbar]);
+  }, [events, enqueueSnackbar, sendEvent]);
 
   return null;
 }
