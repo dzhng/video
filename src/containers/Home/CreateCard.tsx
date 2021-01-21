@@ -39,7 +39,7 @@ export default function CreateCard({ height }: { height: number }) {
   const classes = useStyles();
 
   return (
-    <Card id="create-new-template-card" className={classes.card} style={{ height }}>
+    <Card data-testid="create-new-template-card" className={classes.card} style={{ height }}>
       <Typography variant="h2">New template</Typography>
       <AddIcon className={classes.icon} />
     </Card>

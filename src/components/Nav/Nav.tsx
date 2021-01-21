@@ -174,7 +174,7 @@ export default function Nav({
                     <Typography variant="h4">{workspace.name}</Typography>
                   </MenuItem>
                 ))}
-                <MenuItem data-testid="newWorkspaceOption" value={NewWorkspaceValue}>
+                <MenuItem data-testid="new-workspace-option" value={NewWorkspaceValue}>
                   <Typography variant="h5" className={classes.createWorkspaceItem}>
                     <b>+ New Workspace</b>
                   </Typography>
@@ -216,6 +216,7 @@ export default function Nav({
             A workspace allows you to collaborate with a group of co-workers on calls.
           </DialogContentText>
           <TextField
+            data-testid="new-workspace-name-field"
             autoFocus
             margin="dense"
             id="name"
@@ -230,7 +231,7 @@ export default function Nav({
           <Button onClick={() => setIsCreatingWorkspace(false)} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleCreateWorkspace} color="primary">
+          <Button data-testid="create-button" onClick={handleCreateWorkspace} color="primary">
             Create
           </Button>
         </DialogActions>

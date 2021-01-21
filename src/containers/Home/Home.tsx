@@ -167,7 +167,7 @@ export default function Home({
 
   if (isWorkspacesReady && workspaces && workspaces.length > 0) {
     return (
-      <div className={classes.container}>
+      <div data-testid="container" className={classes.container}>
         <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
 
         <Grid container className={classes.grid} spacing={3}>
@@ -178,7 +178,7 @@ export default function Home({
                   <MenuIcon />
                 </IconButton>
               </Hidden>
-              <Typography variant="h1" className={classes.title}>
+              <Typography data-testid="title" variant="h1" className={classes.title}>
                 {workspace ? workspace.name : <Skeleton width={150} height={avatarSize} />}
               </Typography>
             </div>
@@ -213,6 +213,7 @@ export default function Home({
                   <div>
                     <IconButton
                       color="inherit"
+                      data-testid="workspace-settings-button"
                       disabled={!workspace}
                       onClick={() => setSettingsMenuOpen((state) => !state)}
                     >
@@ -286,9 +287,10 @@ export default function Home({
     );
   } else if (isWorkspacesReady && workspaces && workspaces.length === 0) {
     return (
-      <div className={classes.container}>
+      <div data-testid="container" className={classes.container}>
         <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
         <Grid
+          data-testid="no-workspace-container"
           container
           spacing={0}
           direction="column"
@@ -303,9 +305,9 @@ export default function Home({
     );
   } else {
     return (
-      <div className={classes.container}>
+      <div data-testid="container" className={classes.container}>
         <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
-        <Grid container className={classes.grid} spacing={3}>
+        <Grid data-testid="loader" container className={classes.grid} spacing={3}>
           <Grid item xs={12} className={classes.titleBar} ref={ref}>
             <div className={classes.titleSection}>
               <Hidden smUp implementation="css">
