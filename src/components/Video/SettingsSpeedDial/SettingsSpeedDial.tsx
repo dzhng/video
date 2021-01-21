@@ -58,12 +58,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
 
   const handleShare = useCallback(() => {
     updateClipboard(sharableCallLink);
-    enqueueSnackbar('URL copied to clipboard!', {
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-    });
+    enqueueSnackbar('URL copied to clipboard!');
     setOpen(false);
   }, [sharableCallLink, enqueueSnackbar]);
 

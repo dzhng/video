@@ -30,9 +30,12 @@ export default function useCallChat(call?: LocalModel<Call>) {
   // TODO: there could be a better way here which is to just filter the last few messages by timestamp. Try this if/when all messaging logic is consoldated into this hook.
   useEffect(() => {
     if (call) {
-      const valueRef = rtdb.ref(
-        `calls/${call.id}/callData/${ChatsDataKey}/${PublicChatsChannelKey}`,
-      );
+      // query for new messages that came in AFTER this query is run
+      const nowMs = new Date().getTime();
+      const valueRef = rtdb
+        .ref(`calls/${call.id}/callData/${ChatsDataKey}/${PublicChatsChannelKey}`)
+        .orderByChild('createdAt')
+        .startAt(nowMs);
 
       // when a new message is created, add it to state
       valueRef.on('child_added', (snapshot) => {

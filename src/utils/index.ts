@@ -1,3 +1,4 @@
+import { capitalize, words } from 'lodash';
 import isPlainObject from 'is-plain-object';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -62,6 +63,11 @@ export function updateClipboard(newClip: string) {
       console.warn('Copy failed!', e);
     },
   );
+}
+
+// return short one word version of display name
+export function shortName(displayName: string) {
+  return capitalize(words(displayName)[0]);
 }
 
 // Recursively removes any object keys with a value of undefined

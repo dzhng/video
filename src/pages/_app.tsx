@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <SnackbarProvider
           maxSnack={3}
           autoHideDuration={3000}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
           variant="info"
         >
           <Head />

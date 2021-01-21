@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     messageAvatar: {
+      flexShrink: 0,
       width: 25,
       height: 25,
     },
