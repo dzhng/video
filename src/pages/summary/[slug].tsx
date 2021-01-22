@@ -17,6 +17,7 @@ export default function SummaryPage() {
   const [callData, setCallData] = useState<RootCallData>();
 
   const callId = String(router.query.slug);
+  const fromHref = String(router.query.fromHref);
 
   // fetch call model
   useEffect(() => {
@@ -53,5 +54,5 @@ export default function SummaryPage() {
     return <LoadingContainer />;
   }
 
-  return <SummaryContainer call={call} data={callData} />;
+  return <SummaryContainer call={call} data={callData} fromHref={fromHref} />;
 }

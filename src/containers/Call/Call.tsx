@@ -100,10 +100,10 @@ export default function CallContainer() {
       window.location.assign(
         `${window.location.protocol}//${
           window.location.host
-        }/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? '')}`,
+        }/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`,
       );
     }
-  }, [isCallEnded, fromHref]);
+  }, [isCallEnded, currentCall, fromHref]);
 
   const [hotkeyPopperOpen, setHotkeyPopperOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
