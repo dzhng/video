@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { Backdrop } from '@material-ui/core';
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab';
 import {
   MoreVert as SpeedDialIcon,
@@ -109,7 +108,6 @@ export default function SettingsSpeedDial({ className }: { className?: string })
 
   return (
     <>
-      <Backdrop open={open} />
       <SpeedDial
         ariaLabel="Call Settings"
         className={clsx(classes.button, className)}
