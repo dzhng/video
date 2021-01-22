@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
@@ -36,12 +36,18 @@ export default function Controls({ showControls = true }: { showControls?: boole
   const roomState = useRoomState();
   const { isFetching } = useAppState();
   const { isAcquiringLocalTracks, isConnecting } = useVideoContext();
+  const popperAnchor = useRef<HTMLDivElement>(null);
+
   const isReconnecting = roomState === 'reconnecting';
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || isReconnecting;
 
   return (
-    <div data-testid="container" className={clsx(classes.container, { showControls })}>
-      <ToggleAudioButton disabled={disableButtons} />
+    <div
+      data-testid="container"
+      ref={popperAnchor}
+      className={clsx(classes.container, { showControls })}
+    >
+      <ToggleAudioButton disabled={disableButtons} containerRef={popperAnchor} />
       <ToggleVideoButton disabled={disableButtons} />
       {roomState !== 'disconnected' && !isMobile && <ToggleScreenShareButton />}
       {roomState !== 'disconnected' && <EndCallButton />}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
@@ -83,6 +84,14 @@ export default function CallContainer() {
       );
     }
   }, [isCallEnded, fromHref]);
+
+  // disable el tabbing in this page since that might
+  // conflict with other hotkeys
+  // show hotkey helper when pressed
+  useHotkeys('tab', (e) => {
+    e.preventDefault();
+    // TODO: show hotkey helper
+  });
 
   const isCallStarted: boolean = !!currentCall;
 
