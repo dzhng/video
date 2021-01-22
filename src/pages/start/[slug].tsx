@@ -56,6 +56,10 @@ export default function StartPage() {
       .then((result) => setIsHost(result.exists));
   }, [template, user]);
 
+  if (!isAuthReady) {
+    return <LoadingContainer />;
+  }
+
   if (!user) {
     return <GuestSignIn />;
   }
@@ -77,7 +81,7 @@ export default function StartPage() {
         </style>
       </Head>
 
-      {isAuthReady && template && isHost !== undefined ? (
+      {template && isHost !== undefined ? (
         <CallProvider template={template} isHost={isHost}>
           <CallContainer />
         </CallProvider>
