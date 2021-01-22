@@ -63,6 +63,22 @@ export default function Interactions() {
     [setPopperMessage],
   );
 
+  useHotkeys(
+    // action [i]tems, [q]uetions, [t]ake aways
+    'i,q,t',
+    (e) => {
+      e.preventDefault();
+      setNavItem(0);
+      setPopperMessage(
+        <>
+          <b>Notes</b>: Use <b>[enter]</b> to create, <b>[esc]</b> to cancel.
+        </>,
+        true,
+      );
+    },
+    [setPopperMessage],
+  );
+
   useEffect(() => {
     const handleNotiClick = () => {
       // set index for chats

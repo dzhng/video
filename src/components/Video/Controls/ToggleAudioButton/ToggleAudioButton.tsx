@@ -84,7 +84,7 @@ export default function ToggleAudioButton({
 
   return (
     <Tooltip
-      title={isAudioEnabled ? 'Mute Audio' : 'Unmute Audio'}
+      title={isAudioEnabled ? 'Mute Audio [A]' : 'Unmute Audio [A]'}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >

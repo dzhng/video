@@ -64,7 +64,7 @@ export default function EndCallButton({
   return (
     <>
       <Tooltip
-        title={'End Call'}
+        title={'End Call [E]'}
         onClick={handleEndCall}
         placement="top"
         PopperProps={{ disablePortal: true }}

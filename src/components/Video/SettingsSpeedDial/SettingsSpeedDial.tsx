@@ -82,7 +82,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
   }, [toggleFullScreen]);
 
   useHotkeys(
-    's',
+    'l',
     (e) => {
       e.preventDefault();
       handleShare();
@@ -100,19 +100,19 @@ export default function SettingsSpeedDial({ className }: { className?: string })
   );
 
   const actions = [
-    { icon: <ShareIcon />, name: 'Copy Link', onClick: handleShare },
+    { icon: <ShareIcon />, name: 'Copy Link [L]', onClick: handleShare },
+    isFullScreenSupported
+      ? {
+          icon: isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />,
+          name: isFullScreen ? 'Exit Full Screen [F]' : 'Full Screen [F]',
+          onClick: handleToggleFullScreen,
+        }
+      : null,
     !isMobile
       ? {
           icon: <SettingsIcon />,
           name: 'Change Camera or Mic',
           onClick: handleDeviceSettings,
-        }
-      : null,
-    isFullScreenSupported
-      ? {
-          icon: isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />,
-          name: isFullScreen ? 'Exit Full Screen' : 'Full Screen',
-          onClick: handleToggleFullScreen,
         }
       : null,
     isToggleCameraSupported

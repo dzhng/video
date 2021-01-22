@@ -62,7 +62,7 @@ export default function ToggleVideoButton({
 
   return (
     <Tooltip
-      title={isVideoEnabled ? 'Mute Video' : 'Unmute Video'}
+      title={isVideoEnabled ? 'Mute Video [V]' : 'Unmute Video [V]'}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
