@@ -4,6 +4,7 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { KeyboardOutlined as KeyboardIcon } from '@material-ui/icons';
 import { useHotkeys } from 'react-hotkeys-hook';
 
+import { isMobile } from '~/utils';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
@@ -146,13 +147,16 @@ export default function CallContainer() {
         </div>
       </UnsupportedBrowserWarning>
 
-      <div
-        className={classes.hotkeyButton}
-        onMouseEnter={() => setHotkeyPopperOpen(true)}
-        onMouseLeave={() => setHotkeyPopperOpen(false)}
-      >
-        <KeyboardIcon />
-      </div>
+      {!isMobile && (
+        <div
+          className={classes.hotkeyButton}
+          onMouseEnter={() => setHotkeyPopperOpen(true)}
+          onMouseLeave={() => setHotkeyPopperOpen(false)}
+          onClick={() => setHotkeyPopperOpen((state) => !state)}
+        >
+          <KeyboardIcon />
+        </div>
+      )}
 
       <HotkeyInstructions
         open={hotkeyPopperOpen}
