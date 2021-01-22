@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { KeyboardOutlined as KeyboardIcon } from '@material-ui/icons';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
@@ -11,12 +12,36 @@ import useCallContext from '~/hooks/useCallContext/useCallContext';
 import HotkeyInstructions from './HotkeyInstructions/HotkeyInstructions';
 import CallFlow from './CallFlow';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       width: '100%',
       height: '100vh',
       background: '#091523',
+    },
+    hotkeyButton: {
+      position: 'fixed',
+      top: 5,
+      right: 5,
+      backgroundColor: theme.palette.grey[900],
+      color: theme.palette.grey[200],
+      width: 30,
+      height: 30,
+      padding: '5px',
+      borderRadius: 15,
+      cursor: 'pointer',
+
+      // it's important that this component has a higher zIndex than popper background
+      // or else the mouse out events will always be called whenever popper is shown
+      zIndex: 300,
+
+      '&:hover': {
+        color: theme.palette.grey[500],
+      },
+      '& svg': {
+        width: 20,
+        height: 20,
+      },
     },
 
     // define animation for container background
@@ -121,7 +146,19 @@ export default function CallContainer() {
         </div>
       </UnsupportedBrowserWarning>
 
-      <HotkeyInstructions open={hotkeyPopperOpen} anchorRef={anchorRef} />
+      <div
+        className={classes.hotkeyButton}
+        onMouseEnter={() => setHotkeyPopperOpen(true)}
+        onMouseLeave={() => setHotkeyPopperOpen(false)}
+      >
+        <KeyboardIcon />
+      </div>
+
+      <HotkeyInstructions
+        open={hotkeyPopperOpen}
+        anchorRef={anchorRef}
+        onClick={() => setHotkeyPopperOpen(false)}
+      />
     </>
   );
 }

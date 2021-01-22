@@ -63,9 +63,11 @@ const HotkeyItem = ({ title, hotkey }: { title: string; hotkey: string }) => {
 export default function HotkeyInstructions({
   open,
   anchorRef,
+  onClick,
 }: {
   open: boolean;
   anchorRef: React.RefObject<HTMLElement>;
+  onClick?(): void;
 }) {
   const classes = useStyles();
 
@@ -78,6 +80,7 @@ export default function HotkeyInstructions({
         placement="bottom"
         className="hotkeyInstructionsPopper"
         transition
+        onClick={onClick}
       >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
