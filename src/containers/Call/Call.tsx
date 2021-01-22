@@ -16,14 +16,7 @@ const useStyles = makeStyles(() =>
     container: {
       width: '100%',
       height: '100vh',
-
-      background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
-      backgroundSize: '400% 400%',
-      // steps is important here since it tells browser to run at steps/seconds fps
-      // this is important for reducing cpu usage
-      animation: 'gradient 30s steps(150) infinite',
-      // do animation on gpu so its less taxing on cpu
-      transform: 'translateZ(0)',
+      background: '#091523',
     },
 
     // define animation for container background

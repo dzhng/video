@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     backdrop: {
-      zIndex: 0,
+      zIndex: 200,
     },
     hotkeyItem: {
       margin: theme.spacing(1),
@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme) =>
       '.hotkeyInstructionsPopper': {
         minWidth: 300,
         top: 'calc(50vh - 260px) !important',
+        zIndex: 201,
       },
     },
   }),
