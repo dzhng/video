@@ -30,6 +30,12 @@ const useStyles = makeStyles((theme) =>
       borderTop: theme.dividerBorder,
       flexShrink: 0,
     },
+
+    '@global': {
+      '.interactionPopper': {
+        top: '48px !important',
+      },
+    },
   }),
 );
 
@@ -37,7 +43,10 @@ export default function Interactions() {
   const classes = useStyles();
   const { events } = useCallContext();
   const [navItem, setNavItem] = useState(0);
-  const { popperElement, anchorRef, setPopperMessage } = useHotkeyPopper();
+  const { popperElement, anchorRef, setPopperMessage } = useHotkeyPopper({
+    className: 'interactionPopper',
+    placement: 'top',
+  });
 
   useHotkeys(
     'c',
@@ -46,7 +55,7 @@ export default function Interactions() {
       setNavItem(1);
       setPopperMessage(
         <>
-          <b>Chat</b> selected
+          <b>Chats</b>: Use <b>[enter]</b> to send, <b>[esc]</b> to cancel.
         </>,
         true,
       );

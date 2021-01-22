@@ -6,6 +6,7 @@ import { Typography, Divider, TextField, Tooltip, IconButton } from '@material-u
 import { Skeleton } from '@material-ui/lab';
 import { SendOutlined as SendIcon } from '@material-ui/icons';
 import Linkify from 'react-linkify';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
@@ -110,6 +111,7 @@ const Message = ({ message, isSelf }: { message: MessageType; isSelf: boolean })
 const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
   const classes = useStyles();
   const [input, setInput] = useState('');
+  const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = useCallback(() => {
     if (input.length > 0) {
@@ -118,8 +120,32 @@ const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
     }
   }, [input, sendMessage]);
 
+  useHotkeys(
+    'c',
+    (e) => {
+      e.preventDefault();
+      textFieldRef.current?.focus();
+    },
+    // use keyup event since keypress is taken by nav
+    // this way the same hotkey can be binded to multiple
+    // handlers
+    { keyup: true },
+  );
+
+  // cancel focus when esc is pressed
+  useHotkeys(
+    'esc',
+    () => {
+      textFieldRef.current?.blur();
+    },
+    {
+      enableOnTags: ['TEXTAREA'],
+    },
+  );
+
   return (
     <TextField
+      inputRef={textFieldRef}
       className={classes.composeBar}
       variant="outlined"
       color="secondary"

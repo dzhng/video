@@ -13,7 +13,25 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function useHotkeyPopper() {
+type PopperPlacement =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top';
+
+export default function useHotkeyPopper(options?: {
+  className?: string;
+  placement?: PopperPlacement;
+  timeout?: number;
+}) {
   const classes = useStyles();
   const anchorRef = useRef<HTMLDivElement>(null);
   const popperTimer = useRef<any>();
@@ -21,22 +39,31 @@ export default function useHotkeyPopper() {
   const [popperMessage, _setPopperMessage] = useState<React.ReactNode>(null);
 
   // auto close var will automatically open and close popper after set time
-  const setPopperMessage = useCallback((node: React.ReactNode, autoClose?: boolean) => {
-    _setPopperMessage(node);
-    if (autoClose) {
-      setIsPopperOpen(true);
+  const setPopperMessage = useCallback(
+    (node: React.ReactNode, autoClose?: boolean) => {
+      _setPopperMessage(node);
+      if (autoClose) {
+        setIsPopperOpen(true);
 
-      if (popperTimer.current) {
-        clearTimeout(popperTimer.current);
-        popperTimer.current = undefined;
+        if (popperTimer.current) {
+          clearTimeout(popperTimer.current);
+          popperTimer.current = undefined;
+        }
+        popperTimer.current = setTimeout(() => setIsPopperOpen(false), options?.timeout ?? 1500);
       }
-      popperTimer.current = setTimeout(() => setIsPopperOpen(false), 1500);
-    }
-  }, []);
+    },
+    [options],
+  );
 
   const popperElement = useMemo(
     () => (
-      <Popper open={isPopperOpen} anchorEl={anchorRef.current} placement="top" transition>
+      <Popper
+        open={isPopperOpen}
+        anchorEl={anchorRef.current}
+        placement={options?.placement ?? 'top'}
+        className={options?.className}
+        transition
+      >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Card className={classes.popper}>
@@ -46,7 +73,7 @@ export default function useHotkeyPopper() {
         )}
       </Popper>
     ),
-    [isPopperOpen, popperMessage, classes],
+    [isPopperOpen, popperMessage, classes, options],
   );
 
   return { popperElement, anchorRef, isPopperOpen, setIsPopperOpen, setPopperMessage };
