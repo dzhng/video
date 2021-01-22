@@ -42,6 +42,7 @@ export default function ToggleAudioButton(props: {
       toggleAudioEnabled(true);
     },
     { keydown: true },
+    [toggleAudioEnabled],
   );
   useHotkeys(
     'space',
@@ -51,6 +52,7 @@ export default function ToggleAudioButton(props: {
       toggleAudioEnabled(false);
     },
     { keyup: true },
+    [toggleAudioEnabled],
   );
   // prevent default space behavior on press
   // have it here just in case
