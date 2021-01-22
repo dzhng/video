@@ -3,7 +3,7 @@ import { rtdb } from '~/utils/firebase';
 import { LocalModel, Call, CallData, CallDataTypes } from '~/firebase/schema-types';
 
 export default function useCallData(call?: LocalModel<Call>) {
-  const [currentCallData, setCurrentCallData] = useState<CallData | undefined>(undefined);
+  const [currentCallData, setCurrentCallData] = useState<CallData>();
 
   useEffect(() => {
     if (call) {

@@ -20,7 +20,7 @@ export default function StartPage() {
 
   const templateId = String(router.query.slug);
 
-  // fetching template model
+  // fetch template model
   useEffect(() => {
     if (!templateId) {
       return;
@@ -56,10 +56,6 @@ export default function StartPage() {
       .then((result) => setIsHost(result.exists));
   }, [template, user]);
 
-  if (!isAuthReady) {
-    return <LoadingContainer />;
-  }
-
   if (!user) {
     return <GuestSignIn />;
   }
@@ -81,7 +77,7 @@ export default function StartPage() {
         </style>
       </Head>
 
-      {template && isHost !== undefined ? (
+      {isAuthReady && template && isHost !== undefined ? (
         <CallProvider template={template} isHost={isHost}>
           <CallContainer />
         </CallProvider>
