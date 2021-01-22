@@ -5,9 +5,11 @@ import {
   SubjectOutlined as NotesIcon,
   ChatBubbleOutlineOutlined as ChatsIcon,
 } from '@material-ui/icons';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { CallEvents } from '~/components/CallProvider/events';
+import useHotkeyPopper from '~/hooks/useHotkeyPopper/useHotkeyPopper';
 import Notes from './Notes';
 import Chats from './Chats';
 
@@ -35,6 +37,22 @@ export default function Interactions() {
   const classes = useStyles();
   const { events } = useCallContext();
   const [navItem, setNavItem] = useState(0);
+  const { popperElement, anchorRef, setPopperMessage } = useHotkeyPopper();
+
+  useHotkeys(
+    'c',
+    (e) => {
+      e.preventDefault();
+      setNavItem(1);
+      setPopperMessage(
+        <>
+          <b>Chat</b> selected
+        </>,
+        true,
+      );
+    },
+    [setPopperMessage],
+  );
 
   useEffect(() => {
     const handleNotiClick = () => {
@@ -49,31 +67,36 @@ export default function Interactions() {
   }, [events]);
 
   return (
-    <Card className={classes.container}>
-      <div className={classes.content}>{navItem === 0 ? <Notes /> : <Chats />}</div>
+    <>
+      <Card className={classes.container}>
+        <div className={classes.content}>{navItem === 0 ? <Notes /> : <Chats />}</div>
 
-      <BottomNavigation
-        className={classes.nav}
-        value={navItem}
-        onChange={(_, newValue) => {
-          setNavItem(newValue);
-        }}
-        showLabels
-      >
-        <Tooltip
-          placement="top"
-          title="Collaborate with other participants on shared notes, eveyone can edit notes collaboratively."
+        <BottomNavigation
+          ref={anchorRef}
+          className={classes.nav}
+          value={navItem}
+          onChange={(_, newValue) => {
+            setNavItem(newValue);
+          }}
+          showLabels
         >
-          <BottomNavigationAction label="Notes" icon={<NotesIcon />} />
-        </Tooltip>
+          <Tooltip
+            placement="top"
+            title="Collaborate with other participants on shared notes, eveyone can edit notes collaboratively."
+          >
+            <BottomNavigationAction label="Notes" icon={<NotesIcon />} />
+          </Tooltip>
 
-        <Tooltip
-          placement="top"
-          title="Message other participants, new participants joining will be able to see past messages."
-        >
-          <BottomNavigationAction label="Chats" icon={<ChatsIcon />} />
-        </Tooltip>
-      </BottomNavigation>
-    </Card>
+          <Tooltip
+            placement="top"
+            title="Message other participants, new participants joining will be able to see past messages."
+          >
+            <BottomNavigationAction label="Chats" icon={<ChatsIcon />} />
+          </Tooltip>
+        </BottomNavigation>
+      </Card>
+
+      {popperElement}
+    </>
   );
 }

@@ -1,19 +1,19 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Popper, Fade, Card, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 
 import { isMobile } from '~/utils';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useHotkeyPopper from '~/hooks/useHotkeyPopper/useHotkeyPopper';
 
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     container: {
       display: 'flex',
@@ -29,12 +29,6 @@ const useStyles = makeStyles((theme) =>
         visibility: 'visible',
       },
     },
-    popper: {
-      padding: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.main,
-      color: 'white',
-      boxShadow: theme.shadows[7],
-    },
   }),
 );
 
@@ -43,24 +37,7 @@ export default function Controls({ showControls = true }: { showControls?: boole
   const roomState = useRoomState();
   const { isFetching } = useAppState();
   const { isAcquiringLocalTracks, isConnecting } = useVideoContext();
-  const popperAnchor = useRef<HTMLDivElement>(null);
-  const popperTimer = useRef<any>();
-  const [isPopperOpen, setIsPopperOpen] = useState(false);
-  const [popperMessage, _setPopperMessage] = useState<React.ReactNode>(null);
-
-  // auto close var will automatically open and close popper after set time
-  const setPopperMessage = useCallback((node: React.ReactNode, autoClose?: boolean) => {
-    _setPopperMessage(node);
-    if (autoClose) {
-      setIsPopperOpen(true);
-
-      if (popperTimer.current) {
-        clearTimeout(popperTimer.current);
-        popperTimer.current = undefined;
-      }
-      popperTimer.current = setTimeout(() => setIsPopperOpen(false), 1500);
-    }
-  }, []);
+  const { popperElement, anchorRef, setIsPopperOpen, setPopperMessage } = useHotkeyPopper();
 
   const isReconnecting = roomState === 'reconnecting';
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || isReconnecting;
@@ -69,7 +46,7 @@ export default function Controls({ showControls = true }: { showControls?: boole
     <>
       <div
         data-testid="container"
-        ref={popperAnchor}
+        ref={anchorRef}
         className={clsx(classes.container, { showControls })}
       >
         <ToggleAudioButton
@@ -82,15 +59,7 @@ export default function Controls({ showControls = true }: { showControls?: boole
         {roomState !== 'disconnected' && <EndCallButton setPopperMessage={setPopperMessage} />}
       </div>
 
-      <Popper open={isPopperOpen} anchorEl={popperAnchor.current} placement="top" transition>
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Card className={classes.popper}>
-              <Typography variant="body1">{popperMessage}</Typography>
-            </Card>
-          </Fade>
-        )}
-      </Popper>
+      {popperElement}
     </>
   );
 }
