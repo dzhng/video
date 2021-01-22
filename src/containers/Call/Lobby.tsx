@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppState } from '~/state';
@@ -9,7 +9,7 @@ import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import Room from '~/components/Video/Room/Room';
 import LocalPreview from './LocalPreview';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     joinButton: {
       height: 50,
