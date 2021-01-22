@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
+import { useHotkeys } from 'react-hotkeys-hook';
 import LocalPreview from './LocalPreview';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,6 +33,15 @@ export default function CreateCall({ create }: { create(): Promise<boolean> }) {
     create();
     setIsCreating(true);
   }, [create, isCreating]);
+
+  useHotkeys(
+    'enter',
+    (e) => {
+      e.preventDefault();
+      handleCreate();
+    },
+    [handleCreate],
+  );
 
   const actionBar = (
     <Button

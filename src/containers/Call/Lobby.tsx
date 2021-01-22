@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
@@ -54,6 +55,20 @@ export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
       handleSubmit();
     }
   }, [call]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useHotkeys(
+    'enter',
+    (e) => {
+      // make sure to have this check because we want
+      // the enter key for modal confirmations... etc, so
+      // don't want to prevent default all the time
+      if (roomState !== 'connected') {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [roomState, handleSubmit],
+  );
 
   // TODO: just put this inside of LocalPreview, since it's the same between this and CreateCall component. Can expose isLoading / disabled / onClick as props.
   const actionBar = (
