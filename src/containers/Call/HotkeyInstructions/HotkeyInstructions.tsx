@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) =>
     '@global': {
       '.hotkeyInstructionsPopper': {
         minWidth: 300,
-        top: 'calc(50vh - 260px) !important',
+        top: 'calc(50vh - 280px) !important',
         zIndex: 201,
       },
     },
@@ -106,6 +106,7 @@ export default function HotkeyInstructions({
               <HotkeyItem title="Full Screen" hotkey="F" />
               <HotkeyItem title="Copy Share Link" hotkey="L" />
               <HotkeyItem title="Join or Create Call (before call start)" hotkey="[enter]" />
+              <HotkeyItem title="Hotkey Instructions (this modal)" hotkey="long press [tab]" />
             </Card>
           </Fade>
         )}
