@@ -61,10 +61,10 @@ export default function Notes() {
   );
 
   const sections = [
-    [ActionItemsKey, 'Action Items'],
-    [QuestionsKey, 'Questions'],
-    [TakeAwaysKey, 'Take Aways'],
-  ].map(([key, title]) => {
+    [ActionItemsKey, 'Action Items', 'i'],
+    [QuestionsKey, 'Questions', 'q'],
+    [TakeAwaysKey, 'Take Aways', 't'],
+  ].map(([key, title, hotkey]) => {
     // disabling rules of hooks because even though it's called in a callback,
     // it's done in map of static var which means it's a guarenteed ordered synchronous call
     // eslint-disable-next-line react-hooks/rules-of-hooks,react-hooks/exhaustive-deps
@@ -85,6 +85,7 @@ export default function Notes() {
       <TaskSection
         key={key}
         title={title}
+        hotkey={hotkey}
         tasks={tasks}
         createTask={createCallback}
         updateTask={updateCallback}

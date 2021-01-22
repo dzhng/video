@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import clsx from 'clsx';
 import { entries } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
@@ -9,6 +9,7 @@ import {
   RadioButtonUncheckedOutlined as UncheckedIcon,
   RadioButtonCheckedOutlined as CheckedIcon,
 } from '@material-ui/icons';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { TaskSectionType } from './types';
 
 const MaxTaskLength = 280;
@@ -107,12 +108,14 @@ const Task = ({
 
 export default function TaskSection({
   title,
+  hotkey,
   tasks,
   createTask,
   updateTask,
   deleteTask,
 }: {
   title: string;
+  hotkey: string;
   tasks: TaskSectionType;
   createTask(name: string): void;
   updateTask(id: string, name?: string, isDone?: boolean): void;
@@ -120,6 +123,7 @@ export default function TaskSection({
 }) {
   const classes = useStyles();
   const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const tasksEntries = entries(tasks).sort((a, b) => a[1].order - b[1].order);
 
   const handleCreate = useCallback(() => {
@@ -145,6 +149,32 @@ export default function TaskSection({
     [handleCreate],
   );
 
+  useHotkeys(
+    hotkey,
+    (e) => {
+      e.preventDefault();
+      inputRef.current?.focus();
+    },
+    // use keyup event since keypress is taken by nav
+    // this way the same hotkey can be binded to multiple
+    // handlers
+    { keyup: true },
+  );
+
+  // cancel focus when esc is pressed
+  useHotkeys(
+    'esc,tab',
+    (e) => {
+      if (window.document.activeElement === inputRef.current) {
+        e.preventDefault();
+        inputRef.current?.blur();
+      }
+    },
+    {
+      enableOnTags: ['TEXTAREA'],
+    },
+  );
+
   return (
     <div className={classes.section}>
       <Typography variant="h3" className={classes.sectionTitle}>
@@ -162,6 +192,7 @@ export default function TaskSection({
       ))}
 
       <InputBase
+        inputRef={inputRef}
         fullWidth
         multiline
         margin="dense"

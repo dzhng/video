@@ -55,7 +55,7 @@ export default function Interactions() {
       setNavItem(1);
       setPopperMessage(
         <>
-          <b>Chats</b>: Use <b>[enter]</b> to send, <b>[esc]</b> to cancel.
+          <b>Chats</b>: Use <b>[enter]</b> to send, <b>[tab]</b> to cancel.
         </>,
         true,
       );
@@ -65,16 +65,18 @@ export default function Interactions() {
 
   useHotkeys(
     // action [i]tems, [q]uetions, [t]ake aways
-    'i,q,t',
+    'i,q,t,n',
     (e) => {
       e.preventDefault();
       setNavItem(0);
-      setPopperMessage(
-        <>
-          <b>Notes</b>: Use <b>[enter]</b> to create, <b>[esc]</b> to cancel.
-        </>,
-        true,
-      );
+      if (e.key !== 'n') {
+        setPopperMessage(
+          <>
+            <b>Notes</b>: Use <b>[enter]</b> to create, <b>[tab]</b> to cancel.
+          </>,
+          true,
+        );
+      }
     },
     [setPopperMessage],
   );

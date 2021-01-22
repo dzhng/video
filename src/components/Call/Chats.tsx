@@ -134,9 +134,12 @@ const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
 
   // cancel focus when esc is pressed
   useHotkeys(
-    'esc',
-    () => {
-      textFieldRef.current?.blur();
+    'esc,tab',
+    (e) => {
+      if (window.document.activeElement === textFieldRef.current) {
+        e.preventDefault();
+        textFieldRef.current?.blur();
+      }
     },
     {
       enableOnTags: ['TEXTAREA'],
