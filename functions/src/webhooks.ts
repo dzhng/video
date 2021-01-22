@@ -64,9 +64,11 @@ export const twilioVideoStatus = functions.region(region).https.onRequest(async 
   const callRef = store.collection(Collections.CALLS).doc(RoomName);
   const templateRef = store.collection(Collections.TEMPLATES).doc(callData.templateId);
 
+  // increment duration just in case there were multiple twilio rooms in the call
+  // (can be an edge case), or we implement restarting sessions in the future.
   batch.update(callRef, {
     isFinished: true,
-    duration: Number(RoomDuration),
+    duration: admin.firestore.FieldValue.increment(Number(RoomDuration)),
   });
 
   batch.update(templateRef, {
