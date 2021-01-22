@@ -52,6 +52,9 @@ export default function ToggleAudioButton(props: {
     },
     { keyup: true },
   );
+  // prevent default space behavior on press
+  // have it here just in case
+  useHotkeys('space', (e) => e.preventDefault());
 
   return (
     <>
