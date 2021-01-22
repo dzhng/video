@@ -128,7 +128,7 @@ export default function CallContainer() {
         </div>
       </UnsupportedBrowserWarning>
 
-      <HotkeyInstructions open={true} anchorRef={anchorRef} />
+      <HotkeyInstructions open={hotkeyPopperOpen} anchorRef={anchorRef} />
     </>
   );
 }

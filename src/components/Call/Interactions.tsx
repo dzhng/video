@@ -64,7 +64,7 @@ export default function Interactions() {
   );
 
   useHotkeys(
-    // action [i]tems, [q]uetions, [t]ake aways
+    // action [i]tems, [q]uestions, [t]ake aways
     'i,q,t,n',
     (e) => {
       e.preventDefault();
