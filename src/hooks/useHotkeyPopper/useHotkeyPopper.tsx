@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
+// copied from MUI documentation
 type PopperPlacement =
   | 'bottom-end'
   | 'bottom-start'

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -8,6 +8,7 @@ import { VideoProvider } from '~/components/Video/VideoProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
+import HotkeyInstructions from './HotkeyInstructions/HotkeyInstructions';
 import CallFlow from './CallFlow';
 
 const useStyles = makeStyles(() =>
@@ -85,27 +86,49 @@ export default function CallContainer() {
     }
   }, [isCallEnded, fromHref]);
 
+  const [hotkeyPopperOpen, setHotkeyPopperOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+
   // disable el tabbing in this page since that might
   // conflict with other hotkeys
   // show hotkey helper when pressed
   useHotkeys('tab', (e) => {
     e.preventDefault();
-    // TODO: show hotkey helper
   });
+  useHotkeys(
+    'tab',
+    (e) => {
+      e.preventDefault();
+      setHotkeyPopperOpen(true);
+    },
+    { keydown: true },
+  );
+  useHotkeys(
+    'tab',
+    (e) => {
+      e.preventDefault();
+      setHotkeyPopperOpen(false);
+    },
+    { keyup: true },
+  );
 
   const isCallStarted: boolean = !!currentCall;
 
   return (
-    <UnsupportedBrowserWarning>
-      <div className={classes.container}>
-        <VideoProvider
-          options={connectionOptions}
-          onError={setError}
-          onDisconnect={handleDisconnect}
-        >
-          <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
-        </VideoProvider>
-      </div>
-    </UnsupportedBrowserWarning>
+    <>
+      <UnsupportedBrowserWarning>
+        <div ref={anchorRef} className={classes.container}>
+          <VideoProvider
+            options={connectionOptions}
+            onError={setError}
+            onDisconnect={handleDisconnect}
+          >
+            <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
+          </VideoProvider>
+        </div>
+      </UnsupportedBrowserWarning>
+
+      <HotkeyInstructions open={true} anchorRef={anchorRef} />
+    </>
   );
 }
