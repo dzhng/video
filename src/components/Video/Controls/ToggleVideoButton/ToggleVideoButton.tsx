@@ -39,7 +39,6 @@ export default function ToggleVideoButton({
     }
   }, [toggleVideoEnabled]);
 
-  // setup hotkeys to toggle audio
   useHotkeys(
     'v',
     (e) => {

@@ -10,6 +10,7 @@ import {
   FlipCameraIosOutlined as SwitchCameraIcon,
   TuneOutlined as SettingsIcon,
 } from '@material-ui/icons';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useSnackbar } from 'notistack';
 import { isMobile, isBrowser, updateClipboard } from '~/utils';
 import SettingsDialog from '~/components/Video/SettingsDialog/SettingsDialog';
@@ -79,6 +80,24 @@ export default function SettingsSpeedDial({ className }: { className?: string })
     toggleFullScreen();
     setOpen(false);
   }, [toggleFullScreen]);
+
+  useHotkeys(
+    's',
+    (e) => {
+      e.preventDefault();
+      handleShare();
+    },
+    [handleShare],
+  );
+
+  useHotkeys(
+    'f',
+    (e) => {
+      e.preventDefault();
+      handleToggleFullScreen();
+    },
+    [handleToggleFullScreen],
+  );
 
   const actions = [
     { icon: <ShareIcon />, name: 'Copy Link', onClick: handleShare },

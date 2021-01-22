@@ -50,7 +50,6 @@ export default function EndCallButton({
     room.disconnect();
   }, [endCall, room]);
 
-  // setup hotkeys to toggle audio
   useHotkeys(
     'e',
     (e) => {
