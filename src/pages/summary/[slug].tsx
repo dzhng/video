@@ -26,7 +26,6 @@ const twilioClient = new Twilio(twilioApiKeySID, twilioApiKeySecret, {
 export default function SummaryPage({ participants }: { participants: ParticipantRecord[] }) {
   const router = useRouter();
   const [call, setCall] = useState<LocalModel<Call>>();
-  const [template, setTemplate] = useState<LocalModel<Template>>();
   const [callData, setCallData] = useState<RootCallData>();
 
   const callId = String(router.query.slug);
@@ -51,25 +50,6 @@ export default function SummaryPage({ participants }: { participants: Participan
     return unsubscribe;
   }, [callId]);
 
-  // fetch template model
-  useEffect(() => {
-    if (!call) {
-      return;
-    }
-
-    const unsubscribe = db
-      .collection(Collections.TEMPLATES)
-      .doc(call.templateId)
-      .onSnapshot((result) => {
-        setTemplate({
-          id: result.id,
-          ...(result.data() as Template),
-        });
-      });
-
-    return unsubscribe;
-  }, [call]);
-
   // fetch call data
   useEffect(() => {
     if (!callId) {
@@ -87,13 +67,7 @@ export default function SummaryPage({ participants }: { participants: Participan
   }
 
   return (
-    <SummaryContainer
-      template={template}
-      call={call}
-      data={callData}
-      participants={participants}
-      fromHref={fromHref}
-    />
+    <SummaryContainer call={call} data={callData} participants={participants} fromHref={fromHref} />
   );
 }
 

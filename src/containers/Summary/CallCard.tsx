@@ -4,8 +4,9 @@ import { Card, CardContent, Typography, Divider } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 
 import { formatPastDate, formatDuration } from '~/utils';
-import { LocalModel, Call, Template } from '~/firebase/schema-types';
+import { LocalModel, Call } from '~/firebase/schema-types';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
+import useTemplate from '~/hooks/useTemplate/useTemplate';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import type { ParticipantRecord } from './types';
 
@@ -85,15 +86,14 @@ const Participant = ({
 };
 
 export default function CallCard({
-  template,
   call,
   participants,
 }: {
-  template?: LocalModel<Template>;
   call: LocalModel<Call>;
   participants: ParticipantRecord[];
 }) {
   const classes = useStyles();
+  const template = useTemplate(call.templateId);
 
   return (
     <Card className={classes.container}>

@@ -326,7 +326,3 @@ export default function Home({
     );
   }
 }
-
-/* 
-
-*/
