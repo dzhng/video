@@ -20,11 +20,13 @@ const useStyles = makeStyles((theme) =>
 );
 
 export default function SummaryContainer({
+  template,
   call,
   data,
   participants,
   fromHref,
 }: {
+  template?: LocalModel<Template>;
   call: LocalModel<Call>;
   data: { [key: string]: CallData };
   participants: ParticipantRecord[];
@@ -53,7 +55,7 @@ export default function SummaryContainer({
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <CallCard call={call} participants={participants} />
+          <CallCard template={template} call={call} participants={participants} />
         </Grid>
         <Grid item xs={12} sm={6}>
           <DataCard data={data} />

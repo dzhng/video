@@ -3,13 +3,9 @@ import { get } from 'lodash';
 import { styled } from '@material-ui/core/styles';
 import { useAppState } from '~/state';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
+import { TasksDataKey, ActionItemsKey, QuestionsKey, TakeAwaysKey } from '~/constants';
 import { TaskType, TaskSectionType } from './types';
 import TaskSection from './TaskSection';
-
-const TasksDataKey = 'tasks';
-const ActionItemsKey = 'actionItems';
-const QuestionsKey = 'questions';
-const TakeAwaysKey = 'takeAways';
 
 const Container = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(1),

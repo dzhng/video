@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { rtdb } from '~/utils/firebase';
+import { CallsRTDBRoot, CurrentActivityIDKey, ActivityDataKey } from '~/constants';
 import { LocalModel, Call, Activity, CallDataTypes, CallData } from '~/firebase/schema-types';
 
 export default function useActivity(call?: LocalModel<Call>) {
@@ -10,7 +11,7 @@ export default function useActivity(call?: LocalModel<Call>) {
         return;
       }
 
-      rtdb.ref(`calls/${call.id}/currentActivityId`).set(activity.id);
+      rtdb.ref(`${CallsRTDBRoot}/${call.id}/${CurrentActivityIDKey}`).set(activity.id);
     },
     [call],
   );
@@ -21,14 +22,14 @@ export default function useActivity(call?: LocalModel<Call>) {
       return;
     }
 
-    rtdb.ref(`calls/${call.id}/currentActivityId`).set(null);
+    rtdb.ref(`${CallsRTDBRoot}/${call.id}/${CurrentActivityIDKey}`).set(null);
   }, [call]);
 
   const [currentActivityId, setCurrentActivityId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (call) {
-      const valueRef = rtdb.ref(`calls/${call.id}/currentActivityId`);
+      const valueRef = rtdb.ref(`${CallsRTDBRoot}/${call.id}/${CurrentActivityIDKey}`);
 
       valueRef.on('value', (snapshot) => {
         setCurrentActivityId(snapshot.val());
@@ -49,7 +50,7 @@ export default function useActivity(call?: LocalModel<Call>) {
         return;
       }
 
-      const fullPath = `calls/${call.id}/activityData/${activity.id}${
+      const fullPath = `${CallsRTDBRoot}/${call.id}/${ActivityDataKey}/${activity.id}${
         path ? '/' + path.replace(/\./g, '/') : ''
       }`;
       rtdb.ref().update({
@@ -63,7 +64,9 @@ export default function useActivity(call?: LocalModel<Call>) {
 
   useEffect(() => {
     if (call && currentActivityId) {
-      const valueRef = rtdb.ref(`calls/${call.id}/activityData/${currentActivityId}`);
+      const valueRef = rtdb.ref(
+        `${CallsRTDBRoot}/${call.id}/${ActivityDataKey}/${currentActivityId}`,
+      );
 
       valueRef.on('value', (snapshot) => {
         setCurrentActivityData(snapshot.val() ?? {});

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { rtdb } from '~/utils/firebase';
+import { CallsRTDBRoot } from '~/constants';
 import { LocalModel, Call, CallData, CallDataTypes } from '~/firebase/schema-types';
 
 export default function useCallData(call?: LocalModel<Call>) {
@@ -7,7 +8,7 @@ export default function useCallData(call?: LocalModel<Call>) {
 
   useEffect(() => {
     if (call) {
-      const valueRef = rtdb.ref(`calls/${call.id}/callData`);
+      const valueRef = rtdb.ref(`${CallsRTDBRoot}/${call.id}`);
 
       valueRef.on('value', (snapshot) => {
         setCurrentCallData(snapshot.val() ?? {});
@@ -26,7 +27,7 @@ export default function useCallData(call?: LocalModel<Call>) {
         return;
       }
 
-      const fullPath = `calls/${call.id}/callData/${key}${
+      const fullPath = `${CallsRTDBRoot}/${call.id}/${key}${
         path ? '/' + path.replace(/\./g, '/') : ''
       }`;
       rtdb.ref().update({

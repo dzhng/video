@@ -3,8 +3,9 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { Twilio } from 'twilio';
 
-import { Collections, LocalModel, Call, CallData } from '~/firebase/schema-types';
+import { Collections, LocalModel, Template, Call, CallData } from '~/firebase/schema-types';
 import { db, rtdb } from '~/utils/firebase';
+import { CallsRTDBRoot } from '~/constants';
 import LoadingContainer from '~/containers/Loading/Loading';
 import SummaryContainer from '~/containers/Summary/Summary';
 import type { ParticipantRecord } from '~/containers/Summary/types';
@@ -24,6 +25,7 @@ const twilioClient = new Twilio(twilioApiKeySID, twilioApiKeySecret, {
 export default function SummaryPage({ participants }: { participants: ParticipantRecord[] }) {
   const router = useRouter();
   const [call, setCall] = useState<LocalModel<Call>>();
+  const [template, setTemplate] = useState<LocalModel<Template>>();
   const [callData, setCallData] = useState<RootCallData>();
 
   const callId = String(router.query.slug);
@@ -48,13 +50,32 @@ export default function SummaryPage({ participants }: { participants: Participan
     return unsubscribe;
   }, [callId]);
 
+  // fetch template model
+  useEffect(() => {
+    if (!call) {
+      return;
+    }
+
+    const unsubscribe = db
+      .collection(Collections.TEMPLATES)
+      .doc(call.templateId)
+      .onSnapshot((result) => {
+        setTemplate({
+          id: result.id,
+          ...(result.data() as Template),
+        });
+      });
+
+    return unsubscribe;
+  }, [call]);
+
   // fetch call data
   useEffect(() => {
     if (!callId) {
       return;
     }
 
-    const valueRef = rtdb.ref(`calls/${callId}`);
+    const valueRef = rtdb.ref(`${CallsRTDBRoot}/${callId}`);
     valueRef.on('value', (snapshot) => {
       setCallData(snapshot.val() ?? {});
     });
@@ -65,7 +86,13 @@ export default function SummaryPage({ participants }: { participants: Participan
   }
 
   return (
-    <SummaryContainer call={call} data={callData} participants={participants} fromHref={fromHref} />
+    <SummaryContainer
+      template={template}
+      call={call}
+      data={callData}
+      participants={participants}
+      fromHref={fromHref}
+    />
   );
 }
 
