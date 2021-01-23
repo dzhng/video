@@ -54,9 +54,13 @@ const Section = ({ name, tasks }: { name: string; tasks: TaskSectionType }) => {
   return (
     <div>
       <Typography variant="h5">{name}</Typography>
-      {tasksEntries.map(([id, task]) => (
-        <Task key={id} task={task} />
-      ))}
+      {tasksEntries.length > 0 ? (
+        tasksEntries.map(([id, task]) => <Task key={id} task={task} />)
+      ) : (
+        <Typography variant="body1" style={{ marginTop: 3, marginBottom: 3 }}>
+          No {name.toLowerCase()} were created during this call.
+        </Typography>
+      )}
     </div>
   );
 };

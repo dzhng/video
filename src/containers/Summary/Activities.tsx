@@ -41,6 +41,10 @@ const useStyles = makeStyles((theme) =>
       borderRadius: theme.shape.borderRadius,
       border: theme.dividerBorder,
       marginTop: theme.spacing(1),
+
+      // activities depend on flex display to show properly
+      display: 'flex',
+      minHeight: 350,
     },
   }),
 );
