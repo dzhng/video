@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       flexDirection: 'column',
       padding: '2em',
-      marginTop: 'calc(50vh - 225px)',
+      marginTop: 'calc(50vh - 250px)',
       textAlign: 'center',
 
       '& p': {
