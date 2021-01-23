@@ -11,10 +11,13 @@ import {
   RemoteVideoTrack,
 } from 'twilio-video';
 
-import AudioLevelIndicator from '~/components/Video/AudioLevelIndicator/AudioLevelIndicator';
+import AudioLevelIndicator, {
+  useVolume,
+} from '~/components/Video/AudioLevelIndicator/AudioLevelIndicator';
 import BandwidthWarning from '~/components/Video/BandwidthWarning/BandwidthWarning';
 import NetworkQualityLevel from '~/components/Video/NetworkQualityLevel/NetworkQualityLevel';
 
+import useDominantSpeaker from '~/hooks/Video/useDominantSpeaker/useDominantSpeaker';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import usePublications from '~/hooks/Video/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/Video/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
@@ -38,6 +41,9 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[7],
       overflow: 'hidden',
 
+      // for speaker glow transitions
+      transition: 'box-shadow 0.8s',
+
       // fix webkit bug where borderRadius doesn't render
       transform: 'translateZ(0)',
 
@@ -60,6 +66,12 @@ const useStyles = makeStyles((theme: Theme) =>
         filter: 'blur(4px) grayscale(1) brightness(0.5)',
       },
     },
+    isDominantSpeaker: (props: { volume: number }) => ({
+      boxShadow: `0px 0px 16px ${2 + props.volume}px rgb(255 255 255 / 40%)`,
+    }),
+    isSpeaking: (props: { volume: number }) => ({
+      boxShadow: `0px 0px 16px ${2 + props.volume / 2}px ${theme.palette.error.main}60`,
+    }),
     infoContainer: {
       position: 'absolute',
       zIndex: 1,
@@ -142,6 +154,7 @@ export default function ParticipantInfo({
   children,
 }: ParticipantInfoProps) {
   const { isVideoEnabled } = useVideoContext();
+  const dominantSpeaker = useDominantSpeaker();
   const publications = usePublications(participant);
 
   const audioPublication = publications.find((p) => p.kind === 'audio');
@@ -155,15 +168,25 @@ export default function ParticipantInfo({
   );
 
   const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
+  const volume = useVolume(audioTrack);
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
-  const classes = useStyles();
+  const classes = useStyles({ volume: volume ?? 0 });
   const userInfo = useUserInfo(participant.identity);
+
+  // dominant speaker needs to be detected by twilio AND there must be some volume to
+  // be qualified as dominant speaker. Note that we are adding rules to twilio's original
+  // rules since our use cases requires very sensitive dominant speaker detection.
+  // (needs to unset the minute the speaker stops speaking)
+  const isSpeaking = volume !== undefined && volume > 3;
+  const isDominantSpeaker = participant.identity === dominantSpeaker?.identity && isSpeaking;
 
   return (
     <div
       className={clsx(classes.container, {
         [classes.isVideoSwitchedOff]: isVideoSwitchedOff,
+        [classes.isDominantSpeaker]: isDominantSpeaker,
+        [classes.isSpeaking]: isDominantSpeaker ? false : isSpeaking, // if already dominant speaker, don't set speaking
       })}
       onClick={onClick}
       data-cy-participant={participant.identity}
@@ -181,7 +204,7 @@ export default function ParticipantInfo({
           <NetworkQualityLevel participant={participant} />
         </div>
         <div className={classes.indicators}>
-          <AudioLevelIndicator audioTrack={audioTrack} />
+          <AudioLevelIndicator volume={volume} />
           {!isVideoEnabled && <VideocamOff data-testid="camoff-icon" />}
           {isScreenShareEnabled && <ScreenShare data-testid="screenshare-icon" />}
           {/*isSelected && <PinIcon data-testid="pin-icon" />*/}
