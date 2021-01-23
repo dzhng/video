@@ -67,10 +67,10 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     isDominantSpeaker: (props: { volume: number }) => ({
-      boxShadow: `0px 0px 16px ${2 + props.volume}px rgb(255 255 255 / 40%)`,
+      boxShadow: `0px 0px 16px ${4 + props.volume / 2}px rgb(255 255 255 / 60%)`,
     }),
     isInterrupting: (props: { volume: number }) => ({
-      boxShadow: `0px 0px 16px ${2 + props.volume / 2}px ${theme.palette.error.main}60`,
+      boxShadow: `0px 0px 16px ${4 + props.volume / 2}px ${theme.palette.error.main}60`,
     }),
     infoContainer: {
       position: 'absolute',
