@@ -11,7 +11,7 @@ import BreakoutForm from '../CreateForm/Breakout';
 
 import PresentationDisplay, { PresentationView } from '../CallDisplay/Presentation';
 import VideoDisplay from '../CallDisplay/Video';
-import PollDisplay from '../CallDisplay/Poll';
+import PollDisplay, { PollView } from '../CallDisplay/Poll';
 import QuestionsDisplay from '../CallDisplay/Questions';
 import BreakoutDisplay from '../CallDisplay/Breakout';
 
@@ -49,6 +49,7 @@ export const ActivityTypeConfig: {
     icon: <PollIcon className={iconClassName} />,
     form: <PollForm />,
     display: <PollDisplay />,
+    summary: (activity, data) => <PollView activity={activity} data={data} isHost={false} />,
     initialValue: {
       showResultsRightAway: false,
       isMultipleChoice: false,

@@ -18,10 +18,30 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
     },
+    activityContainer: {
+      marginBottom: theme.spacing(1),
+    },
+    activityInfo: {
+      display: 'flex',
+      alignItems: 'center',
+
+      '& h5': {
+        fontWeight: 'bold',
+        flexGrow: 1,
+      },
+      '& p': {
+        color: theme.palette.grey[600],
+        textAlign: 'right',
+      },
+    },
     activity: {
+      ...theme.customMixins.scrollBar,
       width: '100%',
       maxHeight: 400,
       overflowY: 'auto',
+      borderRadius: theme.shape.borderRadius,
+      border: theme.dividerBorder,
+      marginTop: theme.spacing(1),
     },
   }),
 );
@@ -31,10 +51,15 @@ const FinishedActivity = ({ finishedActivity }: { finishedActivity: FinishedActi
   const config = ActivityTypeConfig.find((a) => a.type === finishedActivity.template.type);
 
   return config && config.summary ? (
-    <div className={classes.activity}>
-      <Typography variant="h5">{finishedActivity.template.name}</Typography>
-      <Typography variant="body1">{finishedActivity.template.type}</Typography>
-      {config.summary(finishedActivity.template, finishedActivity.data)}
+    <div className={classes.activityContainer}>
+      <div className={classes.activityInfo}>
+        <Typography variant="h5">{finishedActivity.template.name}</Typography>
+        <Typography variant="body1">{finishedActivity.template.type}</Typography>
+      </div>
+
+      <div className={classes.activity}>
+        {config.summary(finishedActivity.template, finishedActivity.data)}
+      </div>
     </div>
   ) : null;
 };

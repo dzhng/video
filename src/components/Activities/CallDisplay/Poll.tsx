@@ -7,7 +7,7 @@ import {
   RadioButtonUnchecked as UncheckedIcon,
   RadioButtonChecked as CheckedIcon,
 } from '@material-ui/icons';
-import { PollActivityMetadata } from '~/firebase/schema-types';
+import { PollActivityMetadata, Activity, CallData, CallDataTypes } from '~/firebase/schema-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { useAppState } from '~/state';
 
@@ -72,13 +72,13 @@ const useStyles = makeStyles((theme) =>
       color: 'white',
       textAlign: 'center',
     },
-    progressBar: {
+    progressBar: (props: { voted?: boolean }) => ({
       position: 'absolute',
       top: 0,
       left: 0,
       height: '100%',
-      backgroundColor: theme.palette.primary.light + '50',
-    },
+      backgroundColor: props.voted ? theme.palette.primary.light + '50' : theme.palette.grey[300],
+    }),
     controls: {
       display: 'flex',
       justifyContent: 'space-between',
@@ -109,7 +109,7 @@ function PollOption({
   // disabled option cannot vote
   disabled: boolean;
 }) {
-  const classes = useStyles();
+  const classes = useStyles({ voted });
 
   return (
     <div
@@ -134,17 +134,26 @@ function PollOption({
   );
 }
 
-export default function PollDisplay() {
-  const classes = useStyles();
+export function PollView({
+  activity,
+  data,
+  updateData,
+  isHost,
+}: {
+  activity?: Activity;
+  data?: CallData;
+  updateData?(activity: Activity, path: string | null, value: CallDataTypes): void;
+  isHost: boolean;
+}) {
+  const classes = useStyles({});
   const { user } = useAppState();
-  const { currentActivity, updateActivityData, currentActivityData, isHost } = useCallContext();
 
-  const metadata = currentActivity?.metadata as PollActivityMetadata | undefined;
+  const metadata = activity?.metadata as PollActivityMetadata | undefined;
 
   const flattenedVotes = useMemo<string[]>(() => {
-    const voteMap = (get(currentActivityData, VoteMapKey) as VoteMapType) || {};
+    const voteMap = (get(data, VoteMapKey) as VoteMapType) || {};
     return flatten(values(voteMap));
-  }, [currentActivityData]);
+  }, [data]);
 
   const totalVotes = useMemo<number>(() => {
     return flattenedVotes.length;
@@ -171,48 +180,46 @@ export default function PollDisplay() {
 
   const votedForOption = useCallback(
     (option: string): boolean => {
-      if (!currentActivityData || !user) {
+      if (!data || !user) {
         return false;
       }
 
-      const votes = (get(currentActivityData, [VoteMapKey, user.uid]) as string[]) || [];
+      const votes = (get(data, [VoteMapKey, user.uid]) as string[]) || [];
       return votes.includes(option);
     },
-    [currentActivityData, user],
+    [data, user],
   );
 
   const toggleOption = useCallback(
     (option: string) => {
-      if (!currentActivity || !user || !currentActivityData || !metadata) {
+      if (!activity || !user || !data || !metadata) {
         return;
       }
 
-      const votes = (get(currentActivityData, [VoteMapKey, user.uid]) as string[]) || [];
+      const votes = (get(data, [VoteMapKey, user.uid]) as string[]) || [];
       if (votes.includes(option)) {
-        updateActivityData(currentActivity, `${VoteMapKey}.${user.uid}`, without(votes, option));
+        updateData?.(activity, `${VoteMapKey}.${user.uid}`, without(votes, option));
       } else {
         // if single choice is selectd, make sure to deselect this user from all other options first
         const newVotes = metadata.isMultipleChoice ? uniq([...votes, option]) : [option];
-        updateActivityData(currentActivity, `${VoteMapKey}.${user.uid}`, newVotes);
+        updateData?.(activity, `${VoteMapKey}.${user.uid}`, newVotes);
       }
     },
-    [currentActivity, currentActivityData, updateActivityData, user, metadata],
+    [activity, data, updateData, user, metadata],
   );
 
   const handleFinish = useCallback(() => {
-    if (!currentActivity) {
+    if (!activity) {
       return;
     }
 
-    updateActivityData(currentActivity, FinishKey, true);
-  }, [currentActivity, updateActivityData]);
+    updateData?.(activity, FinishKey, true);
+  }, [activity, updateData]);
 
   const showVotes =
-    metadata && currentActivityData
-      ? (currentActivityData[FinishKey] as boolean) || metadata.showResultsRightAway
-      : false;
+    metadata && data ? (data[FinishKey] as boolean) || metadata.showResultsRightAway : false;
 
-  const shouldDisable = currentActivityData ? (currentActivityData[FinishKey] as boolean) : false;
+  const shouldDisable = data ? (data[FinishKey] as boolean) : false;
 
   return (
     <div className={classes.container}>
@@ -256,5 +263,18 @@ export default function PollDisplay() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PollDisplay() {
+  const { currentActivity, updateActivityData, currentActivityData, isHost } = useCallContext();
+
+  return (
+    <PollView
+      activity={currentActivity}
+      data={currentActivityData}
+      updateData={updateActivityData}
+      isHost={isHost}
+    />
   );
 }
