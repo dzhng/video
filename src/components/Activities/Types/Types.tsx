@@ -13,6 +13,7 @@ import PresentationDisplay, { PresentationView } from '../CallDisplay/Presentati
 import VideoDisplay from '../CallDisplay/Video';
 import PollDisplay, { PollView } from '../CallDisplay/Poll';
 import QuestionsDisplay from '../CallDisplay/Questions';
+import QuestionsSummary from '../CallDisplay/QuestionsSummary';
 import BreakoutDisplay from '../CallDisplay/Breakout';
 
 const iconClassName = 'TypeIcon';
@@ -25,7 +26,7 @@ export const ActivityTypeConfig: {
   icon: React.ReactElement;
   form: React.ReactElement;
   display: React.ReactElement;
-  summary?(activity: Activity, data?: CallData): React.ReactElement;
+  summary?(activity: Activity, data: CallData): React.ReactElement;
   initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.AnySchema;
 }[] = [
@@ -78,6 +79,7 @@ export const ActivityTypeConfig: {
     icon: <QuestionsIcon className={iconClassName} />,
     form: <QuestionsForm />,
     display: <QuestionsDisplay />,
+    summary: (activity, data) => <QuestionsSummary activity={activity} data={data} />,
     initialValue: {
       questions: [''], // start with 1 (invalid) option already defined
       allowMultipleSubmissions: false,

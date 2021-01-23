@@ -19,13 +19,14 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
     },
     activityContainer: {
-      marginBottom: theme.spacing(1),
+      marginBottom: theme.spacing(2),
     },
     activityInfo: {
       display: 'flex',
       alignItems: 'center',
 
       '& h5': {
+        color: theme.palette.secondary.main,
         fontWeight: 'bold',
         flexGrow: 1,
       },
@@ -37,8 +38,6 @@ const useStyles = makeStyles((theme) =>
     activity: {
       ...theme.customMixins.scrollBar,
       width: '100%',
-      maxHeight: 400,
-      overflowY: 'auto',
       borderRadius: theme.shape.borderRadius,
       border: theme.dividerBorder,
       marginTop: theme.spacing(1),
