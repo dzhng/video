@@ -124,7 +124,7 @@ export default function HistoryContainer({
                 <MenuIcon />
               </IconButton>
             </Hidden>
-            <Typography variant="h1">Past Calls</Typography>
+            <Typography variant="h1">Call History</Typography>
           </div>
         </Grid>
 

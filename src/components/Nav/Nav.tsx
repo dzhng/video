@@ -183,7 +183,7 @@ export default function Nav({
                 <CallHistoryIcon />
               </ListItemIcon>
               <ListItemText>
-                <Typography variant="h3">Call History</Typography>
+                <Typography variant="h3">History</Typography>
               </ListItemText>
             </ListItem>
           </Link>
