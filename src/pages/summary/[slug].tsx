@@ -75,8 +75,25 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return { notFound: true };
   }
 
+  // first fetch the correct room
+  const rooms = await twilioClient.video.rooms.list({
+    status: 'completed',
+    uniqueName: callId,
+    limit: 5,
+  });
+
+  if (rooms.length === 0) {
+    return { notFound: true };
+  }
+
+  // ideally there should just be one room per unique name, if there are multiple it means
+  // the room was created / destroyed throughout the call, and somehow the webhook didn't
+  // catch it and ended the call.
+  // If this is the case, use the one with highest duration
+  const room = rooms.sort((a, b) => b.duration - a.duration)[0];
+
   // fetch participants from Twilio API
-  const participantRecords = await twilioClient.video.rooms(callId).participants.list();
+  const participantRecords = await twilioClient.video.rooms(room.sid).participants.list();
   const participants = participantRecords.map((record) => {
     const data: ParticipantRecord = {
       uid: record.identity,
