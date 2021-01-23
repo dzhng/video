@@ -1,20 +1,32 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Card, Typography, Hidden, IconButton, Grid } from '@material-ui/core';
+import { Card, Divider, Typography, Hidden, IconButton, Grid } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { LocalModel, Call } from '~/firebase/schema-types';
+import { formatDuration, formatPastDate } from '~/utils';
 import useTemplate from '~/hooks/useTemplate/useTemplate';
 import Nav from '~/components/Nav/Nav';
 
-const cardHeight = 100;
+const cardHeight = 110;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       display: 'flex',
       flexDirection: 'row',
+    },
+    titleSection: {
+      display: 'flex',
+      alignItems: 'center',
+      overflow: 'hidden', // need it for title ellipsis
+      height: 48,
+
+      '& .MuiIconButton-root': {
+        // cancel out the padding, but don't set padding at 0 since that changes hover shape
+        marginLeft: '-12px',
+      },
     },
     grid: {
       maxHeight: '100vh',
@@ -31,7 +43,21 @@ const useStyles = makeStyles((theme) =>
       margin: 0,
     },
     callItem: {
-      height: cardHeight,
+      minHeight: cardHeight,
+      padding: theme.spacing(2),
+      cursor: 'pointer',
+
+      '&:hover': {
+        boxShadow: theme.shadows[4],
+      },
+      '& h3': {
+        wrap: 'ellipsis',
+        overflow: 'hidden',
+      },
+      '& hr': {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+      },
     },
     cardSkeleton: {
       borderRadius: theme.shape.borderRadius,
@@ -55,6 +81,14 @@ const CallCard = ({ call }: { call: LocalModel<Call> }) => {
   return (
     <Card className={classes.callItem}>
       <Typography variant="h3">{template ? template.name : <Skeleton />}</Typography>
+      <Divider />
+
+      <Typography variant="body1">
+        <b>Duration:</b> {formatDuration(call?.duration ?? 0)} minutes
+      </Typography>
+      <Typography variant="body1">
+        <b>Created:</b> {formatPastDate((call.createdAt as any).toDate())}
+      </Typography>
     </Card>
   );
 };
@@ -82,12 +116,14 @@ export default function HistoryContainer({
       <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
       <Grid container className={classes.grid} spacing={3}>
         <Grid item xs={12}>
-          <Hidden smUp implementation="css">
-            <IconButton onClick={() => setMobileOpen(true)}>
-              <MenuIcon />
-            </IconButton>
-          </Hidden>
-          <Typography variant="h1">Call History</Typography>
+          <div className={classes.titleSection}>
+            <Hidden smUp implementation="css">
+              <IconButton onClick={() => setMobileOpen(true)}>
+                <MenuIcon />
+              </IconButton>
+            </Hidden>
+            <Typography variant="h1">Past Calls</Typography>
+          </div>
         </Grid>
 
         {isLoadingCalls

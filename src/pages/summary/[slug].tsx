@@ -3,7 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { Twilio } from 'twilio';
 
-import { Collections, LocalModel, Template, Call, CallData } from '~/firebase/schema-types';
+import { Collections, LocalModel, Call, CallData } from '~/firebase/schema-types';
 import { db, rtdb } from '~/utils/firebase';
 import { removeUndefineds } from '~/utils';
 import { CallsRTDBRoot } from '~/constants';
@@ -29,7 +29,7 @@ export default function SummaryPage({ participants }: { participants: Participan
   const [callData, setCallData] = useState<RootCallData>();
 
   const callId = String(router.query.slug);
-  const fromHref = String(router.query.fromHref);
+  const fromHref = router.query.fromHref as string | undefined;
 
   // fetch call model
   useEffect(() => {

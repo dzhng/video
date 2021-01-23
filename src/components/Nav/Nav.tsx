@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Typography,
@@ -62,6 +63,18 @@ const useStyles = makeStyles((theme: Theme) =>
         minWidth: 40,
         color: theme.palette.secondary.main,
       },
+      '& .MuiListItem-root': {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(1),
+        width: 'auto',
+        borderRadius: 21,
+        color: theme.palette.grey[900],
+      },
+      '& .selected': {
+        color: theme.palette.secondary.main,
+      },
     },
     drawerContent: {
       height: '100%',
@@ -107,6 +120,7 @@ export default function Nav({
   closeModal(): void;
 }) {
   const classes = useStyles();
+  const router = useRouter();
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
 
@@ -118,6 +132,13 @@ export default function Nav({
     setCurrentWorkspaceId,
     createWorkspace,
   } = useAppState();
+
+  const routeSelectedClassname = useCallback(
+    (route) => {
+      return route === router.pathname ? 'selected' : undefined;
+    },
+    [router],
+  );
 
   const handleWorkspaceChange = useCallback(
     (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -146,7 +167,7 @@ export default function Nav({
 
         <List className={classes.list}>
           <Link href="/">
-            <ListItem button onClick={closeModal}>
+            <ListItem button onClick={closeModal} className={routeSelectedClassname('/')}>
               <ListItemIcon>
                 <VideoCallIcon />
               </ListItemIcon>
@@ -157,7 +178,7 @@ export default function Nav({
           </Link>
 
           <Link href="/history">
-            <ListItem button onClick={closeModal}>
+            <ListItem button onClick={closeModal} className={routeSelectedClassname('/history')}>
               <ListItemIcon>
                 <CallHistoryIcon />
               </ListItemIcon>
