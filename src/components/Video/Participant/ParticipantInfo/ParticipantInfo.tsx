@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
     isDominantSpeaker: (props: { volume: number }) => ({
       boxShadow: `0px 0px 16px ${2 + props.volume}px rgb(255 255 255 / 40%)`,
     }),
-    isSpeaking: (props: { volume: number }) => ({
+    isInterrupting: (props: { volume: number }) => ({
       boxShadow: `0px 0px 16px ${2 + props.volume / 2}px ${theme.palette.error.main}60`,
     }),
     infoContainer: {
@@ -181,12 +181,16 @@ export default function ParticipantInfo({
   const isSpeaking = volume !== undefined && volume > 3;
   const isDominantSpeaker = participant.identity === dominantSpeaker?.identity && isSpeaking;
 
+  // you are interrupting when you are not the dominant speaker, but there is another dominant
+  // speaker and you are speaking
+  const isInterrupting = Boolean(!isDominantSpeaker && dominantSpeaker && isSpeaking);
+
   return (
     <div
       className={clsx(classes.container, {
         [classes.isVideoSwitchedOff]: isVideoSwitchedOff,
         [classes.isDominantSpeaker]: isDominantSpeaker,
-        [classes.isSpeaking]: isDominantSpeaker ? false : isSpeaking, // if already dominant speaker, don't set speaking
+        [classes.isInterrupting]: isInterrupting,
       })}
       onClick={onClick}
       data-cy-participant={participant.identity}
