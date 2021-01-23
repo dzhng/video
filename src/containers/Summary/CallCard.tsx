@@ -77,7 +77,7 @@ const Participant = ({
         <div>
           {joinedCallTime <= 0
             ? 'Joined call when it started'
-            : 'Joined call {joinedCallTime} minutes after it started'}
+            : `Joined call ${joinedCallTime} minutes after it started`}
         </div>
       </div>
     </div>
