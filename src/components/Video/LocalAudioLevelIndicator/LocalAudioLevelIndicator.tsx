@@ -8,7 +8,7 @@ import AudioLevelIndicator, {
 export default function LocalAudioLevelIndicator() {
   const { localTracks } = useVideoContext();
   const audioTrack = localTracks.find((track) => track.kind === 'audio') as LocalAudioTrack;
-  const volume = useVolume();
+  const volume = useVolume(audioTrack);
 
   return <AudioLevelIndicator volume={volume} />;
 }
