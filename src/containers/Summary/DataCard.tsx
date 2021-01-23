@@ -1,5 +1,4 @@
 import React from 'react';
-import { get } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Card, CardContent, Typography } from '@material-ui/core';
 import { CallData } from '~/firebase/schema-types';

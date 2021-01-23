@@ -4,10 +4,11 @@ import { useRouter } from 'next/router';
 import { Container, Grid, Typography, IconButton } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { BackIcon } from '~/components/Icons';
-import { LocalModel, Call, CallData } from '~/firebase/schema-types';
+import { LocalModel, Call, CallData, Template } from '~/firebase/schema-types';
 import type { ParticipantRecord } from './types';
 import CallCard from './CallCard';
 import DataCard from './DataCard';
+import InProgressMessageCard from './InProgressMessageCard';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -58,7 +59,7 @@ export default function SummaryContainer({
           <CallCard template={template} call={call} participants={participants} />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <DataCard data={data} />
+          {call.isFinished ? <DataCard data={data} /> : <InProgressMessageCard />}
         </Grid>
       </Grid>
     </Container>

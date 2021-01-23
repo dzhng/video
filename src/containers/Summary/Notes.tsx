@@ -2,8 +2,13 @@ import React from 'react';
 import { get, entries } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import {
+  RadioButtonUncheckedOutlined as UncheckedIcon,
+  RadioButtonCheckedOutlined as CheckedIcon,
+} from '@material-ui/icons';
+
 import { TasksDataKey, ActionItemsKey, QuestionsKey, TakeAwaysKey } from '~/constants';
-import { TaskType, TaskSectionType } from '~/src/components/Call/types';
+import { TaskType, TaskSectionType } from '~/components/Call/types';
 import { CallData } from '~/firebase/schema-types';
 
 const useStyles = makeStyles((theme) =>
@@ -17,12 +22,24 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
+const Task = ({ task }: { task: TaskType }) => {
+  return (
+    <div>
+      {task.isDone ? <CheckedIcon /> : <UncheckedIcon />}
+      <Typography variant="body1">{task.name}</Typography>
+    </div>
+  );
+};
+
 const Section = ({ name, tasks }: { name: string; tasks: TaskSectionType }) => {
   const tasksEntries = entries(tasks).sort((a, b) => a[1].order - b[1].order);
 
   return (
     <div>
       <Typography variant="h5">{name}</Typography>
+      {tasksEntries.map(([id, task]) => (
+        <Task key={id} task={task} />
+      ))}
     </div>
   );
 };

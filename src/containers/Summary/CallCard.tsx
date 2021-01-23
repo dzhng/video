@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) =>
     },
     callStats: {
       marginBottom: theme.spacing(1),
-      color: theme.palette.grey[700],
+      color: theme.palette.grey[800],
     },
     participant: {
       display: 'flex',
@@ -99,9 +99,15 @@ export default function CallCard({
           <Typography variant="body1">
             <b>Room:</b> {template?.name}
           </Typography>
-          <Typography variant="body1">
-            <b>Duration:</b> {formatDuration(call.duration ?? 0)} minutes
-          </Typography>
+          {call.isFinished ? (
+            <Typography variant="body1">
+              <b>Duration:</b> {formatDuration(call.duration ?? 0)} minutes
+            </Typography>
+          ) : (
+            <Typography variant="body1">
+              <b>Call in progress...</b>
+            </Typography>
+          )}
           <Typography variant="body1">
             <b>Created:</b> {formatPastDate((call.createdAt as any).toDate())}
           </Typography>

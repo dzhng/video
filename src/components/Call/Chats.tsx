@@ -9,13 +9,10 @@ import Linkify from 'react-linkify';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
+import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
-import {
-  MessageType,
-  ChatsDataKey,
-  PublicChatsChannelKey,
-} from '~/components/CallProvider/useCallChat/useCallChat';
+import { MessageType } from '~/components/CallProvider/useCallChat/useCallChat';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 import { ChatChannelType } from './types';
 
