@@ -26,11 +26,8 @@ import { Skeleton } from '@material-ui/lab';
 import { VideoCallIcon } from '~/components/Icons';
 import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
+import { Logo } from '~/components/Icons';
 import Menu from './Menu/Menu';
-
-const Logo = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
-  <img src="/logo.png" {...props} />
-);
 
 const NewWorkspaceValue = '__New_Workspace__';
 const sidebarWidth = 300;

@@ -10,6 +10,7 @@ import { TextField } from 'formik-material-ui';
 
 import { useAppState } from '~/state';
 import LoadingContainer from '~/containers/Loading/Loading';
+import { Logo } from '~/components/Icons';
 
 const FormSchema = Yup.object().shape({
   email: Yup.string().email().required(),
@@ -37,10 +38,8 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       padding: '2em',
       marginTop: 'calc(50vh - 250px)',
+      textAlign: 'center',
 
-      '& h1': {
-        marginBottom: theme.spacing(1),
-      },
       '& p': {
         marginBottom: theme.spacing(1),
       },
@@ -49,6 +48,12 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
       },
+    },
+    logo: {
+      marginBottom: theme.spacing(1),
+      maxWidth: 120,
+      marginLeft: 'auto',
+      marginRight: 'auto',
     },
     button: {
       color: 'black',
@@ -108,7 +113,8 @@ const LoginForm = ({ isSubmitting }: { isSubmitting: boolean }) => {
         className={classes.button}
         size="large"
         type="submit"
-        variant="contained"
+        variant="outlined"
+        color="primary"
         disabled={isSubmitting}
       >
         {isSubmitting ? <CircularProgress size={'1.5rem'} /> : 'Sign In'}
@@ -163,13 +169,14 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
   return (
     <Container maxWidth="xs" className={classes.container}>
       <Paper elevation={3} className={classes.paper}>
-        <Typography variant="h1">Welcome to Aomni</Typography>
+        <Logo className={classes.logo} />
         <Typography variant="body1">Sign in or create a new account to get started.</Typography>
 
         <Button
           fullWidth
           disabled={isAuthenticating}
-          variant="contained"
+          variant="outlined"
+          color="primary"
           className={classes.button}
           onClick={loginWithGoogle}
           startIcon={GoogleLogo}
@@ -203,7 +210,9 @@ export default function LoginPage({ previousPage }: { previousPage?: string }) {
         <Divider />
 
         <Link href="/register">
-          <Button fullWidth>Register</Button>
+          <Button fullWidth color="secondary">
+            Register
+          </Button>
         </Link>
       </Paper>
     </Container>

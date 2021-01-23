@@ -22,3 +22,7 @@ export {
   ScreenShareIcon,
   BreakoutIcon,
 };
+
+export const Logo = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img src="/logo.png" {...props} />
+);
