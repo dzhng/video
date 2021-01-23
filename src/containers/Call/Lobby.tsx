@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, CircularProgress } from '@material-ui/core';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -6,6 +6,7 @@ import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
+import LoadingContainer from '~/containers/Loading/Loading';
 import Room from '~/components/Video/Room/Room';
 import LocalPreview from './LocalPreview';
 
@@ -32,6 +33,7 @@ export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
   const { isConnecting: _isConnecting, connect, isAcquiringLocalTracks } = useVideoContext();
   const { call } = useCallContext();
   const roomState = useRoomState();
+  const [hasConnected, setHasConnected] = useState(false);
 
   const isLoading = !call || isAcquiringLocalTracks;
   const isConnecting = isFetching || _isConnecting;
@@ -43,7 +45,7 @@ export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
 
     const token = await getToken(call.id);
     if (token) {
-      connect(token);
+      connect(token).then(() => setHasConnected(true));
     } else {
       console.error('Token not defined');
     }
@@ -88,5 +90,13 @@ export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
     </Button>
   );
 
-  return <>{roomState !== 'connected' ? <LocalPreview actionBar={actionBar} /> : <Room />}</>;
+  return roomState !== 'connected' ? (
+    hasConnected ? (
+      <LoadingContainer />
+    ) : (
+      <LocalPreview actionBar={actionBar} />
+    )
+  ) : (
+    <Room />
+  );
 }

@@ -41,7 +41,7 @@ export default function SummaryContainer({
   const classes = useStyles();
 
   // generate back button href and prefetch for good perf
-  const backHref = fromHref ?? '/';
+  const backHref = fromHref || '/';
   const router = useRouter();
   router.prefetch(backHref);
 
