@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Card, Divider, Typography, Hidden, IconButton, Grid } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
@@ -105,6 +106,7 @@ export default function HistoryContainer({
   isLoadingCalls: boolean;
 }) {
   const classes = useStyles();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const loadingCallsSkeletons = [0, 1, 2].map((key) => (
@@ -132,7 +134,7 @@ export default function HistoryContainer({
           ? loadingCallsSkeletons
           : calls.map((call) => (
               <Grid item {...cardItemSizeProps} key={call.id}>
-                <Link href={`/summary/${call.id}`}>
+                <Link href={`/summary/${call.id}?fromHref=${encodeURIComponent(router.pathname)}`}>
                   {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
                   <div>
                     <CallCard call={call} />

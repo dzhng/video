@@ -1,10 +1,12 @@
 import React from 'react';
+import Link from 'next/link';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Card, CardContent, Typography, Divider } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 
 import { formatPastDate, formatDuration } from '~/utils';
 import { LocalModel, Call } from '~/firebase/schema-types';
+import { useAppState } from '~/state';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 import useTemplate from '~/hooks/useTemplate/useTemplate';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
@@ -93,7 +95,12 @@ export default function CallCard({
   participants: ParticipantRecord[];
 }) {
   const classes = useStyles();
+  const { workspaces } = useAppState();
   const template = useTemplate(call.templateId);
+
+  const canVisitTemplate = Boolean(
+    workspaces?.find((workspace) => workspace.id === template?.workspaceId),
+  );
 
   return (
     <Card className={classes.container}>
@@ -101,7 +108,14 @@ export default function CallCard({
         <Typography variant="h2">Info</Typography>
         <div className={classes.callStats}>
           <Typography variant="body1">
-            <b>Room:</b> {template?.name}
+            <b>Room:</b>{' '}
+            {canVisitTemplate ? (
+              <Link href={`/template/${template?.id}`}>
+                <a>{template?.name}</a>
+              </Link>
+            ) : (
+              template?.name
+            )}
           </Typography>
           {call.isFinished ? (
             <Typography variant="body1">
