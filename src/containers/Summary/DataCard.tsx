@@ -1,8 +1,10 @@
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography } from '@material-ui/core';
-import { CallData } from '~/firebase/schema-types';
+import { Card, CardContent, Typography, Divider } from '@material-ui/core';
+import { CallData, Activity } from '~/firebase/schema-types';
 import Notes from './Notes';
+import Chats from './Chats';
+import Activities from './Activities';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -12,11 +14,21 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(1),
         fontWeight: 'bold',
       },
+      '& hr': {
+        marginBottom: theme.spacing(2),
+        marginTop: theme.spacing(2),
+      },
     },
   }),
 );
 
-export default function DataCard({ data }: { data: { [key: string]: CallData } }) {
+export default function DataCard({
+  data,
+  activities,
+}: {
+  data: { [key: string]: CallData };
+  activities?: Activity[];
+}) {
   const classes = useStyles();
 
   return (
@@ -24,6 +36,19 @@ export default function DataCard({ data }: { data: { [key: string]: CallData } }
       <CardContent>
         <Typography variant="h2">Notes</Typography>
         <Notes data={data} />
+
+        <Divider />
+
+        <Typography variant="h2">Chats</Typography>
+        <Chats data={data} />
+
+        {activities && (
+          <>
+            <Divider />
+            <Typography variant="h2">Activities</Typography>
+            <Activities />
+          </>
+        )}
       </CardContent>
     </Card>
   );

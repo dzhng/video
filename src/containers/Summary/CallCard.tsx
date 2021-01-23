@@ -17,6 +17,10 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(1),
         fontWeight: 'bold',
       },
+      '& hr': {
+        marginBottom: theme.spacing(2),
+        marginTop: theme.spacing(2),
+      },
     },
     callStats: {
       marginBottom: theme.spacing(1),

@@ -59,7 +59,11 @@ export default function SummaryContainer({
           <CallCard template={template} call={call} participants={participants} />
         </Grid>
         <Grid item xs={12} sm={6}>
-          {call.isFinished ? <DataCard data={data} /> : <InProgressMessageCard />}
+          {call.isFinished ? (
+            <DataCard data={data} activities={call.activitiesSnapshot} />
+          ) : (
+            <InProgressMessageCard />
+          )}
         </Grid>
       </Grid>
     </Container>
