@@ -81,7 +81,7 @@ export default function QuestionsSummary({
   const isLastQuestion = index === metadata.questions.length - 1;
 
   return (
-    <div className={classes.container} style={{ maxHeight: 500, overflow: 'hidden' }}>
+    <div className={classes.container} style={{ height: 500, overflow: 'hidden' }}>
       <div className={classes.content}>
         <Card className={classes.questionCard}>
           <Typography variant="h1">{currentQuestion}</Typography>
