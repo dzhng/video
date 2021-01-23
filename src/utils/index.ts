@@ -2,7 +2,9 @@ import { capitalize, words } from 'lodash';
 import isPlainObject from 'is-plain-object';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import duration from 'dayjs/plugin/duration';
 
+dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 export const isMobile = (() => {
@@ -36,6 +38,10 @@ export function formatRelativeDate(date: Date) {
   } else {
     return formatPastDate(date);
   }
+}
+
+export function formatDuration(seconds: number) {
+  return Math.round(dayjs.duration({ seconds }).asMinutes());
 }
 
 // This function ensures that the user has granted the browser permission to use audio and video
