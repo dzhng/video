@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { get, values } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { CallData } from '~/firebase/schema-types';
 import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
 import { MessageList } from '~/components/Call/Chats';
@@ -31,7 +31,7 @@ export default function Chats({ data }: { data: { [key: string]: CallData } }) {
       {list.length > 0 ? (
         <MessageList data={data} scrollRef={scrollRef} />
       ) : (
-        <Typography variant="body1" style={{ margin: 10 }}>
+        <Typography variant="body1" style={{ margin: 8 }}>
           No chats were sent in this call.
         </Typography>
       )}
