@@ -15,16 +15,33 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       '& h5': {
-        marginBottom: theme.spacing(1),
+        marginTop: theme.spacing(1),
         fontWeight: 'bold',
+      },
+    },
+    task: {
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: 3,
+      marginBottom: 3,
+
+      '& p': {
+        flexGrow: 1,
+      },
+      '& svg': {
+        width: '0.85em',
+        height: '0.85em',
+        marginRight: theme.spacing(1),
+        color: theme.palette.secondary.main,
       },
     },
   }),
 );
 
 const Task = ({ task }: { task: TaskType }) => {
+  const classes = useStyles();
   return (
-    <div>
+    <div className={classes.task}>
       {task.isDone ? <CheckedIcon /> : <UncheckedIcon />}
       <Typography variant="body1">{task.name}</Typography>
     </div>

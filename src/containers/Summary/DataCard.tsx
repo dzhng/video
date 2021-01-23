@@ -46,7 +46,7 @@ export default function DataCard({
           <>
             <Divider />
             <Typography variant="h2">Activities</Typography>
-            <Activities />
+            <Activities data={data} activities={activities} />
           </>
         )}
       </CardContent>

@@ -1,6 +1,7 @@
 import { ActivityMetadata, ActivityTypes } from '~/firebase/schema-types';
 import * as Yup from 'yup';
 import { PresentIcon, VideoIcon, PollIcon, QuestionsIcon, BreakoutIcon } from '~/components/Icons';
+import { Activity, CallData } from '~/firebase/schema-types';
 
 import PresentationForm from '../CreateForm/Presentation';
 import VideoForm from '../CreateForm/Video';
@@ -8,7 +9,7 @@ import PollForm from '../CreateForm/Poll';
 import QuestionsForm from '../CreateForm/Questions';
 import BreakoutForm from '../CreateForm/Breakout';
 
-import PresentationDisplay from '../CallDisplay/Presentation';
+import PresentationDisplay, { PresentationView } from '../CallDisplay/Presentation';
 import VideoDisplay from '../CallDisplay/Video';
 import PollDisplay from '../CallDisplay/Poll';
 import QuestionsDisplay from '../CallDisplay/Questions';
@@ -24,6 +25,7 @@ export const ActivityTypeConfig: {
   icon: React.ReactElement;
   form: React.ReactElement;
   display: React.ReactElement;
+  summary?(activity: Activity, data?: CallData): React.ReactElement;
   initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.AnySchema;
 }[] = [
@@ -34,6 +36,7 @@ export const ActivityTypeConfig: {
     icon: <PresentIcon className={iconClassName} />,
     form: <PresentationForm />,
     display: <PresentationDisplay />,
+    summary: (activity) => <PresentationView activity={activity} />,
     initialValue: { presentationId: '' },
     schema: Yup.object().shape({
       presentationId: Yup.string().max(30).required('Presentation not uploaded'),

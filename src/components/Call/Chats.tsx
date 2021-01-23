@@ -9,6 +9,7 @@ import Linkify from 'react-linkify';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
+import { CallData } from '~/firebase/schema-types';
 import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
@@ -179,11 +180,61 @@ const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
   );
 };
 
+export const MessageList = ({
+  data,
+  scrollRef,
+}: {
+  data?: CallData;
+  scrollRef: React.MutableRefObject<number>;
+}) => {
+  const classes = useStyles();
+  const { user } = useAppState();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const messageList = useMemo(() => {
+    const publicChatsData = get(data, [ChatsDataKey, PublicChatsChannelKey], {}) as ChatChannelType;
+
+    return values(publicChatsData)
+      .slice(0, MaxDisplayableMessages)
+      .sort((a, b) => a.createdAt - b.createdAt);
+  }, [data]);
+
+  const handleScroll = useCallback(() => {
+    if (listRef.current) {
+      scrollRef.current = Math.max(
+        listRef.current.scrollHeight - listRef.current.clientHeight - listRef.current.scrollTop,
+        0,
+      );
+    }
+  }, [scrollRef]);
+
+  useLayoutEffect(() => {
+    // whenever messageList updates, keep the same bottom scroll position
+    // this will handle the case when user creates new message, or when a new messages comes in from remote
+    if (listRef.current) {
+      listRef.current.scroll({
+        top: listRef.current.scrollHeight - listRef.current.clientHeight - scrollRef.current,
+      });
+    }
+  }, [messageList, scrollRef]);
+
+  return (
+    <div ref={listRef} className={classes.messageList} onScroll={handleScroll}>
+      {messageList.map((message) => (
+        <Message
+          key={`${message.uid}-${message.createdAt}}`}
+          message={message}
+          isSelf={user?.uid === message.uid}
+        />
+      ))}
+    </div>
+  );
+};
+
 export default function Chats() {
   const classes = useStyles();
   const { user } = useAppState();
   const { currentCallData, updateCallData } = useCallContext();
-  const listRef = useRef<HTMLDivElement>(null);
   const scrollBottomRef = useRef(0);
 
   const createMessage = useCallback(
@@ -211,37 +262,6 @@ export default function Chats() {
     [user, updateCallData],
   );
 
-  const messageList = useMemo(() => {
-    const publicChatsData = get(
-      currentCallData,
-      [ChatsDataKey, PublicChatsChannelKey],
-      {},
-    ) as ChatChannelType;
-
-    return values(publicChatsData)
-      .slice(0, MaxDisplayableMessages)
-      .sort((a, b) => a.createdAt - b.createdAt);
-  }, [currentCallData]);
-
-  const handleScroll = useCallback(() => {
-    if (listRef.current) {
-      scrollBottomRef.current = Math.max(
-        listRef.current.scrollHeight - listRef.current.clientHeight - listRef.current.scrollTop,
-        0,
-      );
-    }
-  }, []);
-
-  useLayoutEffect(() => {
-    // whenever messageList updates, keep the same bottom scroll position
-    // this will handle the case when user creates new message, or when a new messages comes in from remote
-    if (listRef.current) {
-      listRef.current.scroll({
-        top: listRef.current.scrollHeight - listRef.current.clientHeight - scrollBottomRef.current,
-      });
-    }
-  }, [messageList]);
-
   return (
     <div className={classes.container}>
       <Typography variant="h3" className={classes.title}>
@@ -249,16 +269,7 @@ export default function Chats() {
       </Typography>
       <Divider />
 
-      <div ref={listRef} className={classes.messageList} onScroll={handleScroll}>
-        {messageList.map((message) => (
-          <Message
-            key={`${message.uid}-${message.createdAt}}`}
-            message={message}
-            isSelf={user?.uid === message.uid}
-          />
-        ))}
-      </div>
-
+      <MessageList data={currentCallData} scrollRef={scrollBottomRef} />
       <ComposeBar sendMessage={createMessage} />
     </div>
   );

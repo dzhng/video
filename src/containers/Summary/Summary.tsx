@@ -12,6 +12,11 @@ import InProgressMessageCard from './InProgressMessageCard';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    container: {
+      ...theme.customMixins.scrollBar,
+      overflowY: 'auto',
+      maxHeight: '100vh',
+    },
     title: {
       marginTop: theme.spacing(3),
       display: 'flex',
@@ -41,7 +46,7 @@ export default function SummaryContainer({
   router.prefetch(backHref);
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" className={classes.container}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography variant="h1" className={classes.title}>
