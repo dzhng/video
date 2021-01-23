@@ -44,10 +44,29 @@ export declare interface Invite {
   createdAt: admin.firestore.FieldValue;
 }
 
+export declare interface Activity {
+  id: string;
+  name: string;
+  type: string;
+  // metadata changes depending on activity types
+  metadata: object;
+}
+
+export declare interface Template {
+  name: string;
+  creatorId: string;
+  workspaceId: string;
+  ongoingCallId?: string | null;
+  activities: Activity[];
+  isDeleted: boolean;
+  createdAt: admin.firestore.FieldValue;
+}
+
 export declare interface Call {
   templateId: string;
   creatorId: string;
   isFinished: boolean;
   duration?: number;
+  activitiesSnapshot?: Activity[];
   createdAt: admin.firestore.FieldValue;
 }

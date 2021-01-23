@@ -77,6 +77,7 @@ export declare interface Call {
   creatorId: string;
   isFinished: boolean;
   duration?: number;
+  activitiesSnapshot?: Activity[];
   createdAt: FbDate;
 }
 

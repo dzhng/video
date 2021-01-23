@@ -74,6 +74,9 @@ export default function useCall(template: LocalModel<Template>) {
     const templateRef = db.collection(Collections.TEMPLATES).doc(template.id);
     const callRef = db.collection(Collections.CALLS).doc(template.ongoingCallId);
 
+    // NOTE: we want this operation to be quick, so
+    // not going to update activitiesSnapshot here,
+    // depending on webhook to do that.
     batch.update(templateRef, { ongoingCallId: null });
     batch.update(callRef, { isFinished: true });
 

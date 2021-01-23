@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import 'firebase-functions';
 import admin from 'firebase-admin';
-import { Collections, Call } from './schema';
+import { Collections, Call, Template } from './schema';
 import { region } from './constants';
 
 interface TwilioStatusBody {
@@ -64,11 +64,15 @@ export const twilioVideoStatus = functions.region(region).https.onRequest(async 
   const callRef = store.collection(Collections.CALLS).doc(RoomName);
   const templateRef = store.collection(Collections.TEMPLATES).doc(callData.templateId);
 
+  const template = await store.collection(Collections.TEMPLATES).doc(callData.templateId).get();
+  const templateData = template.data() as Template;
+
   // increment duration just in case there were multiple twilio rooms in the call
   // (can be an edge case), or we implement restarting sessions in the future.
   batch.update(callRef, {
     isFinished: true,
     duration: admin.firestore.FieldValue.increment(Number(RoomDuration)),
+    activitiesSnapshot: templateData.activities,
   });
 
   batch.update(templateRef, {
