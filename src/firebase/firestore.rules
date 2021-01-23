@@ -136,9 +136,10 @@ service cloud.firestore {
 
       allow create, update: if
         request.auth != null &&
-        assertKeys(['templateId', 'creatorId', 'isFinished', 'duration', 'activitiesSnapshot', 'createdAt']) &&
+        assertKeys(['templateId', 'creatorId', 'workspaceId', 'isFinished', 'duration', 'activitiesSnapshot', 'createdAt']) &&
         requiredStringKey('templateId', 1, 30) &&
         requiredStringKey('creatorId', 1, 30) &&
+        requiredStringKey('workspaceId', 1, 30) &&
         requiredCreatedAtKey() &&
 
         // marks if this call has finished, and stores duration in seconds

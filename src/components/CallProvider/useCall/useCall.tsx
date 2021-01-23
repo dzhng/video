@@ -40,6 +40,7 @@ export default function useCall(template: LocalModel<Template>) {
     const newCallData: Call = {
       templateId: template.id,
       creatorId: user.uid,
+      workspaceId: template.workspaceId,
       isFinished: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };

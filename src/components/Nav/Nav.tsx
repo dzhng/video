@@ -23,7 +23,7 @@ import {
   Button,
 } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-import { VideoCallIcon } from '~/components/Icons';
+import { VideoCallIcon, CallHistoryIcon } from '~/components/Icons';
 import { isBrowser } from '~/utils';
 import { useAppState } from '~/state';
 import { Logo } from '~/components/Icons';
@@ -126,9 +126,10 @@ export default function Nav({
         setIsCreatingWorkspace(true);
       } else {
         setCurrentWorkspaceId(value);
+        closeModal();
       }
     },
-    [setCurrentWorkspaceId],
+    [setCurrentWorkspaceId, closeModal],
   );
 
   const handleCreateWorkspace = useCallback(() => {
@@ -151,6 +152,17 @@ export default function Nav({
               </ListItemIcon>
               <ListItemText>
                 <Typography variant="h3">Rooms</Typography>
+              </ListItemText>
+            </ListItem>
+          </Link>
+
+          <Link href="/history">
+            <ListItem button onClick={closeModal}>
+              <ListItemIcon>
+                <CallHistoryIcon />
+              </ListItemIcon>
+              <ListItemText>
+                <Typography variant="h3">Call History</Typography>
               </ListItemText>
             </ListItem>
           </Link>

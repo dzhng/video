@@ -386,6 +386,7 @@ describe('firebase cloud firestore database rules', () => {
     let requiredFields = {
       templateId: '123',
       creatorId: 'alice',
+      workspaceId: 'workspace',
       isFinished: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };

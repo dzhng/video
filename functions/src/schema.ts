@@ -65,6 +65,7 @@ export declare interface Template {
 export declare interface Call {
   templateId: string;
   creatorId: string;
+  workspaceId: string;
   isFinished: boolean;
   duration?: number;
   activitiesSnapshot?: Activity[];
