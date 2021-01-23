@@ -73,7 +73,7 @@ export default function ActivityDrawer({
       <div className={classes.actionArea}>
         <ActivitiesBar
           template={template}
-          mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'call'}
+          mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
           currentActivity={currentActivity}
           startActivity={startActivity}
         />

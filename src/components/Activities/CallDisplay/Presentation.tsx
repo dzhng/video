@@ -21,7 +21,7 @@ const useStyles = makeStyles(() =>
 
 export default function PresentationDisplay() {
   const classes = useStyles();
-  const { currentActivity, isHost, updateActivityData, currentActivityData } = useCallContext();
+  const { currentActivity, updateActivityData, currentActivityData } = useCallContext();
   const [presentationData, setPresentationData] = useState<Presentation | null>(null);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function PresentationDisplay() {
     <div className={classes.container}>
       {presentationData && (
         <PresentationContainer
-          showControls={isHost}
+          showControls
           presentation={presentationData}
           startAt={0}
           index={currentIndex}
