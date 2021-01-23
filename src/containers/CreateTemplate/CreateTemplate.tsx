@@ -17,6 +17,11 @@ const initialValues = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+
       '& >button': {
         position: 'fixed',
         top: theme.spacing(1),
@@ -26,8 +31,6 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       ...theme.customMixins.modalPaper,
       padding: theme.spacing(3),
-      // assume height maxes out at ~330px (change if needed)
-      marginTop: 'calc(50vh - 165px)',
       marginLeft: 'auto',
       marginRight: 'auto',
 

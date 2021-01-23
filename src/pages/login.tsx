@@ -31,13 +31,15 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     paper: {
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
       padding: '2em',
-      marginTop: 'calc(50vh - 250px)',
       textAlign: 'center',
 
       '& p': {

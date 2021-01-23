@@ -15,8 +15,13 @@ import { Logo } from '~/components/Icons';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    container: {
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     card: {
-      marginTop: 'calc(50vh - 150px)',
       padding: theme.spacing(3),
       textAlign: 'center',
 
@@ -83,7 +88,7 @@ export default function GuestSignin() {
   }, [signInAnonymously, displayName]);
 
   return (
-    <Container maxWidth="xs" style={{ height: '100vh' }}>
+    <Container maxWidth="xs" className={classes.container}>
       <Card className={classes.card}>
         <Logo className={classes.logo} />
 
