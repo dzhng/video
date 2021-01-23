@@ -14,6 +14,8 @@ import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
 import IntercomLoader from '~/components/IntercomLoader/IntercomLoader';
 import AppStateProvider from '~/state';
 
+import './styles.css';
+
 export default function App({ Component, pageProps }: AppProps) {
   const [previousPage, setPreviousPage] = useState<string | undefined>();
 

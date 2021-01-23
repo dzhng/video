@@ -51,8 +51,10 @@ const useStyles = makeStyles((theme) =>
         boxShadow: theme.shadows[4],
       },
       '& h3': {
+        height: 19,
         wrap: 'ellipsis',
         overflow: 'hidden',
+        animation: 'fadeIn 0.4s',
       },
       '& hr': {
         marginTop: theme.spacing(1),
@@ -80,7 +82,7 @@ const CallCard = ({ call }: { call: LocalModel<Call> }) => {
 
   return (
     <Card className={classes.callItem}>
-      <Typography variant="h3">{template ? template.name : <Skeleton />}</Typography>
+      <Typography variant="h3">{template?.name}</Typography>
       <Divider />
 
       <Typography variant="body1">

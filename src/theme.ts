@@ -14,6 +14,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       activitiesBarMini: CSSProperties;
       callButton: CSSProperties;
       scrollBar: CSSProperties;
+      disableScrollBar: CSSProperties;
     };
   }
 
@@ -29,6 +30,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       activitiesBarMini?: CSSProperties;
       callButton?: CSSProperties;
       scrollBar?: CSSProperties;
+      disableScrollBar?: CSSProperties;
     };
   }
 }
@@ -150,6 +152,15 @@ export default createMuiTheme({
       '&::-webkit-scrollbar-thumb:hover': {
         background: 'rgba(0,0,0,0.4)',
       },
+    },
+    disableScrollBar: {
+      // Hide scrollbar for Chrome, Safari and Opera
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+      // Hide scrollbar for IE, Edge and Firefox
+      msOverflowStyle: 'none', // IE and Edge
+      scrollbarWidth: 'none', // Firefox
     },
   },
 });

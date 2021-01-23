@@ -13,9 +13,10 @@ import InProgressMessageCard from './InProgressMessageCard';
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      ...theme.customMixins.scrollBar,
+      ...theme.customMixins.disableScrollBar,
       overflowY: 'auto',
       maxHeight: '100vh',
+      paddingBottom: 50,
     },
     title: {
       marginTop: theme.spacing(3),
