@@ -92,7 +92,11 @@ export default function Activities({
     .filter((v) => !!v) as FinishedActivityType[];
 
   if (finishedActivities.length === 0) {
-    return <Typography variant="body1">No activities was started during this call.</Typography>;
+    return (
+      <Typography variant="body1" style={{ color: '#888' }}>
+        No activities was started during this call.
+      </Typography>
+    );
   }
 
   return (
