@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ConfirmStartModal({
+export default function ConfirmRestartModal({
   open,
   onClose,
   onConfirm,
@@ -39,13 +39,12 @@ export default function ConfirmStartModal({
   return (
     <Dialog className={classes.modal} open={open} onClose={onClose}>
       <DialogTitle disableTypography>
-        <Typography variant="h2">Start new activity?</Typography>
+        <Typography variant="h2">Restart activity?</Typography>
       </DialogTitle>
 
       <DialogContent dividers>
         <Typography variant="body1">
-          Starting a new activity will pause the current activity. You can resume the current
-          activity any time.
+          Restarting this activity will erase all data that has been submitted.
         </Typography>
       </DialogContent>
 
@@ -55,7 +54,7 @@ export default function ConfirmStartModal({
         </Button>
 
         <Button type="submit" color="primary" variant="contained" autoFocus onClick={handleSubmit}>
-          Start
+          Restart
         </Button>
       </DialogActions>
     </Dialog>

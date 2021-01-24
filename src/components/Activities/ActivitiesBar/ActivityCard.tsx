@@ -2,7 +2,11 @@ import React, { useCallback } from 'react';
 import * as Yup from 'yup';
 import { Card, Typography, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { EditOutlined as EditIcon, PlayArrow as StartIcon } from '@material-ui/icons';
+import {
+  EditOutlined as EditIcon,
+  PlayArrow as StartIcon,
+  PlayArrowOutlined as ResumeIcon,
+} from '@material-ui/icons';
 import { Activity } from '~/firebase/schema-types';
 import EditableTitle from '~/components/EditableTitle/EditableTitle';
 
@@ -56,6 +60,7 @@ interface PropTypes {
 
   // call mode props
   isStarted?: boolean;
+  hasStarted?: boolean;
   onStart?(): void;
 }
 
@@ -63,6 +68,7 @@ export default function ActivitiesCard({
   activity,
   mode,
   isStarted,
+  hasStarted,
   save,
   onEdit,
   onStart,
@@ -120,7 +126,7 @@ export default function ActivitiesCard({
           </Tooltip>
         )}
 
-        {mode === 'call' && !isStarted && (
+        {mode === 'call' && !isStarted && !hasStarted && (
           <Tooltip title="Edit activity" placement="bottom">
             <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
               <EditIcon />
@@ -128,15 +134,18 @@ export default function ActivitiesCard({
           </Tooltip>
         )}
 
-        <Tooltip title={isStarted ? 'Activity started' : 'Start activity'} placement="bottom">
+        <Tooltip
+          title={isStarted ? 'Activity started' : hasStarted ? 'Resume activity' : 'Start activity'}
+          placement="bottom"
+        >
           <div>
             <Button
               variant="contained"
               disabled={isStarted}
-              color="secondary"
+              color={hasStarted ? 'primary' : 'secondary'}
               onClick={handleStartClick}
             >
-              <StartIcon />
+              {hasStarted ? <ResumeIcon /> : <StartIcon />}
             </Button>
           </div>
         </Tooltip>

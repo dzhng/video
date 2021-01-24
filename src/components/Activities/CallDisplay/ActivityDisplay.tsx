@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Typography, Card, IconButton, Tooltip } from '@material-ui/core';
 import {
@@ -7,6 +7,7 @@ import {
 } from '@material-ui/icons';
 import { ActivityTypeConfig } from '../Types/Types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
+import ConfirmRestartModal from './ConfirmRestartModal';
 import ErrorDisplay from './Error';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,15 +48,31 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ActivityDisplay() {
   const classes = useStyles();
-  const { call, currentActivity, endActivity, updateActivityData } = useCallContext();
+  const {
+    call,
+    currentActivity,
+    endActivity,
+    updateActivityData,
+    hasActivityStarted,
+  } = useCallContext();
+  const [confirmRestart, setConfirmRestart] = useState(false);
 
   const handleRestartActivity = useCallback(() => {
+    // no need to show anything if activity don't have any data submitted
+    if (!currentActivity || !hasActivityStarted(currentActivity)) {
+      return;
+    }
+
+    setConfirmRestart(true);
+  }, [currentActivity, hasActivityStarted]);
+
+  const handleRestartConfirm = useCallback(() => {
     if (!currentActivity) {
       return;
     }
 
     // to restart, just clear the activity data for that activity
-    updateActivityData(currentActivity, null, {});
+    updateActivityData(currentActivity, null, null);
   }, [updateActivityData, currentActivity]);
 
   if (!call || !currentActivity) {
@@ -68,25 +85,35 @@ export default function ActivityDisplay() {
   }
 
   return (
-    <Card className={classes.container}>
-      <div className={classes.header}>
-        <Typography variant="h2">
-          <b>{currentActivity.name}</b>
-        </Typography>
+    <>
+      <Card className={classes.container}>
+        <div className={classes.header}>
+          <Typography variant="h2">
+            <b>{currentActivity.name}</b>
+          </Typography>
 
-        <Tooltip title="Restart activity" placement="bottom">
-          <IconButton size="small" onClick={handleRestartActivity}>
-            <RestartIcon />
-          </IconButton>
-        </Tooltip>
+          <Tooltip title="Restart activity" placement="bottom">
+            <IconButton size="small" onClick={handleRestartActivity}>
+              <RestartIcon />
+            </IconButton>
+          </Tooltip>
 
-        <Tooltip title="Close activity" placement="bottom">
-          <IconButton size="small" onClick={endActivity}>
-            <CloseIcon />
-          </IconButton>
-        </Tooltip>
-      </div>
-      <div className={classes.content}>{config.display}</div>
-    </Card>
+          <Tooltip title="Close activity - your progress will be saved" placement="bottom">
+            <IconButton size="small" onClick={endActivity}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
+        <div className={classes.content}>{config.display}</div>
+      </Card>
+
+      {confirmRestart && (
+        <ConfirmRestartModal
+          open={confirmRestart}
+          onClose={() => setConfirmRestart(false)}
+          onConfirm={handleRestartConfirm}
+        />
+      )}
+    </>
   );
 }

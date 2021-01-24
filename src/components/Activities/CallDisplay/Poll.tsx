@@ -192,7 +192,7 @@ export function PollView({
 
   const toggleOption = useCallback(
     (option: string) => {
-      if (!activity || !user || !data || !metadata) {
+      if (!activity || !user || !metadata) {
         return;
       }
 

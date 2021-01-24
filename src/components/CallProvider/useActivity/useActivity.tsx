@@ -60,23 +60,41 @@ export default function useActivity(call?: LocalModel<Call>) {
     [call],
   );
 
-  const [currentActivityData, setCurrentActivityData] = useState<CallData | undefined>(undefined);
+  const [activityData, setActivityData] = useState<{ [key: string]: CallData } | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
-    if (call && currentActivityId) {
-      const valueRef = rtdb.ref(
-        `${CallsRTDBRoot}/${call.id}/${ActivityDataKey}/${currentActivityId}`,
-      );
+    if (call) {
+      const valueRef = rtdb.ref(`${CallsRTDBRoot}/${call.id}/${ActivityDataKey}`);
 
       valueRef.on('value', (snapshot) => {
-        setCurrentActivityData(snapshot.val() ?? {});
+        setActivityData(snapshot.val() ?? {});
       });
 
       return () => valueRef.off('value');
     } else {
-      setCurrentActivityData(undefined);
+      setActivityData(undefined);
     }
-  }, [call, currentActivityId]);
+  }, [call]);
+
+  const hasActivityStarted = useCallback(
+    (activity: Activity): boolean => {
+      if (!activityData) {
+        return false;
+      }
+
+      const data = activityData[activity.id];
+      if (!data || Object.keys(data).length === 0) {
+        return false;
+      }
+
+      return true;
+    },
+    [activityData],
+  );
+
+  const currentActivityData = currentActivityId ? activityData?.[currentActivityId] : undefined;
 
   return {
     startActivity,
@@ -84,5 +102,6 @@ export default function useActivity(call?: LocalModel<Call>) {
     currentActivityId,
     updateActivityData,
     currentActivityData,
+    hasActivityStarted,
   };
 }

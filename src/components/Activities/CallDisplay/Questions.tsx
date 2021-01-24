@@ -204,7 +204,7 @@ export default function QuestionsDisplay() {
 
   const handleSubmit = useCallback(
     (response: string, isAnonymous: boolean) => {
-      if (!currentActivity || !currentQuestion || !user || !currentActivityData) {
+      if (!currentActivity || !currentQuestion || !user) {
         return;
       }
 
@@ -237,15 +237,7 @@ export default function QuestionsDisplay() {
       // clear text area on submit
       setResponseValues((state) => ({ ...state, [currentQuestion]: '' }));
     },
-    [
-      currentQuestion,
-      currentActivity,
-      currentActivityData,
-      updateActivityData,
-      user,
-      haveSubmittedResponse,
-      metadata,
-    ],
+    [currentQuestion, currentActivity, updateActivityData, user, haveSubmittedResponse, metadata],
   );
 
   const handleDeleteResponse = useCallback(

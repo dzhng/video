@@ -10,7 +10,6 @@ import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import NewActivityModal from './NewActivityModal';
 import EditActivityModal from './EditActivityModal';
-import ConfirmStartModal from './ConfirmStartModal';
 import ActivityCard from './ActivityCard';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -67,6 +66,7 @@ const ActivityTimelineItem = ({
   onEdit(): void;
 
   isStarted?: boolean;
+  hasStarted?: boolean;
   onStart?(): void;
 }) => {
   const classes = useStyles();
@@ -103,6 +103,7 @@ interface PropTypes {
   // only valid in call mode
   currentActivity?: Activity;
   startActivity?(activity: Activity): void;
+  hasActivityStarted?(activity: Activity): boolean;
 }
 
 export default function ActivitiesBar({
@@ -110,13 +111,13 @@ export default function ActivitiesBar({
   mode,
   startActivity,
   currentActivity,
+  hasActivityStarted,
 }: PropTypes) {
   const classes = useStyles();
   // have a local copy of activities here so that we can debounce saving to firebase (we can edit and see results without depending on template.activities to update in real-time)
   const [activities, setActivities] = useState<Activity[]>(template.activities);
   const [newActivityOpen, setNewActivityOpen] = useState(false);
   const [editActivityIndex, setEditActivityIndex] = useState<number | null>(null);
-  const [confirmStartActivity, setConfirmStartActivity] = useState<Activity | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const { markIsWriting } = useAppState();
 
@@ -189,24 +190,10 @@ export default function ActivitiesBar({
   // start activity right away if none is started, if not, ask for confirmation first
   const handleStartActivity = useCallback(
     (activity: Activity) => {
-      if (currentActivity) {
-        setConfirmStartActivity(activity);
-      } else {
-        startActivity?.(activity);
-      }
+      startActivity?.(activity);
     },
-    [currentActivity, startActivity],
+    [startActivity],
   );
-
-  const handleCancelStartActivity = useCallback(() => {
-    setConfirmStartActivity(null);
-  }, []);
-
-  const handleStartActivityConfirm = useCallback(() => {
-    if (confirmStartActivity) {
-      startActivity?.(confirmStartActivity);
-    }
-  }, [startActivity, confirmStartActivity]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragStart={() => setIsDragging(true)}>
@@ -242,6 +229,7 @@ export default function ActivitiesBar({
                 save={(values: Activity) => handleSaveActivity(values, index)}
                 onEdit={() => setEditActivityIndex(index)}
                 isStarted={currentActivity === activity}
+                hasStarted={hasActivityStarted?.(activity)}
                 onStart={() => handleStartActivity(activity)}
               />
             ))}
@@ -278,14 +266,6 @@ export default function ActivitiesBar({
           open={true}
           onClose={() => setEditActivityIndex(null)}
           onDelete={() => handleDeleteActivity(editActivityIndex)}
-        />
-      )}
-
-      {confirmStartActivity !== null && (
-        <ConfirmStartModal
-          open={!!confirmStartActivity}
-          onClose={handleCancelStartActivity}
-          onConfirm={handleStartActivityConfirm}
         />
       )}
     </DragDropContext>

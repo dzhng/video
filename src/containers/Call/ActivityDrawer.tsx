@@ -56,6 +56,7 @@ export default function ActivityDrawer({
     startActivity,
     isActivityDrawerOpen,
     setIsActivityDrawerOpen,
+    hasActivityStarted,
   } = useCallContext();
 
   const container = isBrowser ? () => window.document.body : undefined;
@@ -76,6 +77,7 @@ export default function ActivityDrawer({
           mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
           currentActivity={currentActivity}
           startActivity={startActivity}
+          hasActivityStarted={hasActivityStarted}
         />
         {isCallStarted && <Interactions />}
       </div>

@@ -27,6 +27,7 @@ interface CallContextTypes {
   endActivity(): void;
   updateActivityData(activity: Activity, path: string | null, value: CallDataTypes): void;
   currentActivityData?: CallData;
+  hasActivityStarted(activity: Activity): boolean;
 
   // call data management
   currentCallData?: CallData;
