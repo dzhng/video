@@ -66,6 +66,9 @@ const useStyles = makeStyles((theme) =>
       borderRadius: theme.shape.borderRadius,
       height: cardHeight,
     },
+    noCallText: {
+      color: theme.palette.grey[700],
+    },
   }),
 );
 
@@ -115,6 +118,27 @@ export default function HistoryContainer({
     </Grid>
   ));
 
+  const callsGridItem =
+    calls.length > 0 ? (
+      calls.map((call) => (
+        <Grid item {...cardItemSizeProps} key={call.id}>
+          <Link href={`/summary/${call.id}?fromHref=${encodeURIComponent(router.pathname)}`}>
+            {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
+            <div>
+              <CallCard call={call} />
+            </div>
+          </Link>
+        </Grid>
+      ))
+    ) : (
+      <Grid item xs={12}>
+        <Typography variant="body1" className={classes.noCallText}>
+          You have not made any calls yet. All finished calls will be listed here, where you can
+          access the call summary and any data created in the call.
+        </Typography>
+      </Grid>
+    );
+
   return (
     <div className={classes.container}>
       <Nav mobileOpen={mobileOpen} closeModal={() => setMobileOpen(false)} />
@@ -130,18 +154,7 @@ export default function HistoryContainer({
           </div>
         </Grid>
 
-        {isLoadingCalls
-          ? loadingCallsSkeletons
-          : calls.map((call) => (
-              <Grid item {...cardItemSizeProps} key={call.id}>
-                <Link href={`/summary/${call.id}?fromHref=${encodeURIComponent(router.pathname)}`}>
-                  {/* Need to wrap Card in div since Link doesn't work with functional components. See: https://github.com/vercel/next.js/issues/7915 */}
-                  <div>
-                    <CallCard call={call} />
-                  </div>
-                </Link>
-              </Grid>
-            ))}
+        {isLoadingCalls ? loadingCallsSkeletons : callsGridItem}
       </Grid>
     </div>
   );
