@@ -73,6 +73,8 @@ const useStyles = makeStyles((theme) =>
     composeBar: {
       padding: theme.spacing(1),
       marginTop: 0,
+      flexShrink: 0,
+      flexGrow: 0,
     },
   }),
 );

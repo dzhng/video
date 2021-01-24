@@ -26,10 +26,7 @@ const useStyles = makeStyles((theme) =>
       width: props.isPortrait ? '100%' : `${mainItemWidthPercent}%`,
       maxWidth: props.isPortrait ? '100%' : mainItemMaxWidth,
       height: props.isPortrait ? `${mainItemHeightPercent}%` : '100%',
-      padding: theme.spacing(3),
-      // less padding on bottom since controls will already have a lot
-      // TODO: this feels a bit hacky since layout shouldn't know about controls
-      paddingBottom: theme.spacing(1),
+      padding: theme.spacing(1),
       display: 'flex', // make it easier to align children
     }),
     itemContainer: (props: StyleProps) => ({
@@ -124,8 +121,8 @@ export default function VideoLayout({ width, height, variant, gridItems, mainIte
     );
   }, [variant, isPortrait, width, height, displayableItems]);
 
-  // use 6% of item size as padding
-  const itemPadding = itemSize * 0.06;
+  // use 5% of item size as padding
+  const itemPadding = itemSize * 0.05;
   const classes = useStyles({ itemPadding, variant, isPortrait });
 
   return (

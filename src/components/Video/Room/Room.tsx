@@ -23,9 +23,10 @@ import ChatNotification from './ChatNotification/ChatNotification';
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
-const Container = styled('div')(() => ({
+const Container = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
+  paddingTop: theme.spacing(1),
 }));
 
 const LayoutContainer = styled('div')({
@@ -38,6 +39,8 @@ const LayoutContainer = styled('div')({
 const ControlsBar = styled('div')(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(1),
+  // no need to pad top since layout on top will already have a lot of padding
+  paddingTop: 0,
   flexShrink: 0,
   display: 'flex',
   justifyContent: 'space-between',
