@@ -6,6 +6,7 @@ import { isMobile } from '~/utils';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useHotkeyPopper from '~/hooks/useHotkeyPopper/useHotkeyPopper';
 
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
@@ -36,15 +37,29 @@ export default function Controls({ showControls = true }: { showControls?: boole
   const roomState = useRoomState();
   const { isFetching } = useAppState();
   const { isAcquiringLocalTracks, isConnecting } = useVideoContext();
+  const { popperElement, anchorRef, setIsPopperOpen, setPopperMessage } = useHotkeyPopper();
+
   const isReconnecting = roomState === 'reconnecting';
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || isReconnecting;
 
   return (
-    <div data-testid="container" className={clsx(classes.container, { showControls })}>
-      <ToggleAudioButton disabled={disableButtons} />
-      <ToggleVideoButton disabled={disableButtons} />
-      {roomState !== 'disconnected' && !isMobile && <ToggleScreenShareButton />}
-      {roomState !== 'disconnected' && <EndCallButton />}
-    </div>
+    <>
+      <div
+        data-testid="container"
+        ref={anchorRef}
+        className={clsx(classes.container, { showControls })}
+      >
+        <ToggleAudioButton
+          disabled={disableButtons}
+          setPopperOpen={setIsPopperOpen}
+          setPopperMessage={setPopperMessage}
+        />
+        <ToggleVideoButton disabled={disableButtons} setPopperMessage={setPopperMessage} />
+        {roomState !== 'disconnected' && !isMobile && <ToggleScreenShareButton />}
+        {roomState !== 'disconnected' && <EndCallButton setPopperMessage={setPopperMessage} />}
+      </div>
+
+      {popperElement}
+    </>
   );
 }

@@ -6,15 +6,14 @@ import { Typography, Divider, TextField, Tooltip, IconButton } from '@material-u
 import { Skeleton } from '@material-ui/lab';
 import { SendOutlined as SendIcon } from '@material-ui/icons';
 import Linkify from 'react-linkify';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
+import { CallData } from '~/firebase/schema-types';
+import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
-import {
-  MessageType,
-  ChatsDataKey,
-  PublicChatsChannelKey,
-} from '~/components/CallProvider/useCallChat/useCallChat';
+import { MessageType } from '~/components/CallProvider/useCallChat/useCallChat';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 import { ChatChannelType } from './types';
 
@@ -67,6 +66,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     messageAvatar: {
+      flexShrink: 0,
       width: 25,
       height: 25,
     },
@@ -109,6 +109,7 @@ const Message = ({ message, isSelf }: { message: MessageType; isSelf: boolean })
 const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
   const classes = useStyles();
   const [input, setInput] = useState('');
+  const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = useCallback(() => {
     if (input.length > 0) {
@@ -117,8 +118,35 @@ const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
     }
   }, [input, sendMessage]);
 
+  useHotkeys(
+    'c',
+    (e) => {
+      e.preventDefault();
+      textFieldRef.current?.focus();
+    },
+    // use keyup event since keypress is taken by nav
+    // this way the same hotkey can be binded to multiple
+    // handlers
+    { keyup: true },
+  );
+
+  // cancel focus when esc is pressed
+  useHotkeys(
+    'esc,tab',
+    (e) => {
+      if (window.document.activeElement === textFieldRef.current) {
+        e.preventDefault();
+        textFieldRef.current?.blur();
+      }
+    },
+    {
+      enableOnTags: ['TEXTAREA'],
+    },
+  );
+
   return (
     <TextField
+      inputRef={textFieldRef}
       className={classes.composeBar}
       variant="outlined"
       color="secondary"
@@ -152,11 +180,61 @@ const ComposeBar = ({ sendMessage }: { sendMessage(text: string): void }) => {
   );
 };
 
+export const MessageList = ({
+  data,
+  scrollRef,
+}: {
+  data?: CallData;
+  scrollRef: React.MutableRefObject<number>;
+}) => {
+  const classes = useStyles();
+  const { user } = useAppState();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const messageList = useMemo(() => {
+    const publicChatsData = get(data, [ChatsDataKey, PublicChatsChannelKey], {}) as ChatChannelType;
+
+    return values(publicChatsData)
+      .slice(0, MaxDisplayableMessages)
+      .sort((a, b) => a.createdAt - b.createdAt);
+  }, [data]);
+
+  const handleScroll = useCallback(() => {
+    if (listRef.current) {
+      scrollRef.current = Math.max(
+        listRef.current.scrollHeight - listRef.current.clientHeight - listRef.current.scrollTop,
+        0,
+      );
+    }
+  }, [scrollRef]);
+
+  useLayoutEffect(() => {
+    // whenever messageList updates, keep the same bottom scroll position
+    // this will handle the case when user creates new message, or when a new messages comes in from remote
+    if (listRef.current) {
+      listRef.current.scroll({
+        top: listRef.current.scrollHeight - listRef.current.clientHeight - scrollRef.current,
+      });
+    }
+  }, [messageList, scrollRef]);
+
+  return (
+    <div ref={listRef} className={classes.messageList} onScroll={handleScroll}>
+      {messageList.map((message) => (
+        <Message
+          key={`${message.uid}-${message.createdAt}}`}
+          message={message}
+          isSelf={user?.uid === message.uid}
+        />
+      ))}
+    </div>
+  );
+};
+
 export default function Chats() {
   const classes = useStyles();
   const { user } = useAppState();
   const { currentCallData, updateCallData } = useCallContext();
-  const listRef = useRef<HTMLDivElement>(null);
   const scrollBottomRef = useRef(0);
 
   const createMessage = useCallback(
@@ -184,37 +262,6 @@ export default function Chats() {
     [user, updateCallData],
   );
 
-  const messageList = useMemo(() => {
-    const publicChatsData = get(
-      currentCallData,
-      [ChatsDataKey, PublicChatsChannelKey],
-      {},
-    ) as ChatChannelType;
-
-    return values(publicChatsData)
-      .slice(0, MaxDisplayableMessages)
-      .sort((a, b) => a.createdAt - b.createdAt);
-  }, [currentCallData]);
-
-  const handleScroll = useCallback(() => {
-    if (listRef.current) {
-      scrollBottomRef.current = Math.max(
-        listRef.current.scrollHeight - listRef.current.clientHeight - listRef.current.scrollTop,
-        0,
-      );
-    }
-  }, []);
-
-  useLayoutEffect(() => {
-    // whenever messageList updates, keep the same bottom scroll position
-    // this will handle the case when user creates new message, or when a new messages comes in from remote
-    if (listRef.current) {
-      listRef.current.scroll({
-        top: listRef.current.scrollHeight - listRef.current.clientHeight - scrollBottomRef.current,
-      });
-    }
-  }, [messageList]);
-
   return (
     <div className={classes.container}>
       <Typography variant="h3" className={classes.title}>
@@ -222,16 +269,7 @@ export default function Chats() {
       </Typography>
       <Divider />
 
-      <div ref={listRef} className={classes.messageList} onScroll={handleScroll}>
-        {messageList.map((message) => (
-          <Message
-            key={`${message.uid}-${message.createdAt}}`}
-            message={message}
-            isSelf={user?.uid === message.uid}
-          />
-        ))}
-      </div>
-
+      <MessageList data={currentCallData} scrollRef={scrollBottomRef} />
       <ComposeBar sendMessage={createMessage} />
     </div>
   );

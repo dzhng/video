@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -20,7 +21,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ToggleVideoButton(props: { disabled?: boolean }) {
+export default function ToggleVideoButton({
+  disabled,
+  setPopperMessage,
+}: {
+  disabled?: boolean;
+  setPopperMessage(node: React.ReactNode, autoClose?: boolean): void;
+}) {
   const classes = useStyles();
   const { isVideoEnabled, toggleVideoEnabled, shouldDisableVideoToggle } = useVideoContext();
   const lastClickTimeRef = useRef(0);
@@ -32,9 +39,30 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
     }
   }, [toggleVideoEnabled]);
 
+  useHotkeys(
+    'v',
+    (e) => {
+      e.preventDefault();
+      toggleVideo();
+      setPopperMessage(
+        isVideoEnabled ? (
+          <>
+            Video <b>disabled</b>.
+          </>
+        ) : (
+          <>
+            Video <b>enabled</b>.
+          </>
+        ),
+        true,
+      );
+    },
+    [toggleVideo, isVideoEnabled, setPopperMessage],
+  );
+
   return (
     <Tooltip
-      title={isVideoEnabled ? 'Mute Video' : 'Unmute Video'}
+      title={isVideoEnabled ? 'Mute Video [V]' : 'Unmute Video [V]'}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
@@ -43,7 +71,7 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
         <Fab
           className={classes.fab}
           onClick={toggleVideo}
-          disabled={props.disabled || shouldDisableVideoToggle}
+          disabled={disabled || shouldDisableVideoToggle}
         >
           {isVideoEnabled ? (
             <Videocam data-testid="video-icon" />

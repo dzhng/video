@@ -7,7 +7,6 @@ import { Menu as MenuIcon } from '@material-ui/icons';
 import useDimensions from 'react-cool-dimensions';
 
 import Controls from '~/components/Video/Controls/Controls';
-import ReconnectingNotification from '~/components/Video/ReconnectingNotification/ReconnectingNotification';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
 import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
@@ -18,6 +17,8 @@ import useScreenShareParticipant from '~/hooks/Video/useScreenShareParticipant/u
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
 import SettingsSpeedDial from '~/components/Video/SettingsSpeedDial/SettingsSpeedDial';
+import ReconnectingNotification from './ReconnectingNotification/ReconnectingNotification';
+import ChatNotification from './ChatNotification/ChatNotification';
 
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
@@ -130,6 +131,7 @@ export default function Room() {
         </div>
       </ControlsBar>
 
+      <ChatNotification />
       <ReconnectingNotification />
     </Container>
   );

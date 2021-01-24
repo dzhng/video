@@ -11,27 +11,37 @@ import {
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { useAppState } from '~/state';
+import { Logo } from '~/components/Icons';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    container: {
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     card: {
-      marginTop: 'calc(50vh - 150px)',
       padding: theme.spacing(3),
+      textAlign: 'center',
 
-      '& h1': {
-        marginBottom: theme.spacing(2),
-        textAlign: 'center',
-      },
       '& hr': {
         marginTop: theme.spacing(3),
         marginBottom: theme.spacing(3),
       },
+    },
+    logo: {
+      marginBottom: theme.spacing(1),
+      maxWidth: 120,
+      marginLeft: 'auto',
+      marginRight: 'auto',
     },
     joinButton: {
       marginTop: theme.spacing(1),
       height: 42,
     },
     googleButton: {
+      fontSize: '1.1rem',
       color: 'black',
       background: 'white',
       textTransform: 'none',
@@ -78,9 +88,9 @@ export default function GuestSignin() {
   }, [signInAnonymously, displayName]);
 
   return (
-    <Container maxWidth="xs" style={{ height: '100vh' }}>
+    <Container maxWidth="xs" className={classes.container}>
       <Card className={classes.card}>
-        <Typography variant="h1">Welcome to Aomni</Typography>
+        <Logo className={classes.logo} />
 
         <div>
           {authError && (
@@ -124,7 +134,8 @@ export default function GuestSignin() {
         <Button
           fullWidth
           disabled={isAuthenticating}
-          variant="contained"
+          variant="outlined"
+          color="primary"
           className={classes.googleButton}
           onClick={loginWithGoogle}
           startIcon={GoogleLogo}

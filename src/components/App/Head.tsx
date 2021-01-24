@@ -49,14 +49,6 @@ export default function Head({ title, description, url, ogImage }: HeadProps) {
         `,
         }}
       />
-
-      {/* disable scroll bouncing effect on ios */}
-      <style>
-        {`html, body {
-            height: 100%;
-            overflow: hidden;
-        }`}
-      </style>
     </NextHead>
   );
 }

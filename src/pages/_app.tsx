@@ -14,6 +14,8 @@ import ErrorDialog from '~/components/ErrorDialog/ErrorDialog';
 import IntercomLoader from '~/components/IntercomLoader/IntercomLoader';
 import AppStateProvider from '~/state';
 
+import './styles.css';
+
 export default function App({ Component, pageProps }: AppProps) {
   const [previousPage, setPreviousPage] = useState<string | undefined>();
 
@@ -31,7 +33,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <SnackbarProvider
           maxSnack={3}
           autoHideDuration={3000}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
           variant="info"
         >
           <Head />

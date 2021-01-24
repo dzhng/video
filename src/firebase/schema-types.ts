@@ -75,8 +75,10 @@ export type CallData = { [key: string]: CallDataTypes };
 export declare interface Call {
   templateId: string;
   creatorId: string;
+  workspaceId: string;
   isFinished: boolean;
   duration?: number;
+  activitiesSnapshot?: Activity[];
   createdAt: FbDate;
 }
 

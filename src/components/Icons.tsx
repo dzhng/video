@@ -8,6 +8,7 @@ import {
   LiveHelpOutlined as QuestionsIcon,
   ScreenShareOutlined as ScreenShareIcon,
   GroupOutlined as BreakoutIcon,
+  HistoryOutlined as CallHistoryIcon,
 } from '@material-ui/icons';
 
 // re-export standardized icons so they are consistent
@@ -21,4 +22,9 @@ export {
   QuestionsIcon,
   ScreenShareIcon,
   BreakoutIcon,
+  CallHistoryIcon,
 };
+
+export const Logo = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img src="/logo.png" {...props} />
+);

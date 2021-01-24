@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import CallEnd from '@material-ui/icons/CallEnd';
 import {
@@ -24,7 +25,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function EndCallButton(props: object) {
+export default function EndCallButton({
+  setPopperMessage,
+}: {
+  setPopperMessage(node: React.ReactNode, autoClose?: boolean): void;
+}) {
   const classes = useStyles();
   const { room } = useVideoContext();
   const { isHost, endCall } = useCallContext();
@@ -45,16 +50,27 @@ export default function EndCallButton(props: object) {
     room.disconnect();
   }, [endCall, room]);
 
+  useHotkeys(
+    'e',
+    (e) => {
+      e.preventDefault();
+      handleEndCall();
+      // only show message if not host since host has the confirm dialog
+      !isHost && setPopperMessage(<b>Ending call...</b>, true);
+    },
+    [isHost, setPopperMessage],
+  );
+
   return (
     <>
       <Tooltip
-        title={'End Call'}
+        title={'End Call [E]'}
         onClick={handleEndCall}
         placement="top"
         PopperProps={{ disablePortal: true }}
       >
         <div>
-          <Fab className={classes.fab} color="secondary" disabled={isEndingCall} {...props}>
+          <Fab className={classes.fab} color="secondary" disabled={isEndingCall}>
             <CallEnd />
           </Fab>
         </div>

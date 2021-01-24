@@ -16,36 +16,36 @@ const mainItemMaxWidth = 1100;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    container: {
+    container: (props: StyleProps) => ({
       display: 'flex',
-      flexDirection: (props: StyleProps) => (props.isPortrait ? 'column' : 'row'),
+      flexDirection: props.isPortrait ? 'column' : 'row',
       alignItems: 'stretch',
       width: '100%',
-    },
-    mainItem: {
-      width: (props: StyleProps) => (props.isPortrait ? '100%' : `${mainItemWidthPercent}%`),
-      maxWidth: (props: StyleProps) => (props.isPortrait ? '100%' : mainItemMaxWidth),
-      height: (props: StyleProps) => (props.isPortrait ? `${mainItemHeightPercent}%` : '100%'),
+    }),
+    mainItem: (props: StyleProps) => ({
+      width: props.isPortrait ? '100%' : `${mainItemWidthPercent}%`,
+      maxWidth: props.isPortrait ? '100%' : mainItemMaxWidth,
+      height: props.isPortrait ? `${mainItemHeightPercent}%` : '100%',
       padding: theme.spacing(3),
       // less padding on bottom since controls will already have a lot
       // TODO: this feels a bit hacky since layout shouldn't know about controls
       paddingBottom: theme.spacing(1),
       display: 'flex', // make it easier to align children
-    },
-    itemContainer: {
+    }),
+    itemContainer: (props: StyleProps) => ({
       flexGrow: 1,
       display: 'flex',
       overflow: 'hidden',
-      flexDirection: (props: StyleProps) => (props.variant === 'grid' ? 'row' : 'column'),
+      flexDirection: props.variant === 'grid' ? 'row' : 'column',
       flexWrap: 'wrap',
       justifyContent: 'center',
       alignContent: 'center',
-    },
-    gridItem: {
+    }),
+    gridItem: (props: StyleProps) => ({
       overflow: 'hidden',
-      padding: (props: StyleProps) => props.itemPadding + 'px',
+      padding: props.itemPadding + 'px',
       display: 'flex', // make it easier to align children
-    },
+    }),
   }),
 );
 

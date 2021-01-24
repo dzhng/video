@@ -6,6 +6,7 @@ import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import MediaErrorSnackbar from './MediaErrorSnackbar/MediaErrorSnackbar';
+import TipsSnackBar from './TipsSnackBar/TipsSnackBar';
 import ActivityDrawer from './ActivityDrawer';
 import Lobby from './Lobby';
 import CreateCall from './CreateCall';
@@ -19,6 +20,8 @@ const Container = styled('div')({
 
   '& #main': {
     flexGrow: 1,
+    // used to position snackbar
+    position: 'relative',
   },
 });
 
@@ -87,7 +90,7 @@ export default function CallFlow({
 
   return (
     <Container>
-      {(roomState === 'connected' || isHost) && (
+      {roomState === 'connected' && (
         <ActivityDrawer isCallStarted={isCallStarted} fromHref={fromHref} />
       )}
 
@@ -99,6 +102,8 @@ export default function CallFlow({
         ) : (
           <WaitForHost />
         )}
+
+        <TipsSnackBar />
       </div>
 
       <MediaErrorSnackbar error={mediaError} />

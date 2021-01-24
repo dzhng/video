@@ -14,6 +14,7 @@ import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 import { ErrorOutline as ErrorIcon } from '@material-ui/icons';
 import { useAppState } from '~/state';
+import { Logo } from '~/components/Icons';
 
 const FormSchema = Yup.object().shape({
   name: Yup.string().min(1, 'Please enter a valid name').required(),
@@ -34,13 +35,26 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     paper: {
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
       padding: '2em',
-      marginTop: 'calc(50vh - 225px)',
+      textAlign: 'center',
+
+      '& p': {
+        marginBottom: theme.spacing(1),
+      },
+    },
+    logo: {
+      marginBottom: theme.spacing(1),
+      maxWidth: 120,
+      marginLeft: 'auto',
+      marginRight: 'auto',
     },
     errorMessage: {
       color: 'red',
@@ -147,8 +161,10 @@ export default function RegisterPage() {
   return (
     <Container maxWidth="xs" className={classes.container}>
       <Paper elevation={3} className={classes.paper}>
-        <Typography variant="h1">Welcome to Aomni</Typography>
-        <Typography variant="body1">Register to get started.</Typography>
+        <Logo className={classes.logo} />
+        <Typography variant="body1">
+          Welcome to the future of virtual meetings. Register for an account to get started.
+        </Typography>
 
         <Formik
           initialValues={initialValues}

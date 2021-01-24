@@ -120,30 +120,26 @@ export default function ActivitiesCard({
           </Tooltip>
         )}
 
-        {mode === 'call' && (
-          <>
-            {!isStarted && (
-              <Tooltip title="Edit activity" placement="bottom">
-                <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
-                  <EditIcon />
-                </Button>
-              </Tooltip>
-            )}
-
-            <Tooltip title={isStarted ? 'Activity started' : 'Start activity'} placement="bottom">
-              <div>
-                <Button
-                  variant="contained"
-                  disabled={isStarted}
-                  color="secondary"
-                  onClick={handleStartClick}
-                >
-                  <StartIcon />
-                </Button>
-              </div>
-            </Tooltip>
-          </>
+        {mode === 'call' && !isStarted && (
+          <Tooltip title="Edit activity" placement="bottom">
+            <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
+              <EditIcon />
+            </Button>
+          </Tooltip>
         )}
+
+        <Tooltip title={isStarted ? 'Activity started' : 'Start activity'} placement="bottom">
+          <div>
+            <Button
+              variant="contained"
+              disabled={isStarted}
+              color="secondary"
+              onClick={handleStartClick}
+            >
+              <StartIcon />
+            </Button>
+          </div>
+        </Tooltip>
       </div>
     </Card>
   );

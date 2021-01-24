@@ -16,9 +16,9 @@ const CurrentIndexKey = 'currentIndex';
 // map of responses for questions, key is question, value is array of ResponseType
 // NOTE: because of firebase limitations, key has to be encoded via encodeURIComponent,
 // as questions can contain spaces or special characters that is not allowed as firebase keys
-const ResponsesKey = 'responses';
+export const ResponsesKey = 'responses';
 
-interface ResponseType {
+export interface ResponseType {
   uid: string;
   isAnonymous: boolean;
   response: string;
@@ -27,7 +27,7 @@ interface ResponseType {
 
 const ResponseSchema = Yup.string().min(1).max(500).required();
 
-const useStyles = makeStyles((theme) =>
+export const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       width: '100%',
@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
     },
     content: {
+      ...theme.customMixins.scrollBar,
       flexGrow: 1,
       padding: theme.spacing(2),
       overflowY: 'auto',

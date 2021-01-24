@@ -25,14 +25,10 @@ function initializeAnalyser(stream: MediaStream) {
   return analyser;
 }
 
-function AudioLevelIndicator({
-  audioTrack,
-  color = 'white',
-}: {
-  audioTrack?: AudioTrack;
-  color?: string;
-}) {
-  const SVGRectRef = useRef<SVGRectElement>(null);
+// Return a value between 0 - 14 indicating volume (0 being lowest)
+// TODO: move useVolume to a different file
+export function useVolume(audioTrack?: AudioTrack) {
+  const [volume, setVolume] = useState<number>();
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
   const mediaStreamTrack = useMediaStreamTrack(audioTrack);
@@ -74,9 +70,7 @@ function AudioLevelIndicator({
   }, [isTrackEnabled, mediaStreamTrack, audioTrack]);
 
   useEffect(() => {
-    const SVGClipElement = SVGRectRef.current;
-
-    if (isTrackEnabled && SVGClipElement && analyser) {
+    if (isTrackEnabled && analyser) {
       const sampleArray = new Uint8Array(analyser.frequencyBinCount);
 
       const timer = interval(() => {
@@ -88,22 +82,46 @@ function AudioLevelIndicator({
           values += sampleArray[i];
         }
 
-        const volume = Math.min(14, Math.max(0, Math.log10(values / length / 3) * 7));
-
-        SVGClipElement?.setAttribute('y', String(14 - volume));
+        const calculatedVolume = Math.min(14, Math.max(0, Math.log10(values / length / 3) * 7));
+        setVolume(calculatedVolume);
       }, 100);
 
       return () => {
-        SVGClipElement.setAttribute('y', '14');
         timer.stop();
       };
+    } else {
+      // reset volume to undefined if conditions not met
+      setVolume(undefined);
     }
   }, [isTrackEnabled, analyser]);
+
+  return volume;
+}
+
+export default React.memo(function AudioLevelIndicator({
+  volume,
+  color = 'white',
+}: {
+  volume?: number;
+  color?: string;
+}) {
+  const SVGRectRef = useRef<SVGRectElement>(null);
+
+  useEffect(() => {
+    const SVGClipElement = SVGRectRef.current;
+
+    if (volume !== undefined && SVGClipElement) {
+      SVGClipElement?.setAttribute('y', String(14 - volume));
+      return () => {
+        SVGClipElement.setAttribute('y', '14');
+      };
+    }
+  }, [volume]);
 
   // Each instance of this component will need a unique HTML ID
   const clipPathId = `audio-level-clip-${getUniqueClipId()}`;
 
-  return isTrackEnabled ? (
+  return volume !== undefined ? (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -161,6 +179,4 @@ function AudioLevelIndicator({
       </g>
     </svg>
   );
-}
-
-export default React.memo(AudioLevelIndicator);
+});

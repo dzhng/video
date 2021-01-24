@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { Backdrop } from '@material-ui/core';
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab';
 import {
   MoreVert as SpeedDialIcon,
@@ -11,6 +10,7 @@ import {
   FlipCameraIosOutlined as SwitchCameraIcon,
   TuneOutlined as SettingsIcon,
 } from '@material-ui/icons';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useSnackbar } from 'notistack';
 import { isMobile, isBrowser, updateClipboard } from '~/utils';
 import SettingsDialog from '~/components/Video/SettingsDialog/SettingsDialog';
@@ -58,12 +58,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
 
   const handleShare = useCallback(() => {
     updateClipboard(sharableCallLink);
-    enqueueSnackbar('URL copied to clipboard!', {
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right',
-      },
-    });
+    enqueueSnackbar('URL copied to clipboard!');
     setOpen(false);
   }, [sharableCallLink, enqueueSnackbar]);
 
@@ -86,20 +81,38 @@ export default function SettingsSpeedDial({ className }: { className?: string })
     setOpen(false);
   }, [toggleFullScreen]);
 
+  useHotkeys(
+    'l',
+    (e) => {
+      e.preventDefault();
+      handleShare();
+    },
+    [handleShare],
+  );
+
+  useHotkeys(
+    'f',
+    (e) => {
+      e.preventDefault();
+      handleToggleFullScreen();
+    },
+    [handleToggleFullScreen],
+  );
+
   const actions = [
-    { icon: <ShareIcon />, name: 'Copy Link', onClick: handleShare },
+    { icon: <ShareIcon />, name: 'Copy Link [L]', onClick: handleShare },
+    isFullScreenSupported
+      ? {
+          icon: isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />,
+          name: isFullScreen ? 'Exit Full Screen [F]' : 'Full Screen [F]',
+          onClick: handleToggleFullScreen,
+        }
+      : null,
     !isMobile
       ? {
           icon: <SettingsIcon />,
           name: 'Change Camera or Mic',
           onClick: handleDeviceSettings,
-        }
-      : null,
-    isFullScreenSupported
-      ? {
-          icon: isFullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />,
-          name: isFullScreen ? 'Exit Full Screen' : 'Full Screen',
-          onClick: handleToggleFullScreen,
         }
       : null,
     isToggleCameraSupported
@@ -114,7 +127,6 @@ export default function SettingsSpeedDial({ className }: { className?: string })
 
   return (
     <>
-      <Backdrop open={open} />
       <SpeedDial
         ariaLabel="Call Settings"
         className={clsx(classes.button, className)}

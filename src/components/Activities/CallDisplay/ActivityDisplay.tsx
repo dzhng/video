@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ActivityDisplay() {
   const classes = useStyles();
-  const { call, currentActivity, endActivity, updateActivityData, isHost } = useCallContext();
+  const { call, currentActivity, endActivity, updateActivityData } = useCallContext();
 
   const handleRestartActivity = useCallback(() => {
     if (!currentActivity) {
@@ -74,21 +74,17 @@ export default function ActivityDisplay() {
           <b>{currentActivity.name}</b>
         </Typography>
 
-        {isHost && (
-          <Tooltip title="Restart activity" placement="bottom">
-            <IconButton size="small" onClick={handleRestartActivity}>
-              <RestartIcon />
-            </IconButton>
-          </Tooltip>
-        )}
+        <Tooltip title="Restart activity" placement="bottom">
+          <IconButton size="small" onClick={handleRestartActivity}>
+            <RestartIcon />
+          </IconButton>
+        </Tooltip>
 
-        {isHost && (
-          <Tooltip title="Close activity" placement="bottom">
-            <IconButton size="small" onClick={endActivity}>
-              <CloseIcon />
-            </IconButton>
-          </Tooltip>
-        )}
+        <Tooltip title="Close activity" placement="bottom">
+          <IconButton size="small" onClick={endActivity}>
+            <CloseIcon />
+          </IconButton>
+        </Tooltip>
       </div>
       <div className={classes.content}>{config.display}</div>
     </Card>

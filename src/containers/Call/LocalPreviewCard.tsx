@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
     card: {
       display: 'flex',
       flexDirection: 'column',
-      maxHeight: '80vh',
+      maxHeight: '60vh',
       boxShadow: theme.shadows[15],
     },
     videoContainer: {

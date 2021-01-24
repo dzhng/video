@@ -1,6 +1,7 @@
 import { ActivityMetadata, ActivityTypes } from '~/firebase/schema-types';
 import * as Yup from 'yup';
 import { PresentIcon, VideoIcon, PollIcon, QuestionsIcon, BreakoutIcon } from '~/components/Icons';
+import { Activity, CallData } from '~/firebase/schema-types';
 
 import PresentationForm from '../CreateForm/Presentation';
 import VideoForm from '../CreateForm/Video';
@@ -8,10 +9,11 @@ import PollForm from '../CreateForm/Poll';
 import QuestionsForm from '../CreateForm/Questions';
 import BreakoutForm from '../CreateForm/Breakout';
 
-import PresentationDisplay from '../CallDisplay/Presentation';
+import PresentationDisplay, { PresentationView } from '../CallDisplay/Presentation';
 import VideoDisplay from '../CallDisplay/Video';
-import PollDisplay from '../CallDisplay/Poll';
+import PollDisplay, { PollView } from '../CallDisplay/Poll';
 import QuestionsDisplay from '../CallDisplay/Questions';
+import QuestionsSummary from '../CallDisplay/QuestionsSummary';
 import BreakoutDisplay from '../CallDisplay/Breakout';
 
 const iconClassName = 'TypeIcon';
@@ -24,6 +26,7 @@ export const ActivityTypeConfig: {
   icon: React.ReactElement;
   form: React.ReactElement;
   display: React.ReactElement;
+  summary?(activity: Activity, data: CallData): React.ReactElement;
   initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.AnySchema;
 }[] = [
@@ -34,6 +37,7 @@ export const ActivityTypeConfig: {
     icon: <PresentIcon className={iconClassName} />,
     form: <PresentationForm />,
     display: <PresentationDisplay />,
+    summary: (activity) => <PresentationView activity={activity} />,
     initialValue: { presentationId: '' },
     schema: Yup.object().shape({
       presentationId: Yup.string().max(30).required('Presentation not uploaded'),
@@ -46,6 +50,7 @@ export const ActivityTypeConfig: {
     icon: <PollIcon className={iconClassName} />,
     form: <PollForm />,
     display: <PollDisplay />,
+    summary: (activity, data) => <PollView activity={activity} data={data} isHost={false} />,
     initialValue: {
       showResultsRightAway: false,
       isMultipleChoice: false,
@@ -74,6 +79,7 @@ export const ActivityTypeConfig: {
     icon: <QuestionsIcon className={iconClassName} />,
     form: <QuestionsForm />,
     display: <QuestionsDisplay />,
+    summary: (activity, data) => <QuestionsSummary activity={activity} data={data} />,
     initialValue: {
       questions: [''], // start with 1 (invalid) option already defined
       allowMultipleSubmissions: false,

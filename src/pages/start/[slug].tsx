@@ -20,7 +20,7 @@ export default function StartPage() {
 
   const templateId = String(router.query.slug);
 
-  // fetching template model
+  // fetch template model
   useEffect(() => {
     if (!templateId) {
       return;

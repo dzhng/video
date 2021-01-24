@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { includes, trim, capitalize, words, without } from 'lodash';
+import { includes, trim, without } from 'lodash';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Paper, InputBase, IconButton } from '@material-ui/core';
 import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import { Add as AddIcon, HighlightOff as RemoveIcon } from '@material-ui/icons';
 import { createStyles, makeStyles, styled, Theme } from '@material-ui/core/styles';
+import { shortName } from '~/utils';
 import { LocalModel, User } from '~/firebase/schema-types';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -231,7 +232,7 @@ export default function MembersField({
       {currentUsers.map((user) => (
         <MemberItem
           key={user.id}
-          title={`${capitalize(words(user.displayName)[0])} (${user.email})`}
+          title={`${shortName(user.displayName)} (${user.email})`}
           value={user.id}
           remove={removeUser}
         />

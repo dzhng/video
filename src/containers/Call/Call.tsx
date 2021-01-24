@@ -1,27 +1,48 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { KeyboardOutlined as KeyboardIcon } from '@material-ui/icons';
+import { useHotkeys } from 'react-hotkeys-hook';
 
+import { isMobile } from '~/utils';
 import { useAppState } from '~/state';
 import { VideoProvider } from '~/components/Video/VideoProvider';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
+import HotkeyInstructions from './HotkeyInstructions/HotkeyInstructions';
 import CallFlow from './CallFlow';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       width: '100%',
       height: '100vh',
+      background: '#091523',
+    },
+    hotkeyButton: {
+      position: 'fixed',
+      top: 5,
+      right: 5,
+      backgroundColor: theme.palette.grey[900],
+      color: theme.palette.grey[200],
+      width: 30,
+      height: 30,
+      padding: '5px',
+      borderRadius: 15,
+      cursor: 'pointer',
 
-      background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
-      backgroundSize: '400% 400%',
-      // steps is important here since it tells browser to run at steps/seconds fps
-      // this is important for reducing cpu usage
-      animation: 'gradient 30s steps(150) infinite',
-      // do animation on gpu so its less taxing on cpu
-      transform: 'translateZ(0)',
+      // it's important that this component has a higher zIndex than popper background
+      // or else the mouse out events will always be called whenever popper is shown
+      zIndex: 300,
+
+      '&:hover': {
+        color: theme.palette.grey[500],
+      },
+      '& svg': {
+        width: 20,
+        height: 20,
+      },
     },
 
     // define animation for container background
@@ -67,36 +88,81 @@ export default function CallContainer() {
   const handleDisconnect = useCallback(() => {
     if (!isCallEnded) {
       window.location.assign(
-        `${window.location.protocol}//${window.location.host}/finish?fromHref=${encodeURIComponent(
-          fromHref ?? '',
-        )}`,
+        `${window.location.protocol}//${
+          window.location.host
+        }/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`,
       );
     }
-  }, [isCallEnded, fromHref]);
+  }, [isCallEnded, currentCall, fromHref]);
 
   useEffect(() => {
     if (isCallEnded) {
       window.location.assign(
         `${window.location.protocol}//${
           window.location.host
-        }/finish?hostEnded=true&fromHref=${encodeURIComponent(fromHref ?? '')}`,
+        }/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`,
       );
     }
-  }, [isCallEnded, fromHref]);
+  }, [isCallEnded, currentCall, fromHref]);
+
+  const [hotkeyPopperOpen, setHotkeyPopperOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+
+  // disable el tabbing in this page since that might
+  // conflict with other hotkeys
+  // show hotkey helper when pressed
+  useHotkeys('tab', (e) => {
+    e.preventDefault();
+  });
+  useHotkeys(
+    'tab',
+    (e) => {
+      e.preventDefault();
+      setHotkeyPopperOpen(true);
+    },
+    { keydown: true },
+  );
+  useHotkeys(
+    'tab',
+    (e) => {
+      e.preventDefault();
+      setHotkeyPopperOpen(false);
+    },
+    { keyup: true },
+  );
 
   const isCallStarted: boolean = !!currentCall;
 
   return (
-    <UnsupportedBrowserWarning>
-      <div className={classes.container}>
-        <VideoProvider
-          options={connectionOptions}
-          onError={setError}
-          onDisconnect={handleDisconnect}
+    <>
+      <UnsupportedBrowserWarning>
+        <div ref={anchorRef} className={classes.container}>
+          <VideoProvider
+            options={connectionOptions}
+            onError={setError}
+            onDisconnect={handleDisconnect}
+          >
+            <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
+          </VideoProvider>
+        </div>
+      </UnsupportedBrowserWarning>
+
+      {!isMobile && (
+        <div
+          className={classes.hotkeyButton}
+          onMouseEnter={() => setHotkeyPopperOpen(true)}
+          onMouseLeave={() => setHotkeyPopperOpen(false)}
+          onClick={() => setHotkeyPopperOpen((state) => !state)}
         >
-          <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
-        </VideoProvider>
-      </div>
-    </UnsupportedBrowserWarning>
+          <KeyboardIcon />
+        </div>
+      )}
+
+      <HotkeyInstructions
+        open={hotkeyPopperOpen}
+        anchorRef={anchorRef}
+        onClick={() => setHotkeyPopperOpen(false)}
+      />
+    </>
   );
 }

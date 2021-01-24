@@ -11,6 +11,7 @@ import GuestSignIn from '~/containers/Call/GuestSignIn';
 import { CallProvider } from '~/components/CallProvider';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ActivityDrawer from '~/containers/Call/ActivityDrawer';
+import ChatNotification from '~/components/Video/Room/ChatNotification/ChatNotification';
 
 // this component is just responsible for creating a call model for testing
 // note that if a call exits createCall will just fail, but it is fine because
@@ -117,6 +118,7 @@ export default function CallTest() {
           >
             <ActivityDrawer isCallStarted={isCallStarted} fromHref={fromHref} />
             <CallCreator />
+            <ChatNotification />
           </div>
         </CallProvider>
       ) : (
