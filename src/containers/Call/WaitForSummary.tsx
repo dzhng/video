@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Container, Typography } from '@material-ui/core';
+import { Container, Typography, CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -18,7 +18,12 @@ const useStyles = makeStyles((theme) =>
       },
       '& p': {
         marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(3),
         fontSize: '1.2rem',
+      },
+      '& div:[role=progressbar]': {
+        marginLeft: 'auto',
+        marginRight: 'auto',
       },
     },
   }),
@@ -33,6 +38,7 @@ export default function WaitForSummary() {
       <Typography variant="body1">
         This page will automatically update when the call summary is ready.
       </Typography>
+      <CircularProgress color="primary" variant="indeterminate"></CircularProgress>
     </Container>
   );
 }
