@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) =>
         marginBottom: theme.spacing(3),
         fontSize: '1.2rem',
       },
-      '& div:[role=progressbar]': {
+      '& div[role=progressbar]': {
         marginLeft: 'auto',
         marginRight: 'auto',
       },
