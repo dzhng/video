@@ -6,9 +6,9 @@ import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import useRoomState from '~/hooks/Video/useRoomState/useRoomState';
-import LoadingContainer from '~/containers/Loading/Loading';
 import Room from '~/components/Video/Room/Room';
 import LocalPreview from './LocalPreview';
+import WaitForSummary from './WaitForSummary';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -92,7 +92,7 @@ export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
 
   return roomState !== 'connected' ? (
     hasConnected ? (
-      <LoadingContainer />
+      <WaitForSummary />
     ) : (
       <LocalPreview actionBar={actionBar} />
     )
