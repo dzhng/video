@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { IconButton, Tooltip, Fab } from '@material-ui/core';
 import {
   NavigateBefore,
@@ -80,6 +81,24 @@ export default function PresentationDisplay({
       finalSetIndex(finalIndex + 1);
     }
   }, [finalIndex, finalSetIndex, presentation]);
+
+  useHotkeys(
+    'right',
+    (e) => {
+      e.preventDefault();
+      nextSlide();
+    },
+    [nextSlide],
+  );
+
+  useHotkeys(
+    'left',
+    (e) => {
+      e.preventDefault();
+      previousSlide();
+    },
+    [previousSlide],
+  );
 
   // we want to load all slides at once, so that the ones to be displayed will load in the background. We toggle which slide to display via CSS
   return (

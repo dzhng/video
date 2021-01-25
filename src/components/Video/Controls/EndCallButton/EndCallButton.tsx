@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useHotkeys } from 'react-hotkeys-hook';
-
 import CallEnd from '@material-ui/icons/CallEnd';
 import {
   Fab,
