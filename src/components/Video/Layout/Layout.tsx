@@ -32,14 +32,12 @@ const useStyles = makeStyles((theme) =>
     itemContainer: (props: StyleProps) => ({
       flexGrow: 1,
       display: 'flex',
-      overflow: 'hidden',
       flexDirection: props.variant === 'grid' ? 'row' : 'column',
       flexWrap: 'wrap',
       justifyContent: 'center',
       alignContent: 'center',
     }),
     gridItem: (props: StyleProps) => ({
-      overflow: 'hidden',
       padding: props.itemPadding + 'px',
       display: 'flex', // make it easier to align children
     }),

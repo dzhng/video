@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Participant } from 'twilio-video';
-import { take, uniq, compact } from 'lodash';
+import { take, uniq, compact, intersection } from 'lodash';
 import { maxTracks } from '~/constants';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
@@ -32,6 +32,12 @@ export default function useDisplayableParticipants() {
       setPreviousDominantSpeakers((state) => uniq([dominantSpeaker, ...state]));
     }
   }, [dominantSpeaker]);
+
+  // when the participants list changes, make sure they are removed from this dominant
+  // speaker array
+  useEffect(() => {
+    setPreviousDominantSpeakers((speakers) => intersection(speakers, participants));
+  }, [participants]);
 
   const displayableParticipants = useMemo<Participant[]>(() => {
     const participantsWithVideo = participants.filter(haveVideo);

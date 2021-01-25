@@ -100,6 +100,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return { notFound: true };
   }
 
+  // TODO: merge the records with duplicate identity
+  //  this is an case that can happen if a user leaves /joins multiple times during a call
   const participants = participantRecords.map((record) => {
     const data: ParticipantRecord = removeUndefineds({
       uid: record.identity,
