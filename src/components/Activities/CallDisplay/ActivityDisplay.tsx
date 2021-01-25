@@ -57,14 +57,20 @@ export default function ActivityDisplay() {
   } = useCallContext();
   const [confirmRestart, setConfirmRestart] = useState(false);
 
+  const config = ActivityTypeConfig.find((_config) => _config.type === currentActivity?.type);
+
   const handleRestartActivity = useCallback(() => {
     // no need to show anything if activity don't have any data submitted
-    if (!currentActivity || !hasActivityStarted(currentActivity)) {
+    if (!currentActivity || !hasActivityStarted(currentActivity) || !config) {
       return;
     }
 
-    setConfirmRestart(true);
-  }, [currentActivity, hasActivityStarted]);
+    if (config.showRestartConfirm) {
+      setConfirmRestart(true);
+    } else {
+      updateActivityData(currentActivity, null, null);
+    }
+  }, [currentActivity, hasActivityStarted, config, updateActivityData]);
 
   const handleRestartConfirm = useCallback(() => {
     if (!currentActivity) {
@@ -79,7 +85,6 @@ export default function ActivityDisplay() {
     return <ErrorDisplay />;
   }
 
-  const config = ActivityTypeConfig.find((_config) => _config.type === currentActivity.type);
   if (!config) {
     return <ErrorDisplay />;
   }
@@ -93,9 +98,15 @@ export default function ActivityDisplay() {
           </Typography>
 
           <Tooltip title="Restart activity" placement="bottom">
-            <IconButton size="small" onClick={handleRestartActivity}>
-              <RestartIcon />
-            </IconButton>
+            <div>
+              <IconButton
+                size="small"
+                disabled={!hasActivityStarted}
+                onClick={handleRestartActivity}
+              >
+                <RestartIcon />
+              </IconButton>
+            </div>
           </Tooltip>
 
           <Tooltip title="Close activity - your progress will be saved" placement="bottom">

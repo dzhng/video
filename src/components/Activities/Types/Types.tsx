@@ -27,6 +27,7 @@ export const ActivityTypeConfig: {
   form: React.ReactElement;
   display: React.ReactElement;
   summary?(activity: Activity, data: CallData): React.ReactElement;
+  showRestartConfirm: boolean; // if there is a need to show the confirmation modal on restart
   initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.AnySchema;
 }[] = [
@@ -38,6 +39,7 @@ export const ActivityTypeConfig: {
     form: <PresentationForm />,
     display: <PresentationDisplay />,
     summary: (activity) => <PresentationView activity={activity} />,
+    showRestartConfirm: false,
     initialValue: { presentationId: '' },
     schema: Yup.object().shape({
       presentationId: Yup.string().max(30).required('Presentation not uploaded'),
@@ -51,6 +53,7 @@ export const ActivityTypeConfig: {
     form: <PollForm />,
     display: <PollDisplay />,
     summary: (activity, data) => <PollView activity={activity} data={data} isHost={false} />,
+    showRestartConfirm: true,
     initialValue: {
       showResultsRightAway: false,
       isMultipleChoice: false,
@@ -80,6 +83,7 @@ export const ActivityTypeConfig: {
     form: <QuestionsForm />,
     display: <QuestionsDisplay />,
     summary: (activity, data) => <QuestionsSummary activity={activity} data={data} />,
+    showRestartConfirm: true,
     initialValue: {
       questions: [''], // start with 1 (invalid) option already defined
       allowMultipleSubmissions: false,
@@ -105,6 +109,7 @@ export const ActivityTypeConfig: {
     icon: <VideoIcon className={iconClassName} />,
     form: <VideoForm />,
     display: <VideoDisplay />,
+    showRestartConfirm: false,
     initialValue: { videoId: '' },
     schema: Yup.object().shape({
       videoId: Yup.string().max(30).required('Video not uploaded'),
@@ -118,6 +123,7 @@ export const ActivityTypeConfig: {
     icon: <BreakoutIcon className={iconClassName} />,
     form: <BreakoutForm />,
     display: <BreakoutDisplay />,
+    showRestartConfirm: false,
     initialValue: {
       numberOfRooms: 2,
     },

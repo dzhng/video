@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Card, Typography, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -19,8 +20,10 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'row',
       padding: theme.spacing(1),
 
+      '&.hasStarted': {
+        backgroundColor: theme.palette.primary.main + '10',
+      },
       '&:hover': {
-        backgroundColor: theme.palette.grey[100],
         boxShadow: theme.shadows[4],
       },
     },
@@ -104,7 +107,7 @@ export default function ActivitiesCard({
   );
 
   return (
-    <Card className={classes.card}>
+    <Card className={clsx(classes.card, { hasStarted })}>
       <div className={classes.content}>
         <EditableTitle
           disabled={mode === 'view' || isStarted}
