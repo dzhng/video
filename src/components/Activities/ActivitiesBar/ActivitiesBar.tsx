@@ -17,6 +17,8 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       ...theme.customMixins.scrollBar,
       overflowY: 'auto',
+      padding: theme.spacing(1.5),
+      paddingBottom: 0,
 
       '& .MuiTimelineOppositeContent-root': {
         flex: 0,
@@ -38,7 +40,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     timelineItem: {
-      margin: theme.spacing(2),
+      // be careful with margin overlap here
+      // margin collapsing between different timelineItems
+      // will prevent placeholder height from being
+      // calculated correctly.
+      marginBottom: theme.spacing(1.5),
     },
     addButton: {
       height: 60,
