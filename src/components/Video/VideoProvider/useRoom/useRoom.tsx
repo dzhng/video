@@ -51,8 +51,8 @@ export default function useRoom(
 
           newRoom.localParticipant.videoTracks.forEach((publication) =>
             // All video tracks are published with 'low' priority because the video track
-            // that is displayed in the 'MainParticipant' component will have it's priority
-            // set to 'high' via track.setPriority()
+            // that is displayed in the main component will have it's priority
+            // set to 'high' in the component itself
             publication.setPriority('low'),
           );
 

@@ -20,13 +20,16 @@ export default function useDisplayableParticipants() {
   const screenShareParticipant = useScreenShareParticipant();
   const participants = useParticipants();
 
-  const [dominantSpeakerToDisplay, setDominantSpeakerToDisplay] = useState(dominantSpeaker);
+  const [previousDominantSpeakers, setPreviousDominantSpeakers] = useState([dominantSpeaker]);
 
   // when displaying, make sure the person who was the last dominant speaker
   // is always shown, even if they are not the dominant speaker anymore
   useEffect(() => {
     if (dominantSpeaker) {
-      setDominantSpeakerToDisplay(dominantSpeaker);
+      // When the dominant speaker changes, they are moved to the front of the participants array.
+      // This means that the most recent dominant speakers will always be near the top of the
+      // ParticipantStrip component.
+      setPreviousDominantSpeakers((state) => uniq([dominantSpeaker, ...state]));
     }
   }, [dominantSpeaker]);
 
@@ -40,17 +43,14 @@ export default function useDisplayableParticipants() {
           localParticipant,
           // make sure screenshare participant is in front as well
           screenShareParticipant,
-          // When the dominant speaker changes, they are moved to the front of the participants array.
-          // This means that the most recent dominant speakers will always be near the top of the
-          // ParticipantStrip component.
-          dominantSpeakerToDisplay,
+          ...previousDominantSpeakers,
           ...participantsWithVideo,
           ...participants,
         ]),
       ),
       maxTracks,
     );
-  }, [localParticipant, screenShareParticipant, dominantSpeakerToDisplay, participants]);
+  }, [localParticipant, screenShareParticipant, previousDominantSpeakers, participants]);
 
   return displayableParticipants;
 }

@@ -27,8 +27,8 @@ export default function useScreenShareToggle() {
         const track = stream.getTracks()[0];
 
         // All video tracks are published with 'low' priority. This works because the video
-        // track that is displayed in the 'MainParticipant' component will have it's priority
-        // set to 'high' via track.setPriority()
+        // track that is displayed in the main video component will have it's priority
+        // set to 'high' in component itself
         room.localParticipant
           .publishTrack(track, {
             name: 'screen', // Tracks can be named to easily find them later
