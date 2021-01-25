@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { LocalParticipant, RemoteParticipant } from 'twilio-video';
+import { Participant as ParticipantType } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
 import { Fab, Tooltip, Hidden } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
@@ -8,8 +8,7 @@ import useDimensions from 'react-cool-dimensions';
 
 import Controls from '~/components/Video/Controls/Controls';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
-import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
-import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import useDisplayableParticipants from '~/hooks/Video/useDisplayableParticipants/useDisplayableParticipants';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
 import ScreenShareParticipant from '~/components/Video/ScreenShareParticipant/ScreenShareParticipant';
@@ -73,15 +72,12 @@ export default function Room() {
   const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
   const { currentActivity, setIsActivityDrawerOpen } = useCallContext();
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
-  const participants = useParticipants();
+  const participants = useDisplayableParticipants();
   const screenShareParticipant = useScreenShareParticipant();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   const participantToItem = useCallback(
-    (participant: LocalParticipant | RemoteParticipant) => ({
+    (participant: ParticipantType) => ({
       key: participant.sid ? participant.sid : 'local',
       node: (
         <Participant
@@ -95,8 +91,8 @@ export default function Room() {
   );
 
   const items = useMemo<{ key: string; node: React.ReactNode }[]>(
-    () => [participantToItem(localParticipant)].concat(participants.map(participantToItem)),
-    [localParticipant, participants, participantToItem],
+    () => participants.map(participantToItem),
+    [participants, participantToItem],
   );
 
   const variant = currentActivity || screenShareParticipant ? 'focus' : 'grid';
