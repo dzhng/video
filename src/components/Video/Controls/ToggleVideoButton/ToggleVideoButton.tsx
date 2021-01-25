@@ -31,6 +31,7 @@ export default function ToggleVideoButton({
   const classes = useStyles();
   const { isVideoEnabled, toggleVideoEnabled, shouldDisableVideoToggle } = useVideoContext();
   const lastClickTimeRef = useRef(0);
+  const disableVideoToggle = disabled || shouldDisableVideoToggle;
 
   const toggleVideo = useCallback(() => {
     if (Date.now() - lastClickTimeRef.current > 300) {
@@ -43,7 +44,7 @@ export default function ToggleVideoButton({
     'v',
     (e) => {
       e.preventDefault();
-      if (disabled || shouldDisableVideoToggle) {
+      if (disableVideoToggle) {
         return;
       }
 
@@ -61,7 +62,7 @@ export default function ToggleVideoButton({
         true,
       );
     },
-    [toggleVideo, isVideoEnabled, setPopperMessage],
+    [disableVideoToggle, toggleVideo, isVideoEnabled, setPopperMessage],
   );
 
   return (
@@ -72,11 +73,7 @@ export default function ToggleVideoButton({
     >
       {/* Wrapping <Fab/> in <div/> so that tooltip can wrap a disabled element */}
       <div>
-        <Fab
-          className={classes.fab}
-          onClick={toggleVideo}
-          disabled={disabled || shouldDisableVideoToggle}
-        >
+        <Fab className={classes.fab} onClick={toggleVideo} disabled={disableVideoToggle}>
           {isVideoEnabled ? (
             <Videocam data-testid="video-icon" />
           ) : (

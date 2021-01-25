@@ -28,6 +28,7 @@ export default function ToggleAudioButton({
   const { localTracks } = useVideoContext();
   const hasAudioTrack = localTracks.some((track) => track.kind === 'audio');
   const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
+  const disableAudioToggle = Boolean(!hasAudioTrack || disabled);
 
   // setup hotkeys for push to talk
   // on key down, enable audio, on key up, disable audio
@@ -35,7 +36,7 @@ export default function ToggleAudioButton({
     'space',
     (e) => {
       e.preventDefault();
-      if (!hasAudioTrack || disabled) {
+      if (disableAudioToggle) {
         return;
       }
 
@@ -48,13 +49,13 @@ export default function ToggleAudioButton({
       toggleAudioEnabled(true);
     },
     { keydown: true },
-    [toggleAudioEnabled, setPopperOpen],
+    [disableAudioToggle, toggleAudioEnabled, setPopperOpen],
   );
   useHotkeys(
     'space',
     (e) => {
       e.preventDefault();
-      if (!hasAudioTrack || disabled) {
+      if (disableAudioToggle) {
         return;
       }
 
@@ -62,7 +63,7 @@ export default function ToggleAudioButton({
       toggleAudioEnabled(false);
     },
     { keyup: true },
-    [toggleAudioEnabled, setPopperOpen],
+    [disableAudioToggle, toggleAudioEnabled, setPopperOpen],
   );
   // prevent default space behavior on press
   // have it here just in case
@@ -73,7 +74,7 @@ export default function ToggleAudioButton({
     'a',
     (e) => {
       e.preventDefault();
-      if (!hasAudioTrack || disabled) {
+      if (disableAudioToggle) {
         return;
       }
 
@@ -91,7 +92,7 @@ export default function ToggleAudioButton({
         true,
       );
     },
-    [toggleAudioEnabled, isAudioEnabled, setPopperMessage],
+    [disableAudioToggle, toggleAudioEnabled, isAudioEnabled, setPopperMessage],
   );
 
   return (
@@ -105,7 +106,7 @@ export default function ToggleAudioButton({
         <Fab
           className={classes.fab}
           onClick={() => toggleAudioEnabled()}
-          disabled={!hasAudioTrack || disabled}
+          disabled={disableAudioToggle}
           data-cy-audio-toggle
         >
           {isAudioEnabled ? <Mic data-testid="mic-icon" /> : <MicOff data-testid="micoff-icon" />}
