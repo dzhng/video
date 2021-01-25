@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) =>
         maxHeight: '100%',
       },
       '& >div:first-child': {
-        minHeight: 100,
+        // leave at least enough height to show the button
+        minHeight: 84,
       },
       '& >div:nth-child(2)': {
         flexBasis: '500px',
