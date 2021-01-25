@@ -121,8 +121,8 @@ export default function VideoLayout({ width, height, variant, gridItems, mainIte
     );
   }, [variant, isPortrait, width, height, displayableItems]);
 
-  // use 5% of item size as padding
-  const itemPadding = itemSize * 0.05;
+  // use 5% of item size as padding, or reasonable max
+  const itemPadding = Math.min(itemSize * 0.05, 8);
   const classes = useStyles({ itemPadding, variant, isPortrait });
 
   return (

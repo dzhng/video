@@ -152,7 +152,7 @@ export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
           </Hidden>
         </div>
 
-        <Tooltip title="Previous sessions (Coming soon!)" placement="bottom">
+        <Tooltip title="Previous calls (Coming soon!)" placement="bottom">
           <div>
             <IconButton disabled>
               <HistoryIcon />

@@ -43,6 +43,10 @@ const useStyles = makeStyles((theme) =>
         marginTop: 0,
       },
     },
+    activityCard: {
+      ...theme.customMixins.scrollBar,
+      overflowY: 'auto',
+    },
   }),
 );
 
@@ -77,7 +81,7 @@ export default function ActivityDrawer({
       )}
 
       <div className={classes.actionArea}>
-        <Card>
+        <Card className={classes.activityCard}>
           <ActivitiesBar
             template={template}
             mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}

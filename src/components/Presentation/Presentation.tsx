@@ -58,7 +58,7 @@ export default function PresentationDisplay({
   const classes = useStyles();
   const [currentScale, setCurrentScale] = useState<number>(1);
 
-  const handleScaleChange = useCallback((scale: number) => {
+  const handleScaleChange = useCallback(({ scale }: { scale: number }) => {
     setCurrentScale(scale);
   }, []);
 
@@ -81,7 +81,7 @@ export default function PresentationDisplay({
   return (
     <div className={classes.container}>
       <TransformWrapper
-        scale={currentScale}
+        defaultScale={1}
         onZoomChange={handleScaleChange}
         reset={{ animationTime: 100 }}
         pan={{ velocity: false }}

@@ -26,7 +26,6 @@ const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: 
 const Container = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  paddingTop: theme.spacing(1),
 }));
 
 const LayoutContainer = styled('div')({
