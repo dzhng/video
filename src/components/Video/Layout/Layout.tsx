@@ -36,6 +36,8 @@ const useStyles = makeStyles((theme) =>
       flexWrap: 'wrap',
       justifyContent: 'center',
       alignContent: 'center',
+      // just in case layout algorithm goes wrong
+      overflow: 'hidden',
     }),
     gridItem: (props: StyleProps) => ({
       padding: props.itemPadding + 'px',

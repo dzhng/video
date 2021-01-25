@@ -170,13 +170,13 @@ export default function ParticipantInfo({
   //isSelected,
   children,
 }: ParticipantInfoProps) {
-  const { isVideoEnabled } = useVideoContext();
   const dominantSpeaker = useDominantSpeaker();
   const publications = usePublications(participant);
 
   const audioPublication = publications.find((p) => p.kind === 'audio');
   const videoPublication = publications.find((p) => p.trackName.includes('camera'));
 
+  const isVideoEnabled = Boolean(videoPublication);
   const isScreenShareEnabled = publications.find((p) => p.trackName.includes('screen'));
 
   const videoTrack = useTrack(videoPublication);
