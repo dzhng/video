@@ -14,6 +14,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       maxHeight: '60vh',
       boxShadow: theme.shadows[15],
+      // fix safari video cropping bug
+      transform: 'translateZ(0)',
     },
     videoContainer: {
       overflow: 'hidden',

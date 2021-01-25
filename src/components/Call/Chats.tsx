@@ -22,9 +22,11 @@ const MaxDisplayableMessages = 500;
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      height: '100%',
+      flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',
+      // need to set this so messageList overflow can work in a flex layout
+      overflow: 'hidden',
     },
     title: {
       margin: theme.spacing(1),

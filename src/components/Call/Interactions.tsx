@@ -21,9 +21,13 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
     },
     content: {
+      // scroll should be defined by child, since chats
+      // requires some custom behavior
+      overflow: 'hidden',
       flexGrow: 1,
-      overflowY: 'auto',
-      ...theme.customMixins.scrollBar,
+      // so child can be 100% height
+      display: 'flex',
+      flexDirection: 'column',
     },
     nav: {
       borderTop: theme.dividerBorder,

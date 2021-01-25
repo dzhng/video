@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) =>
       },
       '& >div:first-child': {
         maxHeight: '50%',
+        flexShrink: 0,
       },
       '& >div:nth-child(2)': {
         flexBasis: '50%',

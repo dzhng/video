@@ -8,7 +8,9 @@ import { TaskType, TaskSectionType } from './types';
 import TaskSection from './TaskSection';
 
 const Container = styled('div')(({ theme }) => ({
+  ...theme.customMixins.scrollBar,
   marginTop: theme.spacing(1),
+  overflowY: 'auto',
 }));
 
 export default function Notes() {
