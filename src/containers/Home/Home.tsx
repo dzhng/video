@@ -228,12 +228,14 @@ export default function Home({
                   <MenuItem disabled>Settings</MenuItem>
 
                   {isAdmin && (
-                    <AddMemberMenuItem
-                      onClick={handleMenuClick}
-                      addMembers={addMembers}
-                      removeMembers={removeMembers}
-                      members={members}
-                    />
+                    <MenuItem
+                      onClick={() => {
+                        setSettingsMenuOpen((state) => !state);
+                        setMembersDialogOpen(true);
+                      }}
+                    >
+                      Manage Workspace Members
+                    </MenuItem>
                   )}
 
                   <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />
