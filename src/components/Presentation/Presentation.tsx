@@ -9,6 +9,7 @@ import Slides from './Slides';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      position: 'relative', // for absolute position slide elements
       display: 'flex',
       flexDirection: 'column',
       width: '100%',
@@ -55,6 +56,11 @@ export default function PresentationDisplay({
 }: PropTypes) {
   const [_index, _setIndex] = useState<number>(startAt);
   const classes = useStyles();
+  const [currentScale, setCurrentScale] = useState<number>(1);
+
+  const handleScaleChange = useCallback((scale: number) => {
+    setCurrentScale(scale);
+  }, []);
 
   const finalSetIndex = setIndex ? setIndex : _setIndex;
   const finalIndex = typeof index === 'number' ? index : _index;
@@ -74,12 +80,18 @@ export default function PresentationDisplay({
   // we want to load all slides at once, so that the ones to be displayed will load in the background. We toggle which slide to display via CSS
   return (
     <div className={classes.container}>
-      <TransformWrapper defaultScale={1} reset={{ animationTime: 100 }} pan={{ velocity: false }}>
+      <TransformWrapper
+        scale={currentScale}
+        onZoomChange={handleScaleChange}
+        reset={{ animationTime: 100 }}
+        pan={{ velocity: false }}
+      >
         {({ resetTransform }: { resetTransform(): void }) => (
           <TransformComponent>
             <Slides
               slides={presentation.slides}
               index={finalIndex}
+              scale={scale}
               resetTransform={resetTransform}
             />
           </TransformComponent>
