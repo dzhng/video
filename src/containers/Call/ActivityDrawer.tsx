@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Drawer, Fab, Hidden } from '@material-ui/core';
+import { Drawer, Card, Fab, Hidden } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import { BackIcon } from '~/components/Icons';
@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       overflow: 'hidden',
 
+      // space the children out with margins
+      '& >div': {
+        margin: theme.spacing(1),
+      },
       // if only child, go 100% height
       '& >div:first-child:last-child': {
         maxHeight: '100%',
@@ -36,6 +40,7 @@ const useStyles = makeStyles((theme) =>
       '& >div:nth-child(2)': {
         flexBasis: '50%',
         flexGrow: 1,
+        marginTop: 0,
       },
     },
   }),
@@ -72,13 +77,15 @@ export default function ActivityDrawer({
       )}
 
       <div className={classes.actionArea}>
-        <ActivitiesBar
-          template={template}
-          mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
-          currentActivity={currentActivity}
-          startActivity={startActivity}
-          hasActivityStarted={hasActivityStarted}
-        />
+        <Card>
+          <ActivitiesBar
+            template={template}
+            mode={isHost ? (isCallStarted ? 'call' : 'edit') : 'view'}
+            currentActivity={currentActivity}
+            startActivity={startActivity}
+            hasActivityStarted={hasActivityStarted}
+          />
+        </Card>
         {isCallStarted && <Interactions />}
       </div>
     </>

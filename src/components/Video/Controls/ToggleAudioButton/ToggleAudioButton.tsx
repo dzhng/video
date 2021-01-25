@@ -35,6 +35,10 @@ export default function ToggleAudioButton({
     'space',
     (e) => {
       e.preventDefault();
+      if (!hasAudioTrack || disabled) {
+        return;
+      }
+
       setPopperOpen(true);
       setPopperMessage(
         <>
@@ -50,6 +54,10 @@ export default function ToggleAudioButton({
     'space',
     (e) => {
       e.preventDefault();
+      if (!hasAudioTrack || disabled) {
+        return;
+      }
+
       setPopperOpen(false);
       toggleAudioEnabled(false);
     },
@@ -65,6 +73,10 @@ export default function ToggleAudioButton({
     'a',
     (e) => {
       e.preventDefault();
+      if (!hasAudioTrack || disabled) {
+        return;
+      }
+
       toggleAudioEnabled();
       setPopperMessage(
         isAudioEnabled ? (

@@ -91,7 +91,7 @@ export default function PresentationDisplay({
             <Slides
               slides={presentation.slides}
               index={finalIndex}
-              scale={scale}
+              scale={currentScale}
               resetTransform={resetTransform}
             />
           </TransformComponent>

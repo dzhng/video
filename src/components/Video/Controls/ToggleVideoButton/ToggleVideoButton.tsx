@@ -43,6 +43,10 @@ export default function ToggleVideoButton({
     'v',
     (e) => {
       e.preventDefault();
+      if (disabled || shouldDisableVideoToggle) {
+        return;
+      }
+
       toggleVideo();
       setPopperMessage(
         isVideoEnabled ? (
