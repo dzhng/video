@@ -16,6 +16,7 @@ import AudioLevelIndicator, {
 } from '~/components/Video/AudioLevelIndicator/AudioLevelIndicator';
 import BandwidthWarning from '~/components/Video/BandwidthWarning/BandwidthWarning';
 import NetworkQualityLevel from '~/components/Video/NetworkQualityLevel/NetworkQualityLevel';
+import UserAvatar from '~/components/UserAvatar/UserAvatar';
 
 import useDominantSpeaker from '~/hooks/Video/useDominantSpeaker/useDominantSpeaker';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
@@ -74,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
     infoContainer: {
       position: 'absolute',
-      zIndex: 1,
+      zIndex: 2,
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
@@ -82,6 +83,25 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       padding: '0.4em',
       background: 'transparent',
+    },
+    avatarContainer: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1,
+
+      '& >div': {
+        width: '70%',
+        height: '70%',
+        maxWidth: 150,
+        maxHeight: 150,
+        border: '2px solid #CCC',
+      },
     },
     reconnectingContainer: {
       position: 'absolute',
@@ -93,10 +113,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       background: 'rgba(40, 42, 43, 0.75)',
-      zIndex: 1,
-    },
-    hideVideo: {
-      background: 'black',
+      zIndex: 3,
     },
     identity: {
       height: 22,
@@ -196,10 +213,7 @@ export default function ParticipantInfo({
       data-cy-participant={participant.identity}
       data-testid="container"
     >
-      <div
-        className={clsx(classes.infoContainer, { [classes.hideVideo]: !isVideoEnabled })}
-        data-testid="info-container"
-      >
+      <div className={classes.infoContainer} data-testid="info-container">
         <div className={classes.infoRow}>
           <h4 className={classes.identity}>
             <ParticipantConnectionIndicator participant={participant} />
@@ -214,12 +228,19 @@ export default function ParticipantInfo({
           {/*isSelected && <PinIcon data-testid="pin-icon" />*/}
         </div>
       </div>
+
+      {!isVideoEnabled && (
+        <div className={classes.avatarContainer}>{userInfo && <UserAvatar user={userInfo} />}</div>
+      )}
+
       {isParticipantReconnecting && (
         <div className={classes.reconnectingContainer}>
           <Typography data-testid="reconnecting">Reconnecting...</Typography>
         </div>
       )}
+
       {isVideoSwitchedOff && <BandwidthWarning />}
+
       {children}
     </div>
   );
