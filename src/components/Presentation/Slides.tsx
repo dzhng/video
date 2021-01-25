@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Fab, Tooltip } from '@material-ui/core';
-import { FullscreenOutlined as ResetZoomIcon } from '@material-ui/icons';
 import Slide from './Slide';
 
 const useStyles = makeStyles((theme) =>
@@ -12,23 +10,16 @@ const useStyles = makeStyles((theme) =>
     hideSlide: {
       display: 'none',
     },
-    fab: {
-      position: 'absolute',
-      bottom: theme.spacing(1),
-      right: theme.spacing(1),
-    },
   }),
 );
 
 export default function Slides({
   slides,
   index,
-  scale,
   resetTransform,
 }: {
   slides: string[];
   index: number;
-  scale: number;
   resetTransform(): void;
 }) {
   const classes = useStyles();
@@ -53,14 +44,6 @@ export default function Slides({
           priority={idx === index}
         />
       ))}
-
-      {scale !== 1 && (
-        <Tooltip title="Reset zoom" placement="top">
-          <Fab size="small" onClick={resetTransform}>
-            <ResetZoomIcon />
-          </Fab>
-        </Tooltip>
-      )}
     </>
   );
 }

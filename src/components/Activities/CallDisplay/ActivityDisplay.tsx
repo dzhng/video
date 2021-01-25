@@ -101,7 +101,7 @@ export default function ActivityDisplay() {
             <div>
               <IconButton
                 size="small"
-                disabled={!hasActivityStarted}
+                disabled={!hasActivityStarted(currentActivity)}
                 onClick={handleRestartActivity}
               >
                 <RestartIcon />

@@ -15,6 +15,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       callButton: CSSProperties;
       scrollBar: CSSProperties;
       disableScrollBar: CSSProperties;
+      overflowScrollGradient: CSSProperties;
     };
   }
 
@@ -31,6 +32,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       callButton?: CSSProperties;
       scrollBar?: CSSProperties;
       disableScrollBar?: CSSProperties;
+      overflowScrollGradient?: CSSProperties;
     };
   }
 }
@@ -161,6 +163,27 @@ export default createMuiTheme({
       // Hide scrollbar for IE, Edge and Firefox
       msOverflowStyle: 'none', // IE and Edge
       scrollbarWidth: 'none', // Firefox
+    },
+    overflowScrollGradient: {
+      position: 'relative',
+
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        width: '100%',
+        height: 25,
+        // transparent keyword is broken in Safari
+        background: 'linear-gradient(white, rgba(255, 255, 255, 0.001))',
+      },
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 25,
+        background: 'linear-gradient(rgba(255, 255, 255, 0.001), white)',
+      },
     },
   },
 });
