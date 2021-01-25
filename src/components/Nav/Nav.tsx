@@ -228,6 +228,7 @@ export default function Nav({
     ),
     [
       classes,
+      routeSelectedClassname,
       currentWorkspaceId,
       handleWorkspaceChange,
       isWorkspacesReady,
