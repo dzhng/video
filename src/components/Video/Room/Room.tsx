@@ -23,7 +23,7 @@ import ChatNotification from './ChatNotification/ChatNotification';
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
-const Container = styled('div')(({ theme }) => ({
+const Container = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
 }));
