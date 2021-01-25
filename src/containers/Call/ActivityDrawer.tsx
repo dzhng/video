@@ -35,11 +35,12 @@ const useStyles = makeStyles((theme) =>
         maxHeight: '100%',
       },
       '& >div:first-child': {
-        maxHeight: '50%',
+        flexBasis: '400px',
+        flexGrow: 1,
         flexShrink: 0,
       },
       '& >div:nth-child(2)': {
-        flexBasis: '50%',
+        flexBasis: '400px',
         flexGrow: 1,
         marginTop: 0,
       },

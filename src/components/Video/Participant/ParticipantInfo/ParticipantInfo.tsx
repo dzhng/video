@@ -19,7 +19,6 @@ import NetworkQualityLevel from '~/components/Video/NetworkQualityLevel/NetworkQ
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 
 import useDominantSpeaker from '~/hooks/Video/useDominantSpeaker/useDominantSpeaker';
-import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import usePublications from '~/hooks/Video/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/Video/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useParticipantIsReconnecting from '~/hooks/Video/useParticipantIsReconnecting/useParticipantIsReconnecting';
