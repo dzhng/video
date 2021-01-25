@@ -100,10 +100,13 @@ export default function Activities({
   }
 
   return (
-    <div className={classes.container}>
-      {finishedActivities.map((fa) => (
-        <FinishedActivity key={fa.template.id} finishedActivity={fa} />
-      ))}
-    </div>
+    <>
+      <Typography variant="h2">Activities</Typography>
+      <div className={classes.container}>
+        {finishedActivities.map((fa) => (
+          <FinishedActivity key={fa.template.id} finishedActivity={fa} />
+        ))}
+      </div>
+    </>
   );
 }

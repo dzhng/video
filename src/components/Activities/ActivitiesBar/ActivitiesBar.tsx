@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
-import { Typography, Button, Card, CardContent } from '@material-ui/core';
+import { Typography, Button, Card } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AddOutlined as AddIcon, InfoOutlined as InfoIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
@@ -32,11 +32,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     hintCard: {
       border: '2px solid ' + theme.palette.info.light,
+      padding: theme.spacing(1),
+      display: 'flex',
 
-      '& svg': {
-        marginTop: '-5px',
-        marginLeft: '-3px',
+      '& >svg': {
         color: theme.palette.info.main,
+        marginRight: theme.spacing(1),
+        flexShrink: 0,
+      },
+      '& >div': {
+        flexGrow: 1,
       },
     },
     timelineItem: {
@@ -213,16 +218,15 @@ export default function ActivitiesBar({
             {/* Hide hint card after more than 2 activities since the user probably know what it is at that point. It also takes up a lot of space. */}
             {activities.length <= 2 && mode === 'edit' && (
               <Card className={clsx(classes.hintCard, classes.timelineItem)}>
-                <CardContent>
-                  <InfoIcon />
+                <InfoIcon />
+                <div>
                   <Typography variant="h2">
-                    <b>Structure your call with activities</b>
+                    <b>Plan your call with activities</b>
                   </Typography>
                   <Typography variant="body1">
-                    Activities are different interactions that engage the audience. Some activities
-                    are driven purely by the host, some engage everyone in the call.
+                    Activities are different interactions that engage the audience.
                   </Typography>
-                </CardContent>
+                </div>
               </Card>
             )}
 

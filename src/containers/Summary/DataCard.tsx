@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Divider } from '@material-ui/core';
+import { Card, CardContent, Divider } from '@material-ui/core';
 import { CallData, Activity } from '~/firebase/schema-types';
 import Notes from './Notes';
 import Chats from './Chats';
@@ -34,18 +34,13 @@ export default function DataCard({
   return (
     <Card className={classes.container}>
       <CardContent>
-        <Typography variant="h2">Notes</Typography>
         <Notes data={data} />
-
         <Divider />
-
-        <Typography variant="h2">Chats</Typography>
         <Chats data={data} />
 
         {activities && (
           <>
             <Divider />
-            <Typography variant="h2">Activities</Typography>
             <Activities data={data} activities={activities} />
           </>
         )}

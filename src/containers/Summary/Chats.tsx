@@ -27,14 +27,17 @@ export default function Chats({ data }: { data: { [key: string]: CallData } }) {
   const list = values(get(data, [ChatsDataKey, PublicChatsChannelKey], {}));
 
   return (
-    <div className={classes.container}>
-      {list.length > 0 ? (
-        <MessageList data={data} scrollRef={scrollRef} />
-      ) : (
-        <Typography variant="body1" style={{ margin: 8, color: '#888' }}>
-          No chats were sent in this call.
-        </Typography>
-      )}
-    </div>
+    <>
+      <Typography variant="h2">Chats</Typography>
+      <div className={classes.container}>
+        {list.length > 0 ? (
+          <MessageList data={data} scrollRef={scrollRef} />
+        ) : (
+          <Typography variant="body1" style={{ margin: 8, color: '#888' }}>
+            No chats were sent in this call.
+          </Typography>
+        )}
+      </div>
+    </>
   );
 }
