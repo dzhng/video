@@ -47,7 +47,7 @@ export default function CallFlow({
   // tracks if the call was created by user or if just joining existing call
   const [callCreated, setCallCreated] = useState(false);
 
-  // get local tracks on component mount, remove when dismounted
+  // get local tracks on component mount
   useEffect(() => {
     getAudioAndVideoTracks().catch((error) => {
       console.log('Error acquiring local media:');

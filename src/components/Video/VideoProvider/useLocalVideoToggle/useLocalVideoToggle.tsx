@@ -99,12 +99,13 @@ export default function useLocalVideoToggle(
   }, [isEnabled, isPublishing, mediaStreamTrack, videoTrack, localParticipant]);
 
   const isToggleCameraSupported: boolean = Boolean(supportsFacingMode && videoDevices.length > 1);
+  const shouldDisableVideoToggle = isPublishing || !videoTrack;
 
   return {
     isVideoEnabled: isEnabled,
     toggleVideoEnabled,
     isToggleCameraSupported,
-    shouldDisableVideoToggle: isPublishing,
+    shouldDisableVideoToggle,
     toggleCamera,
   };
 }
