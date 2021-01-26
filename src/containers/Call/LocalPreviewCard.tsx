@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Card, Typography, Button, CircularProgress } from '@material-ui/core';
+import useDimensions from 'react-cool-dimensions';
 import { VideoCallFilledIcon } from '~/components/Icons';
 import LocalVideoPreview from '~/components/Video/LocalVideoPreview/LocalVideoPreview';
 import Controls from '~/components/Video/Controls/Controls';
@@ -11,7 +12,6 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
       display: 'flex',
-      flexDirection: 'row',
       maxHeight: '60vh',
       boxShadow: theme.shadows[15],
       // fix safari video cropping bug
@@ -19,6 +19,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
       [theme.breakpoints.down('xs')]: {
         flexDirection: 'column',
+      },
+      [theme.breakpoints.up('sm')]: {
+        flexDirection: 'row',
+        height: ({ width }: { width: number }) => width * 0.67,
       },
       '& >div:first-child': {
         flexBasis: '300px',
@@ -97,10 +101,14 @@ export default function LocalPreviewCard({
   isSubmitting,
   onSubmit,
 }: LocalPreviewCardProps) {
-  const classes = useStyles();
+  // set a height based on percentage of width so that video has a good display area
+  // or else there'll be a weird transition state before the video starts where
+  // the height will be super low
+  const { ref, width } = useDimensions();
+  const classes = useStyles({ width });
 
   return (
-    <Card className={clsx(classes.card, className)}>
+    <Card ref={ref} className={clsx(classes.card, className)}>
       <div className={classes.videoContainer}>
         <LocalVideoPreview />
         <div className={classes.controlsContainer}>
