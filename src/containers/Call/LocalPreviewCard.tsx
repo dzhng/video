@@ -133,7 +133,7 @@ export default function LocalPreviewCard({
           disabled={disabled}
         >
           {isSubmitting ? (
-            <CircularProgress color="secondary" size={'1rem'} />
+            <CircularProgress color="primary" size={'1rem'} />
           ) : (
             <>
               <VideoCallFilledIcon style={{ marginRight: 8 }} />

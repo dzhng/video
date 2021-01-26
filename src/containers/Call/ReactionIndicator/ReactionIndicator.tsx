@@ -31,30 +31,8 @@ const useStyles = makeStyles(() =>
 
       '& >span': {
         position: 'absolute',
-        visibility: 'hidden',
-        animation: `globalReaction ${reactionTimeMs / 1000}s`,
         cursor: 'default',
         pointerEvents: 'none',
-      },
-    },
-
-    // define animation for pop in text
-    '@global': {
-      '@keyframes globalReaction': {
-        '0%': {
-          visibility: 'visible',
-          transform: 'scale(1.0)',
-          opacity: 1,
-        },
-        '60%': {
-          opacity: 1,
-          transform: 'scale(1.0)',
-        },
-        '100%': {
-          visibility: 'hidden',
-          transform: 'scale(1.5)',
-          opacity: 0,
-        },
       },
     },
   }),
@@ -88,8 +66,8 @@ export default function ReactionIndicator() {
         ).map((_, idx) => (
           <motion.span
             key={`${new Date().getTime()}${idx}`}
-            style={{ bottom: '-50px', left: Math.random() * width }}
-            animate={{ bottom: (Math.random() * 0.4 + 0.2) * height }}
+            style={{ bottom: '-50px', left: Math.random() * width, opacity: 1 }}
+            animate={{ opacity: 0, y: -(Math.random() * 0.4 + 0.2) * height, scale: [1, 1, 1.5] }}
             transition={{
               ease: 'easeOut',
               duration: reactionTimeMs / 1000,
@@ -102,7 +80,7 @@ export default function ReactionIndicator() {
 
         // after animation is over, remove all elements
         timerId.current = setTimeout(() => {
-          setReactionElements((state) => without(state, ...elements));
+          setReactionElements((newState) => without(newState, ...elements));
         }, reactionTimeMs);
 
         return [...elements, ...state];
