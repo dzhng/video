@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useHotkeys } from 'react-hotkeys-hook';
 import CallEnd from '@material-ui/icons/CallEnd';
 import {
@@ -15,14 +14,7 @@ import {
 
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      margin: theme.spacing(1),
-    },
-  }),
-);
+import { useStyles } from '../styles';
 
 export default function EndCallButton({
   setPopperMessage,

@@ -1,19 +1,11 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Fab, Tooltip } from '@material-ui/core';
 import { Mic, MicOff } from '@material-ui/icons';
 
 import useLocalAudioToggle from '~/hooks/Video/useLocalAudioToggle/useLocalAudioToggle';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      margin: theme.spacing(1),
-    },
-  }),
-);
+import { useStyles } from '../styles';
 
 export default function ToggleAudioButton({
   disabled,

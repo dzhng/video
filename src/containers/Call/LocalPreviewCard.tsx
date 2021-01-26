@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     actionButton: {
       ...theme.customMixins.callButton,
+      height: 43,
       fontWeight: 'bold',
       fontSize: '1.1rem',
       flexShrink: 0,

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import { ScreenShare, StopScreenShare } from '@material-ui/icons';
 import { Tooltip, Fab } from '@material-ui/core';
@@ -7,23 +6,12 @@ import { Tooltip, Fab } from '@material-ui/core';
 import useScreenShareToggle from '~/hooks/Video/useScreenShareToggle/useScreenShareToggle';
 import useScreenShareParticipant from '~/hooks/Video/useScreenShareParticipant/useScreenShareParticipant';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
+import { useStyles } from '../styles';
 
 export const SCREEN_SHARE_TEXT = 'Share Screen';
 export const STOP_SCREEN_SHARE_TEXT = 'Stop Sharing Screen';
 export const SHARE_IN_PROGRESS_TEXT = 'Cannot share screen when another user is sharing';
 export const SHARE_NOT_SUPPORTED_TEXT = 'Screen sharing is not supported with this browser';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      margin: theme.spacing(1),
-      '&[disabled]': {
-        color: 'rgba(225, 225, 225, 0.8)',
-        backgroundColor: 'rgba(175, 175, 175, 0.6);',
-      },
-    },
-  }),
-);
 
 export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
   const classes = useStyles();

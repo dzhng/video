@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import clsx from 'clsx';
 import { Participant as ParticipantType } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
 import { Fab, Tooltip, Hidden } from '@material-ui/core';
@@ -16,6 +17,7 @@ import useScreenShareParticipant from '~/hooks/Video/useScreenShareParticipant/u
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
 import SettingsSpeedDial from '~/components/Video/SettingsSpeedDial/SettingsSpeedDial';
+import { useStyles } from '~/components/Video/Controls/styles';
 import ReconnectingNotification from './ReconnectingNotification/ReconnectingNotification';
 import ChatNotification from './ChatNotification/ChatNotification';
 
@@ -46,7 +48,6 @@ const ControlsBar = styled('div')(({ theme }) => ({
 
   '& .fab': {
     backgroundColor: theme.palette.grey[900],
-    margin: theme.spacing(1),
     color: 'white',
   },
 
@@ -58,6 +59,8 @@ const ControlsBar = styled('div')(({ theme }) => ({
 }));
 
 export default function Room() {
+  const classes = useStyles();
+
   // Here we would like the height of the main container to be the height of the viewport.
   // On some mobile browsers, 'height: 100vh' sets the height equal to that of the screen,
   // not the viewport. This looks bad when the mobile browsers location bar is open.
@@ -114,7 +117,10 @@ export default function Room() {
           <Hidden smUp implementation="js">
             <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
               <div>
-                <Fab className="fab" onClick={() => setIsActivityDrawerOpen(true)}>
+                <Fab
+                  className={clsx('fab', classes.fab)}
+                  onClick={() => setIsActivityDrawerOpen(true)}
+                >
                   <MenuIcon />
                 </Fab>
               </div>

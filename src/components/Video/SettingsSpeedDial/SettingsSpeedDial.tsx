@@ -27,6 +27,12 @@ const useStyles = makeStyles((theme) =>
         '&:hover': {
           backgroundColor: theme.palette.grey[800],
         },
+        // if small screen, have smaller buttons so they can all fit
+        // make sure this is aligned with video controls fab styles
+        [theme.breakpoints.down('xs')]: {
+          width: 40,
+          height: 40,
+        },
       },
 
       '& .MuiSpeedDialAction-staticTooltipLabel': {
