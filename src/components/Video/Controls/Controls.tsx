@@ -12,6 +12,7 @@ import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
+import ReactionButton from './ReactionButton/ReactionButton';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -51,13 +52,19 @@ export default function Controls({ showControls = true }: { showControls?: boole
         ref={anchorRef}
         className={clsx(classes.container, { showControls })}
       >
+        {/* we are assuming that connected room means call provider is setup, which is needed for reactions */}
+        {roomState !== 'disconnected' && <ReactionButton />}
+
         <ToggleAudioButton
           disabled={disableButtons}
           setPopperOpen={setIsPopperOpen}
           setPopperMessage={setPopperMessage}
         />
         <ToggleVideoButton disabled={disableButtons} setPopperMessage={setPopperMessage} />
-        {roomState !== 'disconnected' && !isMobile && <ToggleScreenShareButton />}
+
+        {roomState !== 'disconnected' && !isMobile && (
+          <ToggleScreenShareButton disabled={disableButtons} />
+        )}
         {roomState !== 'disconnected' && <EndCallButton setPopperMessage={setPopperMessage} />}
       </div>
 

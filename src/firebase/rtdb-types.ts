@@ -25,8 +25,8 @@ export interface MessageType {
 }
 
 export type ReactionTypes =
-  | 'happy'
   | 'thumbsup'
+  | 'happy'
   | 'laugh'
   | 'celebrate'
   | '100'
@@ -34,6 +34,18 @@ export type ReactionTypes =
   | 'wow'
   | 'fire'
   | 'love';
+
+export const ReactionMap: { [key in ReactionTypes]: string } = {
+  thumbsup: '👍',
+  happy: '😀',
+  laugh: '😂',
+  celebrate: '🎉',
+  100: '💯',
+  tear: '😥',
+  wow: '😲',
+  fire: '🔥',
+  love: '😍',
+};
 
 export interface ReactionType {
   uid: string;
