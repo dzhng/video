@@ -6,6 +6,7 @@ import useActivity from './useActivity/useActivity';
 import useCallData from './useCallData/useCallData';
 import useCurrentActivity from './useCurrentActivity/useCurrentActivity';
 import useCallChat from './useCallChat/useCallChat';
+import useCallReactions from './useCallReactions/useCallReactions';
 import { CallEmitter, CallEmitterType } from './events';
 
 interface CallContextTypes {
@@ -52,6 +53,8 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
 
   // init call chat events
   useCallChat(CallEmitter, useCallProps.call);
+  // init reactions events
+  useCallReactions(CallEmitter, useCallProps.call);
 
   const value = useMemo<CallContextTypes>(
     () => ({

@@ -93,22 +93,20 @@ export default function Activities({
     })
     .filter((v) => !!v) as FinishedActivityType[];
 
-  if (finishedActivities.length === 0) {
-    return (
-      <Typography variant="body1" style={{ color: '#888' }}>
-        No activities was started during this call.
-      </Typography>
-    );
-  }
-
   return (
     <>
       <Typography variant="h2">Activities</Typography>
-      <div className={classes.container}>
-        {finishedActivities.map((fa) => (
-          <FinishedActivity key={fa.template.id} finishedActivity={fa} />
-        ))}
-      </div>
+      {finishedActivities.length > 0 ? (
+        <div className={classes.container}>
+          {finishedActivities.map((fa) => (
+            <FinishedActivity key={fa.template.id} finishedActivity={fa} />
+          ))}
+        </div>
+      ) : (
+        <Typography variant="body1" style={{ color: '#888' }}>
+          No activities was started during this call.
+        </Typography>
+      )}
     </>
   );
 }
