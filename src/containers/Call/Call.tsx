@@ -12,10 +12,12 @@ import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/Un
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import HotkeyInstructions from './HotkeyInstructions/HotkeyInstructions';
 import CallFlow from './CallFlow';
+import ReactionIndicator from './ReactionIndicator/ReactionIndicator';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
+      position: 'relative',
       width: '100%',
       height: '100vh',
       background: '#091523',
@@ -129,6 +131,8 @@ export default function CallContainer() {
           >
             <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
           </VideoProvider>
+
+          <ReactionIndicator />
         </div>
       </UnsupportedBrowserWarning>
 

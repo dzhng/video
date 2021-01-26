@@ -19,10 +19,12 @@ const useStyles = makeStyles(() =>
       zIndex: 3,
       fontSize: ({ width }: { width: number }) => width / 2 + 'px',
       color: 'white',
+      pointerEvents: 'none',
 
       '& >span': {
-        opacity: 0,
+        visibility: 'hidden',
         animation: 'popIn 1.5s',
+        cursor: 'default',
       },
     },
 
@@ -30,6 +32,7 @@ const useStyles = makeStyles(() =>
     '@global': {
       '@keyframes popIn': {
         '0%': {
+          visibility: 'visible',
           opacity: 0,
           transform: 'scale(0.5)',
         },
@@ -42,6 +45,7 @@ const useStyles = makeStyles(() =>
           transform: 'scale(1)',
         },
         '100%': {
+          visibility: 'hidden',
           opacity: 0,
           transform: 'scale(2)',
         },
