@@ -23,6 +23,8 @@ const useStyles = makeStyles(() =>
 
       '& >span': {
         visibility: 'hidden',
+        opacity: 0,
+        transform: 'scale(0.5)',
         animation: 'popIn 1.5s',
         cursor: 'default',
       },
