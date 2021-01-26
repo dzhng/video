@@ -23,16 +23,14 @@ const useStyles = makeStyles(() =>
 
       '& >span': {
         visibility: 'hidden',
-        opacity: 0,
-        transform: 'scale(0.5)',
-        animation: 'popIn 1.5s',
+        animation: 'participantReaction 1.5s',
         cursor: 'default',
       },
     },
 
     // define animation for pop in text
     '@global': {
-      '@keyframes popIn': {
+      '@keyframes participantReaction': {
         '0%': {
           visibility: 'visible',
           opacity: 0,

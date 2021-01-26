@@ -22,14 +22,14 @@ const useStyles = makeStyles(() =>
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 3,
-      fontSize: '20px',
+      fontSize: '40px',
       color: 'white',
       pointerEvents: 'none',
 
       '& >span': {
         position: 'absolute',
         visibility: 'hidden',
-        animation: `popIn ${reactionTimeMs / 1000}s`,
+        animation: `globalReaction ${reactionTimeMs / 1000}s`,
         cursor: 'default',
         pointerEvents: 'none',
       },
@@ -37,16 +37,19 @@ const useStyles = makeStyles(() =>
 
     // define animation for pop in text
     '@global': {
-      '@keyframes popIn': {
+      '@keyframes globalReaction': {
         '0%': {
           visibility: 'visible',
+          transform: 'scale(1.0)',
           opacity: 1,
         },
-        '50%': {
+        '60%': {
           opacity: 1,
+          transform: 'scale(1.0)',
         },
         '100%': {
           visibility: 'hidden',
+          transform: 'scale(1.5)',
           opacity: 0,
         },
       },
@@ -78,9 +81,13 @@ export default function ReactionIndicator() {
       const elements = fill(Array(elementsPerReaction), null).map((_, idx) => (
         <motion.span
           key={`${new Date().getTime()}${idx}`}
-          style={{ bottom: '-20px', left: Math.random() * width }}
-          animate={{ bottom: (Math.random() * 0.6 + 0.2) * height }}
-          transition={{ ease: 'easeOut', duration: reactionTimeMs / 1000 }}
+          style={{ bottom: '-50px', left: Math.random() * width }}
+          animate={{ bottom: (Math.random() * 0.4 + 0.2) * height }}
+          transition={{
+            ease: 'easeOut',
+            duration: reactionTimeMs / 1000,
+            delay: Math.random() * 0.5,
+          }}
         >
           {ReactionMap[reaction.type]}
         </motion.span>
