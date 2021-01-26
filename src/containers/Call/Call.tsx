@@ -44,21 +44,6 @@ const useStyles = makeStyles((theme) =>
         height: 20,
       },
     },
-
-    // define animation for container background
-    '@global': {
-      '@keyframes gradient': {
-        '0%': {
-          backgroundPosition: '0% 50%',
-        },
-        '50%': {
-          backgroundPosition: '100% 50%',
-        },
-        '100%': {
-          backgroundPosition: '0% 50%',
-        },
-      },
-    },
   }),
 );
 

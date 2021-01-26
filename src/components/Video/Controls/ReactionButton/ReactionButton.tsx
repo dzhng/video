@@ -43,7 +43,11 @@ export const useComponentStyles = makeStyles((theme) =>
   }),
 );
 
-export default function ReactionButton() {
+export default function ReactionButton({
+  setPopperMessage,
+}: {
+  setPopperMessage(node: React.ReactNode, autoClose?: boolean): void;
+}) {
   const parentClasses = useStyles();
   const classes = useComponentStyles();
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -78,8 +82,9 @@ export default function ReactionButton() {
     (e) => {
       e.preventDefault();
       createReaction('thumbsup');
+      setPopperMessage(<>Reaction sent 👍</>, true);
     },
-    [createReaction],
+    [createReaction, setPopperMessage],
   );
 
   return (

@@ -53,7 +53,7 @@ export default function Controls({ showControls = true }: { showControls?: boole
         className={clsx(classes.container, { showControls })}
       >
         {/* we are assuming that connected room means call provider is setup, which is needed for reactions */}
-        {roomState !== 'disconnected' && <ReactionButton />}
+        {roomState !== 'disconnected' && <ReactionButton setPopperMessage={setPopperMessage} />}
 
         <ToggleAudioButton
           disabled={disableButtons}

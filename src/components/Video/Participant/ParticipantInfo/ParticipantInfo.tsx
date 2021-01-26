@@ -26,6 +26,7 @@ import useTrack from '~/hooks/Video/useTrack/useTrack';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
+import ReactionIndicator from './ReactionIndicator/ReactionIndicator';
 //import PinIcon from './PinIcon/PinIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -112,7 +113,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       background: 'rgba(40, 42, 43, 0.75)',
-      zIndex: 3,
+      zIndex: 10,
     },
     identity: {
       height: 22,
@@ -239,6 +240,7 @@ export default function ParticipantInfo({
       )}
 
       {isVideoSwitchedOff && <BandwidthWarning />}
+      <ReactionIndicator identity={participant.identity} />
 
       {children}
     </div>

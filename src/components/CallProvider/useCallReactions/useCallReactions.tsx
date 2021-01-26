@@ -20,9 +20,7 @@ export default function useCallReactions(events: CallEmitterType, call?: LocalMo
       // when a new message is created, add it to state
       valueRef.on('child_added', (snapshot) => {
         const val = snapshot.val() as ReactionType;
-        if (val.uid !== user.uid) {
-          events.emit(CallEvents.NEW_REACTION, val);
-        }
+        events.emit(CallEvents.NEW_REACTION, val);
       });
 
       return () => valueRef.off('child_added');
