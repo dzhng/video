@@ -3,13 +3,13 @@ import { get, entries } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
-import { CallData, ActivityDataKey } from '~/firebase/rtdb-types';
+import { ActivityType, ActivityDataType, CallData, ActivityDataKey } from '~/firebase/rtdb-types';
 import type { Activity } from '~/firebase/schema-types';
 import { ActivityTypeConfig } from '~/components/Activities/Types/Types';
 
 interface FinishedActivityType {
   template: Activity;
-  data: CallData;
+  data: ActivityType;
 }
 
 const useStyles = makeStyles((theme) =>
@@ -76,7 +76,7 @@ export default function Activities({
 }) {
   const classes = useStyles();
 
-  const allActivityData = get(data, [ActivityDataKey]) as CallData;
+  const allActivityData = get(data, [ActivityDataKey]) as ActivityDataType;
   const finishedActivities = entries(allActivityData)
     .map(([activityId, activityData]) => {
       const template = activities.find((config) => config.id === activityId);
@@ -84,10 +84,12 @@ export default function Activities({
         return undefined;
       }
 
-      return {
+      const finishedType: FinishedActivityType = {
         template,
         data: activityData,
       };
+
+      return finishedType;
     })
     .filter((v) => !!v) as FinishedActivityType[];
 
