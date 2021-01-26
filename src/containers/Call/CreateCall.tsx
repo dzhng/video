@@ -26,7 +26,7 @@ export default function CreateCall({ create }: { create(): Promise<boolean> }) {
   return (
     <LocalPreview
       title="Start call as host"
-      helperText="Please check that your camera and mic is enabled, and create the call when you are ready."
+      helperText="Please check that your camera and mic is enabled, and start the call when you are ready."
       actionText="Start Call"
       disabled={isCreating}
       isSubmitting={isCreating}
