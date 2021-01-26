@@ -3,12 +3,14 @@ import { fill, without } from 'lodash';
 import { motion } from 'framer-motion';
 import useDimensions from 'react-cool-dimensions';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { isMobile } from '~/utils';
 import { ReactionMap, ReactionType } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { CallEvents } from '~/components/CallProvider/events';
 
 const reactionTimeMs = 1000;
-const elementsPerReaction = 40;
+// mobile have smaller screen so less reactions
+const elementsPerReaction = isMobile ? 15 : 30;
 
 const useStyles = makeStyles(() =>
   createStyles({

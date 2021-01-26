@@ -51,6 +51,8 @@ export default function ReactionButton({
   const parentClasses = useStyles();
   const classes = useComponentStyles();
   const anchorRef = useRef<HTMLDivElement>(null);
+  // track last reaction created for quick creation via hotkeys
+  const [currentReaction, setCurrentReaction] = useState<ReactionTypes>('thumbsup');
   const [pickerOpen, setPickerOpen] = useState(false);
   const { user } = useAppState();
   const { updateCallData } = useCallContext();
@@ -72,6 +74,7 @@ export default function ReactionButton({
       // should generate a relatively unique key
       const key = `${user.uid}-${nowMs}`;
       updateCallData(ReactionsDataKey, key, reactionData);
+      setCurrentReaction(type);
     },
     [user, updateCallData],
   );
@@ -81,10 +84,10 @@ export default function ReactionButton({
     'r',
     (e) => {
       e.preventDefault();
-      createReaction('thumbsup');
-      setPopperMessage(<>Reaction sent 👍</>, true);
+      createReaction(currentReaction);
+      setPopperMessage(<>Reaction sent {ReactionMap[currentReaction]}</>, true);
     },
-    [createReaction, setPopperMessage],
+    [createReaction, currentReaction, setPopperMessage],
   );
 
   return (
@@ -97,7 +100,7 @@ export default function ReactionButton({
             onClick={() => setPickerOpen((state) => !state)}
             onMouseEnter={() => setPickerOpen(true)}
           >
-            {ReactionMap.thumbsup}
+            {ReactionMap[currentReaction]}
           </Fab>
         </div>
       </Tooltip>
