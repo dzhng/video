@@ -30,6 +30,7 @@
     "firebase-admin": "^9.4.2",
     "formik": "^2.2.6",
     "formik-material-ui": "^3.0.1",
+    "framer-motion": "^3.2.2-rc.1",
     "fscreen": "^1.1.0",
     "husky": "^4.3.8",
     "isomorphic-unfetch": "^3.1.0",

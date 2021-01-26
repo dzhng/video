@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { without } from 'lodash';
+import { fill, without } from 'lodash';
+import { motion } from 'framer-motion';
 import useDimensions from 'react-cool-dimensions';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { ReactionMap, ReactionType } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { CallEvents } from '~/components/CallProvider/events';
 
-const reactionTimeMs = 1500;
-const elementsPerReaction = 20;
+const reactionTimeMs = 1000;
+const elementsPerReaction = 40;
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -30,6 +31,7 @@ const useStyles = makeStyles(() =>
         visibility: 'hidden',
         animation: `popIn ${reactionTimeMs / 1000}s`,
         cursor: 'default',
+        pointerEvents: 'none',
       },
     },
 
@@ -38,21 +40,14 @@ const useStyles = makeStyles(() =>
       '@keyframes popIn': {
         '0%': {
           visibility: 'visible',
-          opacity: 0,
-          transform: 'scale(0.5)',
-        },
-        '20%': {
           opacity: 1,
-          transform: 'scale(1)',
         },
         '50%': {
           opacity: 1,
-          transform: 'scale(1)',
         },
         '100%': {
           visibility: 'hidden',
           opacity: 0,
-          transform: 'scale(2)',
         },
       },
     },
@@ -62,15 +57,17 @@ const useStyles = makeStyles(() =>
 export default function ReactionIndicator() {
   // measure width and height to figure out how far elements needs to float up
   const { ref, width, height } = useDimensions<HTMLDivElement>();
-  const classes = useStyles({ width, height });
+  const classes = useStyles();
   const { events } = useCallContext();
   const [reactionElements, setReactionElements] = useState<React.ReactNode[]>([]);
+  const timerId = useRef<any>();
 
-  // track unmount state so timer don't call setState when unmounted
-  const didUnmount = useRef(false);
+  // stop timer on unmount
   useEffect(
     () => () => {
-      didUnmount.current = true;
+      if (timerId.current) {
+        clearTimeout(timerId.current);
+      }
     },
     [],
   );
@@ -78,19 +75,22 @@ export default function ReactionIndicator() {
   // everytime noti messages change, send to snackbar
   useEffect(() => {
     const handleNewReaction = (reaction: ReactionType) => {
-      const elements = Array(elementsPerReaction).map((_, idx) => (
-        <span key={idx} style={{ bottom: 0, left: Math.random() * width }}>
+      const elements = fill(Array(elementsPerReaction), null).map((_, idx) => (
+        <motion.span
+          key={`${new Date().getTime()}${idx}`}
+          style={{ bottom: '-20px', left: Math.random() * width }}
+          animate={{ bottom: (Math.random() * 0.6 + 0.2) * height }}
+          transition={{ ease: 'easeOut', duration: reactionTimeMs / 1000 }}
+        >
           {ReactionMap[reaction.type]}
-        </span>
+        </motion.span>
       ));
 
       setReactionElements((state) => [...elements, ...state]);
 
       // after animation is over, remove all elements
-      setTimeout(() => {
-        if (!didUnmount.current) {
-          setReactionElements((state) => without(state, ...elements));
-        }
+      timerId.current = setTimeout(() => {
+        setReactionElements((state) => without(state, ...elements));
       }, reactionTimeMs);
     };
 
@@ -98,7 +98,7 @@ export default function ReactionIndicator() {
     return () => {
       events.off(CallEvents.NEW_REACTION, handleNewReaction);
     };
-  }, [events, width]);
+  }, [events, width, height]);
 
   return (
     <div ref={ref} className={classes.container}>
