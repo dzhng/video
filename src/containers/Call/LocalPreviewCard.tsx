@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
       [theme.breakpoints.down('xs')]: {
         flexDirection: 'column',
+        textAlign: 'center',
       },
       [theme.breakpoints.up('sm')]: {
         flexDirection: 'row',
@@ -132,7 +133,7 @@ export default function LocalPreviewCard({
           disabled={disabled}
         >
           {isSubmitting ? (
-            <CircularProgress color="inherit" size={'1rem'} />
+            <CircularProgress color="secondary" size={'1rem'} />
           ) : (
             <>
               <VideoCallFilledIcon style={{ marginRight: 8 }} />
