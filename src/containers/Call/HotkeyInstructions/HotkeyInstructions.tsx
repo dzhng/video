@@ -121,7 +121,7 @@ export default function HotkeyInstructions({
 
                 <Typography variant="h5">Misc</Typography>
                 <Divider />
-                <HotkeyItem title="Send thumbs up reaction 👍" hotkey="R" />
+                <HotkeyItem title="Send reaction 👍" hotkey="R" />
                 <HotkeyItem title="Full Screen" hotkey="F" />
                 <HotkeyItem title="Copy Share Link" hotkey="L" />
                 <HotkeyItem title="Join or Create Call (before call start)" hotkey="[enter]" />
