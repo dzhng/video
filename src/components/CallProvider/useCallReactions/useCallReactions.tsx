@@ -5,9 +5,7 @@ import { CallsRTDBRoot, ReactionsDataKey, ReactionType } from '~/firebase/rtdb-t
 import { useAppState } from '~/state';
 import { CallEvents, CallEmitterType } from '../events';
 
-export const MessageTimeoutMs = 2000;
-
-export default function useCallChat(events: CallEmitterType, call?: LocalModel<Call>) {
+export default function useCallReactions(events: CallEmitterType, call?: LocalModel<Call>) {
   const { user } = useAppState();
 
   useEffect(() => {

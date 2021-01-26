@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { rtdb } from '~/utils/firebase';
 import { LocalModel, Call } from '~/firebase/schema-types';
-import { CallsRTDBRoot, ChatsDataKey, PublicChatsChannelKey } from '~/constants';
+import {
+  CallsRTDBRoot,
+  ChatsDataKey,
+  PublicChatsChannelKey,
+  MessageType,
+} from '~/firebase/rtdb-types';
 import { useAppState } from '~/state';
-import { MessageType } from '~/firebase/rtdb-types';
 import { CallEvents, CallEmitterType } from '../events';
-
-export const MessageTimeoutMs = 2000;
 
 export default function useCallChat(events: CallEmitterType, call?: LocalModel<Call>) {
   const { user } = useAppState();
