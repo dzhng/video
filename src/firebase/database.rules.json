@@ -9,6 +9,9 @@
           "all": {
             ".indexOn": ["createdAt"]
           }
+        },
+        "reactions": {
+          ".indexOn": ["createdAt"]
         }
       }
     }
