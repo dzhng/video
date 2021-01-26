@@ -11,6 +11,7 @@ import { CallEvents } from '~/components/CallProvider/events';
 const reactionTimeMs = 1000;
 // mobile have smaller screen so less reactions
 const elementsPerReaction = isMobile ? 15 : 30;
+const maxElements = 60;
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -80,27 +81,32 @@ export default function ReactionIndicator() {
   // everytime noti messages change, send to snackbar
   useEffect(() => {
     const handleNewReaction = (reaction: ReactionType) => {
-      const elements = fill(Array(elementsPerReaction), null).map((_, idx) => (
-        <motion.span
-          key={`${new Date().getTime()}${idx}`}
-          style={{ bottom: '-50px', left: Math.random() * width }}
-          animate={{ bottom: (Math.random() * 0.4 + 0.2) * height }}
-          transition={{
-            ease: 'easeOut',
-            duration: reactionTimeMs / 1000,
-            delay: Math.random() * 0.5,
-          }}
-        >
-          {ReactionMap[reaction.type]}
-        </motion.span>
-      ));
+      setReactionElements((state) => {
+        const elements = fill(
+          Array(Math.min(maxElements - state.length, elementsPerReaction)),
+          null,
+        ).map((_, idx) => (
+          <motion.span
+            key={`${new Date().getTime()}${idx}`}
+            style={{ bottom: '-50px', left: Math.random() * width }}
+            animate={{ bottom: (Math.random() * 0.4 + 0.2) * height }}
+            transition={{
+              ease: 'easeOut',
+              duration: reactionTimeMs / 1000,
+              delay: Math.random() * 0.5,
+            }}
+          >
+            {ReactionMap[reaction.type]}
+          </motion.span>
+        ));
 
-      setReactionElements((state) => [...elements, ...state]);
+        // after animation is over, remove all elements
+        timerId.current = setTimeout(() => {
+          setReactionElements((state) => without(state, ...elements));
+        }, reactionTimeMs);
 
-      // after animation is over, remove all elements
-      timerId.current = setTimeout(() => {
-        setReactionElements((state) => without(state, ...elements));
-      }, reactionTimeMs);
+        return [...elements, ...state];
+      });
     };
 
     events.on(CallEvents.NEW_REACTION, handleNewReaction);
