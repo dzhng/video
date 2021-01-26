@@ -5,9 +5,9 @@ import { Skeleton } from '@material-ui/lab';
 import { useSnackbar } from 'notistack';
 
 import { shortName } from '~/utils';
+import { MessageType } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
-import { MessageType } from '~/components/CallProvider/useCallChat/useCallChat';
 import { CallEvents } from '~/components/CallProvider/events';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 

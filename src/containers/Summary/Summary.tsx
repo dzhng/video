@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import { Container, Grid, Typography, IconButton } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { BackIcon } from '~/components/Icons';
-import { LocalModel, Call, CallData } from '~/firebase/schema-types';
+import type { LocalModel, Call } from '~/firebase/schema-types';
+import type { CallData } from '~/firebase/rtdb-types';
 import type { ParticipantRecord } from './types';
 import CallCard from './CallCard';
 import DataCard from './DataCard';
@@ -33,7 +34,7 @@ export default function SummaryContainer({
   fromHref,
 }: {
   call: LocalModel<Call>;
-  data: { [key: string]: CallData };
+  data: CallData;
   participants: ParticipantRecord[];
   fromHref?: string;
 }) {

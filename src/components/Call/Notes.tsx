@@ -3,8 +3,14 @@ import { get } from 'lodash';
 import { styled } from '@material-ui/core/styles';
 import { useAppState } from '~/state';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
-import { TasksDataKey, ActionItemsKey, QuestionsKey, TakeAwaysKey } from '~/constants';
-import { TaskType, TaskSectionType } from './types';
+import {
+  TaskType,
+  TaskSectionType,
+  TasksDataKey,
+  ActionItemsKey,
+  QuestionsKey,
+  TakeAwaysKey,
+} from '~/firebase/rtdb-types';
 import TaskSection from './TaskSection';
 
 const Container = styled('div')(({ theme }) => ({

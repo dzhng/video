@@ -1,7 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { rtdb } from '~/utils/firebase';
-import { CallsRTDBRoot, CurrentActivityIDKey, ActivityDataKey } from '~/constants';
-import { LocalModel, Call, Activity, CallDataTypes, CallData } from '~/firebase/schema-types';
+import {
+  CallDataTypes,
+  CallsRTDBRoot,
+  CurrentActivityIDKey,
+  ActivityDataKey,
+  ActivityDataType,
+} from '~/firebase/rtdb-types';
+import { LocalModel, Call, Activity } from '~/firebase/schema-types';
 
 export default function useActivity(call?: LocalModel<Call>) {
   const startActivity = useCallback(
@@ -60,9 +66,7 @@ export default function useActivity(call?: LocalModel<Call>) {
     [call],
   );
 
-  const [activityData, setActivityData] = useState<{ [key: string]: CallData } | undefined>(
-    undefined,
-  );
+  const [activityData, setActivityData] = useState<ActivityDataType | undefined>(undefined);
 
   useEffect(() => {
     if (call) {

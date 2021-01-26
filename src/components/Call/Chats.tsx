@@ -9,13 +9,16 @@ import Linkify from 'react-linkify';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
-import { CallData } from '~/firebase/schema-types';
-import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
+import {
+  CallData,
+  MessageType,
+  ChatChannelType,
+  ChatsDataKey,
+  PublicChatsChannelKey,
+} from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
-import { MessageType } from '~/components/CallProvider/useCallChat/useCallChat';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
-import { ChatChannelType } from './types';
 
 const MaxDisplayableMessages = 500;
 

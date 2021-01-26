@@ -3,8 +3,8 @@ import { get, entries } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
-import { ActivityDataKey } from '~/constants';
-import { CallData, Activity } from '~/firebase/schema-types';
+import { CallData, ActivityDataKey } from '~/firebase/rtdb-types';
+import type { Activity } from '~/firebase/schema-types';
 import { ActivityTypeConfig } from '~/components/Activities/Types/Types';
 
 interface FinishedActivityType {
@@ -71,7 +71,7 @@ export default function Activities({
   data,
   activities,
 }: {
-  data: { [key: string]: CallData };
+  data: CallData;
   activities: Activity[];
 }) {
   const classes = useStyles();

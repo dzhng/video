@@ -9,10 +9,16 @@ import {
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 
-import { TasksDataKey, ActionItemsKey, QuestionsKey, TakeAwaysKey } from '~/constants';
 import { updateClipboard } from '~/utils';
-import { TaskType, TaskSectionType } from '~/components/Call/types';
-import { CallData } from '~/firebase/schema-types';
+import {
+  CallData,
+  TaskType,
+  TaskSectionType,
+  TasksDataKey,
+  ActionItemsKey,
+  QuestionsKey,
+  TakeAwaysKey,
+} from '~/firebase/rtdb-types';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -85,7 +91,7 @@ const Section = ({ name, tasks }: { name: string; tasks: TaskSectionType }) => {
   );
 };
 
-export default function Notes({ data }: { data: { [key: string]: CallData } }) {
+export default function Notes({ data }: { data: CallData }) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 

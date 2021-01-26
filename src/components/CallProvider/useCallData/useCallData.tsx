@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { rtdb } from '~/utils/firebase';
-import { CallsRTDBRoot } from '~/constants';
-import { LocalModel, Call, CallData, CallDataTypes } from '~/firebase/schema-types';
+import { CallsRTDBRoot, CallData, CallDataTypes } from '~/firebase/rtdb-types';
+import { LocalModel, Call } from '~/firebase/schema-types';
 
 export default function useCallData(call?: LocalModel<Call>) {
   const [currentCallData, setCurrentCallData] = useState<CallData>();

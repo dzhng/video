@@ -1,7 +1,8 @@
 import { ActivityMetadata, ActivityTypes } from '~/firebase/schema-types';
 import * as Yup from 'yup';
 import { PresentIcon, VideoIcon, PollIcon, QuestionsIcon, BreakoutIcon } from '~/components/Icons';
-import { Activity, CallData } from '~/firebase/schema-types';
+import type { Activity } from '~/firebase/schema-types';
+import type { ActivityType } from '~/firebase/rtdb-types';
 
 import PresentationForm from '../CreateForm/Presentation';
 import VideoForm from '../CreateForm/Video';
@@ -26,7 +27,7 @@ export const ActivityTypeConfig: {
   icon: React.ReactElement;
   form: React.ReactElement;
   display: React.ReactElement;
-  summary?(activity: Activity, data: CallData): React.ReactElement;
+  summary?(activity: Activity, data: ActivityType): React.ReactElement;
   showRestartConfirm: boolean; // if there is a need to show the confirmation modal on restart
   initialValue: ActivityMetadata[ActivityTypes];
   schema: Yup.AnySchema;

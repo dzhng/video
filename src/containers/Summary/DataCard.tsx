@@ -1,7 +1,8 @@
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Card, CardContent, Divider } from '@material-ui/core';
-import { CallData, Activity } from '~/firebase/schema-types';
+import type { Activity } from '~/firebase/schema-types';
+import type { CallData } from '~/firebase/rtdb-types';
 import Notes from './Notes';
 import Chats from './Chats';
 import Activities from './Activities';
@@ -26,7 +27,7 @@ export default function DataCard({
   data,
   activities,
 }: {
-  data: { [key: string]: CallData };
+  data: CallData;
   activities?: Activity[];
 }) {
   const classes = useStyles();

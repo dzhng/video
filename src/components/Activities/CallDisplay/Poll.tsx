@@ -7,7 +7,8 @@ import {
   RadioButtonUnchecked as UncheckedIcon,
   RadioButtonChecked as CheckedIcon,
 } from '@material-ui/icons';
-import { PollActivityMetadata, Activity, CallData, CallDataTypes } from '~/firebase/schema-types';
+import type { PollActivityMetadata, Activity } from '~/firebase/schema-types';
+import type { CallDataTypes } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { useAppState } from '~/state';
 
@@ -141,7 +142,7 @@ export function PollView({
   isHost,
 }: {
   activity?: Activity;
-  data?: CallData;
+  data?: any;
   updateData?(activity: Activity, path: string | null, value: CallDataTypes): void;
   isHost: boolean;
 }) {

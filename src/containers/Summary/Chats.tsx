@@ -2,8 +2,7 @@ import React, { useRef } from 'react';
 import { get, values } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import { CallData } from '~/firebase/schema-types';
-import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
+import { CallData, ChatsDataKey, PublicChatsChannelKey } from '~/firebase/rtdb-types';
 import { MessageList } from '~/components/Call/Chats';
 
 const useStyles = makeStyles((theme) =>
@@ -20,7 +19,7 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function Chats({ data }: { data: { [key: string]: CallData } }) {
+export default function Chats({ data }: { data: CallData }) {
   const classes = useStyles();
   const scrollRef = useRef(0);
 

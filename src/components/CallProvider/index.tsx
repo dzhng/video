@@ -1,12 +1,6 @@
 import React, { createContext, useState, useMemo } from 'react';
-import {
-  LocalModel,
-  Call,
-  Template,
-  Activity,
-  CallDataTypes,
-  CallData,
-} from '~/firebase/schema-types';
+import { LocalModel, Call, Template, Activity } from '~/firebase/schema-types';
+import { CallDataTypes, CallData, ActivityType } from '~/firebase/rtdb-types';
 import useCall from './useCall/useCall';
 import useActivity from './useActivity/useActivity';
 import useCallData from './useCallData/useCallData';
@@ -26,7 +20,7 @@ interface CallContextTypes {
   startActivity(activity: Activity): void;
   endActivity(): void;
   updateActivityData(activity: Activity, path: string | null, value: CallDataTypes): void;
-  currentActivityData?: CallData;
+  currentActivityData?: ActivityType;
   hasActivityStarted(activity: Activity): boolean;
 
   // call data management
