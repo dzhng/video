@@ -67,7 +67,6 @@ export default function ReactionButton() {
 
       // should generate a relatively unique key
       const key = `${user.uid}-${nowMs}`;
-
       updateCallData(ReactionsDataKey, key, reactionData);
     },
     [user, updateCallData],
