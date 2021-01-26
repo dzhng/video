@@ -1,7 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { rtdb } from '~/utils/firebase';
 import { LocalModel, Call } from '~/firebase/schema-types';
-import { CallsRTDBRoot, ReactionsDataKey, ReactionType } from '~/firebase/rtdb-types';
+import {
+  ReactionTypes,
+  CallsRTDBRoot,
+  ReactionsDataKey,
+  ReactionsCountDataKey,
+  ReactionType,
+} from '~/firebase/rtdb-types';
 import { useAppState } from '~/state';
 import { CallEvents, CallEmitterType } from '../events';
 
@@ -27,5 +33,39 @@ export default function useCallReactions(events: CallEmitterType, call?: LocalMo
     }
   }, [call, user, events]);
 
-  return null;
+  const createReaction = useCallback(
+    (type: ReactionTypes) => {
+      if (!call || !user) {
+        return;
+      }
+
+      const nowMs = new Date().getTime();
+      const reactionData: ReactionType = {
+        uid: user.uid,
+        type,
+        createdAt: nowMs,
+      };
+
+      // should generate a relatively unique key
+      const key = `${user.uid}-${nowMs}`;
+      const valueRef = rtdb.ref(`${CallsRTDBRoot}/${call.id}/${ReactionsDataKey}`);
+      valueRef.update({
+        [key]: reactionData,
+      });
+
+      // atomically update count via transaction
+      const countRef = rtdb.ref(`${CallsRTDBRoot}/${call.id}/${ReactionsCountDataKey}`);
+      countRef.transaction((countMap: { [key in ReactionTypes]: number } | null) => {
+        const count = countMap?.[type] ? countMap?.[type] + 1 : 1;
+
+        return {
+          ...countMap,
+          [type]: count,
+        };
+      });
+    },
+    [user, call],
+  );
+
+  return { createReaction };
 }

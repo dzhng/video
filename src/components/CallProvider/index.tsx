@@ -1,6 +1,6 @@
 import React, { createContext, useState, useMemo } from 'react';
 import { LocalModel, Call, Template, Activity } from '~/firebase/schema-types';
-import { CallDataTypes, CallData, ActivityType } from '~/firebase/rtdb-types';
+import { CallDataTypes, CallData, ActivityType, ReactionTypes } from '~/firebase/rtdb-types';
 import useCall from './useCall/useCall';
 import useActivity from './useActivity/useActivity';
 import useCallData from './useCallData/useCallData';
@@ -27,6 +27,7 @@ interface CallContextTypes {
   // call data management
   currentCallData?: CallData;
   updateCallData(key: string, path: string | null, value: CallDataTypes): void;
+  createReaction(type: ReactionTypes): void;
 
   // ui states
   isActivityDrawerOpen: boolean;
@@ -54,7 +55,7 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
   // init call chat events
   useCallChat(CallEmitter, useCallProps.call);
   // init reactions events
-  useCallReactions(CallEmitter, useCallProps.call);
+  const useCallReactionsProps = useCallReactions(CallEmitter, useCallProps.call);
 
   const value = useMemo<CallContextTypes>(
     () => ({
@@ -62,6 +63,7 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
       ...useActivityProps,
       ...useCallDataProps,
       ...useCurrentActivityProps,
+      ...useCallReactionsProps,
       template,
       isHost,
       isActivityDrawerOpen,
@@ -73,6 +75,7 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
       useActivityProps,
       useCallDataProps,
       useCurrentActivityProps,
+      useCallReactionsProps,
       template,
       isHost,
       isActivityDrawerOpen,

@@ -14,6 +14,7 @@ export const ActivityDataKey = 'activityData';
 export const CurrentActivityIDKey = 'currentActivityId';
 
 export const ReactionsDataKey = 'reactions';
+export const ReactionsCountDataKey = 'reactionCount';
 
 // types that goes into rtdb
 export type MessageTypes = 'text' | 'image' | 'file';

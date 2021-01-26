@@ -5,8 +5,7 @@ import { entries } from 'lodash';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Fab, Tooltip, Popper, Card, Fade } from '@material-ui/core';
 
-import { useAppState } from '~/state';
-import { ReactionMap, ReactionType, ReactionTypes, ReactionsDataKey } from '~/firebase/rtdb-types';
+import { ReactionMap, ReactionTypes } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { useStyles } from '../styles';
 
@@ -54,29 +53,15 @@ export default function ReactionButton({
   // track last reaction created for quick creation via hotkeys
   const [currentReaction, setCurrentReaction] = useState<ReactionTypes>('thumbsup');
   const [pickerOpen, setPickerOpen] = useState(false);
-  const { user } = useAppState();
-  const { updateCallData } = useCallContext();
+  const { createReaction } = useCallContext();
 
-  const createReaction = useCallback(
+  const handleCreate = useCallback(
     (type: ReactionTypes) => {
       setPickerOpen(false);
-      if (!user) {
-        return;
-      }
-
-      const nowMs = new Date().getTime();
-      const reactionData: ReactionType = {
-        uid: user.uid,
-        type,
-        createdAt: nowMs,
-      };
-
-      // should generate a relatively unique key
-      const key = `${user.uid}-${nowMs}`;
-      updateCallData(ReactionsDataKey, key, reactionData);
+      createReaction(type);
       setCurrentReaction(type);
     },
-    [user, updateCallData],
+    [createReaction],
   );
 
   // setup hotkeys to send default reaction
@@ -84,10 +69,10 @@ export default function ReactionButton({
     'r',
     (e) => {
       e.preventDefault();
-      createReaction(currentReaction);
+      handleCreate(currentReaction);
       setPopperMessage(<>Reaction sent {ReactionMap[currentReaction]}</>, true);
     },
-    [createReaction, currentReaction, setPopperMessage],
+    [handleCreate, currentReaction, setPopperMessage],
   );
 
   return (
@@ -115,7 +100,7 @@ export default function ReactionButton({
             >
               <Card className={classes.reactionCard}>
                 {entries(ReactionMap).map(([key, data]) => (
-                  <div key={key} onClick={() => createReaction(key as ReactionTypes)}>
+                  <div key={key} onClick={() => handleCreate(key as ReactionTypes)}>
                     {data}
                   </div>
                 ))}
