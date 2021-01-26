@@ -19,7 +19,11 @@ const useStyles = makeStyles(() =>
       zIndex: 3,
       fontSize: ({ width }: { width: number }) => width / 2 + 'px',
       color: 'white',
-      animation: 'popIn 1s',
+
+      '& >span': {
+        opacity: 0,
+        animation: 'popIn 1.5s',
+      },
     },
 
     // define animation for pop in text
@@ -27,12 +31,19 @@ const useStyles = makeStyles(() =>
       '@keyframes popIn': {
         '0%': {
           opacity: 0,
+          transform: 'scale(0.5)',
         },
-        '30%': {
+        '20%': {
           opacity: 1,
+          transform: 'scale(1)',
+        },
+        '50%': {
+          opacity: 1,
+          transform: 'scale(1)',
         },
         '100%': {
           opacity: 0,
+          transform: 'scale(2)',
         },
       },
     },
