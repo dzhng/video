@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import { rtdb } from '~/utils/firebase';
 import { LocalModel, Call } from '~/firebase/schema-types';
-import { CallsRTDBRoot, ReactionsDataKey } from '~/constants';
+import { CallsRTDBRoot, ReactionsDataKey, ReactionType } from '~/firebase/rtdb-types';
 import { useAppState } from '~/state';
-import { ReactionTypes, ReactionType } from '~/firebase/rtdb-types';
 import { CallEvents, CallEmitterType } from '../events';
 
 export const MessageTimeoutMs = 2000;
@@ -22,7 +21,7 @@ export default function useCallChat(events: CallEmitterType, call?: LocalModel<C
 
       // when a new message is created, add it to state
       valueRef.on('child_added', (snapshot) => {
-        const val = snapshot.val() as MessageType;
+        const val = snapshot.val() as ReactionType;
         if (val.uid !== user.uid) {
           events.emit(CallEvents.NEW_REACTION, val);
         }

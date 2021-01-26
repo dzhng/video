@@ -24,7 +24,17 @@ export interface MessageType {
   createdAt: number; // need to be integer since rtdb don't support dates
 }
 
-export type ReactionTypes = 'text' | 'image' | 'file';
+export type ReactionTypes =
+  | 'happy'
+  | 'thumbsup'
+  | 'laugh'
+  | 'celebrate'
+  | '100'
+  | 'tear'
+  | 'wow'
+  | 'fire'
+  | 'love';
+
 export interface ReactionType {
   uid: string;
   type: ReactionTypes;
