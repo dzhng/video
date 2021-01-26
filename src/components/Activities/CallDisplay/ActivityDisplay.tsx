@@ -54,6 +54,7 @@ export default function ActivityDisplay() {
     endActivity,
     updateActivityData,
     hasActivityStarted,
+    isHost,
   } = useCallContext();
   const [confirmRestart, setConfirmRestart] = useState(false);
 
@@ -61,7 +62,7 @@ export default function ActivityDisplay() {
 
   const handleRestartActivity = useCallback(() => {
     // no need to show anything if activity don't have any data submitted
-    if (!currentActivity || !hasActivityStarted(currentActivity) || !config) {
+    if (!currentActivity || !hasActivityStarted(currentActivity) || !config || !isHost) {
       return;
     }
 
@@ -70,7 +71,7 @@ export default function ActivityDisplay() {
     } else {
       updateActivityData(currentActivity, null, null);
     }
-  }, [currentActivity, hasActivityStarted, config, updateActivityData]);
+  }, [currentActivity, hasActivityStarted, config, isHost, updateActivityData]);
 
   const handleRestartConfirm = useCallback(() => {
     if (!currentActivity) {
@@ -97,17 +98,19 @@ export default function ActivityDisplay() {
             <b>{currentActivity.name}</b>
           </Typography>
 
-          <Tooltip title="Restart activity" placement="bottom">
-            <div>
-              <IconButton
-                size="small"
-                disabled={!hasActivityStarted(currentActivity)}
-                onClick={handleRestartActivity}
-              >
-                <RestartIcon />
-              </IconButton>
-            </div>
-          </Tooltip>
+          {isHost && (
+            <Tooltip title="Restart activity" placement="bottom">
+              <div>
+                <IconButton
+                  size="small"
+                  disabled={!hasActivityStarted(currentActivity)}
+                  onClick={handleRestartActivity}
+                >
+                  <RestartIcon />
+                </IconButton>
+              </div>
+            </Tooltip>
+          )}
 
           <Tooltip title="Close activity - your progress will be saved" placement="bottom">
             <IconButton size="small" onClick={endActivity}>
