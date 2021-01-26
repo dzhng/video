@@ -44,7 +44,8 @@ const ControlsBar = styled('div')(({ theme }) => ({
   flexShrink: 0,
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  // controls should always be aligned bottom to ensure equal padding on bottom
+  alignItems: 'flex-end',
 
   '& .fab': {
     backgroundColor: theme.palette.grey[900],
@@ -130,7 +131,7 @@ export default function Room() {
 
         <Controls />
 
-        <div className="right" style={{ width: 72, height: 72, position: 'relative' }}>
+        <div className="right" style={{ width: 72, minHeight: 1, position: 'relative' }}>
           <SettingsSpeedDial className="rightSpeedDial" />
         </div>
       </ControlsBar>

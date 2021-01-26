@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
       '& >div:nth-child(2)': {
         flexBasis: '150px',
         flexGrow: 1,
+        borderLeft: theme.dividerBorder,
       },
     },
     videoContainer: {
@@ -112,9 +113,9 @@ export default function LocalPreviewCard({
       <div className={classes.videoContainer}>
         <LocalVideoPreview />
         <div className={classes.controlsContainer}>
-          <div className="left" style={{ width: 72, height: 72, position: 'relative' }} />
+          <div className="left" style={{ width: 72, minHeight: 1, position: 'relative' }} />
           <Controls />
-          <div className="right" style={{ width: 72, height: 72, position: 'relative' }}>
+          <div className="right" style={{ width: 72, minHeight: 1, position: 'relative' }}>
             <SettingsSpeedDial className="rightSpeedDial" />
           </div>
         </div>
