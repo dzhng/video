@@ -146,7 +146,7 @@ export default function CallContainer() {
       events.off(CallEvents.NEW_REACTION, handleNewReaction);
       controls.stop();
     };
-  }, [events, controls]);
+  }, [events, controls, opacity]);
 
   const isCallStarted: boolean = !!currentCall;
 
