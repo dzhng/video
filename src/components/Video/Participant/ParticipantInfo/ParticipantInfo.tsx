@@ -71,7 +71,9 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: `0px 0px 8px ${2 + props.volume / 2}px rgb(255 255 255 / 60%)`,
     }),
     isInterrupting: (props: { volume: number }) => ({
-      boxShadow: `0px 0px 8px ${2 + props.volume / 2}px ${theme.palette.error.main}60`,
+      boxShadow: `0px 0px 8px ${2 + props.volume / 2}px rgb(255 255 255 / 60%)`,
+      // disable different colors for now - detection isn't very good yet
+      //boxShadow: `0px 0px 8px ${2 + props.volume / 2}px ${theme.palette.error.main}60`,
     }),
     infoContainer: {
       position: 'absolute',
