@@ -56,8 +56,8 @@ export default function Chats({ data }: { data: CallData }) {
         {reactions.length > 0 && (
           <div className={classes.reactionContainer}>
             {reactions.map(([type, count]) => (
-              <Tooltip title={`${count} reactions were sent in this call`}>
-                <span key={type} className={classes.reaction}>
+              <Tooltip key={type} title={`${count} reactions were sent in this call`}>
+                <span className={classes.reaction}>
                   {ReactionMap[type as ReactionTypes]} {count}
                 </span>
               </Tooltip>
