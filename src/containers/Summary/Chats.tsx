@@ -53,7 +53,7 @@ export default function Chats({ data }: { data: CallData }) {
     <>
       <Typography variant="h2">Chats</Typography>
       <div className={classes.container}>
-        {reactions.length > 0 ? (
+        {reactions.length > 0 && (
           <div className={classes.reactionContainer}>
             {reactions.map(([type, count]) => (
               <Tooltip title={`${count} reactions were sent in this call`}>
@@ -63,10 +63,6 @@ export default function Chats({ data }: { data: CallData }) {
               </Tooltip>
             ))}
           </div>
-        ) : (
-          <Typography variant="body1" style={{ margin: 8, color: '#888' }}>
-            No reactions were sent in this call.
-          </Typography>
         )}
 
         {list.length > 0 ? (
