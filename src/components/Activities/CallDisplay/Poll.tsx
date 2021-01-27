@@ -1,8 +1,17 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import clsx from 'clsx';
-import { get, without, uniq, keys, flatten, mapValues, values } from 'lodash';
+import { get, take, without, uniq, keys, flatten, mapValues, values } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton, Button, Tooltip } from '@material-ui/core';
+import {
+  Typography,
+  IconButton,
+  Button,
+  Tooltip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 import {
   RadioButtonUnchecked as UncheckedIcon,
   RadioButtonChecked as CheckedIcon,
@@ -10,12 +19,17 @@ import {
 import type { PollActivityMetadata, Activity } from '~/firebase/schema-types';
 import type { CallDataTypes, ActivityType } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
+import UserAvatar from '~/components/UserAvatar/UserAvatar';
+import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 import { useAppState } from '~/state';
 
 // key of votes, keyed by userIds, value is array of option votes
 const VoteMapKey = 'voteMap';
 // boolean key indicating if results should be shown (stops voting)
 const FinishKey = 'isFinished';
+
+// max number of votes should be shown as avatars
+const maxVotesShown = 10;
 
 interface VoteMapType {
   // key is uid, values is array of options
@@ -49,9 +63,11 @@ const useStyles = makeStyles((theme) =>
 
       '& h3,button': {
         // so it shows above progress bar
-        zIndex: 10,
+        zIndex: 1,
       },
-
+      '& h3': {
+        marginRight: theme.spacing(1),
+      },
       '&.enabled': {
         cursor: 'pointer',
       },
@@ -63,15 +79,56 @@ const useStyles = makeStyles((theme) =>
         boxShadow: theme.shadows[1],
       },
     },
-    votes: {
-      display: 'inline-block',
-      height: '1.15rem',
-      minWidth: '1.15rem',
-      lineHeight: '1.15rem',
-      borderRadius: '0.5rem',
-      backgroundColor: theme.palette.primary.dark,
-      color: 'white',
-      textAlign: 'center',
+    votesList: {
+      flexGrow: 1,
+      display: 'flex',
+      zIndex: 1,
+
+      '& >div': {
+        marginRight: -3,
+        display: 'inline-block',
+        height: '1.16rem',
+        minWidth: '1.16rem',
+        lineHeight: '1.15rem',
+        borderRadius: '0.58rem',
+        backgroundColor: theme.palette.primary.dark,
+        color: 'white',
+        textAlign: 'center',
+        boxShadow: theme.shadows[1],
+        cursor: 'pointer',
+      },
+      '& >div:not(last-child)': {
+        width: '1.16rem',
+      },
+    },
+    votesModal: {
+      '& .MuiDialog-paper': theme.customMixins.modalPaper,
+      '& .MuiDialogTitle-root': {
+        textAlign: 'center',
+        paddingBottom: 0,
+      },
+      '& .MuiDialogContent-root': {
+        display: 'flex',
+        flexWrap: 'wrap',
+      },
+    },
+    voteItem: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      margin: theme.spacing(1),
+      padding: theme.spacing(1),
+      borderRadius: theme.shape.borderRadius,
+      boxShadow: theme.shadows[2],
+
+      '& >div': {
+        width: 50,
+        height: 50,
+        marginBottom: theme.spacing(0.5),
+      },
+      '& >p': {
+        fontWeight: 'bold',
+      },
     },
     progressBar: (props: { voted?: boolean }) => ({
       position: 'absolute',
@@ -90,6 +147,40 @@ const useStyles = makeStyles((theme) =>
     },
   }),
 );
+
+function UserVoteAvatar({ uid, ...props }: { uid: string; [prop: string]: any }) {
+  const user = useUserInfo(uid);
+  return user ? (
+    <Tooltip title={user.displayName} placement="top">
+      <UserAvatar user={user} {...props} />
+    </Tooltip>
+  ) : (
+    <Skeleton variant="circle" {...props} />
+  );
+}
+
+function UserVoteItem({ uid, className }: { uid: string; className?: string }) {
+  const user = useUserInfo(uid);
+  return (
+    <div className={className}>
+      {user ? (
+        <>
+          <Tooltip title={user.displayName} placement="top">
+            <UserAvatar user={user} />
+          </Tooltip>
+          <Typography variant="body1">{user.displayName}</Typography>
+        </>
+      ) : (
+        <>
+          <Skeleton variant="circle" />
+          <Typography variant="body1">
+            <Skeleton />
+          </Typography>
+        </>
+      )}
+    </div>
+  );
+}
 
 function PollOption({
   option,
@@ -111,29 +202,50 @@ function PollOption({
   disabled: boolean;
 }) {
   const classes = useStyles({ voted });
+  const [votersOpen, setVotersOpen] = useState(false);
 
   return (
     <div
       className={clsx(classes.option, disabled ? 'disabled' : 'enabled')}
       onClick={disabled ? undefined : vote}
     >
-      <Typography variant="h3">
-        {option}{' '}
+      <Typography variant="h3">{option}</Typography>
+
+      <div className={classes.votesList}>
         {showVotes && votes.length > 0 && (
-          <Tooltip title={`${votes.length} participants voted for this option`} placement="top">
-            <span className={classes.votes}>{votes.length}</span>
-          </Tooltip>
+          <>
+            {take(votes, maxVotesShown).map((uid) => (
+              <UserVoteAvatar key={uid} uid={uid} onClick={() => setVotersOpen(true)} />
+            ))}
+
+            <Tooltip title={`${votes.length} participants voted for this option`} placement="top">
+              <div onClick={() => setVotersOpen(true)}>{votes.length}</div>
+            </Tooltip>
+          </>
         )}
-      </Typography>
+      </div>
+
       <IconButton size="small" color={disabled && !voted ? 'default' : 'primary'}>
         {voted ? <CheckedIcon /> : <UncheckedIcon />}
       </IconButton>
+
       {showVotes && votes.length > 0 && (
         <div
           className={classes.progressBar}
           style={{ width: `${100 * (votes.length / maxVotes)}%` }}
         />
       )}
+
+      <Dialog className={classes.votesModal} open={votersOpen} onClose={() => setVotersOpen(false)}>
+        <DialogTitle>
+          Voters for <b>{option}</b>
+        </DialogTitle>
+        <DialogContent>
+          {votes.map((uid) => (
+            <UserVoteItem key={uid} uid={uid} className={classes.voteItem} />
+          ))}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
