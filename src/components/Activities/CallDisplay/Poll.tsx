@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import clsx from 'clsx';
-import { get, without, uniq, values, flatten } from 'lodash';
+import { get, without, uniq, keys, flatten, mapValues, values } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Button, Tooltip } from '@material-ui/core';
 import {
@@ -8,7 +8,7 @@ import {
   RadioButtonChecked as CheckedIcon,
 } from '@material-ui/icons';
 import type { PollActivityMetadata, Activity } from '~/firebase/schema-types';
-import type { CallDataTypes } from '~/firebase/rtdb-types';
+import type { CallDataTypes, ActivityType } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { useAppState } from '~/state';
 
@@ -103,7 +103,7 @@ function PollOption({
   option: string;
   vote(): void;
   voted: boolean;
-  votes: number;
+  votes: string[];
   maxVotes: number;
   showVotes: boolean;
 
@@ -119,17 +119,20 @@ function PollOption({
     >
       <Typography variant="h3">
         {option}{' '}
-        {showVotes && votes > 0 && (
-          <Tooltip title={`${votes} participants voted for this option`} placement="top">
-            <span className={classes.votes}>{votes}</span>
+        {showVotes && votes.length > 0 && (
+          <Tooltip title={`${votes.length} participants voted for this option`} placement="top">
+            <span className={classes.votes}>{votes.length}</span>
           </Tooltip>
         )}
       </Typography>
       <IconButton size="small" color={disabled && !voted ? 'default' : 'primary'}>
         {voted ? <CheckedIcon /> : <UncheckedIcon />}
       </IconButton>
-      {showVotes && votes > 0 && (
-        <div className={classes.progressBar} style={{ width: `${100 * (votes / maxVotes)}%` }} />
+      {showVotes && votes.length > 0 && (
+        <div
+          className={classes.progressBar}
+          style={{ width: `${100 * (votes.length / maxVotes)}%` }}
+        />
       )}
     </div>
   );
@@ -142,7 +145,7 @@ export function PollView({
   isHost,
 }: {
   activity?: Activity;
-  data?: any;
+  data?: ActivityType;
   updateData?(activity: Activity, path: string | null, value: CallDataTypes): void;
   isHost: boolean;
 }) {
@@ -151,16 +154,18 @@ export function PollView({
 
   const metadata = activity?.metadata as PollActivityMetadata | undefined;
 
-  const flattenedVotes = useMemo<string[]>(() => {
+  // creates an array of tuples in form of [userId, votedOption]
+  const flattenedVotes = useMemo(() => {
     const voteMap = (get(data, VoteMapKey) as VoteMapType) || {};
-    return flatten(values(voteMap));
+    const tuples = flatten(keys(voteMap).map((uid) => voteMap[uid].map((option) => [uid, option])));
+    return tuples;
   }, [data]);
 
   const totalVotes = useMemo<number>(() => {
     return flattenedVotes.length;
   }, [flattenedVotes]);
 
-  const votesForOptionMap = useMemo<{ [option: string]: number }>(() => {
+  const votesForOptionMap = useMemo<{ [option: string]: string[] }>(() => {
     if (!metadata) {
       return {};
     }
@@ -168,7 +173,7 @@ export function PollView({
     return metadata.options.reduce(
       (value, option) => ({
         ...value,
-        [option]: flattenedVotes.filter((opt) => opt === option).length,
+        [option]: flattenedVotes.filter(([_, opt]) => opt === option).map(([uid]) => uid),
       }),
       {},
     );
@@ -176,7 +181,7 @@ export function PollView({
 
   // find the maximum number of votes for any option
   const maxVotes = useMemo<number>(() => {
-    return Math.max(...values(votesForOptionMap));
+    return Math.max(...values(mapValues(votesForOptionMap, (uids) => uids.length)));
   }, [votesForOptionMap]);
 
   const votedForOption = useCallback(
@@ -232,7 +237,7 @@ export function PollView({
               option={option}
               voted={votedForOption(option)}
               vote={() => toggleOption(option)}
-              votes={votesForOptionMap[option] ?? 0}
+              votes={votesForOptionMap[option] ?? []}
               maxVotes={maxVotes}
               showVotes={showVotes}
               disabled={shouldDisable}
