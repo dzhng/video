@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
-import useScreenShareToggle from '~/hooks/Video/useScreenShareToggle/useScreenShareToggle';
+import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) =>
 
 export default function LocalMessage() {
   const classes = useStyles();
-  const [isScreenShared, toggleScreenShare] = useScreenShareToggle();
+  const { isScreenShared, toggleScreenShare } = useVideoContext();
 
   const handleStop = useCallback(() => {
     if (isScreenShared) {

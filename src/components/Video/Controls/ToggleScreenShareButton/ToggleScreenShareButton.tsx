@@ -3,7 +3,6 @@ import React, { useEffect, useRef } from 'react';
 import { ScreenShare, StopScreenShare } from '@material-ui/icons';
 import { Tooltip, Fab } from '@material-ui/core';
 
-import useScreenShareToggle from '~/hooks/Video/useScreenShareToggle/useScreenShareToggle';
 import useScreenShareParticipant from '~/hooks/Video/useScreenShareParticipant/useScreenShareParticipant';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import { useStyles } from '../styles';
@@ -15,9 +14,8 @@ export const SHARE_NOT_SUPPORTED_TEXT = 'Screen sharing is not supported with th
 
 export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
   const classes = useStyles();
-  const [isScreenShared, toggleScreenShare] = useScreenShareToggle();
+  const { room, isScreenShared, toggleScreenShare } = useVideoContext();
   const screenShareParticipant = useScreenShareParticipant();
-  const { room } = useVideoContext();
   const cleanUpScreenShare = useRef<() => void>();
 
   // when this component is unmounted, turn screen sharing off
