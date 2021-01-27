@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
+import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { KeyboardOutlined as KeyboardIcon } from '@material-ui/icons';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { isMobile } from '~/utils';
 import { useAppState } from '~/state';
+import { ReactionType } from '~/firebase/rtdb-types';
 import { VideoProvider } from '~/components/Video/VideoProvider';
+import { CallEvents } from '~/components/CallProvider/events';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import HotkeyInstructions from './HotkeyInstructions/HotkeyInstructions';
 import CallFlow from './CallFlow';
 import ReactionIndicator from './ReactionIndicator/ReactionIndicator';
+
+const reactionTimeMs = 1500;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -21,6 +26,18 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
       height: '100vh',
       background: '#091523',
+      zIndex: 0,
+    },
+    gradientBackground: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      pointerEvents: 'none',
+      zIndex: -1,
+      opacity: 0,
+      background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
     },
     hotkeyButton: {
       position: 'fixed',
@@ -54,7 +71,7 @@ export default function CallContainer() {
   const router = useRouter();
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
-  const { template } = useCallContext();
+  const { template, events } = useCallContext();
 
   // URL that the back buttom goes to - set by the `from` query param. If not exist don't show back button
   const fromHref: string | undefined =
@@ -103,6 +120,34 @@ export default function CallContainer() {
     { keyup: true },
   );
 
+  const controls = useAnimation();
+  const opacity = useMotionValue(0);
+  useEffect(() => {
+    const handleNewReaction = (reaction: ReactionType) => {
+      if (reaction.type !== 'tear') {
+        // if already animating, do a shorter intemediary animation
+        if (opacity.isAnimating()) {
+          controls.stop();
+          controls.start({
+            opacity: [opacity.get(), 1, 0],
+            transition: { duration: reactionTimeMs / 2 / 1000 },
+          });
+        } else {
+          controls.start({
+            opacity: [0, 1, 1, 0],
+            transition: { duration: reactionTimeMs / 1000 },
+          });
+        }
+      }
+    };
+
+    events.on(CallEvents.NEW_REACTION, handleNewReaction);
+    return () => {
+      events.off(CallEvents.NEW_REACTION, handleNewReaction);
+      controls.stop();
+    };
+  }, [events, controls]);
+
   const isCallStarted: boolean = !!currentCall;
 
   return (
@@ -117,6 +162,11 @@ export default function CallContainer() {
             <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
           </VideoProvider>
 
+          <motion.div
+            className={classes.gradientBackground}
+            style={{ opacity }}
+            animate={controls}
+          />
           <ReactionIndicator />
         </div>
       </UnsupportedBrowserWarning>
