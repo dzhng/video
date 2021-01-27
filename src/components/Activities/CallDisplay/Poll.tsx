@@ -374,7 +374,7 @@ export function PollView({
                 color="primary"
                 onClick={handleFinish}
               >
-                Finish Voting
+                Close Poll
               </Button>
             </div>
           </Tooltip>
