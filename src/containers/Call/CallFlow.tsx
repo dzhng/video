@@ -90,7 +90,7 @@ export default function CallFlow({
 
   return (
     <Container>
-      {roomState === 'connected' && (
+      {roomState !== 'disconnected' && (
         <ActivityDrawer isCallStarted={isCallStarted} fromHref={fromHref} />
       )}
 

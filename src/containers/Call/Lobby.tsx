@@ -52,7 +52,7 @@ export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
     [roomState, handleSubmit],
   );
 
-  return roomState !== 'connected' ? (
+  return roomState === 'disconnected' ? (
     hasConnected ? (
       <WaitForSummary />
     ) : (
