@@ -6,6 +6,12 @@ export const DEFAULT_VIDEO_CONSTRAINTS: MediaStreamConstraints['video'] = {
   frameRate: 24,
 };
 
+export const DEFAULT_AUDIO_CONSTRAINTS: MediaStreamConstraints['audio'] = {
+  noiseSuppression: true,
+  echoCancellation: true,
+  autoGainControl: true,
+};
+
 export const maxTracks = isMobile ? 8 : 50;
 
 // These are used to store the selected media devices in localStorage

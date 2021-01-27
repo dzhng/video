@@ -8,6 +8,7 @@ import Video, {
 
 import {
   DEFAULT_VIDEO_CONSTRAINTS,
+  DEFAULT_AUDIO_CONSTRAINTS,
   SELECTED_AUDIO_INPUT_KEY,
   SELECTED_VIDEO_INPUT_KEY,
 } from '~/constants';
@@ -24,7 +25,7 @@ export default function useLocalTracks(
   const hasVideo = localVideoDevices.length > 0;
 
   const getLocalAudioTrack = useCallback(async (deviceId?: string) => {
-    const options: CreateLocalTrackOptions = {};
+    const options: CreateLocalTrackOptions = { ...(DEFAULT_AUDIO_CONSTRAINTS as {}) };
 
     if (deviceId) {
       options.deviceId = { exact: deviceId };
@@ -88,7 +89,10 @@ export default function useLocalTracks(
         name: `camera-${Date.now()}`,
         ...(hasSelectedVideoDevice && { deviceId: { exact: selectedVideoDeviceId! } }),
       },
-      audio: hasSelectedAudioDevice ? { deviceId: { exact: selectedAudioDeviceId! } } : hasAudio,
+      audio: hasAudio && {
+        ...(DEFAULT_AUDIO_CONSTRAINTS as {}),
+        ...(hasSelectedAudioDevice && { deviceId: { exact: selectedAudioDeviceId! } }),
+      },
     };
 
     return Video.createLocalTracks(localTrackConstraints)
