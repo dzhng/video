@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) =>
       // if only child, go 100% height
       '& >div:first-child:last-child': {
         maxHeight: '100%',
+        flexGrow: 1,
       },
       '& >div:first-child': {
         // leave at least enough height to show the button
@@ -54,15 +55,19 @@ export default function ActivityControl() {
 
   return (
     <div className={classes.actionArea}>
-      <Card className={classes.activityCard}>
-        <ActivitiesBar
-          template={template}
-          mode={isHost ? 'call' : 'view'}
-          currentActivity={currentActivity}
-          startActivity={startActivity}
-          hasActivityStarted={hasActivityStarted}
-        />
-      </Card>
+      {/* only show card if there are activities, or if is host to show create activity button */}
+      {(template.activities.length > 0 || isHost) && (
+        <Card className={classes.activityCard}>
+          <ActivitiesBar
+            template={template}
+            mode={isHost ? 'call' : 'view'}
+            currentActivity={currentActivity}
+            startActivity={startActivity}
+            hasActivityStarted={hasActivityStarted}
+          />
+        </Card>
+      )}
+
       <Interactions />
     </div>
   );
