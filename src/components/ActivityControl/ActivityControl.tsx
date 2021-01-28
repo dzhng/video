@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Fab } from '@material-ui/core';
+import { Card } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import ActivitiesBar from '~/components/Activities/ActivitiesBar/ActivitiesBar';
