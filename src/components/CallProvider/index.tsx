@@ -1,4 +1,4 @@
-import React, { createContext, useState, useMemo } from 'react';
+import React, { createContext, useMemo } from 'react';
 import { LocalModel, Call, Template, Activity } from '~/firebase/schema-types';
 import { CallDataTypes, CallData, ActivityType, ReactionTypes } from '~/firebase/rtdb-types';
 import useCall from './useCall/useCall';
