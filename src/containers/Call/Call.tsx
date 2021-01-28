@@ -95,20 +95,6 @@ export default function CallContainer() {
       : router.push(href);
   }, [currentCall, fromHref, router]);
 
-  // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
-  const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
-  // when this call has been ended by the host, send to summary screen (which will also automatically disconnect)
-  // this will cause a double navigation (since routing will cause disconnect which will retrigger handleDisconnect), but it's fine since it does the same thing
-  useEffect(() => {
-    if (isCallEnded) {
-      const href = `/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`;
-      // use window.assign for mobile since webrtc might freeze if not hard refreshed (android device stop bug)
-      isMobile
-        ? window.location.assign(`${window.location.protocol}//${window.location.host}${href}`)
-        : router.push(href);
-    }
-  }, [isCallEnded, currentCall, fromHref, router]);
-
   const [hotkeyPopperOpen, setHotkeyPopperOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
 
@@ -165,6 +151,8 @@ export default function CallContainer() {
   }, [events, controls, opacity]);
 
   const isCallStarted: boolean = !!currentCall;
+  // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
+  const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
 
   return (
     <>
@@ -175,7 +163,7 @@ export default function CallContainer() {
             onError={setError}
             onDisconnect={handleDisconnect}
           >
-            <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
+            <CallFlow isCallStarted={isCallStarted} isCallEnded={isCallEnded} fromHref={fromHref} />
           </VideoProvider>
 
           <motion.div

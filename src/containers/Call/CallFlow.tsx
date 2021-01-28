@@ -17,7 +17,14 @@ const Container = styled('div')({
   position: 'relative',
 });
 
-export default function CallFlow({ isCallStarted }: { isCallStarted: boolean; fromHref?: string }) {
+export default function CallFlow({
+  isCallStarted,
+  isCallEnded,
+}: {
+  isCallStarted: boolean;
+  isCallEnded: boolean;
+  fromHref?: string;
+}) {
   const [mediaError, setMediaError] = useState<Error>();
   const {
     room,
@@ -40,6 +47,13 @@ export default function CallFlow({ isCallStarted }: { isCallStarted: boolean; fr
       setMediaError(error);
     });
   }, [getAudioAndVideoTracks]);
+
+  // when this call has been ended by the host, disconnect
+  useEffect(() => {
+    if (isCallEnded) {
+      room.disconnect();
+    }
+  }, [isCallEnded, room]);
 
   // keep a latest up to date version of cleanup methods at all times, to call during unmount
   useEffect(() => {
