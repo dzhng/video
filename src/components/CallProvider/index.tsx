@@ -29,10 +29,6 @@ interface CallContextTypes {
   updateCallData(key: string, path: string | null, value: CallDataTypes): void;
   createReaction(type: ReactionTypes): void;
 
-  // ui states
-  isActivityDrawerOpen: boolean;
-  setIsActivityDrawerOpen(open: boolean): void;
-
   // for other user events
   events: CallEmitterType;
 }
@@ -45,8 +41,6 @@ interface PropTypes {
 export const CallContext = createContext<CallContextTypes>(null!);
 
 export function CallProvider({ children, template, isHost }: React.PropsWithChildren<PropTypes>) {
-  const [isActivityDrawerOpen, setIsActivityDrawerOpen] = useState(false);
-
   const useCallProps = useCall(template);
   const useActivityProps = useActivity(useCallProps.call);
   const useCallDataProps = useCallData(useCallProps.call);
@@ -66,8 +60,6 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
       ...useCallReactionsProps,
       template,
       isHost,
-      isActivityDrawerOpen,
-      setIsActivityDrawerOpen,
       events: CallEmitter,
     }),
     [
@@ -78,7 +70,6 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
       useCallReactionsProps,
       template,
       isHost,
-      isActivityDrawerOpen,
     ],
   );
 

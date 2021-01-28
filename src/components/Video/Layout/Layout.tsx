@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) =>
 
 interface PropTypes {
   variant: 'grid' | 'focus';
-  hideControls?: boolean; // hide the rest of the UI and focus only on layout
+  hideSideBar?: boolean; // hide the rest of the UI and focus only on layout
   gridItems: { key: string; node: React.ReactNode }[];
   // only needed when variant is `focus`
   mainItem?: React.ReactNode;
@@ -53,7 +53,7 @@ interface PropTypes {
 
 export default function VideoLayout({
   variant,
-  hideControls,
+  hideSideBar,
   gridItems,
   mainItem,
   sideItem,
@@ -90,7 +90,7 @@ export default function VideoLayout({
         <Drawer
           className={classes.drawerContainer}
           container={container}
-          variant={hideControls ? 'temporary' : 'persistent'}
+          variant={hideSideBar ? 'temporary' : 'persistent'}
           anchor="left"
           open={isActivityDrawerOpen}
           onClose={() => setIsActivityDrawerOpen(false)}
@@ -104,11 +104,11 @@ export default function VideoLayout({
     </>
   );
 
-  // when hideControls flag is set, auto hide drawer
+  // when hide flag is set, auto hide drawer
   // when flag is unset, restore old state
   const prevActivityOpenState = useRef<boolean>(isActivityDrawerOpen);
   useEffect(() => {
-    if (hideControls) {
+    if (hideSideBar) {
       setIsActivityDrawerOpen((state) => {
         prevActivityOpenState.current = state;
         return false;
@@ -116,7 +116,7 @@ export default function VideoLayout({
     } else {
       setIsActivityDrawerOpen(prevActivityOpenState.current);
     }
-  }, [hideControls]);
+  }, [hideSideBar]);
 
   const controls = (
     <div className={classes.controlsContainer}>

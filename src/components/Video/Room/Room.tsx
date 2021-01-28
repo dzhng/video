@@ -6,11 +6,12 @@ import { styled } from '@material-ui/core/styles';
 import useHeight from '~/hooks/Video/useHeight/useHeight';
 import useDisplayableParticipants from '~/hooks/Video/useDisplayableParticipants/useDisplayableParticipants';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
-import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
 import ScreenShareParticipant from '~/components/Video/ScreenShareParticipant/ScreenShareParticipant';
 import useScreenShareParticipant from '~/hooks/Video/useScreenShareParticipant/useScreenShareParticipant';
 import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '~/components/Video/Participant/Participant';
+import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
+import ActivityControl from '~/components/ActivityControl/ActivityControl';
 import ReconnectingNotification from './ReconnectingNotification/ReconnectingNotification';
 import ChatNotification from './ChatNotification/ChatNotification';
 import ControlsBar from './ControlsBar/ControlsBar';
@@ -52,8 +53,11 @@ export default function Room() {
   const screenShareParticipant = useScreenShareParticipant();
   const variant = currentActivity || screenShareParticipant ? 'focus' : 'grid';
 
-  const [participants, undisplayedParticipants] = useDisplayableParticipants();
-  const [selectedParticipant, toggleSelectedParticipant] = useSelectedParticipant();
+  // show less participants when in focus mode
+  const [participants, undisplayedParticipants] = useDisplayableParticipants(
+    variant === 'focus' ? 10 : undefined,
+  );
+  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   const participantToItem = useCallback(
     (participant: ParticipantType) => ({
@@ -62,7 +66,7 @@ export default function Room() {
         <Participant
           participant={participant}
           isSelected={selectedParticipant === participant}
-          onClick={() => toggleSelectedParticipant(participant)}
+          onClick={() => setSelectedParticipant(participant)}
         />
       ),
     }),
@@ -90,9 +94,10 @@ export default function Room() {
     <Container style={{ height: pageHeight }}>
       <Layout
         variant={variant}
+        hideSideBar={!!screenShareParticipant}
         gridItems={items}
         mainItem={screenShareParticipant ? <ScreenShareParticipant /> : <ActivityDisplay />}
-        sideItem={<ActivityDrawer />}
+        sideItem={<ActivityControl />}
         mainControls={<ControlsBar />}
         sideControls={<></>}
       />
