@@ -94,6 +94,18 @@ export default function CallContainer() {
       : router.push(href);
   }, [currentCall, fromHref, router]);
 
+  // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
+  const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
+  useEffect(() => {
+    if (isCallEnded) {
+      const href = `/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`;
+      // use window.assign for mobile since webrtc might freeze if not hard refreshed (android device stop bug)
+      isMobile
+        ? window.location.assign(`${window.location.protocol}//${window.location.host}${href}`)
+        : router.push(href);
+    }
+  }, [isCallEnded, currentCall, fromHref, router]);
+
   const [hotkeyPopperOpen, setHotkeyPopperOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
 
