@@ -39,7 +39,8 @@ export default function EndCallButton({
       await endCall().catch(() => setIsEndingCall(false));
     }
 
-    room.disconnect();
+    // endCall() should have triggered a disconnect, but leave it here just in case if it errors out
+    room?.disconnect();
   }, [isHost, endCall, room]);
 
   useHotkeys(
