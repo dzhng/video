@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
       display: 'flex',
       justifyContent: 'space-between',
+      alignItems: 'flex-end',
       flexShrink: 0,
     },
     buttonContainer: {

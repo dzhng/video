@@ -62,10 +62,9 @@ export default function Room() {
   const variant = currentActivity || screenShareParticipant ? 'focus' : 'grid';
 
   // show less participants when in focus mode
-  /*const [participants, undisplayedParticipants] = useDisplayableParticipants(
+  const [participants, undisplayedParticipants] = useDisplayableParticipants(
     variant === 'focus' ? 10 : undefined,
-    );*/
-  const [participants, undisplayedParticipants] = useDisplayableParticipants(1);
+  );
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   const participantToItem = useCallback(
