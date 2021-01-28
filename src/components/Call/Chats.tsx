@@ -52,7 +52,6 @@ const useStyles = makeStyles((theme) =>
 
       '&.isSelf': {
         flexDirection: 'row-reverse',
-        textAlign: 'right',
 
         '& p': {
           border: '1px solid ' + theme.palette.secondary.main + '70',

@@ -130,8 +130,7 @@ export default function CallTest() {
               variant={variant as any}
               gridItems={items}
               sideItem={<ActivityControl />}
-              mainItem={<CallCreator />}
-              mainControls={<div></div>}
+              mainControls={<CallCreator />}
               sideControls={<div></div>}
             />
             <ChatNotification />
