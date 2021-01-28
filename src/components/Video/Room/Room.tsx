@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { Participant as ParticipantType } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
-import useDimensions from 'react-cool-dimensions';
 
 import useHeight from '~/hooks/Video/useHeight/useHeight';
 import useDisplayableParticipants from '~/hooks/Video/useDisplayableParticipants/useDisplayableParticipants';
@@ -19,17 +18,7 @@ import ControlsBar from './ControlsBar/ControlsBar';
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
-const Container = styled('div')(() => ({
-  display: 'flex',
-  flexDirection: 'column',
-}));
-
-const LayoutContainer = styled('div')({
-  flexGrow: 1,
-  overflow: 'hidden',
-  display: 'flex',
-  alignItems: 'stretch',
-});
+const Container = styled('div')(() => ({}));
 
 export default function Room() {
   // Here we would like the height of the main container to be the height of the viewport.
@@ -38,12 +27,6 @@ export default function Room() {
   // We will dynamically set the height with 'window.innerHeight', which means that this
   // will look good on mobile browsers even after the location bar opens or closes.
   const pageHeight = useHeight();
-
-  // measure the width and height of LayoutContainer feed into layout component to
-  // calculate grid sizes. Make sure LayoutContainer has overflow set to hidden so
-  // that sizes can be calculate correctly.
-  // (if not set, size will overflow and will be wrong)
-  const { ref, width, height } = useDimensions<HTMLDivElement>({ useBorderBoxSize: true });
 
   const { currentActivity } = useCallContext();
   const participants = useDisplayableParticipants();
@@ -73,17 +56,14 @@ export default function Room() {
 
   return (
     <Container style={{ height: pageHeight }}>
-      <LayoutContainer ref={ref}>
-        <Layout
-          variant={variant}
-          width={width}
-          height={height}
-          gridItems={items}
-          mainItem={screenShareParticipant ? <ScreenShareParticipant /> : <ActivityDisplay />}
-          drawer={<ActivityDrawer />}
-        />
-      </LayoutContainer>
-      <ControlsBar />
+      <Layout
+        variant={variant}
+        gridItems={items}
+        mainItem={screenShareParticipant ? <ScreenShareParticipant /> : <ActivityDisplay />}
+        sideItem={<ActivityDrawer />}
+        mainControls={<ControlsBar />}
+        sideControls={<></>}
+      />
 
       <ChatNotification />
       <ReconnectingNotification />
