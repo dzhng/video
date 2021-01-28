@@ -149,11 +149,9 @@ export default function VideoLayout({
 
   const drawerOpenButton = (
     <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
-      <div>
-        <Fab className={classes.drawerOpenButton} onClick={handleDrawerToggle}>
-          <MenuIcon />
-        </Fab>
-      </div>
+      <Fab className={classes.drawerOpenButton} onClick={handleDrawerToggle}>
+        <MenuIcon />
+      </Fab>
     </Tooltip>
   );
 
