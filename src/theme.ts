@@ -122,8 +122,8 @@ export default createMuiTheme({
   headerBarHeight: 65,
   transitionTime: '0.3s',
   dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
-  callControlHeightXs: 50,
-  callControlHeight: 80,
+  callControlHeightXs: 48,
+  callControlHeight: 64, // enough for large fab (56) + 1 spacing
 
   customMixins: {
     modalPaper: {

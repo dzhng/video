@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import clsx from 'clsx';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Hidden, Drawer } from '@material-ui/core';
+import { Hidden, Drawer, Tooltip, Fab } from '@material-ui/core';
+import { Menu as MenuIcon } from '@material-ui/icons';
 import { isBrowser } from '~/utils';
 import Items from './Items';
 
@@ -13,7 +15,17 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'stretch',
     },
     drawerContainer: {
-      ...theme.customMixins.activitiesBarMini,
+      '&.open': {
+        ...theme.customMixins.activitiesBarMini,
+        transition: 'width 0.3s ease-out, min-width 0.3s ease-out, max-width 0.3s ease-out',
+      },
+      '&.closed': {
+        // need to set all properties set by customMixins for transition to work
+        width: 0,
+        minWidth: 0,
+        maxWidth: 0,
+        transition: 'width 0.3s linear, min-width 0.3s linear, max-width 0.3s linear',
+      },
       flexShrink: 0,
     },
     drawerPaper: {
@@ -29,6 +41,13 @@ const useStyles = makeStyles((theme) =>
     },
     controlsContainer: {
       flexShrink: 0,
+      padding: theme.spacing(1),
+      // no need to pad top since layout on top will already have a lot of padding
+      paddingTop: 0,
+      display: 'flex',
+      justifyContent: 'space-between',
+      // controls should always be aligned bottom to ensure equal padding on bottom
+      alignItems: 'flex-end',
 
       [theme.breakpoints.down('xs')]: {
         height: theme.callControlHeightXs,
@@ -36,6 +55,10 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('sm')]: {
         height: theme.callControlHeight,
       },
+    },
+    drawerOpenButton: {
+      backgroundColor: theme.palette.grey[900],
+      color: 'white',
     },
   }),
 );
@@ -51,6 +74,7 @@ interface PropTypes {
   sideControls: React.ReactNode;
 }
 
+// TODO: if any fields in drawer is focused (via hotkeys), open drawer
 export default function VideoLayout({
   variant,
   hideSideBar,
@@ -88,7 +112,7 @@ export default function VideoLayout({
 
       <Hidden xsDown implementation="js">
         <Drawer
-          className={classes.drawerContainer}
+          className={clsx(classes.drawerContainer, isActivityDrawerOpen ? 'open' : 'closed')}
           container={container}
           variant={hideSideBar ? 'temporary' : 'persistent'}
           anchor="left"
@@ -118,8 +142,24 @@ export default function VideoLayout({
     }
   }, [hideSideBar]);
 
+  const handleDrawerToggle = useCallback(() => {
+    setIsActivityDrawerOpen((state) => !state);
+    setIsActivityDrawerOpenXs((state) => !state);
+  }, []);
+
+  const drawerOpenButton = (
+    <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
+      <div>
+        <Fab className={classes.drawerOpenButton} onClick={handleDrawerToggle}>
+          <MenuIcon />
+        </Fab>
+      </div>
+    </Tooltip>
+  );
+
   const controls = (
     <div className={classes.controlsContainer}>
+      {drawerOpenButton}
       {mainControls}
       {sideControls}
     </div>

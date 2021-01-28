@@ -12,9 +12,11 @@ import useSelectedParticipant from '~/components/Video/VideoProvider/useSelected
 import Participant from '~/components/Video/Participant/Participant';
 import ActivityDisplay from '~/components/Activities/CallDisplay/ActivityDisplay';
 import ActivityControl from '~/components/ActivityControl/ActivityControl';
+import Controls from '~/components/Video/Controls/Controls';
+import SettingsSpeedDial from '~/components/Video/SettingsSpeedDial/SettingsSpeedDial';
+
 import ReconnectingNotification from './ReconnectingNotification/ReconnectingNotification';
 import ChatNotification from './ChatNotification/ChatNotification';
-import ControlsBar from './ControlsBar/ControlsBar';
 
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
@@ -98,8 +100,8 @@ export default function Room() {
         gridItems={items}
         mainItem={screenShareParticipant ? <ScreenShareParticipant /> : <ActivityDisplay />}
         sideItem={<ActivityControl />}
-        mainControls={<ControlsBar />}
-        sideControls={<></>}
+        mainControls={<Controls />}
+        sideControls={<SettingsSpeedDial />}
       />
 
       <ChatNotification />
