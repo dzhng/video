@@ -53,6 +53,7 @@ interface PropTypes {
   height: number;
   variant: 'grid' | 'focus';
   gridItems: { key: string; node: React.ReactNode }[];
+  drawer: React.ReactNode;
 
   // only needed when variant is `focus`
   mainItem?: React.ReactNode;
@@ -60,7 +61,14 @@ interface PropTypes {
   mainItemAspectRatio?: number;
 }
 
-export default function VideoLayout({ width, height, variant, gridItems, mainItem }: PropTypes) {
+export default function VideoLayout({
+  width,
+  height,
+  variant,
+  gridItems,
+  mainItem,
+  drawer,
+}: PropTypes) {
   const displayableItems = take(gridItems, MaxDisplayableGridItems);
   const isPortrait = height > width;
 
