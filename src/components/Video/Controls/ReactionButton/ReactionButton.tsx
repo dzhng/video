@@ -48,7 +48,7 @@ export default function ReactionButton({
   const classes = useComponentStyles();
   const anchorRef = useRef<HTMLDivElement>(null);
   // track last reaction created for quick creation via hotkeys
-  const [currentReaction, setCurrentReaction] = useState<ReactionTypes>('thumbsup');
+  const [currentReaction, setCurrentReaction] = useState<ReactionTypes>('hello');
   const [pickerOpen, setPickerOpen] = useState(false);
   const { createReaction } = useCallContext();
 
