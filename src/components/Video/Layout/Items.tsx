@@ -96,20 +96,31 @@ export default function LayoutItems({ gridItems, mainItem, variant }: PropTypes)
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {variant === 'focus' && <div className={classes.mainItem}>{mainItem}</div>}
+      {variant === 'focus' && (
+        <motion.div
+          className={classes.mainItem}
+          initial={{ scale: 0.5, opacity: 0, ...(isPortrait ? { y: -300 } : { x: -300 }) }}
+          animate={{ scale: 1, opacity: 1, y: 0, x: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+        >
+          {mainItem}
+        </motion.div>
+      )}
+
       <div className={classes.itemGridContainer}>
-        {displayableItems.map((item) => (
-          <motion.div
-            key={item.key}
-            className={classes.gridItem}
-            style={{ width: itemSize, height: itemSize }}
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            layout
-          >
-            {item.node}
-          </motion.div>
-        ))}
+        {itemSize > 0 &&
+          displayableItems.map((item) => (
+            <motion.div
+              key={item.key}
+              className={classes.gridItem}
+              style={{ width: itemSize, height: itemSize }}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              layout
+            >
+              {item.node}
+            </motion.div>
+          ))}
       </div>
     </motion.div>
   );

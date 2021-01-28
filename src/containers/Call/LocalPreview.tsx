@@ -28,13 +28,7 @@ export default function LocalPreview(props: LocalPreviewCardProps) {
   const classes = useStyles();
 
   return (
-    <motion.div
-      className={classes.container}
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <motion.div className={classes.container} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
       <LocalPreviewCard className={classes.card} {...props} />
     </motion.div>
   );
