@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
       left: 0,
       right: 0,
       margin: theme.spacing(1),
+      height: theme.callControlHeight,
 
       display: 'flex',
       justifyContent: 'space-between',

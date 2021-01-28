@@ -24,7 +24,7 @@ const useStyles = makeStyles(() =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 3,
+      zIndex: 121, // set zindex so it's above drawer but below modal
       fontSize: '40px',
       color: 'white',
       pointerEvents: 'none',

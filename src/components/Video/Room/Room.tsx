@@ -39,7 +39,13 @@ const UndisplayedParticipantCount = styled('div')(({ theme }) => ({
 
   '& span': {
     color: 'white',
-    fontSize: '1.5em',
+    fontSize: '20px',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    textAlign: 'center',
+    lineHeight: '70px',
+    background: theme.palette.grey[800],
   },
 }));
 
@@ -56,9 +62,10 @@ export default function Room() {
   const variant = currentActivity || screenShareParticipant ? 'focus' : 'grid';
 
   // show less participants when in focus mode
-  const [participants, undisplayedParticipants] = useDisplayableParticipants(
+  /*const [participants, undisplayedParticipants] = useDisplayableParticipants(
     variant === 'focus' ? 10 : undefined,
-  );
+    );*/
+  const [participants, undisplayedParticipants] = useDisplayableParticipants(1);
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   const participantToItem = useCallback(
@@ -83,7 +90,7 @@ export default function Room() {
         key: 'undisplayedCount',
         node: (
           <UndisplayedParticipantCount>
-            <span>+ {undisplayedParticipants.length}</span>
+            <span>+{undisplayedParticipants.length}</span>
           </UndisplayedParticipantCount>
         ),
       });
