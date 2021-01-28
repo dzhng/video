@@ -86,6 +86,7 @@ export default function CallContainer() {
     }
   }, [template.ongoingCallId, currentCall]);
 
+  // anytime the call disconnects, send user to summary screen
   const handleDisconnect = useCallback(() => {
     const href = `/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`;
     // use window.assign for mobile since webrtc might freeze if not hard refreshed (android device stop bug)
@@ -96,6 +97,8 @@ export default function CallContainer() {
 
   // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
   const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
+  // when this call has been ended by the host, send to summary screen (which will also automatically disconnect)
+  // this will cause a double navigation (since routing will cause disconnect which will retrigger handleDisconnect), but it's fine since it does the same thing
   useEffect(() => {
     if (isCallEnded) {
       const href = `/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`;
@@ -132,6 +135,7 @@ export default function CallContainer() {
     { keyup: true },
   );
 
+  // animate gradient backgroud on reaction
   const controls = useAnimation();
   const opacity = useMotionValue(0);
   useEffect(() => {

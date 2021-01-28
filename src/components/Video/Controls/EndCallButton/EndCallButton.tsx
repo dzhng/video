@@ -33,9 +33,14 @@ export default function EndCallButton({
 
   const handleConfirm = useCallback(async () => {
     setIsEndingCall(true);
-    await endCall().catch(() => setIsEndingCall(false));
+
+    // only host can end the call for everyone
+    if (isHost) {
+      await endCall().catch(() => setIsEndingCall(false));
+    }
+
     room.disconnect();
-  }, [endCall, room]);
+  }, [isHost, endCall, room]);
 
   useHotkeys(
     'e',
