@@ -92,7 +92,13 @@ export default function ReactionButton({
           <Fade {...TransitionProps} timeout={200}>
             {/* set this div with neg margins so there's a lot of room for mouse to move before it's set to disappear */}
             <div
-              style={{ margin: '-40px', padding: '40px' }}
+              style={{
+                margin: '-40px',
+                padding: '40px',
+                marginBottom: '-80px',
+                paddingBottom: '80px',
+              }}
+              onClick={() => setPickerOpen(false)}
               onMouseLeave={() => setPickerOpen(false)}
             >
               <Card className={classes.reactionCard}>

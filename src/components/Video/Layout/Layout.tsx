@@ -32,6 +32,10 @@ const useStyles = makeStyles((theme) =>
       ...theme.customMixins.activitiesBarMini,
       display: 'flex',
       flexDirection: 'column',
+      // disable background of default MUI paper
+      backgroundColor: 'transparent',
+      border: 0,
+      boxShadow: 'none',
     },
     actionArea: {
       flexGrow: 1,
