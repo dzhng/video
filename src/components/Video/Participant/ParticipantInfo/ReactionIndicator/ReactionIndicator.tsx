@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import useDimensions from 'react-cool-dimensions';
+import { getUidFromIdentity } from '~/utils/twilio';
 import { ReactionMap, ReactionType, ReactionTypes } from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import { CallEvents } from '~/components/CallProvider/events';
@@ -69,7 +70,7 @@ export default function ReactionIndicator({ identity }: { identity: string }) {
   // everytime noti messages change, send to snackbar
   useEffect(() => {
     const handleNewReaction = (reaction: ReactionType) => {
-      if (reaction.uid === identity) {
+      if (reaction.uid === getUidFromIdentity(identity)) {
         setShowReaction(reaction.type);
         setRenderKey((state) => state + 1);
       }

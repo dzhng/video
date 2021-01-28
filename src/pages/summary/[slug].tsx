@@ -3,6 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { Twilio } from 'twilio';
 
+import { getUidFromIdentity } from '~/utils/twilio';
 import { Collections, LocalModel, Call } from '~/firebase/schema-types';
 import { CallsRTDBRoot, CallData } from '~/firebase/rtdb-types';
 import { db, rtdb } from '~/utils/firebase';
@@ -100,7 +101,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   //  this is an case that can happen if a user leaves /joins multiple times during a call
   const participants = participantRecords.map((record) => {
     const data: ParticipantRecord = removeUndefineds({
-      uid: record.identity,
+      uid: getUidFromIdentity(record.identity) ?? '',
       joinTime: record.startTime.getTime(),
       leaveTime: record.endTime?.getTime(),
       duration: record.duration,

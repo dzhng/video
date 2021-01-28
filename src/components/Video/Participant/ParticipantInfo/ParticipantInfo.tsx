@@ -11,6 +11,7 @@ import {
   RemoteVideoTrack,
 } from 'twilio-video';
 
+import { getUidFromIdentity } from '~/utils/twilio';
 import AudioLevelIndicator, {
   useVolume,
 } from '~/components/Video/AudioLevelIndicator/AudioLevelIndicator';
@@ -191,7 +192,7 @@ export default function ParticipantInfo({
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const classes = useStyles({ volume: volume ?? 0 });
-  const userInfo = useUserInfo(participant.identity);
+  const userInfo = useUserInfo(getUidFromIdentity(participant.identity));
 
   // dominant speaker needs to be detected by twilio AND there must be some volume to
   // be qualified as dominant speaker. Note that we are adding rules to twilio's original
