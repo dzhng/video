@@ -17,14 +17,20 @@ const useStyles = makeStyles((theme) =>
     drawerContainer: {
       '&.open': {
         ...theme.customMixins.activitiesBarMini,
-        transition: 'width 0.3s ease-out, min-width 0.3s ease-out, max-width 0.3s ease-out',
+        transition: theme.transitions.create(['width', 'min-width', 'max-width'], {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
       },
       '&.closed': {
         // need to set all properties set by customMixins for transition to work
         width: 0,
         minWidth: 0,
         maxWidth: 0,
-        transition: 'width 0.3s linear, min-width 0.3s linear, max-width 0.3s linear',
+        transition: theme.transitions.create(['width', 'min-width', 'max-width'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        }),
       },
       flexShrink: 0,
     },
