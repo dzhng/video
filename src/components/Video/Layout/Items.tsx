@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { take } from 'lodash';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import useDimensions from 'react-cool-dimensions';
 import { sizeForSquareThatFitInRect } from './utils';
 
@@ -98,21 +98,18 @@ export default function LayoutItems({ gridItems, mainItem, variant }: PropTypes)
     >
       {variant === 'focus' && <div className={classes.mainItem}>{mainItem}</div>}
       <div className={classes.itemGridContainer}>
-        <AnimatePresence>
-          {displayableItems.map((item) => (
-            <motion.div
-              key={item.key}
-              className={classes.gridItem}
-              style={{ width: itemSize, height: itemSize }}
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
-              layout
-            >
-              {item.node}
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        {displayableItems.map((item) => (
+          <motion.div
+            key={item.key}
+            className={classes.gridItem}
+            style={{ width: itemSize, height: itemSize }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            layout
+          >
+            {item.node}
+          </motion.div>
+        ))}
       </div>
     </motion.div>
   );
