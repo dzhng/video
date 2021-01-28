@@ -59,6 +59,13 @@ const useStyles = makeStyles((theme) =>
     drawerOpenButton: {
       backgroundColor: theme.palette.grey[900],
       color: 'white',
+
+      // if small screen, have smaller buttons so they can all fit
+      // align this with Controls/style.ts
+      [theme.breakpoints.down('xs')]: {
+        width: 40,
+        height: 40,
+      },
     },
   }),
 );

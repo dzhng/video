@@ -13,10 +13,7 @@ export const useComponentStyles = makeStyles((theme) =>
   createStyles({
     fab: {
       fontSize: '1.1rem',
-
-      '& .MuiFab-label': {
-        marginBottom: 4,
-      },
+      '& .MuiFab-label': {},
     },
     reactionCard: {
       fontSize: '1.2rem',
