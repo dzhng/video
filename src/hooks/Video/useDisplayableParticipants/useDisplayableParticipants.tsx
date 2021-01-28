@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Participant } from 'twilio-video';
-import { take, uniq, compact, intersection } from 'lodash';
+import { take, uniq, compact, intersection, without } from 'lodash';
 import { maxTracks } from '~/constants';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useParticipants from '~/hooks/Video/useParticipants/useParticipants';
+import useSelectedParticipant from '~/components/Video/VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import useDominantSpeaker from '~/hooks/Video/useDominantSpeaker/useDominantSpeaker';
 import useScreenShareParticipant from '~/hooks/Video/useScreenShareParticipant/useScreenShareParticipant';
 
@@ -12,12 +13,13 @@ const haveVideo = (participant: Participant): boolean => {
   return Array.from(participant.videoTracks.values()).length > 0;
 };
 
-export default function useDisplayableParticipants() {
+export default function useDisplayableParticipants(maxParticipants?: number) {
   const {
     room: { localParticipant },
   } = useVideoContext();
   const dominantSpeaker = useDominantSpeaker();
   const screenShareParticipant = useScreenShareParticipant();
+  const [selectedParticipant] = useSelectedParticipant();
   const participants = useParticipants();
 
   const [previousDominantSpeakers, setPreviousDominantSpeakers] = useState([dominantSpeaker]);
@@ -47,6 +49,8 @@ export default function useDisplayableParticipants() {
         compact([
           // local participant always go first
           localParticipant,
+          // selected participant is always front right after local
+          selectedParticipant,
           // make sure screenshare participant is in front as well
           screenShareParticipant,
           ...previousDominantSpeakers,
@@ -54,9 +58,20 @@ export default function useDisplayableParticipants() {
           ...participants,
         ]),
       ),
-      maxTracks,
+      maxParticipants ? Math.min(maxParticipants, maxTracks) : maxTracks,
     );
-  }, [localParticipant, screenShareParticipant, previousDominantSpeakers, participants]);
+  }, [
+    localParticipant,
+    selectedParticipant,
+    screenShareParticipant,
+    previousDominantSpeakers,
+    participants,
+    maxParticipants,
+  ]);
 
-  return displayableParticipants;
+  const undisplayedParticipants = useMemo<Participant[]>(() => {
+    return without(participants, ...displayableParticipants);
+  }, [participants, displayableParticipants]);
+
+  return [displayableParticipants, undisplayedParticipants];
 }

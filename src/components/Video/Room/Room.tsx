@@ -18,7 +18,27 @@ import ControlsBar from './ControlsBar/ControlsBar';
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
 
-const Container = styled('div')(() => ({}));
+const Container = styled('div')(() => ({
+  width: '100%',
+}));
+
+const UndisplayedParticipantCount = styled('div')(({ theme }) => ({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  height: '100%',
+  backgroundColor: 'black',
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[7],
+  overflow: 'hidden',
+
+  '& span': {
+    color: 'white',
+    fontSize: '1.5em',
+  },
+}));
 
 export default function Room() {
   // Here we would like the height of the main container to be the height of the viewport.
@@ -29,9 +49,11 @@ export default function Room() {
   const pageHeight = useHeight();
 
   const { currentActivity } = useCallContext();
-  const participants = useDisplayableParticipants();
   const screenShareParticipant = useScreenShareParticipant();
-  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const variant = currentActivity || screenShareParticipant ? 'focus' : 'grid';
+
+  const [participants, undisplayedParticipants] = useDisplayableParticipants();
+  const [selectedParticipant, toggleSelectedParticipant] = useSelectedParticipant();
 
   const participantToItem = useCallback(
     (participant: ParticipantType) => ({
@@ -40,19 +62,29 @@ export default function Room() {
         <Participant
           participant={participant}
           isSelected={selectedParticipant === participant}
-          onClick={() => setSelectedParticipant(participant)}
+          onClick={() => toggleSelectedParticipant(participant)}
         />
       ),
     }),
     [selectedParticipant, setSelectedParticipant],
   );
 
-  const items = useMemo<{ key: string; node: React.ReactNode }[]>(
-    () => participants.map(participantToItem),
-    [participants, participantToItem],
-  );
+  const items = useMemo<{ key: string; node: React.ReactNode }[]>(() => {
+    const mapped = participants.map(participantToItem);
 
-  const variant = currentActivity || screenShareParticipant ? 'focus' : 'grid';
+    if (undisplayedParticipants.length > 0) {
+      mapped.push({
+        key: 'undisplayedCount',
+        node: (
+          <UndisplayedParticipantCount>
+            <span>+ {undisplayedParticipants.length}</span>
+          </UndisplayedParticipantCount>
+        ),
+      });
+    }
+
+    return mapped;
+  }, [participants, participantToItem, undisplayedParticipants]);
 
   return (
     <Container style={{ height: pageHeight }}>

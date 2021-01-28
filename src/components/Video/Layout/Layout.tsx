@@ -28,8 +28,14 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'stretch',
     },
     controlsContainer: {
-      height: 100,
       flexShrink: 0,
+
+      [theme.breakpoints.down('xs')]: {
+        height: theme.callControlHeightXs,
+      },
+      [theme.breakpoints.up('sm')]: {
+        height: theme.callControlHeight,
+      },
     },
   }),
 );

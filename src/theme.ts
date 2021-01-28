@@ -7,6 +7,8 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     headerBarHeight: number;
     transitionTime: string;
     dividerBorder: string;
+    callControlHeightXs: number;
+    callControlHeight: number;
 
     customMixins: {
       modalPaper: CSSProperties;
@@ -24,6 +26,8 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     headerBarHeight?: number;
     transitionTime?: string;
     dividerBorder?: string;
+    callControlHeightXs?: number;
+    callControlHeight?: number;
 
     customMixins: {
       modalPaper?: CSSProperties;
@@ -118,6 +122,8 @@ export default createMuiTheme({
   headerBarHeight: 65,
   transitionTime: '0.3s',
   dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
+  callControlHeightXs: 50,
+  callControlHeight: 80,
 
   customMixins: {
     modalPaper: {
