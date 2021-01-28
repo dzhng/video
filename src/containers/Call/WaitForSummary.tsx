@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, CircularProgress } from '@material-ui/core';
+import { Typography, CircularProgress } from '@material-ui/core';
+import { motion } from 'framer-motion';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -33,12 +34,17 @@ export default function WaitForSummary() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.container}>
+    <motion.div
+      className={classes.container}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
       <Typography variant="h1">Generating call summary...</Typography>
       <Typography variant="body1">
         This page will automatically update when the call summary is ready.
       </Typography>
       <CircularProgress color="primary" variant="indeterminate"></CircularProgress>
-    </Container>
+    </motion.div>
   );
 }

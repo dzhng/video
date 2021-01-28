@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppState } from '~/state';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
@@ -52,20 +53,24 @@ export default function CallLobby({ waitForJoin }: { waitForJoin: boolean }) {
     [roomState, handleSubmit],
   );
 
-  return roomState === 'disconnected' ? (
-    hasConnected ? (
-      <WaitForSummary />
-    ) : (
-      <LocalPreview
-        title="Prepare to join call"
-        helperText="Please check that your camera and mic is enabled, and join the call when you are ready."
-        actionText="Join Call"
-        disabled={isConnecting || isLoading || !waitForJoin}
-        isSubmitting={isConnecting || !waitForJoin}
-        onSubmit={handleSubmit}
-      />
-    )
-  ) : (
-    <Room />
+  return (
+    <AnimatePresence>
+      {roomState === 'disconnected' ? (
+        hasConnected ? (
+          <WaitForSummary />
+        ) : (
+          <LocalPreview
+            title="Prepare to join call"
+            helperText="Please check that your camera and mic is enabled, and join the call when you are ready."
+            actionText="Join Call"
+            disabled={isConnecting || isLoading || !waitForJoin}
+            isSubmitting={isConnecting || !waitForJoin}
+            onSubmit={handleSubmit}
+          />
+        )
+      ) : (
+        <Room />
+      )}
+    </AnimatePresence>
   );
 }

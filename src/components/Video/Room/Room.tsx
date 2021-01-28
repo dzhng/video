@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { Participant as ParticipantType } from 'twilio-video';
 import { styled } from '@material-ui/core/styles';
+import { motion } from 'framer-motion';
 
 import useHeight from '~/hooks/Video/useHeight/useHeight';
 import useDisplayableParticipants from '~/hooks/Video/useDisplayableParticipants/useDisplayableParticipants';
@@ -20,10 +21,6 @@ import ChatNotification from './ChatNotification/ChatNotification';
 
 // use dynamic import here since layout requires measuring dom so can't SSR
 const Layout = dynamic(() => import('~/components/Video/Layout/Layout'), { ssr: false });
-
-const Container = styled('div')(() => ({
-  width: '100%',
-}));
 
 const UndisplayedParticipantCount = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -99,7 +96,7 @@ export default function Room() {
   }, [participants, participantToItem, undisplayedParticipants]);
 
   return (
-    <Container style={{ height: pageHeight }}>
+    <motion.div style={{ height: pageHeight }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
       <Layout
         variant={variant}
         hideSideBar={!!screenShareParticipant}
@@ -112,6 +109,6 @@ export default function Room() {
 
       <ChatNotification />
       <ReconnectingNotification />
-    </Container>
+    </motion.div>
   );
 }
