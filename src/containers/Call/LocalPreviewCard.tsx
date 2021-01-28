@@ -45,16 +45,11 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: 0,
       left: 0,
       right: 0,
+      margin: theme.spacing(1),
 
       display: 'flex',
       justifyContent: 'space-between',
       flexShrink: 0,
-
-      '& .rightSpeedDial': {
-        position: 'absolute',
-        bottom: theme.spacing(1),
-        right: theme.spacing(1),
-      },
     },
     buttonContainer: {
       display: 'flex',
@@ -117,7 +112,7 @@ export default function LocalPreviewCard({
           <div className="left" style={{ width: 72, minHeight: 1, position: 'relative' }} />
           <Controls />
           <div className="right" style={{ width: 72, minHeight: 1, position: 'relative' }}>
-            <SettingsSpeedDial className="rightSpeedDial" />
+            <SettingsSpeedDial />
           </div>
         </div>
       </div>
