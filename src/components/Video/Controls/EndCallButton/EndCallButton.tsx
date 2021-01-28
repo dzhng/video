@@ -40,7 +40,7 @@ export default function EndCallButton({
     }
 
     // endCall() should have triggered a disconnect, but leave it here just in case if it errors out
-    room?.disconnect();
+    room.disconnect?.();
   }, [isHost, endCall, room]);
 
   useHotkeys(

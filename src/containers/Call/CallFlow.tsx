@@ -51,7 +51,7 @@ export default function CallFlow({
   // when this call has been ended by the host, disconnect
   useEffect(() => {
     if (isCallEnded) {
-      room?.disconnect();
+      room.disconnect?.();
     }
   }, [isCallEnded, room]);
 
