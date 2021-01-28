@@ -65,7 +65,7 @@ export default function Notes() {
   );
 
   const sections = [
-    [ActionItemsKey, 'Action Items', 'i'],
+    [ActionItemsKey, 'Action Items', 'a'],
     [QuestionsKey, 'Questions', 'q'],
     [TakeAwaysKey, 'Take Aways', 't'],
   ].map(([key, title, hotkey]) => {

@@ -97,7 +97,7 @@ export default function HotkeyInstructions({
                 <Typography variant="h5">Call Control</Typography>
                 <Divider />
                 <HotkeyItem title="Push-to-Talk" hotkey="[space]" />
-                <HotkeyItem title="Toggle Audio" hotkey="A" />
+                <HotkeyItem title="Toggle Audio" hotkey="M" />
                 <HotkeyItem title="Toggle Video" hotkey="V" />
                 <HotkeyItem title="End Call" hotkey="E" />
 
@@ -105,7 +105,7 @@ export default function HotkeyInstructions({
                 <Divider />
                 <HotkeyItem title="Notes" hotkey="N" />
                 <HotkeyItem title="Chats" hotkey="C" />
-                <HotkeyItem title="Create Action Item" hotkey="I" />
+                <HotkeyItem title="Create Action Item" hotkey="A" />
                 <HotkeyItem title="Create Question" hotkey="Q" />
                 <HotkeyItem title="Create Take Away" hotkey="T" />
                 <HotkeyItem title="Cancel Create" hotkey="[tab]" />

@@ -63,7 +63,7 @@ export default function ToggleAudioButton({
 
   // setup hotkeys to toggle audio
   useHotkeys(
-    'a',
+    'm',
     (e) => {
       e.preventDefault();
       if (disableAudioToggle) {
@@ -89,7 +89,7 @@ export default function ToggleAudioButton({
 
   return (
     <Tooltip
-      title={isAudioEnabled ? 'Mute Audio [A]' : 'Unmute Audio [A]'}
+      title={isAudioEnabled ? 'Mute Audio [M]' : 'Unmute Audio [M]'}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
