@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import clsx from 'clsx';
+import { motion } from 'framer-motion';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Hidden, Drawer, Tooltip, Fab } from '@material-ui/core';
 import { Menu as MenuIcon } from '@material-ui/icons';
@@ -107,6 +108,12 @@ export default function VideoLayout({
   const [isActivityDrawerOpen, setIsActivityDrawerOpen] = useState(true);
   const container = isBrowser ? () => window.document.body : undefined;
 
+  // set first mount var
+  const [firstMount, setFirstMount] = useState(true);
+  useEffect(() => {
+    setTimeout(() => setFirstMount(false));
+  }, []);
+
   const drawer = (
     <>
       <Hidden smUp implementation="js">
@@ -130,11 +137,10 @@ export default function VideoLayout({
       <Hidden xsDown implementation="js">
         <Drawer
           className={clsx(classes.drawerContainer, isActivityDrawerOpen ? 'open' : 'closed')}
-          container={container}
-          variant={hideSideBar ? 'temporary' : 'persistent'}
+          variant="persistent"
           anchor="left"
-          open={isActivityDrawerOpen}
-          onClose={() => setIsActivityDrawerOpen(false)}
+          // start with closed, then we can animate in the drawer after mount
+          open={firstMount ? false : isActivityDrawerOpen}
           classes={{
             paper: classes.drawerPaper,
           }}
@@ -173,11 +179,16 @@ export default function VideoLayout({
   );
 
   const controls = (
-    <div className={classes.controlsContainer}>
+    <motion.div
+      className={classes.controlsContainer}
+      style={{ y: 70 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, type: 'spring' }}
+    >
       {drawerOpenButton}
       {mainControls}
       {sideControls}
-    </div>
+    </motion.div>
   );
 
   return (
