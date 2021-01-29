@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) =>
 
 export default function VideoInputList() {
   const classes = useStyles();
-  const { localTracks, devices } = useVideoContext();
+  const { localTracks, devices, isVideoEnabled } = useVideoContext();
   const videoInputDevices = devices.videoInput;
 
   const localVideoTrack = localTracks.find((track) => track.kind === 'video') as LocalVideoTrack;
@@ -36,11 +36,24 @@ export default function VideoInputList() {
   const localVideoInputDeviceId = mediaStreamTrack?.getSettings().deviceId;
 
   function replaceTrack(newDeviceId: string) {
+    // only allow changing video input when video is enabled (so we know there's a video track)
+    if (!isVideoEnabled || !localVideoTrack) {
+      return;
+    }
+
     window.localStorage.setItem(SELECTED_VIDEO_INPUT_KEY, newDeviceId);
-    localVideoTrack.restart({
-      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-      deviceId: { exact: newDeviceId },
-    });
+    localVideoTrack
+      .restart({
+        ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+        deviceId: { exact: newDeviceId },
+      })
+      .catch(() => {
+        // if restarting fails, remove local storage and set back to old device
+        window.localStorage.removeItem(SELECTED_VIDEO_INPUT_KEY);
+        return localVideoTrack.restart({
+          ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+        });
+      });
   }
 
   return (
@@ -48,7 +61,7 @@ export default function VideoInputList() {
       {videoInputDevices.length > 1 ? (
         <FormControl fullWidth>
           <Typography variant="h5">
-            <b>Video Input</b>
+            <b>Video Input</b> {!isVideoEnabled && '(video disabled)'}
           </Typography>
           <Select
             fullWidth
@@ -56,6 +69,7 @@ export default function VideoInputList() {
             variant="outlined"
             onChange={(e) => replaceTrack(e.target.value as string)}
             value={localVideoInputDeviceId || ''}
+            disabled={!isVideoEnabled}
             data-testid="select-menu"
           >
             {videoInputDevices.map((device) => (
