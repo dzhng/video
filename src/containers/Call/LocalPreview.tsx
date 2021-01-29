@@ -1,7 +1,6 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { motion } from 'framer-motion';
 import type { LocalPreviewCardProps } from './LocalPreviewCard';
 
 // use dynamic import here since local preview card requires measuring dom so can't SSR
@@ -28,8 +27,8 @@ export default function LocalPreview(props: LocalPreviewCardProps) {
   const classes = useStyles();
 
   return (
-    <motion.div className={classes.container} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+    <div className={classes.container}>
       <LocalPreviewCard className={classes.card} {...props} />
-    </motion.div>
+    </div>
   );
 }

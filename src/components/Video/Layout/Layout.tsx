@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'stretch',
     },
     drawerContainer: {
+      // make sure to propagate height down for height calculation on safari
+      // (which won't work with flex unless it's propagated down)
+      height: '100%',
+
       '&.open': {
         ...theme.customMixins.activitiesBarMini,
         transition: theme.transitions.create(['width', 'min-width', 'max-width'], {
@@ -37,6 +41,7 @@ const useStyles = makeStyles((theme) =>
     },
     drawerPaper: {
       ...theme.customMixins.activitiesBarMini,
+      height: '100%',
       display: 'flex',
       flexDirection: 'column',
       // disable background of default MUI paper
@@ -45,6 +50,7 @@ const useStyles = makeStyles((theme) =>
       boxShadow: 'none',
     },
     actionArea: {
+      height: '100%',
       flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',

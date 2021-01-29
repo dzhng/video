@@ -20,6 +20,10 @@ const mainItemMaxWidth = 1100;
 const useStyles = makeStyles((theme) =>
   createStyles({
     itemContainer: (props: StyleProps) => ({
+      // make sure to propagate height down for height calculation on safari
+      // (which won't work with flex unless it's propagated down)
+      width: '100%',
+      height: '100%',
       // need to set to hidden so that dimensions will be calculated correctly
       // (if not set, size will overflow and will be wrong)
       overflow: 'hidden',
@@ -27,7 +31,6 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: props.isPortrait ? 'column' : 'row',
       alignItems: 'stretch',
-      width: '100%',
     }),
     mainItem: (props: StyleProps) => ({
       width: props.isPortrait ? '100%' : `${mainItemWidthPercent}%`,
