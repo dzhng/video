@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { EventEmitter } from 'events';
-import Video, { ConnectOptions, LocalTrack, Room } from 'twilio-video';
+import Video, { ConnectOptions, LocalTrack, LocalVideoTrack, Room } from 'twilio-video';
 import { isMobile, isBrowser } from '~/utils';
 import { Callback } from '~/utils/twilio-types';
 
@@ -27,7 +27,20 @@ export default function useRoom(
   const connect = useCallback(
     (token) => {
       setIsConnecting(true);
-      return Video.connect(token, { ...optionsRef.current, tracks: localTracks }).then(
+
+      // only connect with enabled video tracks, since we don't want to publish stopped or disabled videos
+      // we need to special case video here since it's the track type that gets published/unpublished
+      // on user toggle (audio just has enabled/disabled but doesnt unpublish the track)
+      const enabledLocalTracks = localTracks.filter((track) => {
+        if (track.kind === 'video') {
+          const vTrack = track as LocalVideoTrack;
+          return vTrack.isEnabled && !vTrack.isStopped;
+        } else {
+          return true;
+        }
+      });
+
+      return Video.connect(token, { ...optionsRef.current, tracks: enabledLocalTracks }).then(
         (newRoom) => {
           setRoom(newRoom);
           const disconnect = () => newRoom.disconnect();
