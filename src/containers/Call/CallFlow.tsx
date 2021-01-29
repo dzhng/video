@@ -68,7 +68,8 @@ export default function CallFlow({
 
       if (videoTrack) {
         videoTrack.disable();
-        room.localParticipant?.unpublishTrack(videoTrack);
+        const publication = room.localParticipant?.unpublishTrack(videoTrack);
+        room.localParticipant?.emit('trackUnpublished', publication);
       }
 
       removeLocalVideoTrack();
