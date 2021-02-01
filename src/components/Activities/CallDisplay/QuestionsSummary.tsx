@@ -2,7 +2,8 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { entries } from 'lodash';
 import { Typography, Card, Button, Tooltip } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-import { QuestionsActivityMetadata, Activity, CallData } from '~/firebase/schema-types';
+import { QuestionsActivityMetadata, Activity } from '~/firebase/schema-types';
+import { ActivityType } from '~/firebase/rtdb-types';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 import { ResponsesKey, ResponseType, useStyles } from './Questions';
@@ -51,7 +52,7 @@ export default function QuestionsSummary({
   data,
 }: {
   activity: Activity;
-  data: CallData;
+  data: ActivityType;
 }) {
   const classes = useStyles();
   const [index, setIndex] = useState(0);

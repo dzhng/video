@@ -1,25 +1,10 @@
 import React, { useCallback, useRef } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useHotkeys } from 'react-hotkeys-hook';
-
-import Fab from '@material-ui/core/Fab';
-import Tooltip from '@material-ui/core/Tooltip';
-import Videocam from '@material-ui/icons/Videocam';
-import VideocamOff from '@material-ui/icons/VideocamOff';
+import { Fab, Tooltip } from '@material-ui/core';
+import { Videocam, VideocamOff } from '@material-ui/icons';
 
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      margin: theme.spacing(1),
-
-      '&.Mui-disabled': {
-        backgroundColor: theme.palette.grey[400],
-      },
-    },
-  }),
-);
+import { useStyles } from '../styles';
 
 export default function ToggleVideoButton({
   disabled,
@@ -31,6 +16,7 @@ export default function ToggleVideoButton({
   const classes = useStyles();
   const { isVideoEnabled, toggleVideoEnabled, shouldDisableVideoToggle } = useVideoContext();
   const lastClickTimeRef = useRef(0);
+  const disableVideoToggle = disabled || shouldDisableVideoToggle;
 
   const toggleVideo = useCallback(() => {
     if (Date.now() - lastClickTimeRef.current > 300) {
@@ -43,6 +29,10 @@ export default function ToggleVideoButton({
     'v',
     (e) => {
       e.preventDefault();
+      if (disableVideoToggle) {
+        return;
+      }
+
       toggleVideo();
       setPopperMessage(
         isVideoEnabled ? (
@@ -57,22 +47,18 @@ export default function ToggleVideoButton({
         true,
       );
     },
-    [toggleVideo, isVideoEnabled, setPopperMessage],
+    [disableVideoToggle, toggleVideo, isVideoEnabled, setPopperMessage],
   );
 
   return (
     <Tooltip
-      title={isVideoEnabled ? 'Mute Video [V]' : 'Unmute Video [V]'}
+      title={isVideoEnabled ? 'Turn Off Video [V]' : 'Turn On Video [V]'}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
       {/* Wrapping <Fab/> in <div/> so that tooltip can wrap a disabled element */}
       <div>
-        <Fab
-          className={classes.fab}
-          onClick={toggleVideo}
-          disabled={disabled || shouldDisableVideoToggle}
-        >
+        <Fab className={classes.fab} onClick={toggleVideo} disabled={disableVideoToggle}>
           {isVideoEnabled ? (
             <Videocam data-testid="video-icon" />
           ) : (

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 import clsx from 'clsx';
-import { Typography, Button, Card, CardContent } from '@material-ui/core';
+import { Typography, Button, Card } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AddOutlined as AddIcon, InfoOutlined as InfoIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
@@ -10,7 +10,6 @@ import { db } from '~/utils/firebase';
 import { useAppState } from '~/state';
 import NewActivityModal from './NewActivityModal';
 import EditActivityModal from './EditActivityModal';
-import ConfirmStartModal from './ConfirmStartModal';
 import ActivityCard from './ActivityCard';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -18,6 +17,8 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       ...theme.customMixins.scrollBar,
       overflowY: 'auto',
+      padding: theme.spacing(1.5),
+      paddingBottom: 0,
 
       '& .MuiTimelineOppositeContent-root': {
         flex: 0,
@@ -31,15 +32,24 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     hintCard: {
       border: '2px solid ' + theme.palette.info.light,
+      padding: theme.spacing(1),
+      display: 'flex',
 
-      '& svg': {
-        marginTop: '-5px',
-        marginLeft: '-3px',
+      '& >svg': {
         color: theme.palette.info.main,
+        marginRight: theme.spacing(1),
+        flexShrink: 0,
+      },
+      '& >div': {
+        flexGrow: 1,
       },
     },
     timelineItem: {
-      margin: theme.spacing(2),
+      // be careful with margin overlap here
+      // margin collapsing between different timelineItems
+      // will prevent placeholder height from being
+      // calculated correctly.
+      marginBottom: theme.spacing(1.5),
     },
     addButton: {
       height: 60,
@@ -67,6 +77,7 @@ const ActivityTimelineItem = ({
   onEdit(): void;
 
   isStarted?: boolean;
+  hasStarted?: boolean;
   onStart?(): void;
 }) => {
   const classes = useStyles();
@@ -103,6 +114,7 @@ interface PropTypes {
   // only valid in call mode
   currentActivity?: Activity;
   startActivity?(activity: Activity): void;
+  hasActivityStarted?(activity: Activity): boolean;
 }
 
 export default function ActivitiesBar({
@@ -110,13 +122,13 @@ export default function ActivitiesBar({
   mode,
   startActivity,
   currentActivity,
+  hasActivityStarted,
 }: PropTypes) {
   const classes = useStyles();
   // have a local copy of activities here so that we can debounce saving to firebase (we can edit and see results without depending on template.activities to update in real-time)
   const [activities, setActivities] = useState<Activity[]>(template.activities);
   const [newActivityOpen, setNewActivityOpen] = useState(false);
   const [editActivityIndex, setEditActivityIndex] = useState<number | null>(null);
-  const [confirmStartActivity, setConfirmStartActivity] = useState<Activity | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const { markIsWriting } = useAppState();
 
@@ -189,24 +201,10 @@ export default function ActivitiesBar({
   // start activity right away if none is started, if not, ask for confirmation first
   const handleStartActivity = useCallback(
     (activity: Activity) => {
-      if (currentActivity) {
-        setConfirmStartActivity(activity);
-      } else {
-        startActivity?.(activity);
-      }
+      startActivity?.(activity);
     },
-    [currentActivity, startActivity],
+    [startActivity],
   );
-
-  const handleCancelStartActivity = useCallback(() => {
-    setConfirmStartActivity(null);
-  }, []);
-
-  const handleStartActivityConfirm = useCallback(() => {
-    if (confirmStartActivity) {
-      startActivity?.(confirmStartActivity);
-    }
-  }, [startActivity, confirmStartActivity]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd} onDragStart={() => setIsDragging(true)}>
@@ -220,16 +218,15 @@ export default function ActivitiesBar({
             {/* Hide hint card after more than 2 activities since the user probably know what it is at that point. It also takes up a lot of space. */}
             {activities.length <= 2 && mode === 'edit' && (
               <Card className={clsx(classes.hintCard, classes.timelineItem)}>
-                <CardContent>
-                  <InfoIcon />
+                <InfoIcon />
+                <div>
                   <Typography variant="h2">
-                    <b>Structure your call with activities</b>
+                    <b>Plan your call with activities</b>
                   </Typography>
                   <Typography variant="body1">
-                    Activities are different interactions that engage the audience. Some activities
-                    are driven purely by the host, some engage everyone in the call.
+                    Activities are different interactions that engage the audience.
                   </Typography>
-                </CardContent>
+                </div>
               </Card>
             )}
 
@@ -242,6 +239,7 @@ export default function ActivitiesBar({
                 save={(values: Activity) => handleSaveActivity(values, index)}
                 onEdit={() => setEditActivityIndex(index)}
                 isStarted={currentActivity === activity}
+                hasStarted={hasActivityStarted?.(activity)}
                 onStart={() => handleStartActivity(activity)}
               />
             ))}
@@ -278,14 +276,6 @@ export default function ActivitiesBar({
           open={true}
           onClose={() => setEditActivityIndex(null)}
           onDelete={() => handleDeleteActivity(editActivityIndex)}
-        />
-      )}
-
-      {confirmStartActivity !== null && (
-        <ConfirmStartModal
-          open={!!confirmStartActivity}
-          onClose={handleCancelStartActivity}
-          onConfirm={handleStartActivityConfirm}
         />
       )}
     </DragDropContext>

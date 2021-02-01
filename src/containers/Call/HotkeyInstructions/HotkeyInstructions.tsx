@@ -5,10 +5,18 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) =>
   createStyles({
     popper: {
-      padding: theme.spacing(1),
       backgroundColor: theme.palette.grey[100],
       boxShadow: theme.shadows[7],
+      display: 'flex',
 
+      '& >div': {
+        minWidth: 300,
+        padding: theme.spacing(1),
+
+        '&:first-child': {
+          borderRight: theme.dividerBorder,
+        },
+      },
       '& h5': {
         marginBottom: theme.spacing(1),
         fontWeight: 'bold',
@@ -43,7 +51,7 @@ const useStyles = makeStyles((theme) =>
     '@global': {
       '.hotkeyInstructionsPopper': {
         minWidth: 300,
-        top: 'calc(50vh - 280px) !important',
+        top: 'calc(50vh - 200px) !important',
         zIndex: 201,
       },
     },
@@ -85,28 +93,40 @@ export default function HotkeyInstructions({
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Card className={classes.popper}>
-              <Typography variant="h5">Call Control</Typography>
-              <Divider />
-              <HotkeyItem title="Push-to-Talk" hotkey="[space]" />
-              <HotkeyItem title="Toggle Audio" hotkey="A" />
-              <HotkeyItem title="Toggle Video" hotkey="V" />
-              <HotkeyItem title="End Call" hotkey="E" />
+              <div>
+                <Typography variant="h5">Call Control</Typography>
+                <Divider />
+                <HotkeyItem title="Push-to-Talk" hotkey="[space]" />
+                <HotkeyItem title="Toggle Audio" hotkey="M" />
+                <HotkeyItem title="Toggle Video" hotkey="V" />
+                <HotkeyItem title="End Call" hotkey="E" />
 
-              <Typography variant="h5">Activities</Typography>
-              <Divider />
-              <HotkeyItem title="Notes" hotkey="N" />
-              <HotkeyItem title="Chats" hotkey="C" />
-              <HotkeyItem title="Create Action Item" hotkey="I" />
-              <HotkeyItem title="Create Question" hotkey="Q" />
-              <HotkeyItem title="Create Take Away" hotkey="T" />
-              <HotkeyItem title="Cancel Create" hotkey="[tab]" />
+                <Typography variant="h5">Activities</Typography>
+                <Divider />
+                <HotkeyItem title="Notes" hotkey="N" />
+                <HotkeyItem title="Chats" hotkey="C" />
+                <HotkeyItem title="Create Action Item" hotkey="A" />
+                <HotkeyItem title="Create Question" hotkey="Q" />
+                <HotkeyItem title="Create Take Away" hotkey="T" />
+                <HotkeyItem title="Cancel Create" hotkey="[tab]" />
+              </div>
 
-              <Typography variant="h5">Misc</Typography>
               <Divider />
-              <HotkeyItem title="Full Screen" hotkey="F" />
-              <HotkeyItem title="Copy Share Link" hotkey="L" />
-              <HotkeyItem title="Join or Create Call (before call start)" hotkey="[enter]" />
-              <HotkeyItem title="Hotkey Instructions (this modal)" hotkey="long press [tab]" />
+
+              <div>
+                <Typography variant="h5">Presentation</Typography>
+                <Divider />
+                <HotkeyItem title="Next Slide" hotkey="[right]" />
+                <HotkeyItem title="Previous Slide" hotkey="[left]" />
+
+                <Typography variant="h5">Misc</Typography>
+                <Divider />
+                <HotkeyItem title="Send reaction 👍" hotkey="R" />
+                <HotkeyItem title="Full Screen" hotkey="F" />
+                <HotkeyItem title="Copy Share Link" hotkey="L" />
+                <HotkeyItem title="Join or Create Call (before call start)" hotkey="[enter]" />
+                <HotkeyItem title="Hotkey Instructions (this modal)" hotkey="long press [tab]" />
+              </div>
             </Card>
           </Fade>
         )}

@@ -1,7 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
-import { NavigateBefore, NavigateNext } from '@material-ui/icons';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { IconButton, Tooltip, Fab } from '@material-ui/core';
+import {
+  NavigateBefore,
+  NavigateNext,
+  FullscreenOutlined as ResetZoomIcon,
+} from '@material-ui/icons';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Presentation } from '~/firebase/schema-types';
 import Slides from './Slides';
@@ -9,6 +14,7 @@ import Slides from './Slides';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
+      position: 'relative', // for absolute position slide elements
       display: 'flex',
       flexDirection: 'column',
       width: '100%',
@@ -32,6 +38,11 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 'bold',
       verticalAlign: 'middle',
       margin: theme.spacing(1),
+    },
+    fab: {
+      position: 'absolute',
+      bottom: 40,
+      right: theme.spacing(1),
     },
   }),
 );
@@ -71,18 +82,46 @@ export default function PresentationDisplay({
     }
   }, [finalIndex, finalSetIndex, presentation]);
 
+  useHotkeys(
+    'right',
+    (e) => {
+      e.preventDefault();
+      nextSlide();
+    },
+    [nextSlide],
+  );
+
+  useHotkeys(
+    'left',
+    (e) => {
+      e.preventDefault();
+      previousSlide();
+    },
+    [previousSlide],
+  );
+
   // we want to load all slides at once, so that the ones to be displayed will load in the background. We toggle which slide to display via CSS
   return (
     <div className={classes.container}>
       <TransformWrapper defaultScale={1} reset={{ animationTime: 100 }} pan={{ velocity: false }}>
-        {({ resetTransform }: { resetTransform(): void }) => (
-          <TransformComponent>
-            <Slides
-              slides={presentation.slides}
-              index={finalIndex}
-              resetTransform={resetTransform}
-            />
-          </TransformComponent>
+        {({ resetTransform, scale }: { resetTransform(): void; scale: number }) => (
+          <>
+            <TransformComponent>
+              <Slides
+                slides={presentation.slides}
+                index={finalIndex}
+                resetTransform={resetTransform}
+              />
+            </TransformComponent>
+
+            {scale !== 1 && (
+              <Tooltip title="Reset zoom" placement="top">
+                <Fab className={classes.fab} size="small" onClick={resetTransform}>
+                  <ResetZoomIcon />
+                </Fab>
+              </Tooltip>
+            )}
+          </>
         )}
       </TransformWrapper>
 

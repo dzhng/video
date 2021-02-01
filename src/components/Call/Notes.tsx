@@ -3,12 +3,20 @@ import { get } from 'lodash';
 import { styled } from '@material-ui/core/styles';
 import { useAppState } from '~/state';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
-import { TasksDataKey, ActionItemsKey, QuestionsKey, TakeAwaysKey } from '~/constants';
-import { TaskType, TaskSectionType } from './types';
+import {
+  TaskType,
+  TaskSectionType,
+  TasksDataKey,
+  ActionItemsKey,
+  QuestionsKey,
+  TakeAwaysKey,
+} from '~/firebase/rtdb-types';
 import TaskSection from './TaskSection';
 
 const Container = styled('div')(({ theme }) => ({
+  ...theme.customMixins.scrollBar,
   marginTop: theme.spacing(1),
+  overflowY: 'auto',
 }));
 
 export default function Notes() {
@@ -57,7 +65,7 @@ export default function Notes() {
   );
 
   const sections = [
-    [ActionItemsKey, 'Action Items', 'i'],
+    [ActionItemsKey, 'Action Items', 'a'],
     [QuestionsKey, 'Questions', 'q'],
     [TakeAwaysKey, 'Take Aways', 't'],
   ].map(([key, title, hotkey]) => {

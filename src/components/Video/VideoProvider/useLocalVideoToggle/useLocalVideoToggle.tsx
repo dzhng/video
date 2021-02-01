@@ -78,16 +78,26 @@ export default function useLocalVideoToggle(
     setIsPublishing(true);
     if (isEnabled) {
       videoTrack.disable();
-      localParticipant?.unpublishTrack(videoTrack);
+      const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
+      // TODO: remove trackUnpublished emit when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
+      // need to remove this or else publishication service will track it wrong and have multiple video elements in DOM
+      localParticipant?.emit('trackUnpublished', localTrackPublication);
       await new Promise((resovle) => setTimeout(resovle));
     }
 
     const newFacingMode =
       mediaStreamTrack?.getSettings().facingMode === 'user' ? 'environment' : 'user';
-    await videoTrack.restart({
-      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-      facingMode: newFacingMode,
-    });
+    await videoTrack
+      .restart({
+        ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+        facingMode: newFacingMode,
+      })
+      .catch(() => {
+        // if error restarting track with new facing mode, just restart again with old default settings
+        return videoTrack.restart({
+          ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+        });
+      });
 
     // turn video back on
     if (isEnabled) {
@@ -99,12 +109,13 @@ export default function useLocalVideoToggle(
   }, [isEnabled, isPublishing, mediaStreamTrack, videoTrack, localParticipant]);
 
   const isToggleCameraSupported: boolean = Boolean(supportsFacingMode && videoDevices.length > 1);
+  const shouldDisableVideoToggle = isPublishing || !videoTrack;
 
   return {
     isVideoEnabled: isEnabled,
     toggleVideoEnabled,
     isToggleCameraSupported,
-    shouldDisableVideoToggle: isPublishing,
+    shouldDisableVideoToggle,
     toggleCamera,
   };
 }

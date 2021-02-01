@@ -1,8 +1,13 @@
 import React, { useCallback } from 'react';
+import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Card, Typography, Button, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { EditOutlined as EditIcon, PlayArrow as StartIcon } from '@material-ui/icons';
+import {
+  EditOutlined as EditIcon,
+  PlayArrow as StartIcon,
+  PlayArrowOutlined as ResumeIcon,
+} from '@material-ui/icons';
 import { Activity } from '~/firebase/schema-types';
 import EditableTitle from '~/components/EditableTitle/EditableTitle';
 
@@ -15,8 +20,10 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'row',
       padding: theme.spacing(1),
 
+      '&.hasStarted': {
+        backgroundColor: theme.palette.primary.main + '10',
+      },
       '&:hover': {
-        backgroundColor: theme.palette.grey[100],
         boxShadow: theme.shadows[4],
       },
     },
@@ -56,6 +63,7 @@ interface PropTypes {
 
   // call mode props
   isStarted?: boolean;
+  hasStarted?: boolean;
   onStart?(): void;
 }
 
@@ -63,6 +71,7 @@ export default function ActivitiesCard({
   activity,
   mode,
   isStarted,
+  hasStarted,
   save,
   onEdit,
   onStart,
@@ -98,7 +107,7 @@ export default function ActivitiesCard({
   );
 
   return (
-    <Card className={classes.card}>
+    <Card className={clsx(classes.card, { hasStarted })}>
       <div className={classes.content}>
         <EditableTitle
           disabled={mode === 'view' || isStarted}
@@ -120,7 +129,7 @@ export default function ActivitiesCard({
           </Tooltip>
         )}
 
-        {mode === 'call' && !isStarted && (
+        {mode === 'call' && !isStarted && !hasStarted && (
           <Tooltip title="Edit activity" placement="bottom">
             <Button variant="outlined" color="secondary" onClick={handleSettingsClick}>
               <EditIcon />
@@ -128,18 +137,25 @@ export default function ActivitiesCard({
           </Tooltip>
         )}
 
-        <Tooltip title={isStarted ? 'Activity started' : 'Start activity'} placement="bottom">
-          <div>
-            <Button
-              variant="contained"
-              disabled={isStarted}
-              color="secondary"
-              onClick={handleStartClick}
-            >
-              <StartIcon />
-            </Button>
-          </div>
-        </Tooltip>
+        {(mode === 'call' || mode === 'view') && (
+          <Tooltip
+            title={
+              isStarted ? 'Activity started' : hasStarted ? 'Resume activity' : 'Start activity'
+            }
+            placement="bottom"
+          >
+            <div>
+              <Button
+                variant="contained"
+                disabled={isStarted}
+                color={hasStarted ? 'primary' : 'secondary'}
+                onClick={handleStartClick}
+              >
+                {hasStarted ? <ResumeIcon /> : <StartIcon />}
+              </Button>
+            </div>
+          </Tooltip>
+        )}
       </div>
     </Card>
   );

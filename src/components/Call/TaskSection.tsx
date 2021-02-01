@@ -10,7 +10,7 @@ import {
   RadioButtonCheckedOutlined as CheckedIcon,
 } from '@material-ui/icons';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { TaskSectionType } from './types';
+import { TaskSectionType } from '~/firebase/rtdb-types';
 
 const MaxTaskLength = 280;
 

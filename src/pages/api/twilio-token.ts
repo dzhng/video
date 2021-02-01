@@ -2,6 +2,7 @@ import { NowRequest, NowResponse } from '@vercel/node';
 import assert from 'assert';
 import twilio from 'twilio';
 import admin from '~/utils/firebase-admin';
+import { generateIdentity } from '~/utils/twilio';
 
 const MAX_ALLOWED_SESSION_DURATION = 14400;
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID ?? '';
@@ -25,7 +26,7 @@ export default async (req: NowRequest, res: NowResponse) => {
   assert(body.roomName.length > 0);
 
   const decodedToken = await admin.auth().verifyIdToken(body.idToken);
-  const identity = decodedToken.uid;
+  const identity = generateIdentity(decodedToken.uid);
 
   const AccessToken = twilio.jwt.AccessToken;
   const VideoGrant = AccessToken.VideoGrant;

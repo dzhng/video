@@ -1,24 +1,43 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
+import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { KeyboardOutlined as KeyboardIcon } from '@material-ui/icons';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { isMobile } from '~/utils';
 import { useAppState } from '~/state';
+import { ReactionType } from '~/firebase/rtdb-types';
 import { VideoProvider } from '~/components/Video/VideoProvider';
+import { CallEvents } from '~/components/CallProvider/events';
 import useConnectionOptions from '~/utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from '~/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import HotkeyInstructions from './HotkeyInstructions/HotkeyInstructions';
 import CallFlow from './CallFlow';
+import ReactionIndicator from './ReactionIndicator/ReactionIndicator';
+
+const reactionTimeMs = 1500;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
+      position: 'relative',
       width: '100%',
       height: '100vh',
       background: '#091523',
+      zIndex: 0,
+    },
+    gradientBackground: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      pointerEvents: 'none',
+      zIndex: -1,
+      opacity: 0,
+      background: 'linear-gradient(-45deg, #704c16, #742040, #115168, #167b72)',
     },
     hotkeyButton: {
       position: 'fixed',
@@ -44,21 +63,6 @@ const useStyles = makeStyles((theme) =>
         height: 20,
       },
     },
-
-    // define animation for container background
-    '@global': {
-      '@keyframes gradient': {
-        '0%': {
-          backgroundPosition: '0% 50%',
-        },
-        '50%': {
-          backgroundPosition: '100% 50%',
-        },
-        '100%': {
-          backgroundPosition: '0% 50%',
-        },
-      },
-    },
   }),
 );
 
@@ -67,7 +71,7 @@ export default function CallContainer() {
   const router = useRouter();
   const { setError } = useAppState();
   const connectionOptions = useConnectionOptions();
-  const { template } = useCallContext();
+  const { template, events } = useCallContext();
 
   // URL that the back buttom goes to - set by the `from` query param. If not exist don't show back button
   const fromHref: string | undefined =
@@ -82,28 +86,14 @@ export default function CallContainer() {
     }
   }, [template.ongoingCallId, currentCall]);
 
-  // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
-  const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
-
+  // anytime the call disconnects, send user to summary screen
   const handleDisconnect = useCallback(() => {
-    if (!isCallEnded) {
-      window.location.assign(
-        `${window.location.protocol}//${
-          window.location.host
-        }/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`,
-      );
-    }
-  }, [isCallEnded, currentCall, fromHref]);
-
-  useEffect(() => {
-    if (isCallEnded) {
-      window.location.assign(
-        `${window.location.protocol}//${
-          window.location.host
-        }/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`,
-      );
-    }
-  }, [isCallEnded, currentCall, fromHref]);
+    const href = `/summary/${currentCall}?fromHref=${encodeURIComponent(fromHref ?? '')}`;
+    // use window.assign for mobile since webrtc might freeze if not hard refreshed (android device stop bug)
+    isMobile
+      ? window.location.assign(`${window.location.protocol}//${window.location.host}${href}`)
+      : router.push(href);
+  }, [currentCall, fromHref, router]);
 
   const [hotkeyPopperOpen, setHotkeyPopperOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -131,7 +121,38 @@ export default function CallContainer() {
     { keyup: true },
   );
 
+  // animate gradient backgroud on reaction
+  const controls = useAnimation();
+  const opacity = useMotionValue(0);
+  useEffect(() => {
+    const handleNewReaction = (reaction: ReactionType) => {
+      if (reaction.type !== 'tear') {
+        // if already animating, do a shorter intemediary animation
+        if (opacity.isAnimating()) {
+          controls.stop();
+          controls.start({
+            opacity: [opacity.get(), 1, 0],
+            transition: { duration: reactionTimeMs / 2 / 1000 },
+          });
+        } else {
+          controls.start({
+            opacity: [0, 1, 1, 0],
+            transition: { duration: reactionTimeMs / 1000 },
+          });
+        }
+      }
+    };
+
+    events.on(CallEvents.NEW_REACTION, handleNewReaction);
+    return () => {
+      events.off(CallEvents.NEW_REACTION, handleNewReaction);
+      controls.stop();
+    };
+  }, [events, controls, opacity]);
+
   const isCallStarted: boolean = !!currentCall;
+  // call has ended when the call has been set but template's ongoingCall property doesn't match current call (either null or moved on to another call)
+  const isCallEnded: boolean = Boolean(currentCall && currentCall !== template.ongoingCallId);
 
   return (
     <>
@@ -142,8 +163,15 @@ export default function CallContainer() {
             onError={setError}
             onDisconnect={handleDisconnect}
           >
-            <CallFlow isCallStarted={isCallStarted} fromHref={fromHref} />
+            <CallFlow isCallStarted={isCallStarted} isCallEnded={isCallEnded} fromHref={fromHref} />
           </VideoProvider>
+
+          <motion.div
+            className={classes.gradientBackground}
+            style={{ opacity }}
+            animate={controls}
+          />
+          <ReactionIndicator />
         </div>
       </UnsupportedBrowserWarning>
 

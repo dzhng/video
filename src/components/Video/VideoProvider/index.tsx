@@ -16,6 +16,7 @@ import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
 import useLocalVideoToggle from './useLocalVideoToggle/useLocalVideoToggle';
+import useScreenShareToggle from './useScreenShareToggle/useScreenShareToggle';
 import useDevices from './useDevices/useDevices';
 import useRoom from './useRoom/useRoom';
 
@@ -61,6 +62,8 @@ export interface IVideoContext {
   isToggleCameraSupported: boolean;
   shouldDisableVideoToggle: boolean;
   toggleCamera(): void;
+  isScreenShared: boolean;
+  toggleScreenShare(): void;
 }
 
 export const VideoContext = createContext<IVideoContext>(null!);
@@ -113,6 +116,8 @@ export function VideoProvider({
     toggleCamera,
   } = useLocalVideoToggle(room, localTracks, devices.videoInput, onErrorCallback);
 
+  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(room, onErrorCallback);
+
   // Register onError and onDisconnect callback functions.
   useHandleRoomDisconnectionErrors(room, onError);
   useHandleTrackPublicationFailed(room, onError);
@@ -139,6 +144,8 @@ export function VideoProvider({
         isToggleCameraSupported,
         shouldDisableVideoToggle,
         toggleCamera,
+        isScreenShared,
+        toggleScreenShare,
       }}
     >
       <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>

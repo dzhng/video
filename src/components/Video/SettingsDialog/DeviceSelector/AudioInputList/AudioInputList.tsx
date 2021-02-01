@@ -68,14 +68,14 @@ export default function AudioInputList() {
           </Select>
         </FormControl>
       ) : (
-        <>
+        <div>
           <Typography variant="h5">
             <b>Audio Input</b>
           </Typography>
-          <Typography data-testid="default-track-name">
+          <Typography variant="body1" data-testid="default-track-name">
             {localAudioTrack?.mediaStreamTrack.label || 'No Local Audio'}
           </Typography>
-        </>
+        </div>
       )}
       <div className={classes.indicatorWrapper}>
         <LocalAudioLevelIndicator />

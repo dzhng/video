@@ -7,6 +7,8 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     headerBarHeight: number;
     transitionTime: string;
     dividerBorder: string;
+    callControlHeightXs: number;
+    callControlHeight: number;
 
     customMixins: {
       modalPaper: CSSProperties;
@@ -15,6 +17,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       callButton: CSSProperties;
       scrollBar: CSSProperties;
       disableScrollBar: CSSProperties;
+      overflowScrollGradient: CSSProperties;
     };
   }
 
@@ -23,6 +26,8 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     headerBarHeight?: number;
     transitionTime?: string;
     dividerBorder?: string;
+    callControlHeightXs?: number;
+    callControlHeight?: number;
 
     customMixins: {
       modalPaper?: CSSProperties;
@@ -31,6 +36,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       callButton?: CSSProperties;
       scrollBar?: CSSProperties;
       disableScrollBar?: CSSProperties;
+      overflowScrollGradient?: CSSProperties;
     };
   }
 }
@@ -116,6 +122,8 @@ export default createMuiTheme({
   headerBarHeight: 65,
   transitionTime: '0.3s',
   dividerBorder: '1px solid rgba(0, 0, 0, 0.12)',
+  callControlHeightXs: 48,
+  callControlHeight: 64, // enough for large fab (56) + 1 spacing
 
   customMixins: {
     modalPaper: {
@@ -127,12 +135,16 @@ export default createMuiTheme({
       minWidth: 325,
       width: '33%',
       flexShrink: 0,
+      // react-dnd don't list nested scroll
+      // can enable on a per-component basis
+      overflow: 'hidden',
     },
     activitiesBarMini: {
       maxWidth: 500,
       minWidth: 325,
       width: '25%',
       flexShrink: 0,
+      overflow: 'hidden',
     },
     callButton: {
       background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -161,6 +173,27 @@ export default createMuiTheme({
       // Hide scrollbar for IE, Edge and Firefox
       msOverflowStyle: 'none', // IE and Edge
       scrollbarWidth: 'none', // Firefox
+    },
+    overflowScrollGradient: {
+      position: 'relative',
+
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        width: '100%',
+        height: 25,
+        // transparent keyword is broken in Safari
+        background: 'linear-gradient(white, rgba(255, 255, 255, 0.001))',
+      },
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 25,
+        background: 'linear-gradient(rgba(255, 255, 255, 0.001), white)',
+      },
     },
   },
 });

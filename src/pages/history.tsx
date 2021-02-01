@@ -17,6 +17,7 @@ const snapshotToCall = (
   );
 };
 
+// TODO: paginate calls list
 export default withPrivateRoute(function IndexPage() {
   const { currentWorkspaceId } = useAppState();
   const [calls, setCalls] = useState<LocalModel<Call>[]>([]);
@@ -33,6 +34,7 @@ export default withPrivateRoute(function IndexPage() {
       .where('workspaceId', '==', currentWorkspaceId)
       .where('isFinished', '==', true)
       .orderBy('createdAt', 'desc')
+      .limit(100)
       .onSnapshot(function (querySnapshot) {
         const docs = snapshotToCall(querySnapshot);
         setCalls(docs);

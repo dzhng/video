@@ -1,17 +1,12 @@
-import React, { createContext, useState, useMemo } from 'react';
-import {
-  LocalModel,
-  Call,
-  Template,
-  Activity,
-  CallDataTypes,
-  CallData,
-} from '~/firebase/schema-types';
+import React, { createContext, useMemo } from 'react';
+import { LocalModel, Call, Template, Activity } from '~/firebase/schema-types';
+import { CallDataTypes, CallData, ActivityType, ReactionTypes } from '~/firebase/rtdb-types';
 import useCall from './useCall/useCall';
 import useActivity from './useActivity/useActivity';
 import useCallData from './useCallData/useCallData';
 import useCurrentActivity from './useCurrentActivity/useCurrentActivity';
 import useCallChat from './useCallChat/useCallChat';
+import useCallReactions from './useCallReactions/useCallReactions';
 import { CallEmitter, CallEmitterType } from './events';
 
 interface CallContextTypes {
@@ -26,15 +21,13 @@ interface CallContextTypes {
   startActivity(activity: Activity): void;
   endActivity(): void;
   updateActivityData(activity: Activity, path: string | null, value: CallDataTypes): void;
-  currentActivityData?: CallData;
+  currentActivityData?: ActivityType;
+  hasActivityStarted(activity: Activity): boolean;
 
   // call data management
   currentCallData?: CallData;
   updateCallData(key: string, path: string | null, value: CallDataTypes): void;
-
-  // ui states
-  isActivityDrawerOpen: boolean;
-  setIsActivityDrawerOpen(open: boolean): void;
+  createReaction(type: ReactionTypes): void;
 
   // for other user events
   events: CallEmitterType;
@@ -48,8 +41,6 @@ interface PropTypes {
 export const CallContext = createContext<CallContextTypes>(null!);
 
 export function CallProvider({ children, template, isHost }: React.PropsWithChildren<PropTypes>) {
-  const [isActivityDrawerOpen, setIsActivityDrawerOpen] = useState(false);
-
   const useCallProps = useCall(template);
   const useActivityProps = useActivity(useCallProps.call);
   const useCallDataProps = useCallData(useCallProps.call);
@@ -57,6 +48,8 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
 
   // init call chat events
   useCallChat(CallEmitter, useCallProps.call);
+  // init reactions events
+  const useCallReactionsProps = useCallReactions(CallEmitter, useCallProps.call);
 
   const value = useMemo<CallContextTypes>(
     () => ({
@@ -64,10 +57,9 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
       ...useActivityProps,
       ...useCallDataProps,
       ...useCurrentActivityProps,
+      ...useCallReactionsProps,
       template,
       isHost,
-      isActivityDrawerOpen,
-      setIsActivityDrawerOpen,
       events: CallEmitter,
     }),
     [
@@ -75,9 +67,9 @@ export function CallProvider({ children, template, isHost }: React.PropsWithChil
       useActivityProps,
       useCallDataProps,
       useCurrentActivityProps,
+      useCallReactionsProps,
       template,
       isHost,
-      isActivityDrawerOpen,
     ],
   );
 

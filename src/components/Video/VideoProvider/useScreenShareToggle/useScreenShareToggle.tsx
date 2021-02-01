@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import useVideoContext from '../useVideoContext/useVideoContext';
+import { Room, TwilioError } from 'twilio-video';
 import { LogLevels, Track } from 'twilio-video';
 
 interface MediaStreamTrackPublishOptions {
@@ -8,8 +8,7 @@ interface MediaStreamTrackPublishOptions {
   logLevel: LogLevels;
 }
 
-export default function useScreenShareToggle() {
-  const { room, onError } = useVideoContext();
+export default function useScreenShareToggle(room: Room, onError: (error: TwilioError) => void) {
   const [isSharing, setIsSharing] = useState(false);
   const stopScreenShareRef = useRef<() => void>(null!);
 
@@ -27,8 +26,8 @@ export default function useScreenShareToggle() {
         const track = stream.getTracks()[0];
 
         // All video tracks are published with 'low' priority. This works because the video
-        // track that is displayed in the 'MainParticipant' component will have it's priority
-        // set to 'high' via track.setPriority()
+        // track that is displayed in the main video component will have it's priority
+        // set to 'high' in component itself
         room.localParticipant
           .publishTrack(track, {
             name: 'screen', // Tracks can be named to easily find them later

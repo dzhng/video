@@ -3,17 +3,14 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { Twilio } from 'twilio';
 
-import { Collections, LocalModel, Call, CallData } from '~/firebase/schema-types';
+import { getUidFromIdentity } from '~/utils/twilio';
+import { Collections, LocalModel, Call } from '~/firebase/schema-types';
+import { CallsRTDBRoot, CallData } from '~/firebase/rtdb-types';
 import { db, rtdb } from '~/utils/firebase';
 import { removeUndefineds } from '~/utils';
-import { CallsRTDBRoot } from '~/constants';
 import LoadingContainer from '~/containers/Loading/Loading';
 import SummaryContainer from '~/containers/Summary/Summary';
 import type { ParticipantRecord } from '~/containers/Summary/types';
-
-interface RootCallData {
-  [key: string]: CallData;
-}
 
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID ?? '';
 const twilioApiKeySID = process.env.TWILIO_API_KEY_SID ?? '';
@@ -26,7 +23,7 @@ const twilioClient = new Twilio(twilioApiKeySID, twilioApiKeySecret, {
 export default function SummaryPage({ participants }: { participants: ParticipantRecord[] }) {
   const router = useRouter();
   const [call, setCall] = useState<LocalModel<Call>>();
-  const [callData, setCallData] = useState<RootCallData>();
+  const [callData, setCallData] = useState<CallData>();
 
   const callId = String(router.query.slug);
   const fromHref = router.query.fromHref as string | undefined;
@@ -100,9 +97,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return { notFound: true };
   }
 
+  // TODO: merge the records with duplicate identity
+  //  this is an case that can happen if a user leaves /joins multiple times during a call
   const participants = participantRecords.map((record) => {
     const data: ParticipantRecord = removeUndefineds({
-      uid: record.identity,
+      uid: getUidFromIdentity(record.identity) ?? '',
       joinTime: record.startTime.getTime(),
       leaveTime: record.endTime?.getTime(),
       duration: record.duration,

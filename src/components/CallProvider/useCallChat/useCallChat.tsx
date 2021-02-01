@@ -1,19 +1,14 @@
 import { useEffect } from 'react';
 import { rtdb } from '~/utils/firebase';
 import { LocalModel, Call } from '~/firebase/schema-types';
-import { CallsRTDBRoot, ChatsDataKey, PublicChatsChannelKey } from '~/constants';
+import {
+  CallsRTDBRoot,
+  ChatsDataKey,
+  PublicChatsChannelKey,
+  MessageType,
+} from '~/firebase/rtdb-types';
 import { useAppState } from '~/state';
 import { CallEvents, CallEmitterType } from '../events';
-
-export type MessageTypes = 'text' | 'image' | 'file';
-export interface MessageType {
-  uid: string;
-  type: MessageTypes;
-  data: string; // raw text, image id, or file id
-  createdAt: number; // need to be integer since rtdb don't support dates
-}
-
-export const MessageTimeoutMs = 2000;
 
 export default function useCallChat(events: CallEmitterType, call?: LocalModel<Call>) {
   const { user } = useAppState();

@@ -1,7 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useHotkeys } from 'react-hotkeys-hook';
-
 import CallEnd from '@material-ui/icons/CallEnd';
 import {
   Fab,
@@ -16,14 +14,7 @@ import {
 
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      margin: theme.spacing(1),
-    },
-  }),
-);
+import { useStyles } from '../styles';
 
 export default function EndCallButton({
   setPopperMessage,
@@ -37,35 +28,36 @@ export default function EndCallButton({
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleEndCall = useCallback(() => {
-    if (isHost) {
-      setConfirmOpen(true);
-    } else {
-      room.disconnect();
-    }
-  }, [isHost, room]);
+    setConfirmOpen(true);
+  }, []);
 
   const handleConfirm = useCallback(async () => {
     setIsEndingCall(true);
-    await endCall().catch(() => setIsEndingCall(false));
-    room.disconnect();
-  }, [endCall, room]);
+
+    // only host can end the call for everyone
+    if (isHost) {
+      await endCall().catch(() => setIsEndingCall(false));
+    }
+
+    // endCall() should have triggered a disconnect, but leave it here just in case if it errors out
+    room.disconnect?.();
+  }, [isHost, endCall, room]);
 
   useHotkeys(
     'e',
     (e) => {
       e.preventDefault();
       handleEndCall();
-      // only show message if not host since host has the confirm dialog
-      !isHost && setPopperMessage(<b>Ending call...</b>, true);
+      setPopperMessage(<b>Ending call...</b>, true);
     },
-    [isHost, setPopperMessage],
+    [handleEndCall, setPopperMessage],
   );
 
   return (
     <>
       <Tooltip
         title={'End Call [E]'}
-        onClick={handleEndCall}
+        onClick={isHost ? handleEndCall : handleConfirm}
         placement="top"
         PopperProps={{ disablePortal: true }}
       >
@@ -85,7 +77,9 @@ export default function EndCallButton({
         <DialogTitle>End Call?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            As the host, leaving the call will end the call for everyone.
+            {isHost
+              ? 'As the host, leaving the call will end the call for everyone.'
+              : 'Are you sure you want to leave this call? You can rejoin by returning to this link.'}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

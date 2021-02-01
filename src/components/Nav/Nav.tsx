@@ -103,7 +103,8 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       padding: theme.spacing(2.5),
       objectFit: 'contain',
-      maxWidth: 140,
+      width: 140,
+      height: 85,
     },
     divider: {
       marginLeft: theme.spacing(2),
@@ -228,6 +229,7 @@ export default function Nav({
     ),
     [
       classes,
+      routeSelectedClassname,
       currentWorkspaceId,
       handleWorkspaceChange,
       isWorkspacesReady,

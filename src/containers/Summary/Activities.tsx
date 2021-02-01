@@ -3,13 +3,13 @@ import { get, entries } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
-import { ActivityDataKey } from '~/constants';
-import { CallData, Activity } from '~/firebase/schema-types';
+import { ActivityType, ActivityDataType, CallData, ActivityDataKey } from '~/firebase/rtdb-types';
+import type { Activity } from '~/firebase/schema-types';
 import { ActivityTypeConfig } from '~/components/Activities/Types/Types';
 
 interface FinishedActivityType {
   template: Activity;
-  data: CallData;
+  data: ActivityType;
 }
 
 const useStyles = makeStyles((theme) =>
@@ -71,12 +71,12 @@ export default function Activities({
   data,
   activities,
 }: {
-  data: { [key: string]: CallData };
+  data: CallData;
   activities: Activity[];
 }) {
   const classes = useStyles();
 
-  const allActivityData = get(data, [ActivityDataKey]) as CallData;
+  const allActivityData = get(data, [ActivityDataKey]) as ActivityDataType;
   const finishedActivities = entries(allActivityData)
     .map(([activityId, activityData]) => {
       const template = activities.find((config) => config.id === activityId);
@@ -84,26 +84,29 @@ export default function Activities({
         return undefined;
       }
 
-      return {
+      const finishedType: FinishedActivityType = {
         template,
         data: activityData,
       };
+
+      return finishedType;
     })
     .filter((v) => !!v) as FinishedActivityType[];
 
-  if (finishedActivities.length === 0) {
-    return (
-      <Typography variant="body1" style={{ color: '#888' }}>
-        No activities was started during this call.
-      </Typography>
-    );
-  }
-
   return (
-    <div className={classes.container}>
-      {finishedActivities.map((fa) => (
-        <FinishedActivity key={fa.template.id} finishedActivity={fa} />
-      ))}
-    </div>
+    <>
+      <Typography variant="h2">Activities</Typography>
+      {finishedActivities.length > 0 ? (
+        <div className={classes.container}>
+          {finishedActivities.map((fa) => (
+            <FinishedActivity key={fa.template.id} finishedActivity={fa} />
+          ))}
+        </div>
+      ) : (
+        <Typography variant="body1" style={{ color: '#888' }}>
+          No activities was started during this call.
+        </Typography>
+      )}
+    </>
   );
 }

@@ -1,19 +1,11 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Fab, Tooltip } from '@material-ui/core';
 import { Mic, MicOff } from '@material-ui/icons';
 
 import useLocalAudioToggle from '~/hooks/Video/useLocalAudioToggle/useLocalAudioToggle';
 import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      margin: theme.spacing(1),
-    },
-  }),
-);
+import { useStyles } from '../styles';
 
 export default function ToggleAudioButton({
   disabled,
@@ -28,6 +20,7 @@ export default function ToggleAudioButton({
   const { localTracks } = useVideoContext();
   const hasAudioTrack = localTracks.some((track) => track.kind === 'audio');
   const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
+  const disableAudioToggle = Boolean(!hasAudioTrack || disabled);
 
   // setup hotkeys for push to talk
   // on key down, enable audio, on key up, disable audio
@@ -35,6 +28,10 @@ export default function ToggleAudioButton({
     'space',
     (e) => {
       e.preventDefault();
+      if (disableAudioToggle) {
+        return;
+      }
+
       setPopperOpen(true);
       setPopperMessage(
         <>
@@ -44,17 +41,21 @@ export default function ToggleAudioButton({
       toggleAudioEnabled(true);
     },
     { keydown: true },
-    [toggleAudioEnabled, setPopperOpen],
+    [disableAudioToggle, toggleAudioEnabled, setPopperOpen],
   );
   useHotkeys(
     'space',
     (e) => {
       e.preventDefault();
+      if (disableAudioToggle) {
+        return;
+      }
+
       setPopperOpen(false);
       toggleAudioEnabled(false);
     },
     { keyup: true },
-    [toggleAudioEnabled, setPopperOpen],
+    [disableAudioToggle, toggleAudioEnabled, setPopperOpen],
   );
   // prevent default space behavior on press
   // have it here just in case
@@ -62,9 +63,13 @@ export default function ToggleAudioButton({
 
   // setup hotkeys to toggle audio
   useHotkeys(
-    'a',
+    'm',
     (e) => {
       e.preventDefault();
+      if (disableAudioToggle) {
+        return;
+      }
+
       toggleAudioEnabled();
       setPopperMessage(
         isAudioEnabled ? (
@@ -79,12 +84,12 @@ export default function ToggleAudioButton({
         true,
       );
     },
-    [toggleAudioEnabled, isAudioEnabled, setPopperMessage],
+    [disableAudioToggle, toggleAudioEnabled, isAudioEnabled, setPopperMessage],
   );
 
   return (
     <Tooltip
-      title={isAudioEnabled ? 'Mute Audio [A]' : 'Unmute Audio [A]'}
+      title={isAudioEnabled ? 'Mute Audio [M]' : 'Unmute Audio [M]'}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
@@ -93,7 +98,7 @@ export default function ToggleAudioButton({
         <Fab
           className={classes.fab}
           onClick={() => toggleAudioEnabled()}
-          disabled={!hasAudioTrack || disabled}
+          disabled={disableAudioToggle}
           data-cy-audio-toggle
         >
           {isAudioEnabled ? <Mic data-testid="mic-icon" /> : <MicOff data-testid="micoff-icon" />}

@@ -11,14 +11,15 @@ import {
   RemoteVideoTrack,
 } from 'twilio-video';
 
+import { getUidFromIdentity } from '~/utils/twilio';
 import AudioLevelIndicator, {
   useVolume,
 } from '~/components/Video/AudioLevelIndicator/AudioLevelIndicator';
 import BandwidthWarning from '~/components/Video/BandwidthWarning/BandwidthWarning';
 import NetworkQualityLevel from '~/components/Video/NetworkQualityLevel/NetworkQualityLevel';
+import UserAvatar from '~/components/UserAvatar/UserAvatar';
 
 import useDominantSpeaker from '~/hooks/Video/useDominantSpeaker/useDominantSpeaker';
-import useVideoContext from '~/hooks/Video/useVideoContext/useVideoContext';
 import usePublications from '~/hooks/Video/usePublications/usePublications';
 import useIsTrackSwitchedOff from '~/hooks/Video/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useParticipantIsReconnecting from '~/hooks/Video/useParticipantIsReconnecting/useParticipantIsReconnecting';
@@ -26,6 +27,7 @@ import useTrack from '~/hooks/Video/useTrack/useTrack';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
 
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
+import ReactionIndicator from './ReactionIndicator/ReactionIndicator';
 //import PinIcon from './PinIcon/PinIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -67,14 +69,16 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     isDominantSpeaker: (props: { volume: number }) => ({
-      boxShadow: `0px 0px 16px ${4 + props.volume / 2}px rgb(255 255 255 / 60%)`,
+      boxShadow: `0px 0px 8px ${2 + props.volume / 2}px rgb(255 255 255 / 60%)`,
     }),
     isInterrupting: (props: { volume: number }) => ({
-      boxShadow: `0px 0px 16px ${4 + props.volume / 2}px ${theme.palette.error.main}60`,
+      boxShadow: `0px 0px 8px ${2 + props.volume / 2}px rgb(255 255 255 / 60%)`,
+      // disable different colors for now - detection isn't very good yet
+      //boxShadow: `0px 0px 8px ${2 + props.volume / 2}px ${theme.palette.error.main}60`,
     }),
     infoContainer: {
       position: 'absolute',
-      zIndex: 1,
+      zIndex: 2,
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
@@ -82,6 +86,25 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       padding: '0.4em',
       background: 'transparent',
+    },
+    avatarContainer: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1,
+
+      '& >div': {
+        width: '70%',
+        height: '70%',
+        maxWidth: 150,
+        maxHeight: 150,
+        border: '2px solid #CCC',
+      },
     },
     reconnectingContainer: {
       position: 'absolute',
@@ -93,10 +116,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       background: 'rgba(40, 42, 43, 0.75)',
-      zIndex: 1,
-    },
-    hideVideo: {
-      background: 'black',
+      zIndex: 10,
     },
     identity: {
       height: 22,
@@ -153,13 +173,13 @@ export default function ParticipantInfo({
   //isSelected,
   children,
 }: ParticipantInfoProps) {
-  const { isVideoEnabled } = useVideoContext();
   const dominantSpeaker = useDominantSpeaker();
   const publications = usePublications(participant);
 
   const audioPublication = publications.find((p) => p.kind === 'audio');
   const videoPublication = publications.find((p) => p.trackName.includes('camera'));
 
+  const isVideoEnabled = Boolean(videoPublication);
   const isScreenShareEnabled = publications.find((p) => p.trackName.includes('screen'));
 
   const videoTrack = useTrack(videoPublication);
@@ -172,7 +192,7 @@ export default function ParticipantInfo({
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
   const classes = useStyles({ volume: volume ?? 0 });
-  const userInfo = useUserInfo(participant.identity);
+  const userInfo = useUserInfo(getUidFromIdentity(participant.identity));
 
   // dominant speaker needs to be detected by twilio AND there must be some volume to
   // be qualified as dominant speaker. Note that we are adding rules to twilio's original
@@ -196,10 +216,7 @@ export default function ParticipantInfo({
       data-cy-participant={participant.identity}
       data-testid="container"
     >
-      <div
-        className={clsx(classes.infoContainer, { [classes.hideVideo]: !isVideoEnabled })}
-        data-testid="info-container"
-      >
+      <div className={classes.infoContainer} data-testid="info-container">
         <div className={classes.infoRow}>
           <h4 className={classes.identity}>
             <ParticipantConnectionIndicator participant={participant} />
@@ -214,12 +231,20 @@ export default function ParticipantInfo({
           {/*isSelected && <PinIcon data-testid="pin-icon" />*/}
         </div>
       </div>
+
+      {!isVideoEnabled && (
+        <div className={classes.avatarContainer}>{userInfo && <UserAvatar user={userInfo} />}</div>
+      )}
+
       {isParticipantReconnecting && (
         <div className={classes.reconnectingContainer}>
           <Typography data-testid="reconnecting">Reconnecting...</Typography>
         </div>
       )}
+
       {isVideoSwitchedOff && <BandwidthWarning />}
+      <ReactionIndicator identity={participant.identity} />
+
       {children}
     </div>
   );

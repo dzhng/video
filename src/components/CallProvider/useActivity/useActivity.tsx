@@ -1,7 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { rtdb } from '~/utils/firebase';
-import { CallsRTDBRoot, CurrentActivityIDKey, ActivityDataKey } from '~/constants';
-import { LocalModel, Call, Activity, CallDataTypes, CallData } from '~/firebase/schema-types';
+import {
+  CallDataTypes,
+  CallsRTDBRoot,
+  CurrentActivityIDKey,
+  ActivityDataKey,
+  ActivityDataType,
+} from '~/firebase/rtdb-types';
+import { LocalModel, Call, Activity } from '~/firebase/schema-types';
 
 export default function useActivity(call?: LocalModel<Call>) {
   const startActivity = useCallback(
@@ -60,23 +66,39 @@ export default function useActivity(call?: LocalModel<Call>) {
     [call],
   );
 
-  const [currentActivityData, setCurrentActivityData] = useState<CallData | undefined>(undefined);
+  const [activityData, setActivityData] = useState<ActivityDataType | undefined>(undefined);
 
   useEffect(() => {
-    if (call && currentActivityId) {
-      const valueRef = rtdb.ref(
-        `${CallsRTDBRoot}/${call.id}/${ActivityDataKey}/${currentActivityId}`,
-      );
+    if (call) {
+      const valueRef = rtdb.ref(`${CallsRTDBRoot}/${call.id}/${ActivityDataKey}`);
 
       valueRef.on('value', (snapshot) => {
-        setCurrentActivityData(snapshot.val() ?? {});
+        setActivityData(snapshot.val() ?? {});
       });
 
       return () => valueRef.off('value');
     } else {
-      setCurrentActivityData(undefined);
+      setActivityData(undefined);
     }
-  }, [call, currentActivityId]);
+  }, [call]);
+
+  const hasActivityStarted = useCallback(
+    (activity: Activity): boolean => {
+      if (!activityData) {
+        return false;
+      }
+
+      const data = activityData[activity.id];
+      if (!data || Object.keys(data).length === 0) {
+        return false;
+      }
+
+      return true;
+    },
+    [activityData],
+  );
+
+  const currentActivityData = currentActivityId ? activityData?.[currentActivityId] : undefined;
 
   return {
     startActivity,
@@ -84,5 +106,6 @@ export default function useActivity(call?: LocalModel<Call>) {
     currentActivityId,
     updateActivityData,
     currentActivityData,
+    hasActivityStarted,
   };
 }

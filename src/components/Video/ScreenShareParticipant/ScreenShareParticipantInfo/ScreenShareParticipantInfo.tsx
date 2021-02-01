@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
 
+import { getUidFromIdentity } from '~/utils/twilio';
 import BandwidthWarning from '~/components/Video/BandwidthWarning/BandwidthWarning';
 import useIsTrackSwitchedOff from '~/hooks/Video/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import usePublications from '~/hooks/Video/usePublications/usePublications';
@@ -66,7 +67,7 @@ export default function ScreenShareParticipantInfo({
   children,
 }: ScreenShareParticipantInfoProps) {
   const classes = useStyles();
-  const userInfo = useUserInfo(participant.identity);
+  const userInfo = useUserInfo(getUidFromIdentity(participant.identity));
 
   const publications = usePublications(participant);
   const screenSharePublication = publications.find((p) => p.trackName.includes('screen'));

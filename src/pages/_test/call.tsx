@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fill } from 'lodash';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Button } from '@material-ui/core';
@@ -10,13 +11,20 @@ import LoadingContainer from '~/containers/Loading/Loading';
 import GuestSignIn from '~/containers/Call/GuestSignIn';
 import { CallProvider } from '~/components/CallProvider';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
-import ActivityDrawer from '~/containers/Call/ActivityDrawer';
+import ActivityControl from '~/components/ActivityControl/ActivityControl';
 import ChatNotification from '~/components/Video/Room/ChatNotification/ChatNotification';
+import Layout from '~/components/Video/Layout/Layout';
 
 // this component is just responsible for creating a call model for testing
 // note that if a call exits createCall will just fail, but it is fine because
 // as long as there's an ongoing call to work with we are on
-function CallCreator() {
+function CallCreator({
+  setNumItems,
+  setHideSidebar,
+}: {
+  setNumItems(callback: (state: number) => number): void;
+  setHideSidebar(callback: (state: boolean) => boolean): void;
+}) {
   const { call, createCall, endCall } = useCallContext();
   useEffect(() => {
     createCall();
@@ -24,12 +32,21 @@ function CallCreator() {
 
   // clicking on restart call will end current call, effect will then create a new call
   return (
-    <div style={{ marginLeft: 'auto', marginRight: 'auto', marginTop: '45vh' }}>
+    <div style={{ marginLeft: 'auto', marginRight: 'auto' }}>
       {call && (
         <Button variant="contained" onClick={endCall}>
           Restart Call
         </Button>
       )}
+      <Button variant="contained" onClick={() => setNumItems((state) => state + 1)}>
+        More Items
+      </Button>
+      <Button variant="contained" onClick={() => setNumItems((state) => Math.max(1, state - 1))}>
+        Less Items
+      </Button>
+      <Button variant="contained" onClick={() => setHideSidebar((state) => !state)}>
+        Toggle hideSideBar
+      </Button>
     </div>
   );
 }
@@ -42,8 +59,6 @@ export default function CallTest() {
   const [isHost, setIsHost] = useState<boolean | undefined>(undefined);
 
   const templateId = String(router.query.slug);
-  const isCallStarted = Boolean(router.query.isCallStarted);
-  const fromHref = String(router.query.fromHref);
 
   // fetching template model
   useEffect(() => {
@@ -81,6 +96,17 @@ export default function CallTest() {
       .then((result) => setIsHost(result.exists));
   }, [template, user]);
 
+  const [numItems, setNumItems] = useState(Number(router.query.numItems) || 5);
+
+  // generate random data for now
+  const items = fill(Array(numItems), 0).map((_, idx) => ({
+    key: String(idx),
+    node: <div style={{ width: '100%', height: '100%', backgroundColor: '#999' }} />,
+  }));
+
+  const [hideSideBar, setHideSidebar] = useState(false);
+  const variant = (router.query.variant as string | undefined) ?? 'grid';
+
   if (!isAuthReady) {
     return <LoadingContainer />;
   }
@@ -116,8 +142,16 @@ export default function CallTest() {
               alignItems: 'stretch',
             }}
           >
-            <ActivityDrawer isCallStarted={isCallStarted} fromHref={fromHref} />
-            <CallCreator />
+            <Layout
+              variant={variant as any}
+              hideSideBar={hideSideBar}
+              gridItems={items}
+              sideItem={<ActivityControl />}
+              mainControls={
+                <CallCreator setNumItems={setNumItems} setHideSidebar={setHideSidebar} />
+              }
+              sideControls={<div></div>}
+            />
             <ChatNotification />
           </div>
         </CallProvider>

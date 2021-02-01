@@ -9,22 +9,27 @@ import Linkify from 'react-linkify';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useAppState } from '~/state';
-import { CallData } from '~/firebase/schema-types';
-import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
+import {
+  CallData,
+  MessageType,
+  ChatChannelType,
+  ChatsDataKey,
+  PublicChatsChannelKey,
+} from '~/firebase/rtdb-types';
 import useCallContext from '~/hooks/useCallContext/useCallContext';
 import UserAvatar from '~/components/UserAvatar/UserAvatar';
-import { MessageType } from '~/components/CallProvider/useCallChat/useCallChat';
 import useUserInfo from '~/hooks/useUserInfo/useUserInfo';
-import { ChatChannelType } from './types';
 
 const MaxDisplayableMessages = 500;
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      height: '100%',
+      flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',
+      // need to set this so messageList overflow can work in a flex layout
+      overflow: 'hidden',
     },
     title: {
       margin: theme.spacing(1),
@@ -47,7 +52,6 @@ const useStyles = makeStyles((theme) =>
 
       '&.isSelf': {
         flexDirection: 'row-reverse',
-        textAlign: 'right',
 
         '& p': {
           border: '1px solid ' + theme.palette.secondary.main + '70',
@@ -73,6 +77,8 @@ const useStyles = makeStyles((theme) =>
     composeBar: {
       padding: theme.spacing(1),
       marginTop: 0,
+      flexShrink: 0,
+      flexGrow: 0,
     },
   }),
 );

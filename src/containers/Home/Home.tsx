@@ -12,7 +12,7 @@ import UserAvatar from '~/components/UserAvatar/UserAvatar';
 import Nav from '~/components/Nav/Nav';
 import TemplateCard from './TemplateCard';
 import CreateCard from './CreateCard';
-import AddMemberMenuItem, { AddMemberDialog } from './AddMemberMenuItem';
+import { AddMemberDialog } from './AddMemberMenuItem';
 import LeaveMenuItem from './LeaveMenuItem';
 import DeleteMenuItem from './DeleteMenuItem';
 import { useAppState } from '~/state';
@@ -229,12 +229,14 @@ export default function Home({
                   <MenuItem disabled>Settings</MenuItem>
 
                   {isAdmin && (
-                    <AddMemberMenuItem
-                      onClick={handleMenuClick}
-                      addMembers={addMembers}
-                      removeMembers={removeMembers}
-                      members={members}
-                    />
+                    <MenuItem
+                      onClick={() => {
+                        setSettingsMenuOpen((state) => !state);
+                        setMembersDialogOpen(true);
+                      }}
+                    >
+                      Manage Workspace Members
+                    </MenuItem>
                   )}
 
                   <LeaveMenuItem onClick={handleMenuClick} leaveWorkspace={leaveWorkspace} />

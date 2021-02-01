@@ -1,146 +1,208 @@
-import React, { useMemo } from 'react';
-import { take } from 'lodash';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import clsx from 'clsx';
+import { motion } from 'framer-motion';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-
-const MaxDisplayableGridItems = 50;
-
-interface StyleProps {
-  variant: 'grid' | 'focus';
-  isPortrait: boolean;
-  itemPadding: number;
-}
-
-const mainItemWidthPercent = 70;
-const mainItemHeightPercent = 60;
-const mainItemMaxWidth = 1100;
+import { Hidden, Drawer, Tooltip, Fab } from '@material-ui/core';
+import { Menu as MenuIcon } from '@material-ui/icons';
+import { isBrowser } from '~/utils';
+import Items from './Items';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    container: (props: StyleProps) => ({
-      display: 'flex',
-      flexDirection: props.isPortrait ? 'column' : 'row',
-      alignItems: 'stretch',
+    container: {
       width: '100%',
-    }),
-    mainItem: (props: StyleProps) => ({
-      width: props.isPortrait ? '100%' : `${mainItemWidthPercent}%`,
-      maxWidth: props.isPortrait ? '100%' : mainItemMaxWidth,
-      height: props.isPortrait ? `${mainItemHeightPercent}%` : '100%',
-      padding: theme.spacing(3),
-      // less padding on bottom since controls will already have a lot
-      // TODO: this feels a bit hacky since layout shouldn't know about controls
-      paddingBottom: theme.spacing(1),
-      display: 'flex', // make it easier to align children
-    }),
-    itemContainer: (props: StyleProps) => ({
+      height: '100%',
+      display: 'flex',
+      alignItems: 'stretch',
+    },
+    drawerContainer: {
+      // make sure to propagate height down for height calculation on safari
+      // (which won't work with flex unless it's propagated down)
+      height: '100%',
+
+      '&.open': {
+        ...theme.customMixins.activitiesBarMini,
+        transition: theme.transitions.create(['width', 'min-width', 'max-width'], {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      },
+      '&.closed': {
+        // need to set all properties set by customMixins for transition to work
+        width: 0,
+        minWidth: 0,
+        maxWidth: 0,
+        transition: theme.transitions.create(['width', 'min-width', 'max-width'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        }),
+      },
+      flexShrink: 0,
+    },
+    drawerPaper: {
+      ...theme.customMixins.activitiesBarMini,
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      // disable background of default MUI paper
+      backgroundColor: 'transparent',
+      border: 0,
+      boxShadow: 'none',
+    },
+    actionArea: {
+      height: '100%',
       flexGrow: 1,
       display: 'flex',
-      overflow: 'hidden',
-      flexDirection: props.variant === 'grid' ? 'row' : 'column',
-      flexWrap: 'wrap',
-      justifyContent: 'center',
-      alignContent: 'center',
-    }),
-    gridItem: (props: StyleProps) => ({
-      overflow: 'hidden',
-      padding: props.itemPadding + 'px',
-      display: 'flex', // make it easier to align children
-    }),
+      flexDirection: 'column',
+      alignItems: 'stretch',
+    },
+    controlsContainer: {
+      flexShrink: 0,
+      padding: theme.spacing(1),
+      // no need to pad top since layout on top will already have a lot of padding
+      paddingTop: 0,
+      display: 'flex',
+      justifyContent: 'space-between',
+      // controls should always be aligned bottom to ensure equal padding on bottom
+      alignItems: 'flex-end',
+
+      [theme.breakpoints.down('xs')]: {
+        height: theme.callControlHeightXs,
+      },
+      [theme.breakpoints.up('sm')]: {
+        height: theme.callControlHeight,
+      },
+    },
+    drawerOpenButton: {
+      backgroundColor: theme.palette.grey[900],
+      color: 'white',
+
+      // if small screen, have smaller buttons so they can all fit
+      // align this with Controls/style.ts
+      [theme.breakpoints.down('xs')]: {
+        width: 40,
+        height: 40,
+      },
+    },
   }),
 );
 
-// find the right gridItem size to fit in all item given container area
-// Took algorithm from: https://math.stackexchange.com/a/2570649
-function sizeForSquareThatFitInRect(width: number, height: number, n: number): number {
-  const x = width;
-  const y = height;
-
-  // catch invalid values to avoid NaN output
-  if (n <= 0 || x <= 0 || y <= 0) {
-    return 0;
-  }
-
-  const ratio = x / y;
-  const ncols_float = Math.sqrt(n * ratio);
-  const nrows_float = n / ncols_float;
-
-  // Find best option filling the whole height
-  let nrows1 = Math.ceil(nrows_float);
-  let ncols1 = Math.ceil(n / nrows1);
-  while (nrows1 * ratio < ncols1) {
-    nrows1++;
-    ncols1 = Math.ceil(n / nrows1);
-  }
-  const cell_size1 = y / nrows1;
-
-  // Find best option filling the whole width
-  let ncols2 = Math.ceil(ncols_float);
-  let nrows2 = Math.ceil(n / ncols2);
-  while (ncols2 < nrows2 * ratio) {
-    ncols2++;
-    nrows2 = Math.ceil(n / ncols2);
-  }
-  const cell_size2 = x / ncols2;
-
-  // Find the best values
-  if (cell_size1 < cell_size2) {
-    return cell_size2;
-  } else {
-    return cell_size1;
-  }
-}
-
-// TODO: detect when there's white space on focus mode, and adjust width accordingly
 interface PropTypes {
-  width: number;
-  height: number;
   variant: 'grid' | 'focus';
+  hideSideBar?: boolean; // hide the rest of the UI and focus only on layout
   gridItems: { key: string; node: React.ReactNode }[];
-
   // only needed when variant is `focus`
   mainItem?: React.ReactNode;
-  // if the main item should be displayed at its provided w/h aspect ratio (for stuff like screen sharing or activities)
-  mainItemAspectRatio?: number;
+  sideItem: React.ReactNode;
+  mainControls: React.ReactNode;
+  sideControls: React.ReactNode;
 }
 
-export default function VideoLayout({ width, height, variant, gridItems, mainItem }: PropTypes) {
-  const displayableItems = take(gridItems, MaxDisplayableGridItems);
-  const isPortrait = height > width;
+// TODO: if any fields in drawer is focused (via hotkeys), open drawer
+export default function VideoLayout({
+  variant,
+  hideSideBar,
+  gridItems,
+  mainItem,
+  sideItem,
+  mainControls,
+  sideControls,
+}: PropTypes) {
+  const classes = useStyles();
+  // xs default to closed, others default to open
+  const [isActivityDrawerOpenXs, setIsActivityDrawerOpenXs] = useState(false);
+  const [isActivityDrawerOpen, setIsActivityDrawerOpen] = useState(true);
+  const container = isBrowser ? () => window.document.body : undefined;
 
-  const itemSize = useMemo<number>(() => {
-    // calculate item container width based on given parent width
-    const itemContainerWidth =
-      variant === 'focus' && !isPortrait
-        ? Math.min((width * (100 - mainItemWidthPercent)) / 100, mainItemMaxWidth)
-        : width;
+  // set first mount var
+  const [firstMount, setFirstMount] = useState(true);
+  useEffect(() => {
+    setTimeout(() => setFirstMount(false));
+  }, []);
 
-    const itemContainerHeight =
-      variant === 'focus' && isPortrait ? height * ((100 - mainItemHeightPercent) / 100) : height;
+  const drawer = (
+    <>
+      <Hidden smUp implementation="js">
+        <Drawer
+          container={container}
+          variant="temporary"
+          anchor="left"
+          open={isActivityDrawerOpenXs}
+          onClose={() => setIsActivityDrawerOpenXs(false)}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+        >
+          {sideItem}
+        </Drawer>
+      </Hidden>
 
-    return sizeForSquareThatFitInRect(
-      itemContainerWidth,
-      itemContainerHeight,
-      displayableItems.length,
-    );
-  }, [variant, isPortrait, width, height, displayableItems]);
+      <Hidden xsDown implementation="js">
+        <Drawer
+          className={clsx(classes.drawerContainer, isActivityDrawerOpen ? 'open' : 'closed')}
+          variant="persistent"
+          anchor="left"
+          // start with closed, then we can animate in the drawer after mount
+          open={firstMount ? false : isActivityDrawerOpen}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          {sideItem}
+        </Drawer>
+      </Hidden>
+    </>
+  );
 
-  // use 6% of item size as padding
-  const itemPadding = itemSize * 0.06;
-  const classes = useStyles({ itemPadding, variant, isPortrait });
+  // when hide flag is set, auto hide drawer
+  // when flag is unset, restore old state
+  const prevActivityOpenState = useRef<boolean>(isActivityDrawerOpen);
+  useEffect(() => {
+    if (hideSideBar) {
+      setIsActivityDrawerOpen((state) => {
+        prevActivityOpenState.current = state;
+        return false;
+      });
+    } else {
+      setIsActivityDrawerOpen(prevActivityOpenState.current);
+    }
+  }, [hideSideBar]);
+
+  const handleDrawerToggle = useCallback(() => {
+    setIsActivityDrawerOpen((state) => !state);
+    setIsActivityDrawerOpenXs((state) => !state);
+  }, []);
+
+  const drawerOpenButton = (
+    <Tooltip title="Activities" placement="top" PopperProps={{ disablePortal: true }}>
+      <Fab className={classes.drawerOpenButton} onClick={handleDrawerToggle}>
+        <MenuIcon />
+      </Fab>
+    </Tooltip>
+  );
+
+  const controls = (
+    <motion.div
+      className={classes.controlsContainer}
+      style={{ y: 70 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, type: 'spring' }}
+    >
+      {drawerOpenButton}
+      {mainControls}
+      {sideControls}
+    </motion.div>
+  );
 
   return (
     <div className={classes.container}>
-      {variant === 'focus' && <div className={classes.mainItem}>{mainItem}</div>}
-      <div className={classes.itemContainer}>
-        {displayableItems.map((item) => (
-          <div
-            key={item.key}
-            className={classes.gridItem}
-            style={{ width: itemSize, height: itemSize }}
-          >
-            {item.node}
-          </div>
-        ))}
+      {drawer}
+      <div className={classes.actionArea}>
+        <Items variant={variant} gridItems={gridItems} mainItem={mainItem} />
+        {controls}
       </div>
     </div>
   );

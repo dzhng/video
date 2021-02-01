@@ -12,6 +12,7 @@ import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from './ToggleScreenShareButton/ToggleScreenShareButton';
+import ReactionButton from './ReactionButton/ReactionButton';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -22,6 +23,8 @@ const useStyles = makeStyles(() =>
       transition: 'opacity 1.2s, transform 1.2s, visibility 0s 1.2s',
       opacity: 0,
       visibility: 'hidden',
+      // controls should always be aligned bottom with equal padding on bottom
+      alignItems: 'flex-end',
 
       '&.showControls, &:hover': {
         transition: 'opacity 0.6s, transform 0.6s, visibility 0s',
@@ -49,13 +52,19 @@ export default function Controls({ showControls = true }: { showControls?: boole
         ref={anchorRef}
         className={clsx(classes.container, { showControls })}
       >
+        {/* we are assuming that connected room means call provider is setup, which is needed for reactions */}
+        {roomState !== 'disconnected' && <ReactionButton setPopperMessage={setPopperMessage} />}
+
         <ToggleAudioButton
           disabled={disableButtons}
           setPopperOpen={setIsPopperOpen}
           setPopperMessage={setPopperMessage}
         />
         <ToggleVideoButton disabled={disableButtons} setPopperMessage={setPopperMessage} />
-        {roomState !== 'disconnected' && !isMobile && <ToggleScreenShareButton />}
+
+        {roomState !== 'disconnected' && !isMobile && (
+          <ToggleScreenShareButton disabled={disableButtons} />
+        )}
         {roomState !== 'disconnected' && <EndCallButton setPopperMessage={setPopperMessage} />}
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab';
@@ -27,6 +27,12 @@ const useStyles = makeStyles((theme) =>
         '&:hover': {
           backgroundColor: theme.palette.grey[800],
         },
+        // if small screen, have smaller buttons so they can all fit
+        // make sure this is aligned with video controls fab styles
+        [theme.breakpoints.down('xs')]: {
+          width: 40,
+          height: 40,
+        },
       },
 
       '& .MuiSpeedDialAction-staticTooltipLabel': {
@@ -52,6 +58,7 @@ export default function SettingsSpeedDial({ className }: { className?: string })
   } = useFullScreenToggle();
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const cleanUpFullScreen = useRef<() => void>();
 
   const location = isBrowser ? window.location : ({} as Location);
   const sharableCallLink = `${location.protocol}//${location.host}${location.pathname}`;
@@ -98,6 +105,16 @@ export default function SettingsSpeedDial({ className }: { className?: string })
     },
     [handleToggleFullScreen],
   );
+
+  // when this component is unmounted, turn full screen off
+  useEffect(() => () => cleanUpFullScreen.current?.(), []);
+  useEffect(() => {
+    cleanUpFullScreen.current = () => {
+      if (isFullScreen) {
+        toggleFullScreen();
+      }
+    };
+  }, [isFullScreen, toggleFullScreen]);
 
   const actions = [
     { icon: <ShareIcon />, name: 'Copy Link [L]', onClick: handleShare },

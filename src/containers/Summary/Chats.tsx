@@ -1,9 +1,15 @@
 import React, { useRef } from 'react';
-import { get, values } from 'lodash';
+import { get, values, entries } from 'lodash';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import { CallData } from '~/firebase/schema-types';
-import { ChatsDataKey, PublicChatsChannelKey } from '~/constants';
+import { Typography, Tooltip } from '@material-ui/core';
+import {
+  CallData,
+  ChatsDataKey,
+  PublicChatsChannelKey,
+  ReactionsCountDataKey,
+  ReactionMap,
+  ReactionTypes,
+} from '~/firebase/rtdb-types';
 import { MessageList } from '~/components/Call/Chats';
 
 const useStyles = makeStyles((theme) =>
@@ -17,24 +23,56 @@ const useStyles = makeStyles((theme) =>
       borderRadius: theme.shape.borderRadius,
       border: theme.dividerBorder,
     },
+    reactionContainer: {
+      margin: theme.spacing(1),
+      marginBottom: 0,
+      borderBottom: theme.dividerBorder,
+    },
+    reaction: {
+      display: 'inline-block',
+      marginRight: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+      padding: theme.spacing(1),
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: theme.palette.grey[100],
+      border: theme.dividerBorder,
+      overflow: 'hidden',
+      cursor: 'default',
+    },
   }),
 );
 
-export default function Chats({ data }: { data: { [key: string]: CallData } }) {
+export default function Chats({ data }: { data: CallData }) {
   const classes = useStyles();
   const scrollRef = useRef(0);
 
   const list = values(get(data, [ChatsDataKey, PublicChatsChannelKey], {}));
+  const reactions = entries(get(data, [ReactionsCountDataKey]));
 
   return (
-    <div className={classes.container}>
-      {list.length > 0 ? (
-        <MessageList data={data} scrollRef={scrollRef} />
-      ) : (
-        <Typography variant="body1" style={{ margin: 8, color: '#888' }}>
-          No chats were sent in this call.
-        </Typography>
-      )}
-    </div>
+    <>
+      <Typography variant="h2">Chats</Typography>
+      <div className={classes.container}>
+        {reactions.length > 0 && (
+          <div className={classes.reactionContainer}>
+            {reactions.map(([type, count]) => (
+              <Tooltip key={type} title={`${count} reactions were sent in this call`}>
+                <span className={classes.reaction}>
+                  {ReactionMap[type as ReactionTypes]} {count}
+                </span>
+              </Tooltip>
+            ))}
+          </div>
+        )}
+
+        {list.length > 0 ? (
+          <MessageList data={data} scrollRef={scrollRef} />
+        ) : (
+          <Typography variant="body1" style={{ margin: 8, color: '#888' }}>
+            No chats were sent in this call.
+          </Typography>
+        )}
+      </div>
+    </>
   );
 }
