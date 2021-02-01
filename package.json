@@ -75,6 +75,7 @@
     "mocha-junit-reporter": "^2.0.0",
     "node-mocks-http": "^1.10.0",
     "prettier": "2.2.1",
+    "puppeteer-core": "^5.5.0",
     "react-scripts": "^4.0.1",
     "react-test-renderer": "^17.0.1",
     "start-server-and-test": "^1.11.7",
