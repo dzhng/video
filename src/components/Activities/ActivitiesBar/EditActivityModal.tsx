@@ -158,12 +158,12 @@ export default function EditActivityModal({
 
           <DialogActions className={classes.actions}>
             <Tooltip title="Delete activity" placement="right">
-              <IconButton size="small" onClick={handleDelete}>
+              <IconButton data-testid="delete-button" size="small" onClick={handleDelete}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
 
-            <Button type="submit" color="primary" variant="contained">
+            <Button data-testid="save-button" type="submit" color="primary" variant="contained">
               Save
             </Button>
           </DialogActions>

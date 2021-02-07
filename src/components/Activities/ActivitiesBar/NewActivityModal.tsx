@@ -223,7 +223,9 @@ export default function NewActivityModal({
                     className={clsx(classes.card, { comingSoon: activity.isComingSoon })}
                     onClick={() => activity.isComingSoon || handleSelectType(activity.type)}
                   >
-                    <Typography variant="h3">{activity.name}</Typography>
+                    <Typography data-testid="activity-name" variant="h3">
+                      {activity.name}
+                    </Typography>
                     {activity.icon}
                   </Card>
                 </Tooltip>

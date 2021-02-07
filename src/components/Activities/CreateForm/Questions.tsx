@@ -32,6 +32,7 @@ export default function CreateQuestionsActivity() {
             {values.questions.map((_, index) => (
               <div key={index}>
                 <Field
+                  data-testid="question-text-field"
                   fullWidth
                   component={TextField}
                   name={`${questionsFieldName}.${index}`}

@@ -133,7 +133,10 @@ export default function LocalPreviewCard({
             <CircularProgress color="primary" size={'1rem'} />
           ) : (
             <>
-              <VideoCallFilledIcon style={{ marginRight: 8 }} />
+              <VideoCallFilledIcon
+                data-testid="start-join-call-button"
+                style={{ marginRight: 8 }}
+              />
               {actionText}
             </>
           )}

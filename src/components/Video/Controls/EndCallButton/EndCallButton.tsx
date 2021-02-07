@@ -61,7 +61,7 @@ export default function EndCallButton({
         placement="top"
         PopperProps={{ disablePortal: true }}
       >
-        <div>
+        <div data-testid="end-call-button">
           <Fab className={classes.fab} color="secondary" disabled={isEndingCall}>
             <CallEnd />
           </Fab>
@@ -86,7 +86,13 @@ export default function EndCallButton({
           <Button onClick={() => setConfirmOpen(false)} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleConfirm} color="primary" variant="contained" autoFocus>
+          <Button
+            data-testid="end-call-dialog-button"
+            onClick={handleConfirm}
+            color="primary"
+            variant="contained"
+            autoFocus
+          >
             End Call
           </Button>
         </DialogActions>
