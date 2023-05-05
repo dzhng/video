@@ -1,0 +1,6 @@
+- create a workspace
+- then create a room in the same screen
+- then attempt to start the video call
+- then go to home and check for the new created templates and workspace
+- then create a few templates from the home screen
+- then attempt to start the video call from the home screen

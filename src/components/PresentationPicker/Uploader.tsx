@@ -136,6 +136,7 @@ export default function Uploader({ setData }: { setData(id: string, data: Presen
       />
       <label htmlFor="contained-button">
         <Paper
+          data-testid="upload-presentation-input"
           className={clsx(classes.pickerPaper, {
             disabled: disableUpload,
           })}

@@ -1,0 +1,10 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "testFiles": [
+    "signin.spec.ts",
+    "create-workspace.spec.ts",
+    "template.spec.ts",
+    "delete-workspace.spec.ts",
+    "signout.spec.ts"
+  ]
+}

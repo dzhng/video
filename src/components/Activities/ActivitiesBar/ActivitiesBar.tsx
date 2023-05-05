@@ -249,6 +249,7 @@ export default function ActivitiesBar({
             {mode !== 'view' && (
               <div className={classes.timelineItem}>
                 <Button
+                  data-testid="new-activity-button"
                   variant="contained"
                   color="primary"
                   fullWidth

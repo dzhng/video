@@ -25,7 +25,11 @@ export default function Menu() {
 
   return (
     <div ref={anchorRef}>
-      <IconButton color="inherit" onClick={() => setMenuOpen((state) => !state)}>
+      <IconButton
+        data-testid="user-profile-icon"
+        color="inherit"
+        onClick={() => setMenuOpen((state) => !state)}
+      >
         <Tooltip title="Settings" placement="bottom">
           {userRecord ? (
             <UserAvatar data-testid="avatar" user={userRecord} />
@@ -46,7 +50,11 @@ export default function Menu() {
           </MenuItem>
         )}
         <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
-        {userRecord && <MenuItem onClick={handleSignOut}>Logout</MenuItem>}
+        {userRecord && (
+          <MenuItem data-testid="logout-option" onClick={handleSignOut}>
+            Logout
+          </MenuItem>
+        )}
       </MenuContainer>
       <AboutDialog
         open={aboutOpen}

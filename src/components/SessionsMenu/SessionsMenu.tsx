@@ -159,7 +159,11 @@ export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
             </IconButton>
           </div>
         </Tooltip>
-        <Tooltip title="Room settings" placement="bottom">
+        <Tooltip
+          data-testid="template-settings-menu-button"
+          title="Room settings"
+          placement="bottom"
+        >
           <div ref={anchorRef}>
             <IconButton onClick={() => setSettingsMenuOpen((state) => !state)}>
               <SettingsIcon />
@@ -173,6 +177,7 @@ export default function SessionsMenu({ openDrawer }: { openDrawer(): void }) {
           <Grid item xs={12}>
             <a href={callHref}>
               <Button
+                data-testid="start-call-button"
                 fullWidth
                 color="secondary"
                 variant="contained"
